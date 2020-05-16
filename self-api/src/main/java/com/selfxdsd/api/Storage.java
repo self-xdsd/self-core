@@ -21,18 +21,18 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 package com.selfxdsd.api;
+
 /**
- * The com.selfxdsd.api.Self Platform. This is the highest abstraction.
+ * Storage of Self.
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
  */
-public interface Self {
+public interface Storage {
 
     /**
-     * Authenticated user.
-     * @return User.
+     * Get the users.
+     * @return Users.
      */
-    User authenticated();
-
+    Users users();
 }

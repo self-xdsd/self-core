@@ -20,19 +20,30 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package com.selfxdsd.api;
+package com.selfxdsd.core.mock;
+
+import com.selfxdsd.api.Storage;
+import com.selfxdsd.api.Users;
+
 /**
- * The com.selfxdsd.api.Self Platform. This is the highest abstraction.
+ * In Memory storage used for testing.
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
+ * @todo #13:30min Write unit tests for all the InMemory mock infrastructure.
+ *  These are tools used in Self's unit tests which should also be tested
+ *  themselves. Self's unit tests should fail only if there's a problem with
+ *  Self.
  */
-public interface Self {
+public final class InMemory implements Storage  {
 
     /**
-     * Authenticated user.
-     * @return User.
+     * In-memory users.
      */
-    User authenticated();
+    private Users users = new InMemoryUsers();
 
+    @Override
+    public Users users() {
+        return this.users;
+    }
 }

@@ -20,19 +20,50 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package com.selfxdsd.api;
+package com.selfxdsd.core;
+
+import com.selfxdsd.api.Self;
+import com.selfxdsd.api.Storage;
+import com.selfxdsd.api.User;
+import com.selfxdsd.core.mock.InMemory;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.Test;
+
+import java.net.URL;
+
 /**
- * The com.selfxdsd.api.Self Platform. This is the highest abstraction.
+ * Unit tests for {@link GithubSelf}.
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
  */
-public interface Self {
+public final class GithubSelfTestCase {
 
     /**
-     * Authenticated user.
-     * @return User.
+     * GithubSelf can authenticate a given user.
+     * @throws Exception If something goes wrong.
      */
-    User authenticated();
+    @Test
+    public void authenticatesUser() throws Exception {
+        final Storage storage = new InMemory();
+        final Self self = new GithubSelf(
+            "amihaiemil", "amihaiemil@gmail.com",
+            new URL("https://gravatar.com/amihaiemil"), "gh123token",
+            storage
+        );
+        final User amihaiemil = self.authenticated();
+        MatcherAssert.assertThat(
+            amihaiemil.username(),
+            Matchers.equalTo("amihaiemil")
+        );
+        MatcherAssert.assertThat(
+            storage.users(), Matchers.iterableWithSize(1)
+        );
+        MatcherAssert.assertThat(
+            storage.users().user("amihaiemil", "github").username(),
+            Matchers.equalTo("amihaiemil")
+        );
+    }
 
 }

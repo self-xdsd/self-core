@@ -21,18 +21,26 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 package com.selfxdsd.api;
+
 /**
- * The com.selfxdsd.api.Self Platform. This is the highest abstraction.
- * @author Mihai Andronache (amihaiemil@gmail.com)
+ * Users of Self.
+ * @author Mihai Andronache(amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
  */
-public interface Self {
+public interface Users extends Iterable<User> {
+    /**
+     * Sign up.
+     * @param user User to sign up.
+     * @return The registered User.
+     */
+    User signUp(final User user);
 
     /**
-     * Authenticated user.
+     * Get a User.
+     * @param username Username.
+     * @param provider Provider (github, bitbucket etc).
      * @return User.
      */
-    User authenticated();
-
+    User user(final String username, final String provider);
 }
