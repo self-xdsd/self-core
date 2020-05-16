@@ -34,9 +34,10 @@ import java.net.URL;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
- * @todo #13:30min Implement User.repos(). It should return a
+ * @todo #15:30min Implement User.repos(). It should return a
  *  Repos instance which should represent the user's repository
- *  from the provider's platform (Github, Bitbucket etc).
+ *  from the provider's platform (Github, Bitbucket etc). GithubRepo
+ *  is already implemented, we can start with Github Repos.
  */
 public final class GithubSelf extends BaseSelf {
 
