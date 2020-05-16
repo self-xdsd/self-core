@@ -1,0 +1,17 @@
+docker:
+  image: g4s8/rultor:alpine3.10
+architect:
+  - amihaiemil
+env:
+  MAVEN_OPTS: "-XX:MaxPermSize=256m -Xmx1g"
+merge:
+  script: |-
+    mvn clean install -Pcheckstyle
+deploy:
+  script: |-
+    echo 'Nothing to deploy yet'
+    exit -1
+release:
+  script: |-
+    echo 'Nothing to release yet'
+    exit -1
