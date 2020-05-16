@@ -7,4 +7,4 @@
 [![We recommend IntelliJ IDEA](http://amihaiemil.github.io/images/intellij-idea-recommend.svg)](https://www.jetbrains.com/idea/)
 
 
-Self's Core Java SE Implementation
+Self's Core. This repo contains the main Java SE Implementation, clean of any platform or framework. It offers a public set of Java interfaces which can also be used to write Selenium tests (once a webapp will be in place) or implement a Java client for the RESTful API.
