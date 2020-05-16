@@ -22,7 +22,6 @@
  */
 package com.selfxdsd.core;
 
-import com.selfxdsd.api.Self;
 import com.selfxdsd.api.User;
 import com.selfxdsd.api.Storage;
 import com.selfxdsd.api.Repos;
@@ -39,12 +38,7 @@ import java.net.URL;
  *  Repos instance which should represent the user's repository
  *  from the provider's platform (Github, Bitbucket etc).
  */
-public final class GithubSelf implements Self {
-
-    /**
-     * Self's storage.
-     */
-    private Storage storage;
+public final class GithubSelf extends BaseSelf {
 
     /**
      * Authenticated user.
@@ -67,6 +61,7 @@ public final class GithubSelf implements Self {
         final URL avatar, final String githubToken,
         final Storage storage
     ) {
+        super(storage);
         this.user = new User() {
             private final String token = githubToken;
 
@@ -100,16 +95,16 @@ public final class GithubSelf implements Self {
                 return null;
             }
         };
-        this.storage = storage;
     }
 
     @Override
     public User authenticated() {
-        User authenticated = this.storage.users().user(
+        final Storage storage = this.storage();
+        User authenticated = storage.users().user(
             this.user.username(), this.user.provider()
         );
         if(authenticated == null) {
-            authenticated = this.storage.users().signUp(this.user);
+            authenticated = storage.users().signUp(this.user);
         }
         return authenticated;
     }

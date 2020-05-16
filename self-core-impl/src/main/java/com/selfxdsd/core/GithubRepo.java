@@ -1,13 +1,13 @@
 /**
  * Copyright (c) 2020, Self XDSD Contributors
  * All rights reserved.
- *
+ * <p>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"),
  * to read the Software only. Permission is hereby NOT GRANTED to use, copy,
  * modify, merge, publish, distribute, sublicense, and/or sell copies of
  * the Software.
- *
+ * <p>
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -20,35 +20,30 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package com.selfxdsd.api;
+package com.selfxdsd.core;
+
+import com.selfxdsd.api.Project;
+import com.selfxdsd.api.User;
 
 import javax.json.JsonObject;
 
 /**
- * A Repository belonging to a com.selfxdsd.api.User on Github, Gitlab,
- * Bitbucket etc.
+ * A Github repository.
  * @author Mihai Andronache (amihaiemil@gmail.com)
- * @version $Id$
- * @since 0.0.1
  */
-public interface Repo {
-    /**
-     * Owner of this repository.
-     * @return User.
-     */
-    User owner();
+final class GithubRepo extends BaseRepo {
 
     /**
-     * The Json representation of this Repo as returned by the API
-     * of the User's provider (Github, BitBucket etc).
-     * @return JsonObject.
+     * Constructor.
+     * @param owner Owner of this repo.
+     * @param json Json representation.
      */
-    JsonObject json();
+    GithubRepo(final User owner, final JsonObject json) {
+        super(owner, json);
+    }
 
-    /**
-     * Activate this repository, tell Self to start
-     * managing it.
-     * @return Project.
-     */
-    Project activate();
+    @Override
+    public Project activate() {
+        return null;
+    }
 }
