@@ -23,30 +23,10 @@
 package com.selfxdsd.api;
 
 /**
- * A Project is a User's Repository which has been
- * registered (activated) on the Self platform.
- *
- * Once activated, a project will be managed by one of
- * Self's Project Managers.
+ * Projects managed by Self.
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
- * @todo #10:30min Continue implementing Self's API (Java Interfaces).
- *  We should introduce the Contributor. A Project can have one or
- *  more contributors. Each contributor has an hourly rate.
  */
-public interface Project {
-
-    /**
-     * This project's repository.
-     * @return Repo.
-     */
-    Repo repo();
-
-    /**
-     * Deactivate this project, tell  Self to stop
-     * managing it.
-     * @return This project's repository.
-     */
-    Repo deactivate();
+public interface Projects extends Iterable<Projects> {
 }

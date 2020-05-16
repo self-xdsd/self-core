@@ -60,4 +60,11 @@ public interface User {
      * @return Repos.
      */
     Repos repos();
+
+    /**
+     * A User's projects (activated repositories), managed
+     * by the platform.
+     * @return Projects.
+     */
+    Projects projects();
 }
