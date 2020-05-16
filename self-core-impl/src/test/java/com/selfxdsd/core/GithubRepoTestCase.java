@@ -22,33 +22,53 @@
  */
 package com.selfxdsd.core;
 
-import com.selfxdsd.api.Project;
+import com.selfxdsd.api.Repo;
 import com.selfxdsd.api.Storage;
 import com.selfxdsd.api.User;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.Test;
+import org.mockito.Mockito;
 
+import javax.json.Json;
 import javax.json.JsonObject;
 
 /**
- * A Github repository.
+ * Unit tests for {@link GithubRepo}.
  * @author Mihai Andronache (amihaiemil@gmail.com)
+ * @version $Id$
+ * @since 0.0.1
  */
-final class GithubRepo extends BaseRepo {
+public final class GithubRepoTestCase {
 
     /**
-     * Constructor.
-     * @param owner Owner of this repo.
-     * @param json Json representation.
-     * @param storage Storage used to save the Project when
-     *  this repo is activated.
+     * A GithubRepo can return its owner.
      */
-    GithubRepo(
-        final User owner, final JsonObject json,
-        final Storage storage) {
-        super(owner, json, storage);
+    @Test
+    public void returnsOwner() {
+        final User owner = Mockito.mock(User.class);
+        final Repo repo = new GithubRepo(
+            owner,
+            Json.createObjectBuilder().build(),
+            Mockito.mock(Storage.class)
+        );
+        MatcherAssert.assertThat(repo.owner(), Matchers.is(owner));
     }
 
-    @Override
-    public Project activate() {
-        return null;
+    /**
+     * A GithubRepo can return its Json representation.
+     */
+    @Test
+    public void returnsJson() {
+        final JsonObject rep = Json.createObjectBuilder()
+            .add("full_name", "self-xdsd/self-core")
+            .build();
+        final Repo repo = new GithubRepo(
+            Mockito.mock(User.class),
+            rep,
+            Mockito.mock(Storage.class)
+        );
+        MatcherAssert.assertThat(repo.json(), Matchers.is(rep));
     }
+
 }

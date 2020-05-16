@@ -24,6 +24,7 @@ package com.selfxdsd.core;
 
 import com.selfxdsd.api.Project;
 import com.selfxdsd.api.Repo;
+import com.selfxdsd.api.Storage;
 import com.selfxdsd.api.User;
 
 import javax.json.JsonObject;
@@ -48,13 +49,20 @@ abstract class BaseRepo implements Repo {
     private final JsonObject json;
 
     /**
+     * Storage used for activation.
+     */
+    private final Storage storage;
+
+    /**
      * Constructor.
      * @param owner Owner of this repo.
      * @param json Json representation.
+     * @param storage Storage used for activation.
      */
-    BaseRepo(final User owner, final JsonObject json) {
+    BaseRepo(final User owner, final JsonObject json, final Storage storage) {
         this.owner = owner;
         this.json = json;
+        this.storage = storage;
     }
 
     @Override
