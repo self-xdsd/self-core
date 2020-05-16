@@ -35,4 +35,11 @@ public interface Repo {
      * @return User.
      */
     User owner();
+
+    /**
+     * Activate this repository, tell Self to start
+     * managing it.
+     * @return Project.
+     */
+    Project activate();
 }
