@@ -8,7 +8,7 @@
     <artifactId>self-core</artifactId>
     <packaging>pom</packaging>
     <version>0.0.1-SNAPSHOT</version>
-    <name>com.selfxdsd.api.Self XDSD Core</name>
+    <name>Self XDSD Core</name>
     <description>Core Implementation of the com.selfxdsd.api.Self Platform</description>
     <modules>
         <module>self-api</module>
