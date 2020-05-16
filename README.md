@@ -8,7 +8,7 @@
 [![We recommend IntelliJ IDEA](http://amihaiemil.github.io/images/intellij-idea-recommend.svg)](https://www.jetbrains.com/idea/)
 
 
-Self's Core. This repo contains the main Java SE Implementation, clean of any platform or framework.
+Self's Core. This repo contains the main Java SE Implementation, clean of any framework.
 
 The platform's domain model is implemented as a set of public Java Interfaces which, besides being the skeleton of the core implementation, can also be used to implement Selenium tests or implement a Java client for the RESTful API.
 
