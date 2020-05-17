@@ -1,13 +1,13 @@
 /**
  * Copyright (c) 2020, Self XDSD Contributors
  * All rights reserved.
- *
+ * <p>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"),
  * to read the Software only. Permission is hereby NOT GRANTED to use, copy,
  * modify, merge, publish, distribute, sublicense, and/or sell copies of
  * the Software.
- *
+ * <p>
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -20,45 +20,59 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package com.selfxdsd.api;
-import java.net.URL;
+package com.selfxdsd.core;
+
+import com.selfxdsd.api.Provider;
+import com.selfxdsd.api.Repo;
+import com.selfxdsd.api.User;
+import java.net.URI;
 
 /**
- * User.
+ * Github as a Provider.
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
+ * @todo #20:30min Implemented method repo(). Write unit tests,
+ *  as well as integration tests for it. This method assumes that
+ *  the repo in question is a user-owned and public.
  */
-public interface User {
+final class Github implements Provider {
 
     /**
-     * User's name.
-     * @return String.
+     * User.
      */
-    String username();
+    private final User user;
 
     /**
-     * User's email address.
-     * @return String.
+     * Github's URI.
      */
-    String email();
+    private final URI uri;
 
     /**
-     * User's avatar URL.
-     * @return URL.
+     * Constructor.
+     * @param user Authenticated user.
      */
-    URL avatar();
+    Github(final User user) {
+        this(user, URI.create("https://api.github.com"));
+    }
 
     /**
-     * Provider. Github, Bitbucket, Gitlab etc.
-     * @return String.
+     * Constructor.
+     * @param user Authenticated user.
+     * @param uri Base URI of Github's API.
      */
-    Provider provider();
+    Github(final User user, final URI uri) {
+        this.user = user;
+        this.uri = uri;
+    }
 
-    /**
-     * A User's projects (activated repositories), managed
-     * by the platform.
-     * @return Projects.
-     */
-    Projects projects();
+    @Override
+    public String name() {
+        return "github";
+    }
+
+    @Override
+    public Repo repo(final String name) {
+        throw new UnsupportedOperationException("Not yet implemented");
+    }
 }

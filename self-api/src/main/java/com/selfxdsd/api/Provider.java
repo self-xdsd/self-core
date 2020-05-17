@@ -1,13 +1,13 @@
 /**
  * Copyright (c) 2020, Self XDSD Contributors
  * All rights reserved.
- *
+ * <p>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"),
  * to read the Software only. Permission is hereby NOT GRANTED to use, copy,
  * modify, merge, publish, distribute, sublicense, and/or sell copies of
  * the Software.
- *
+ * <p>
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -23,10 +23,25 @@
 package com.selfxdsd.api;
 
 /**
- * A com.selfxdsd.api.User's repositories on Github, Bitbucket, Gitlab etc.
+ * A Provider is a platform against which the User is authenticated and
+ * which holds the User's repos (Github, Gitlab, Bitbucket etc).
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
  */
-public interface Repos extends Iterable<Repo> {
+public interface Provider {
+
+    /**
+     * Name of this provider.
+     * @return String.
+     */
+    String name();
+
+    /**
+     * Get a Repo by its simple name. E.g. "testrepo" is the simple name
+     * of repo "amihaiemil/testrepo".
+     * @param name Simple name of the repo.
+     * @return Repo.
+     */
+    Repo repo(final String name);
 }

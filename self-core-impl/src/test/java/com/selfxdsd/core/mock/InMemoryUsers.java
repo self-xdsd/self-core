@@ -45,7 +45,9 @@ public final class InMemoryUsers implements Users {
 
     @Override
     public User signUp(final User user) {
-        final UserKey key = new UserKey(user.username(), user.provider());
+        final UserKey key = new UserKey(
+            user.username(), user.provider().name()
+        );
         final User signedUp = this.users.get(key);
         if(signedUp == null) {
             this.users.put(key, user);

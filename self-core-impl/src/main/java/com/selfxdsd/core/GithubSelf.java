@@ -22,9 +22,9 @@
  */
 package com.selfxdsd.core;
 
+import com.selfxdsd.api.Provider;
 import com.selfxdsd.api.User;
 import com.selfxdsd.api.Storage;
-import com.selfxdsd.api.Repos;
 import com.selfxdsd.api.Projects;
 
 import java.net.URL;
@@ -34,10 +34,6 @@ import java.net.URL;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
- * @todo #15:30min Implement User.repos(). It should return a
- *  Repos instance which should represent the user's repository
- *  from the provider's platform (Github, Bitbucket etc). GithubRepo
- *  is already implemented, we can start with Github Repos.
  */
 public final class GithubSelf extends BaseSelf {
 
@@ -82,13 +78,8 @@ public final class GithubSelf extends BaseSelf {
             }
 
             @Override
-            public String provider() {
-                return "github";
-            }
-
-            @Override
-            public Repos repos() {
-                return null;
+            public Provider provider() {
+                return new Github(this);
             }
 
             @Override
@@ -102,7 +93,7 @@ public final class GithubSelf extends BaseSelf {
     public User authenticated() {
         final Storage storage = this.storage();
         User authenticated = storage.users().user(
-            this.user.username(), this.user.provider()
+            this.user.username(), this.user.provider().name()
         );
         if(authenticated == null) {
             authenticated = storage.users().signUp(this.user);
