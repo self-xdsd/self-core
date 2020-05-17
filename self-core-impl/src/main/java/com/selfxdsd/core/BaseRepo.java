@@ -27,8 +27,15 @@ import com.selfxdsd.api.Repo;
 import com.selfxdsd.api.Storage;
 import com.selfxdsd.api.User;
 
+import javax.json.Json;
 import javax.json.JsonObject;
+import java.io.IOException;
+import java.io.StringReader;
+import java.net.HttpURLConnection;
 import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 
 /**
  * Base implementation of {@link com.selfxdsd.api.Repo}.
@@ -73,7 +80,32 @@ abstract class BaseRepo implements Repo {
 
     @Override
     public JsonObject json() {
-        return null;
+        try {
+            final HttpResponse<String> response = HttpClient.newHttpClient()
+                .send(
+                    HttpRequest.newBuilder()
+                        .uri(this.repo)
+                        .header("Content-Type", "application/json")
+                        .build(),
+                    HttpResponse.BodyHandlers.ofString()
+                );
+            final int status = response.statusCode();
+            if(status == HttpURLConnection.HTTP_OK) {
+                return Json.createReader(
+                    new StringReader(response.body())
+                ).readObject();
+            } else {
+                throw new IllegalStateException(
+                    "Unexpected response when fetching [" + this.repo +"]. "
+                  + "Expected 200 OK, but got " + status
+                );
+            }
+        } catch (final IOException | InterruptedException ex) {
+            throw new IllegalStateException(
+                "Exception when fetching repo + [" + this.repo.toString() +"]",
+                ex
+            );
+        }
     }
 
     @Override
