@@ -58,6 +58,10 @@ public final class GithubSelfTestCase {
             Matchers.equalTo("amihaiemil")
         );
         MatcherAssert.assertThat(
+            amihaiemil.provider(),
+            Matchers.instanceOf(Github.class)
+        );
+        MatcherAssert.assertThat(
             storage.users(), Matchers.iterableWithSize(1)
         );
         MatcherAssert.assertThat(
