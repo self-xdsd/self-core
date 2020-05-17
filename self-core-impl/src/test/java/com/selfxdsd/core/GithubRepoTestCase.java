@@ -30,8 +30,7 @@ import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import javax.json.Json;
-import javax.json.JsonObject;
+import java.net.URI;
 
 /**
  * Unit tests for {@link GithubRepo}.
@@ -49,26 +48,10 @@ public final class GithubRepoTestCase {
         final User owner = Mockito.mock(User.class);
         final Repo repo = new GithubRepo(
             owner,
-            Json.createObjectBuilder().build(),
+            URI.create("http://localhost:8080"),
             Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(repo.owner(), Matchers.is(owner));
-    }
-
-    /**
-     * A GithubRepo can return its Json representation.
-     */
-    @Test
-    public void returnsJson() {
-        final JsonObject rep = Json.createObjectBuilder()
-            .add("full_name", "self-xdsd/self-core")
-            .build();
-        final Repo repo = new GithubRepo(
-            Mockito.mock(User.class),
-            rep,
-            Mockito.mock(Storage.class)
-        );
-        MatcherAssert.assertThat(repo.json(), Matchers.is(rep));
     }
 
 }

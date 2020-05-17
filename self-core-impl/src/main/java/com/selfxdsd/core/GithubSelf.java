@@ -79,7 +79,7 @@ public final class GithubSelf extends BaseSelf {
 
             @Override
             public Provider provider() {
-                return new Github(this);
+                return new Github(this, storage);
             }
 
             @Override

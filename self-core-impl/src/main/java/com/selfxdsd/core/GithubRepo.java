@@ -25,8 +25,7 @@ package com.selfxdsd.core;
 import com.selfxdsd.api.Project;
 import com.selfxdsd.api.Storage;
 import com.selfxdsd.api.User;
-
-import javax.json.JsonObject;
+import java.net.URI;
 
 /**
  * A Github repository.
@@ -42,14 +41,16 @@ final class GithubRepo extends BaseRepo {
     /**
      * Constructor.
      * @param owner Owner of this repo.
-     * @param json Json representation.
+     * @param uri URI Pointing to this repo.
      * @param storage Storage used to save the Project when
      *  this repo is activated.
      */
     GithubRepo(
-        final User owner, final JsonObject json,
-        final Storage storage) {
-        super(owner, json, storage);
+        final User owner,
+        final URI uri,
+        final Storage storage
+    ) {
+        super(owner, uri, storage);
     }
 
     @Override

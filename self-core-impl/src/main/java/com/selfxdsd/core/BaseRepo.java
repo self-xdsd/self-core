@@ -28,6 +28,7 @@ import com.selfxdsd.api.Storage;
 import com.selfxdsd.api.User;
 
 import javax.json.JsonObject;
+import java.net.URI;
 
 /**
  * Base implementation of {@link com.selfxdsd.api.Repo}.
@@ -44,9 +45,9 @@ abstract class BaseRepo implements Repo {
     private final User owner;
 
     /**
-     * Json representation as returned by the provider's API.
+     * URI pointing to this repo.
      */
-    private final JsonObject json;
+    private final URI repo;
 
     /**
      * Storage used for activation.
@@ -56,12 +57,12 @@ abstract class BaseRepo implements Repo {
     /**
      * Constructor.
      * @param owner Owner of this repo.
-     * @param json Json representation.
+     * @param repo URI Pointing to this repo.
      * @param storage Storage used for activation.
      */
-    BaseRepo(final User owner, final JsonObject json, final Storage storage) {
+    BaseRepo(final User owner, final URI repo, final Storage storage) {
         this.owner = owner;
-        this.json = json;
+        this.repo = repo;
         this.storage = storage;
     }
 
@@ -72,7 +73,7 @@ abstract class BaseRepo implements Repo {
 
     @Override
     public JsonObject json() {
-        return this.json;
+        return null;
     }
 
     @Override

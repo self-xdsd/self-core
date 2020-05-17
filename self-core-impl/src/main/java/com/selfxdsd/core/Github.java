@@ -24,6 +24,7 @@ package com.selfxdsd.core;
 
 import com.selfxdsd.api.Provider;
 import com.selfxdsd.api.Repo;
+import com.selfxdsd.api.Storage;
 import com.selfxdsd.api.User;
 import java.net.URI;
 
@@ -49,21 +50,29 @@ final class Github implements Provider {
     private final URI uri;
 
     /**
+     * Storge where we might save some stuff.
+     */
+    private final Storage storage;
+
+    /**
      * Constructor.
      * @param user Authenticated user.
+     * @param storage Storage where we might save some stuff.
      */
-    Github(final User user) {
-        this(user, URI.create("https://api.github.com"));
+    Github(final User user, final Storage storage) {
+        this(user, storage, URI.create("https://api.github.com"));
     }
 
     /**
      * Constructor.
      * @param user Authenticated user.
+     * @param storage Storage where we might save some stuff.
      * @param uri Base URI of Github's API.
      */
-    Github(final User user, final URI uri) {
+    Github(final User user, final Storage storage, final URI uri) {
         this.user = user;
         this.uri = uri;
+        this.storage = storage;
     }
 
     @Override
@@ -73,6 +82,9 @@ final class Github implements Provider {
 
     @Override
     public Repo repo(final String name) {
-        throw new UnsupportedOperationException("Not yet implemented");
+        final URI repo = URI.create(
+            this.uri.toString() + "/repos/" + this.user.username() + "/" + name
+        );
+        return new GithubRepo(this.user, repo, this.storage);
     }
 }
