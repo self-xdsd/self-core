@@ -33,9 +33,9 @@ import java.net.URI;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
- * @todo #20:30min Implemented method repo(). Write unit tests,
- *  as well as integration tests for it. This method assumes that
- *  the repo in question is a user-owned and public.
+ * @todo #26:30min Bring in Gizzly mock HTTP Server (see jcabi-http),
+ *  so we can mock the Github server and write unit tests for the methods
+ *  that perform HTTP Requests.
  */
 final class Github implements Provider {
 
