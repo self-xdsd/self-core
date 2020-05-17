@@ -97,7 +97,7 @@ abstract class BaseRepo implements Repo {
             } else {
                 throw new IllegalStateException(
                     "Unexpected response when fetching [" + this.repo +"]. "
-                  + "Expected 200 OK, but got " + status
+                  + "Expected 200 OK, but got " + status + "."
                 );
             }
         } catch (final IOException | InterruptedException ex) {

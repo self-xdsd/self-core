@@ -21,7 +21,7 @@ If you would like to contribute, just open an issue or a PR.
 You will need Java 11.
 Make sure the maven build:
 
-``$mvn clean install -Pcheckstyle``
+``$mvn clean install -Pcheckstyle,itcases``
 
 passes before making a PR. [Checkstyle](http://checkstyle.sourceforge.net/) will make sure
 you're following our code style and guidlines.

@@ -6,7 +6,7 @@ env:
   MAVEN_OPTS: "-XX:MaxPermSize=256m -Xmx1g"
 merge:
   script: |-
-    mvn clean install -Pcheckstyle
+    mvn clean install -Pcheckstyle,itcases
 deploy:
   script: |-
     echo 'Nothing to deploy yet'

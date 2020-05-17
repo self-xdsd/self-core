@@ -5,4 +5,4 @@ jdk:
   - openjdk11
 script:
   - set -e
-  - mvn clean install -Pcheckstyle -PtestCoverage jacoco:report coveralls:report
+  - mvn clean install -Pcheckstyle,itcases -PtestCoverage jacoco:report coveralls:report
