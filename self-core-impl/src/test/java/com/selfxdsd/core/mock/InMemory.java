@@ -22,6 +22,7 @@
  */
 package com.selfxdsd.core.mock;
 
+import com.selfxdsd.api.ProjectManagers;
 import com.selfxdsd.api.Storage;
 import com.selfxdsd.api.Users;
 
@@ -45,5 +46,10 @@ public final class InMemory implements Storage  {
     @Override
     public Users users() {
         return this.users;
+    }
+
+    @Override
+    public ProjectManagers projectManagers() {
+        return null;
     }
 }

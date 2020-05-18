@@ -1,13 +1,13 @@
 /**
  * Copyright (c) 2020, Self XDSD Contributors
  * All rights reserved.
- *
+ * <p>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"),
  * to read the Software only. Permission is hereby NOT GRANTED to use, copy,
  * modify, merge, publish, distribute, sublicense, and/or sell copies of
  * the Software.
- *
+ * <p>
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -23,22 +23,23 @@
 package com.selfxdsd.api;
 
 /**
- * Storage of Self.
+ * A Project Manager.
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
  */
-public interface Storage {
+public interface ProjectManager {
 
     /**
-     * Get the users.
-     * @return Users.
+     * This PM's access token for the Provider's API.
+     * @return String.
      */
-    Users users();
+    String accessToken();
 
     /**
-     * Get the project managers.
-     * @return ProjectManagers.
+     * Projects being managed by this PM.
+     * @return Projects.
      */
-    ProjectManagers projectManagers();
+    Projects projects();
+
 }
