@@ -36,6 +36,20 @@ import org.mockito.Mockito;
 public final class StoredProjectManagerTestCase {
 
     /**
+     * StoredProjectManager returns its id.
+     */
+    @Test
+    public void returnsId() {
+        final ProjectManager manager = new StoredProjectManager(
+            1, "123token", Mockito.mock(Storage.class)
+        );
+        MatcherAssert.assertThat(
+            manager.id(),
+            Matchers.equalTo(1)
+        );
+    }
+
+    /**
      * StoredProjectManager returns its access token.
      */
     @Test

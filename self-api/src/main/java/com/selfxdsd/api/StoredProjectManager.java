@@ -68,6 +68,11 @@ public final class StoredProjectManager implements ProjectManager {
     }
 
     @Override
+    public int id() {
+        return this.id;
+    }
+
+    @Override
     public String accessToken() {
         return this.accessToken;
     }

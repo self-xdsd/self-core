@@ -31,6 +31,13 @@ package com.selfxdsd.api;
 public interface ProjectManager {
 
     /**
+     * The ProjectManager's ID.
+     * @checkstyle MethodName (5 lines)
+     * @return Integer id.
+     */
+    int id();
+
+    /**
      * This PM's access token for the Provider's API.
      * @return String.
      */
