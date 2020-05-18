@@ -64,6 +64,11 @@ public final class InMemoryProjectManagers implements ProjectManagers {
     }
 
     @Override
+    public ProjectManager getById(int id) {
+        return this.pms.get(id);
+    }
+
+    @Override
     public ProjectManager pick() {
         return this.pms.get(1);
     }

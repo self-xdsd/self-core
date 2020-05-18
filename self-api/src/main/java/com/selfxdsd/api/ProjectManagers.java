@@ -31,6 +31,13 @@ package com.selfxdsd.api;
 public interface ProjectManagers extends Iterable<ProjectManager> {
 
     /**
+     * Get a PM by its ID.
+     * @param id ID of the PM.
+     * @return ProjectManager or null if it's not found.
+     */
+    ProjectManager getById(final int id);
+
+    /**
      * Pick a ProjectManager.
      * @return ProjectManager.
      */
