@@ -51,7 +51,6 @@ public final class GithubSelf extends BaseSelf {
      *  his/her repositories).
      * @param storage Storage for Self.
      * @checkstyle ParameterNumber (10 lines)
-     * @checkstyle AnonInnerLength (100 lines)
      */
     public GithubSelf(
         final String username, final String email,

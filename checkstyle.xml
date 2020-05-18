@@ -262,7 +262,6 @@
             <property name="max" value="80"/>
             <property name="ignorePattern" value="^import .*$|^\s+\*\s.*https?:\/\/.+"/>
         </module>
-        <module name="AnonInnerLength" />
         <module name="MethodLength"/>
         <module name="ParameterNumber">
             <property name="max" value="3"/>

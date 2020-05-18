@@ -28,7 +28,13 @@ package com.selfxdsd.api;
  * @version $Id$
  * @since 0.0.1
  */
-public interface Projects extends Iterable<Projects> {
+public interface Projects extends Iterable<Project> {
+
+    /**
+     * Register a new Project with Self.
+     * @param project The Project to register.
+     */
+    void register(final Project project);
 
     /**
      * Get the Projects assigned to a PM.

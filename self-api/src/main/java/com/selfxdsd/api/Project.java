@@ -38,6 +38,12 @@ package com.selfxdsd.api;
 public interface Project {
 
     /**
+     * Project Manager in charge of this Project.
+     * @return ProjectManager.
+     */
+    ProjectManager projectManager();
+
+    /**
      * This project's repository.
      * @return Repo.
      */
