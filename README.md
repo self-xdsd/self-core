@@ -27,3 +27,9 @@ passes before making a PR. [Checkstyle](http://checkstyle.sourceforge.net/) will
 you're following our code style and guidlines.
 
 It's better to make changes on a separate branch (derived from ``master``), so you won't have to cherry pick commits in case your PR is rejected.
+
+## Cash Bounties
+
+Some of the tickets have a cash bounty assigned to it. If you want to solve the ticket and get the bounty, tell me and I'll assign it to you. You will have 10 days to provide a PR and close the ticket. Pay attention: if the 10 days pass, I **might** take it away from you and give it to someone else -- if this happens, you won't get any cash. 
+
+**You don't have to solve the whole ticket!** Many times, it will happen that the ticket requires more effort than what the bounty is worth. If this is the case, solve the ticket only **partially** and leave ``TODO``s in the code -- these ``TODO``s will automatically be transformed into Github Issues. However, you will have to leave the code in a consistent state, the build has to pass always.
