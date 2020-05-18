@@ -29,4 +29,12 @@ package com.selfxdsd.api;
  * @since 0.0.1
  */
 public interface Projects extends Iterable<Projects> {
+
+    /**
+     * Get the Projects assigned to a PM.
+     * @param projectManagerId ID of the Project Manager.
+     * @return Projects.
+     */
+    Projects assignedTo(final int projectManagerId);
+
 }

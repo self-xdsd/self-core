@@ -20,51 +20,65 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package com.selfxdsd.core.mock;
-
-import com.selfxdsd.api.*;
-
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+package com.selfxdsd.api;
 
 /**
- * In memory PMs for testing purposes.
+ * A Project Manager stored in Self. Use this class when implementing
+ * the Storage.<br><br>
+ *
+ * This class is in the API because it is implementation-agnostic!
+ * It only works with API interfaces and nothing else.
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
+ * @todo #29:30min Implement the assign(Repo) method. This repo should
+ *  store create a Project, link it to this PM and then return it back.
+ *  Don't forget ot test this method.
  */
-public final class InMemoryProjectManagers implements ProjectManagers {
+public final class StoredProjectManager implements ProjectManager {
 
     /**
-     * Parent storage.
+     * This PMs id.
+     */
+    private final int id;
+
+    /**
+     * This PM's access token.
+     */
+    private final String accessToken;
+
+    /**
+     * Self's storage.
      */
     private final Storage storage;
 
     /**
-     * PMs's "table".
-     */
-    private final Map<Integer, ProjectManager> pms = new HashMap<>();
-
-    /**
      * Constructor.
-     * @param storage Parent storage.
+     * @param id PM's id.
+     * @param accessToken API Access token.
+     * @param storage Self's storage.
      */
-    public InMemoryProjectManagers(final Storage storage) {
+    public StoredProjectManager(
+        final int id, final String accessToken,
+        final Storage storage
+    ) {
+        this.id = id;
+        this.accessToken = accessToken;
         this.storage = storage;
-        this.pms.put(
-            1,
-            new StoredProjectManager(1, "123token", storage)
-        );
     }
 
     @Override
-    public Iterator<ProjectManager> iterator() {
-        return this.pms.values().iterator();
+    public String accessToken() {
+        return this.accessToken;
     }
 
     @Override
-    public ProjectManager pick() {
-        return this.pms.get(1);
+    public Project assign(final Repo repo) {
+        return null;
+    }
+
+    @Override
+    public Projects projects() {
+        return this.storage.projects().assignedTo(this.id);
     }
 }

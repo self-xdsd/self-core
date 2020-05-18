@@ -37,6 +37,13 @@ public interface ProjectManager {
     String accessToken();
 
     /**
+     * Assign a repo to this ProjectManager.
+     * @param repo Repo to be assigned.
+     * @return Project.
+     */
+    Project assign(final Repo repo);
+
+    /**
      * Projects being managed by this PM.
      * @return Projects.
      */

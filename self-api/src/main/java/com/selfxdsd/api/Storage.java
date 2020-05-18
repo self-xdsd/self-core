@@ -31,14 +31,20 @@ package com.selfxdsd.api;
 public interface Storage {
 
     /**
-     * Get the users.
+     * Get the users Storage API.
      * @return Users.
      */
     Users users();
 
     /**
-     * Get the project managers.
+     * Get the project managers Storage API.
      * @return ProjectManagers.
      */
     ProjectManagers projectManagers();
+
+    /**
+     * Get the projects Storage API.
+     * @return Projects.
+     */
+    Projects projects();
 }

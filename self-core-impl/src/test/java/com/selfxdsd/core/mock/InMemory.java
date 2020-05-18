@@ -22,9 +22,7 @@
  */
 package com.selfxdsd.core.mock;
 
-import com.selfxdsd.api.ProjectManagers;
-import com.selfxdsd.api.Storage;
-import com.selfxdsd.api.Users;
+import com.selfxdsd.api.*;
 
 /**
  * In Memory storage used for testing.
@@ -35,6 +33,9 @@ import com.selfxdsd.api.Users;
  *  These are tools used in Self's unit tests which should also be tested
  *  themselves. Self's unit tests should fail only if there's a problem with
  *  Self.
+ * @todo #29:30min Implement the projects() storage. A Project has an
+ *  incremented integer id, a foreign key to its PM and some other stuff that
+ *  are not yet decided.
  */
 public final class InMemory implements Storage  {
 
@@ -42,6 +43,10 @@ public final class InMemory implements Storage  {
      * In-memory users.
      */
     private Users users = new InMemoryUsers();
+    /**
+     * In-memory project-managers.
+     */
+    private ProjectManagers projectManagers = new InMemoryProjectManagers(this);
 
     @Override
     public Users users() {
@@ -50,6 +55,11 @@ public final class InMemory implements Storage  {
 
     @Override
     public ProjectManagers projectManagers() {
+        return null;
+    }
+
+    @Override
+    public Projects projects() {
         return null;
     }
 }
