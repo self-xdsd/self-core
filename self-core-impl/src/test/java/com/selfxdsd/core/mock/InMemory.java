@@ -33,9 +33,6 @@ import com.selfxdsd.api.*;
  *  These are tools used in Self's unit tests which should also be tested
  *  themselves. Self's unit tests should fail only if there's a problem with
  *  Self.
- * @todo #29:30min Implement the projects() storage. A Project has an
- *  incremented integer id, a foreign key to its PM and some other stuff that
- *  are not yet decided.
  */
 public final class InMemory implements Storage  {
 
