@@ -23,7 +23,6 @@
 package com.selfxdsd.core;
 
 import com.selfxdsd.api.Repo;
-import com.selfxdsd.api.Self;
 import com.selfxdsd.api.Storage;
 import com.selfxdsd.api.User;
 import com.selfxdsd.core.mock.InMemory;
@@ -33,7 +32,6 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import java.net.URI;
-import java.net.URL;
 
 /**
  * Unit tests for {@link GithubRepo}.

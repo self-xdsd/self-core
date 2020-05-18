@@ -109,7 +109,6 @@ abstract class BaseRepo implements Repo {
             } catch (final IOException | InterruptedException ex) {
                 throw new IllegalStateException(
                     "Couldn't fetching repo + [" + this.uri.toString() +"]",
-
                     ex
                 );
             }
@@ -117,6 +116,10 @@ abstract class BaseRepo implements Repo {
         return this.json;
     }
 
+    /**
+     * Get the Storage.
+     * @return Storage.
+     */
     Storage storage() {
         return this.storage;
     }
