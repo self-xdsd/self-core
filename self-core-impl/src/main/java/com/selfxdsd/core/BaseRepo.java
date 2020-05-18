@@ -52,9 +52,14 @@ abstract class BaseRepo implements Repo {
     private final User owner;
 
     /**
+     * This repo's info in JSON.
+     */
+    private JsonObject json;
+
+    /**
      * URI pointing to this repo.
      */
-    private final URI repo;
+    private final URI uri;
 
     /**
      * Storage used for activation.
@@ -69,7 +74,7 @@ abstract class BaseRepo implements Repo {
      */
     BaseRepo(final User owner, final URI repo, final Storage storage) {
         this.owner = owner;
-        this.repo = repo;
+        this.uri = repo;
         this.storage = storage;
     }
 
@@ -80,34 +85,39 @@ abstract class BaseRepo implements Repo {
 
     @Override
     public JsonObject json() {
-        try {
-            final HttpResponse<String> response = HttpClient.newHttpClient()
-                .send(
-                    HttpRequest.newBuilder()
-                        .uri(this.repo)
-                        .header("Content-Type", "application/json")
-                        .build(),
-                    HttpResponse.BodyHandlers.ofString()
-                );
-            final int status = response.statusCode();
-            if(status == HttpURLConnection.HTTP_OK) {
-                return Json.createReader(
-                    new StringReader(response.body())
-                ).readObject();
-            } else {
+        if(this.json == null) {
+            try {
+                final HttpResponse<String> response = HttpClient.newHttpClient()
+                    .send(
+                        HttpRequest.newBuilder()
+                            .uri(this.uri)
+                            .header("Content-Type", "application/json")
+                            .build(),
+                        HttpResponse.BodyHandlers.ofString()
+                    );
+                final int status = response.statusCode();
+                if(status == HttpURLConnection.HTTP_OK) {
+                    this.json =  Json.createReader(
+                        new StringReader(response.body())
+                    ).readObject();
+                } else {
+                    throw new IllegalStateException(
+                        "Unexpected response when fetching [" + this.uri +"]. "
+                            + "Expected 200 OK, but got " + status + "."
+                    );
+                }
+            } catch (final IOException | InterruptedException ex) {
                 throw new IllegalStateException(
-                    "Unexpected response when fetching [" + this.repo +"]. "
-                  + "Expected 200 OK, but got " + status + "."
+                    "Couldn't fetching repo + [" + this.uri.toString() +"]",
+                    
+                    ex
                 );
             }
-        } catch (final IOException | InterruptedException ex) {
-            throw new IllegalStateException(
-                "Exception when fetching repo + [" + this.repo.toString() +"]",
-                ex
-            );
         }
+        return this.json;
     }
 
     @Override
     public abstract Project activate();
+
 }
