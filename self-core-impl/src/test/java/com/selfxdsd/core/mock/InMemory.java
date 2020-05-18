@@ -55,7 +55,7 @@ public final class InMemory implements Storage  {
 
     @Override
     public ProjectManagers projectManagers() {
-        return null;
+        return this.projectManagers;
     }
 
     @Override

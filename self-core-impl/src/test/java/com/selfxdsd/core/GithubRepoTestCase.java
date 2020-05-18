@@ -23,14 +23,17 @@
 package com.selfxdsd.core;
 
 import com.selfxdsd.api.Repo;
+import com.selfxdsd.api.Self;
 import com.selfxdsd.api.Storage;
 import com.selfxdsd.api.User;
+import com.selfxdsd.core.mock.InMemory;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.mockito.Mockito;
 
 import java.net.URI;
+import java.net.URL;
 
 /**
  * Unit tests for {@link GithubRepo}.
@@ -52,6 +55,22 @@ public final class GithubRepoTestCase {
             Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(repo.owner(), Matchers.is(owner));
+    }
+
+    /**
+     * A GithubRepo can be activated. Make this test more robust
+     * after ProjectManager.assign(...) is implemented.
+     * @throws Exception If something goes wrong.
+     */
+    @Test
+    public void activatesRepo() throws Exception {
+        final Storage storage = new InMemory();
+        final Repo repo = new GithubRepo(
+            Mockito.mock(User.class),
+            URI.create("http://localhost:8080"),
+            storage
+        );
+        MatcherAssert.assertThat(repo.activate(), Matchers.nullValue());
     }
 
 }

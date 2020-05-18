@@ -32,9 +32,6 @@ import java.net.URI;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
- * @todo #15:30min Implement and test activation of this Github
- *  repository. Activating a repository means creating and persisting
- *  a Project that will be managed by the platform later.
  */
 final class GithubRepo extends BaseRepo {
 
@@ -55,6 +52,6 @@ final class GithubRepo extends BaseRepo {
 
     @Override
     public Project activate() {
-        return null;
+        return this.storage().projectManagers().pick().assign(this);
     }
 }

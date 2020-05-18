@@ -109,12 +109,16 @@ abstract class BaseRepo implements Repo {
             } catch (final IOException | InterruptedException ex) {
                 throw new IllegalStateException(
                     "Couldn't fetching repo + [" + this.uri.toString() +"]",
-                    
+
                     ex
                 );
             }
         }
         return this.json;
+    }
+
+    Storage storage() {
+        return this.storage;
     }
 
     @Override
