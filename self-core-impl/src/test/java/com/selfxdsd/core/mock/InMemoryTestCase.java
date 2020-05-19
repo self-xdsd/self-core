@@ -12,14 +12,17 @@ import static org.mockito.Mockito.when;
 
 /**
  * Test cases for InMemory storage.
+ * @todo #16:30min Continue writing unit tests for the InMemory storage infrastructure.
+ *  In the end all classes and methods should be covered with unit tests so we can rely 100%
+ *  on them.
  */
-public class InMemoryTestCase {
+public final class InMemoryTestCase {
 
     /**
      * Sign up a user.
      */
     @Test
-    public final void userSignUp() {
+    public void userSignUp() {
         final Storage storage = new InMemory();
         final User user = mockUser("amihaiemil", "GitHub");
 
@@ -33,7 +36,7 @@ public class InMemoryTestCase {
      * Sign up a user twice with the same provider.
      */
     @Test
-    public final void userSignUpTwiceWithSameProvider() {
+    public void userSignUpTwiceWithSameProvider() {
         final Storage storage = new InMemory();
         final User userGithub = mockUser("amihaiemil", "GitHub");
         final User userGithubAgain = mockUser("amihaiemil", "GitHub");
@@ -48,7 +51,7 @@ public class InMemoryTestCase {
      * Sign up a user name with different providers.
      */
     @Test
-    public final void sameUserNameSignedWithDiffProviders() {
+    public void sameUserNameSignedWithDiffProviders() {
         final Storage storage = new InMemory();
         final User userGithub = mockUser("amihaiemil", "GitHub");
         final User userBitbucket = mockUser("amihaiemil", "Bitbucket");
@@ -65,7 +68,7 @@ public class InMemoryTestCase {
      * Should return null when query by a different provider.
      */
     @Test
-    public final void userSignedUpWithOtherProvider() {
+    public void userSignedUpWithOtherProvider() {
         final Storage storage = new InMemory();
         final User user = mockUser("amihaiemil", "GitHub");
 
@@ -79,7 +82,7 @@ public class InMemoryTestCase {
      * Query a user before sign up. Should return null.
      */
     @Test
-    public final void userNotSignedUp() {
+    public void userNotSignedUp() {
         final Storage storage = new InMemory();
         final User signedUser = storage.users().user("amihaiemil", "GitHub");
         assertThat(signedUser, is(nullValue()));
@@ -103,8 +106,5 @@ public class InMemoryTestCase {
 
         return user;
     }
-
-
-    //TODO(criske): add tests cases for project managers
 
 }
