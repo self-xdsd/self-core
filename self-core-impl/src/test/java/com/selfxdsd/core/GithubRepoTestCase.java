@@ -56,19 +56,36 @@ public final class GithubRepoTestCase {
     }
 
     /**
-     * A GithubRepo can be activated. Make this test more robust
-     * after ProjectManager.assign(...) is implemented.
+     * A GithubRepo can be activated. The InMemory storage
+     * comes with a pre-registered ProjectManager with id 1.
      * @throws Exception If something goes wrong.
      */
     @Test
     public void activatesRepo() throws Exception {
         final Storage storage = new InMemory();
+        MatcherAssert.assertThat(
+            storage.projects(),
+            Matchers.iterableWithSize(0)
+        );
+        MatcherAssert.assertThat(
+            storage.projects().assignedTo(1),
+            Matchers.iterableWithSize(0)
+        );
+
         final Repo repo = new GithubRepo(
             Mockito.mock(User.class),
             URI.create("http://localhost:8080"),
             storage
         );
-        MatcherAssert.assertThat(repo.activate(), Matchers.nullValue());
+        MatcherAssert.assertThat(repo.activate(), Matchers.notNullValue());
+        MatcherAssert.assertThat(
+            storage.projects(),
+            Matchers.iterableWithSize(1)
+        );
+        MatcherAssert.assertThat(
+            storage.projects().assignedTo(1),
+            Matchers.iterableWithSize(1)
+        );
     }
 
 }

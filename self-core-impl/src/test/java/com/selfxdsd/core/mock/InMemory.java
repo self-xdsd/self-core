@@ -41,6 +41,11 @@ public final class InMemory implements Storage  {
      */
     private ProjectManagers projectManagers = new InMemoryProjectManagers(this);
 
+    /**
+     * In-memory projects.
+     */
+    private Projects projects = new InMemoryProjects(this);
+
     @Override
     public Users users() {
         return this.users;
@@ -53,6 +58,6 @@ public final class InMemory implements Storage  {
 
     @Override
     public Projects projects() {
-        return null;
+        return this.projects;
     }
 }
