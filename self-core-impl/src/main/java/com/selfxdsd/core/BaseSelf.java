@@ -23,7 +23,7 @@
 package com.selfxdsd.core;
 
 import com.selfxdsd.api.Self;
-import com.selfxdsd.api.Storage;
+import com.selfxdsd.api.storage.Storage;
 
 /**
  * Base Self implementation.

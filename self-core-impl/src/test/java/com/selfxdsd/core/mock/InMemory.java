@@ -23,6 +23,7 @@
 package com.selfxdsd.core.mock;
 
 import com.selfxdsd.api.*;
+import com.selfxdsd.api.storage.Storage;
 
 /**
  * In Memory storage used for testing.
@@ -30,7 +31,7 @@ import com.selfxdsd.api.*;
  * @version $Id$
  * @since 0.0.1
  */
-public final class InMemory implements Storage  {
+public final class InMemory implements Storage {
 
     /**
      * In-memory users.

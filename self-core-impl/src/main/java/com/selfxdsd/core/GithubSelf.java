@@ -24,7 +24,7 @@ package com.selfxdsd.core;
 
 import com.selfxdsd.api.Provider;
 import com.selfxdsd.api.User;
-import com.selfxdsd.api.Storage;
+import com.selfxdsd.api.storage.Storage;
 import com.selfxdsd.api.Projects;
 
 import java.net.URL;

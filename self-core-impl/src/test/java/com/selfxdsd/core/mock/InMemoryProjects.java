@@ -23,6 +23,7 @@
 package com.selfxdsd.core.mock;
 
 import com.selfxdsd.api.*;
+import com.selfxdsd.api.storage.Storage;
 
 import java.util.*;
 

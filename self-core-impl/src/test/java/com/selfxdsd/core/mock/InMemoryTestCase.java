@@ -1,7 +1,7 @@
 package com.selfxdsd.core.mock;
 
 import com.selfxdsd.api.Provider;
-import com.selfxdsd.api.Storage;
+import com.selfxdsd.api.storage.Storage;
 import com.selfxdsd.api.User;
 import org.junit.Test;
 

@@ -20,69 +20,68 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package com.selfxdsd.api;
+package com.selfxdsd.api.storage;
+
+import com.selfxdsd.api.Project;
+import com.selfxdsd.api.ProjectManager;
+import com.selfxdsd.api.Repo;
 
 /**
- * A Project Manager stored in Self. Use this class when implementing
- * the Storage.<br><br>
+ * A Project stored in Self.<br><br>
  *
  * This class is in the API because it is implementation-agnostic!
  * It only works with API interfaces and nothing else.
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
+ * @todo #31:30min Implement the deactivate method which should remove the
+ *  Project form the DB (it means Self will stop managing it). Return the
+ *  corresponding Repo when done. Don't forget the tests.
  */
-public final class StoredProjectManager implements ProjectManager {
+public final class StoredProject implements Project {
 
     /**
-     * This PMs id.
+     * Repo of this Project.
      */
-    private final int id;
+    private final Repo repo;
 
     /**
-     * This PM's access token.
+     * Manager in charge of this Project.
      */
-    private final String accessToken;
+    private final ProjectManager projectManager;
 
     /**
-     * Self's storage.
+     * Self's Storage.
      */
     private final Storage storage;
 
     /**
      * Constructor.
-     * @param id PM's id.
-     * @param accessToken API Access token.
-     * @param storage Self's storage.
+     * @param repo Repo of this project.
+     * @param projectManager Manager in charge.
+     * @param storage Storage of Self.
      */
-    public StoredProjectManager(
-        final int id, final String accessToken,
+    public StoredProject(
+        final Repo repo, final ProjectManager projectManager,
         final Storage storage
     ) {
-        this.id = id;
-        this.accessToken = accessToken;
+        this.repo = repo;
+        this.projectManager = projectManager;
         this.storage = storage;
     }
 
     @Override
-    public int id() {
-        return this.id;
+    public ProjectManager projectManager() {
+        return this.projectManager;
     }
 
     @Override
-    public String accessToken() {
-        return this.accessToken;
+    public Repo repo() {
+        return this.repo;
     }
 
     @Override
-    public Project assign(final Repo repo) {
-        final Project project = new StoredProject(repo, this, this.storage);
-        this.storage.projects().register(project);
-        return project;
-    }
-
-    @Override
-    public Projects projects() {
-        return this.storage.projects().assignedTo(this.id);
+    public Repo deactivate() {
+        return null;
     }
 }

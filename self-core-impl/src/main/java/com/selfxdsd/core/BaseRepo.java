@@ -24,7 +24,7 @@ package com.selfxdsd.core;
 
 import com.selfxdsd.api.Project;
 import com.selfxdsd.api.Repo;
-import com.selfxdsd.api.Storage;
+import com.selfxdsd.api.storage.Storage;
 import com.selfxdsd.api.User;
 
 import javax.json.Json;

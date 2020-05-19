@@ -23,7 +23,7 @@
 package com.selfxdsd.core;
 
 import com.selfxdsd.api.Repo;
-import com.selfxdsd.api.Storage;
+import com.selfxdsd.api.storage.Storage;
 import com.selfxdsd.api.User;
 import com.selfxdsd.core.mock.InMemory;
 import org.hamcrest.MatcherAssert;

@@ -20,8 +20,12 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package com.selfxdsd.api;
+package com.selfxdsd.api.storage;
 
+import com.selfxdsd.api.Project;
+import com.selfxdsd.api.ProjectManager;
+import com.selfxdsd.api.Projects;
+import com.selfxdsd.api.Repo;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
