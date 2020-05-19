@@ -10,13 +10,13 @@ import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-/*
+/**
  * Unit tests for class {@link InMemoryUsers}.
  * @author criske
  * @version $Id$
  * @since 0.0.1
- *  In the end all classes and methods should be covered with unit tests so we can rely 100%
- *  on them.
+ * In the end all classes and methods should be covered with unit tests
+ * so we can rely 100% on them.
  */
 public final class InMemoryTestCase {
 
