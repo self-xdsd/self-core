@@ -10,9 +10,11 @@ import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-/**
- * Test cases for InMemory storage.
- * @todo #16:30min Continue writing unit tests for the InMemory storage infrastructure.
+/*
+ * Unit tests for class {@link InMemoryUsers}.
+ * @author criske
+ * @version $Id$
+ * @since 0.0.1
  *  In the end all classes and methods should be covered with unit tests so we can rely 100%
  *  on them.
  */
