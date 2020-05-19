@@ -29,10 +29,6 @@ import com.selfxdsd.api.*;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
- * @todo #13:30min Write unit tests for all the InMemory mock infrastructure.
- *  These are tools used in Self's unit tests which should also be tested
- *  themselves. Self's unit tests should fail only if there's a problem with
- *  Self.
  */
 public final class InMemory implements Storage  {
 
