@@ -22,6 +22,7 @@
  */
 package com.selfxdsd.api.storage;
 
+import com.selfxdsd.api.Contracts;
 import com.selfxdsd.api.Project;
 import com.selfxdsd.api.ProjectManager;
 import com.selfxdsd.api.Repo;
@@ -37,6 +38,9 @@ import com.selfxdsd.api.Repo;
  * @todo #31:30min Implement the deactivate method which should remove the
  *  Project form the DB (it means Self will stop managing it). Return the
  *  corresponding Repo when done. Don't forget the tests.
+ * @todo #12:30min Method contracts(). Continue implementing the Storage
+ *  (and the mock InMemory) for the Contributor/Project many-to-many relation,
+ *  via the Contract association.
  */
 public final class StoredProject implements Project {
 
@@ -78,6 +82,11 @@ public final class StoredProject implements Project {
     @Override
     public Repo repo() {
         return this.repo;
+    }
+
+    @Override
+    public Contracts contracts() {
+        return null;
     }
 
     @Override

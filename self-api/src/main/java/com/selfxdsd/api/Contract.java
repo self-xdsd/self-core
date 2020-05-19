@@ -1,13 +1,13 @@
 /**
  * Copyright (c) 2020, Self XDSD Contributors
  * All rights reserved.
- *
+ * <p>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"),
  * to read the Software only. Permission is hereby NOT GRANTED to use, copy,
  * modify, merge, publish, distribute, sublicense, and/or sell copies of
  * the Software.
- *
+ * <p>
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -22,40 +22,37 @@
  */
 package com.selfxdsd.api;
 
+import java.math.BigDecimal;
+
 /**
- * A Project is a User's Repository which has been
- * registered (activated) on the Self platform.
- *
- * Once activated, a project will be managed by one of
- * Self's Project Managers.
+ * A collaboration Contract between a Project and a Contributor.
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
  */
-public interface Project {
+public interface Contract {
 
     /**
-     * Project Manager in charge of this Project.
-     * @return ProjectManager.
+     * The Project.
+     * @return Project.
      */
-    ProjectManager projectManager();
+    Project project();
 
     /**
-     * This project's repository.
-     * @return Repo.
+     * The Contributor.
+     * @return Contributor.
      */
-    Repo repo();
+    Contributor contributor();
 
     /**
-     * This project's Contributor Contracts.
-     * @return Contracts.
+     * The Contributor's hourly rate in USD Cents.
+     * @return BigDecimal.
      */
-    Contracts contracts();
+    BigDecimal hourlyRate();
 
     /**
-     * Deactivate this project, tell  Self to stop
-     * managing it.
-     * @return This project's repository.
+     * The Contributor's role (DEV, QA, ARCH etc).
+     * @return String.
      */
-    Repo deactivate();
+    String role();
 }
