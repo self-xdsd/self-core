@@ -22,6 +22,9 @@
  */
 package com.selfxdsd.api;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+
 /**
  * Contracts.
  * @author Mihai Andronache (amihaiemil@gmail.com)
@@ -29,4 +32,30 @@ package com.selfxdsd.api;
  * @since 0.0.1
  */
 public interface Contracts extends Iterable<Contract> {
+
+    /**
+     * Get the Contracts belonging to a given Project.
+     * @param projectId Project ID.
+     * @return Contracts.
+     */
+    Contracts ofProject(final int projectId);
+
+    /**
+     * Empty Contracts. Return an instance of this when you cannot
+     * find the Contracts you are looking for.
+     * @author Mihai Andronache (amihaiemil@gmail.com)
+     * @version $Id$
+     * @since 0.0.1
+     */
+    final class Empty implements Contracts {
+        @Override
+        public Contracts ofProject(final int projectId) {
+            return new Empty();
+        }
+
+        @Override
+        public Iterator<Contract> iterator() {
+            return new ArrayList<Contract>().iterator();
+        }
+    }
 }
