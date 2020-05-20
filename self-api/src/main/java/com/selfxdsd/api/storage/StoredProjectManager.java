@@ -81,9 +81,7 @@ public final class StoredProjectManager implements ProjectManager {
 
     @Override
     public Project assign(final Repo repo) {
-        final Project project = new StoredProject(repo, this, this.storage);
-        this.storage.projects().register(project);
-        return project;
+        return this.storage.projects().register(repo, this);
     }
 
     @Override

@@ -41,12 +41,13 @@ import com.selfxdsd.api.Repo;
  * @todo #12:30min Method contracts(). Continue implementing the Storage
  *  (and the mock InMemory) for the Contributor/Project many-to-many relation,
  *  via the Contract association.
- * @todo #45:30min Implement method int::Project.projectId(). Changes will also
- *  be needed inside StoredProjectManager.assign(...) -- the Project should
- *  be instantiated and returned from the Storage, since that's the place where
- *  the id is generated.
  */
 public final class StoredProject implements Project {
+
+    /**
+     * Project ID.
+     */
+    private final int projectId;
 
     /**
      * Repo of this Project.
@@ -65,17 +66,25 @@ public final class StoredProject implements Project {
 
     /**
      * Constructor.
+     * @param projectId This project's ID.
      * @param repo Repo of this project.
      * @param projectManager Manager in charge.
      * @param storage Storage of Self.
+     * @checkstyle ParameterNumber (10 lines)
      */
     public StoredProject(
-        final Repo repo, final ProjectManager projectManager,
-        final Storage storage
+        final int projectId, final Repo repo,
+        final ProjectManager projectManager, final Storage storage
     ) {
+        this.projectId = projectId;
         this.repo = repo;
         this.projectManager = projectManager;
         this.storage = storage;
+    }
+
+    @Override
+    public int projectId() {
+        return this.projectId;
     }
 
     @Override

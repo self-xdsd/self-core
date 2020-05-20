@@ -39,13 +39,25 @@ import org.mockito.Mockito;
 public final class StoredProjectTestCase {
 
     /**
+     * StoredProject can return its ID.
+     */
+    @Test
+    public void returnsId() {
+        final Project project = new StoredProject(
+            1, Mockito.mock(Repo.class), Mockito.mock(ProjectManager.class),
+            Mockito.mock(Storage.class)
+        );
+        MatcherAssert.assertThat(project.projectId(), Matchers.is(1));
+    }
+
+    /**
      * StoredProject can return its Repo.
      */
     @Test
     public void returnsRepo() {
         final Repo repo = Mockito.mock(Repo.class);
         final Project project = new StoredProject(
-            repo, Mockito.mock(ProjectManager.class),
+            1, repo, Mockito.mock(ProjectManager.class),
             Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(project.repo(), Matchers.is(repo));
@@ -58,7 +70,7 @@ public final class StoredProjectTestCase {
     public void returnsProjectManager() {
         final ProjectManager manager = Mockito.mock(ProjectManager.class);
         final Project project = new StoredProject(
-            Mockito.mock(Repo.class), manager,
+            1, Mockito.mock(Repo.class), manager,
             Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(

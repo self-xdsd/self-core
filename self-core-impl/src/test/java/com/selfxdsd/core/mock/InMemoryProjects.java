@@ -24,6 +24,7 @@ package com.selfxdsd.core.mock;
 
 import com.selfxdsd.api.*;
 import com.selfxdsd.api.storage.Storage;
+import com.selfxdsd.api.storage.StoredProject;
 
 import java.util.*;
 
@@ -60,15 +61,19 @@ public final class InMemoryProjects implements Projects {
     }
 
     @Override
-    public void register(final Project project){
-        final ProjectManager manager = project.projectManager();
+    public Project register(final Repo repo, final ProjectManager manager){
         if(manager == null
             || this.storage.projectManagers().getById(manager.id()) == null) {
             throw new IllegalArgumentException(
-                "Project has no PM or PM is not registered!"
+                "PM is missing or not registered!"
             );
         } else {
-            this.projects.put(this.idCounter++, project);
+            final int projectId = this.idCounter++;
+            final Project project = new StoredProject(
+                projectId, repo, manager, this.storage
+            );
+            this.projects.put(projectId, project);
+            return project;
         }
     }
 
@@ -81,7 +86,10 @@ public final class InMemoryProjects implements Projects {
             private final int pmId = projectManagerId;
 
             @Override
-            public void register(final Project project) {
+            public Project register(
+                final Repo repo,
+                final ProjectManager manager
+            ) {
                 throw new UnsupportedOperationException(
                     "A manager's assigned Projects are immutable, "
                   + "can't register here."

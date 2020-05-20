@@ -35,6 +35,12 @@ package com.selfxdsd.api;
 public interface Project {
 
     /**
+     * The project's ID.
+     * @return Integer.
+     */
+    int projectId();
+
+    /**
      * Project Manager in charge of this Project.
      * @return ProjectManager.
      */

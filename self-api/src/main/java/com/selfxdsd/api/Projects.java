@@ -32,9 +32,11 @@ public interface Projects extends Iterable<Project> {
 
     /**
      * Register a new Project with Self.
-     * @param project The Project to register.
+     * @param repo Repo to register.
+     * @param manager PM who will take charge of the new Project.
+     * @return The registered Project.
      */
-    void register(final Project project);
+    Project register(final Repo repo, final ProjectManager manager);
 
     /**
      * Get the Projects assigned to a PM.
