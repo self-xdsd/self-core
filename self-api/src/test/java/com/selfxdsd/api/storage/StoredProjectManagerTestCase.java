@@ -22,8 +22,10 @@
  */
 package com.selfxdsd.api.storage;
 
+import com.selfxdsd.api.Project;
 import com.selfxdsd.api.ProjectManager;
 import com.selfxdsd.api.Projects;
+import com.selfxdsd.api.Repo;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -83,6 +85,35 @@ public final class StoredProjectManagerTestCase {
         MatcherAssert.assertThat(
             manager.projects(),
             Matchers.is(assigned)
+        );
+    }
+
+    /**
+     * StoredProjectManager can assign a repo to the manager it
+     * represents.
+     */
+    @Test
+    public void assignsRepo() {
+        final Repo repo = Mockito.mock(Repo.class);
+
+        final Storage storage = Mockito.mock(Storage.class);
+        final Projects projects = Mockito.mock(Projects.class);
+        Mockito.when(storage.projects()).thenReturn(projects);
+        final ProjectManager manager = new StoredProjectManager(
+            1, "123token", storage
+        );
+        Mockito.when(projects.register(repo, manager))
+               .thenReturn(new StoredProject(1, repo, manager, storage));
+
+        final Project assigned = manager.assign(repo);
+
+        MatcherAssert.assertThat(
+            assigned.projectManager(),
+            Matchers.is(manager)
+        );
+        MatcherAssert.assertThat(
+            assigned.repo(),
+            Matchers.is(repo)
         );
     }
 }
