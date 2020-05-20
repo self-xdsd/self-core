@@ -41,6 +41,10 @@ import com.selfxdsd.api.Repo;
  * @todo #12:30min Method contracts(). Continue implementing the Storage
  *  (and the mock InMemory) for the Contributor/Project many-to-many relation,
  *  via the Contract association.
+ * @todo #45:30min Implement method int::Project.projectId(). Changes will also
+ *  be needed inside StoredProjectManager.assign(...) -- the Project should
+ *  be instantiated and returned from the Storage, since that's the place where
+ *  the id is generated.
  */
 public final class StoredProject implements Project {
 
