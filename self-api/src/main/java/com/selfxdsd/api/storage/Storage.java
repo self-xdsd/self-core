@@ -22,6 +22,7 @@
  */
 package com.selfxdsd.api.storage;
 
+import com.selfxdsd.api.Contracts;
 import com.selfxdsd.api.ProjectManagers;
 import com.selfxdsd.api.Projects;
 import com.selfxdsd.api.Users;
@@ -51,4 +52,10 @@ public interface Storage {
      * @return Projects.
      */
     Projects projects();
+
+    /**
+     * Get the contracts Storage API.
+     * @return Contracts.
+     */
+    Contracts contracts();
 }

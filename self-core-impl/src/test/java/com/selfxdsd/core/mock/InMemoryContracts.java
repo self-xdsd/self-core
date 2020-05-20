@@ -1,13 +1,13 @@
 /**
  * Copyright (c) 2020, Self XDSD Contributors
  * All rights reserved.
- *
+ * <p>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"),
  * to read the Software only. Permission is hereby NOT GRANTED to use, copy,
  * modify, merge, publish, distribute, sublicense, and/or sell copies of
  * the Software.
- *
+ * <p>
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -22,54 +22,43 @@
  */
 package com.selfxdsd.core.mock;
 
-import com.selfxdsd.api.*;
+import com.selfxdsd.api.Contract;
+import com.selfxdsd.api.Contracts;
 import com.selfxdsd.api.storage.Storage;
 
+import java.util.Iterator;
+
 /**
- * In Memory storage used for testing.
+ * In-Memory contracts for testing purposes.
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
+ * @todo #42:30min Implement this class and write some unit tests
+ *  for Project.contracts(). Then go further and implement
+ *  Contributor.contracts()
  */
-public final class InMemory implements Storage {
+public final class InMemoryContracts implements Contracts {
 
     /**
-     * In-memory users.
+     * Parent storage.
      */
-    private Users users = new InMemoryUsers();
-    /**
-     * In-memory project-managers.
-     */
-    private ProjectManagers projectManagers = new InMemoryProjectManagers(this);
+    private final Storage storage;
 
     /**
-     * In-memory projects.
+     * Constructor.
+     * @param storage Parent storage.
      */
-    private Projects projects = new InMemoryProjects(this);
-
-    /**
-     * In-memory contracts.
-     */
-    private Contracts contracts = new InMemoryContracts(this);
-
-
-    @Override
-    public Users users() {
-        return this.users;
+    public InMemoryContracts(final Storage storage) {
+        this.storage = storage;
     }
 
     @Override
-    public ProjectManagers projectManagers() {
-        return this.projectManagers;
+    public Contracts ofProject(final int projectId) {
+        return null;
     }
 
     @Override
-    public Projects projects() {
-        return this.projects;
-    }
-
-    @Override
-    public Contracts contracts() {
-        return this.contracts;
+    public Iterator<Contract> iterator() {
+        return null;
     }
 }
