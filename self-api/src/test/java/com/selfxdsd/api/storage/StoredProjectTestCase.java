@@ -22,9 +22,7 @@
  */
 package com.selfxdsd.api.storage;
 
-import com.selfxdsd.api.Project;
-import com.selfxdsd.api.ProjectManager;
-import com.selfxdsd.api.Repo;
+import com.selfxdsd.api.*;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -77,5 +75,24 @@ public final class StoredProjectTestCase {
             project.projectManager(),
             Matchers.is(manager)
         );
+    }
+
+    /**
+     * StoredProject can return its contracts.
+     */
+    @Test
+    public void returnsContracts() {
+        final Contracts all = Mockito.mock(Contracts.class);
+        final Contracts ofProject = Mockito.mock(Contracts.class);
+        Mockito.when(all.ofProject(1)).thenReturn(ofProject);
+
+        final Storage storage = Mockito.mock(Storage.class);
+        Mockito.when(storage.contracts()).thenReturn(all);
+
+        final Project project = new StoredProject(
+            1, Mockito.mock(Repo.class), Mockito.mock(ProjectManager.class),
+            storage
+        );
+        MatcherAssert.assertThat(project.contracts(), Matchers.is(ofProject));
     }
 }
