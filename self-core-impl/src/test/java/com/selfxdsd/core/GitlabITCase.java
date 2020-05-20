@@ -13,12 +13,11 @@ import static org.mockito.Mockito.when;
 
 /**
  * Integration tests for {@link Gitlab}.
- *
  * @author criske
  * @version $Id$
  * @since 0.0.1
  */
-public final class GitlabTestCase {
+public final class GitlabITCase {
 
     /**
      * A repo can be fetched from Gitlab as json.
@@ -29,7 +28,7 @@ public final class GitlabTestCase {
         final JsonObject jsonRepo = gitlab.repo("18889648").json();
         assertThat(jsonRepo.getInt("id"), equalTo(18889648));
         assertThat(jsonRepo.getString("path_with_namespace"),
-                equalTo("criske/test2"));
+            equalTo("criske/test2"));
     }
 
     /**
@@ -51,8 +50,8 @@ public final class GitlabTestCase {
         final User user = mock(User.class);
         when(user.username()).thenReturn(username);
         when(user.provider()).then(invocation -> new Gitlab(
-                (User) invocation.getMock(),
-                null));
+            (User) invocation.getMock(),
+            null));
         return (Gitlab) user.provider();
     }
 

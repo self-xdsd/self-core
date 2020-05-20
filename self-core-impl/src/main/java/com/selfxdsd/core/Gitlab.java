@@ -34,8 +34,7 @@ import java.net.URI;
  * @author criske
  * @version $Id$
  * @since 0.0.1
- *  so we can mock the Gitlab server and write unit tests for the methods
- *  that perform HTTP Requests.
+ * @todo #27:30min Continue adding integration tests for Gitlab provider.
  */
 final class Gitlab implements Provider {
 
