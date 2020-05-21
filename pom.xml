@@ -146,7 +146,7 @@
                 <repository>
                     <id>github</id>
                     <name>Self's Core on Github Packages</name>
-                    <url>https://maven.pkg.github.com/self-xdsd/self-core</url>
+                    <url>https://maven.pkg.github.com/self-xdsd</url>
                 </repository>
             </distributionManagement>
         </profile>
