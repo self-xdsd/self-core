@@ -9,8 +9,7 @@ merge:
     mvn clean install -Pcheckstyle,itcases
 deploy:
   script: |-
-    echo 'Nothing to deploy yet'
-    exit -1
+      mvn clean deploy -PsignArtifactsGpg,deployToGithubPackages --settings /home/r/settings.xml
 release:
   script: |-
     echo 'Nothing to release yet'
