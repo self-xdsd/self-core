@@ -21,8 +21,11 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 package com.selfxdsd.api;
+
+import java.net.URL;
+
 /**
- * The com.selfxdsd.api.Self Platform. This is the highest abstraction.
+ * The Self Platform. This is the highest abstraction.
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
@@ -30,9 +33,31 @@ package com.selfxdsd.api;
 public interface Self {
 
     /**
-     * Authenticated user.
+     * Get the User authenticated via Github OAuth2.
+     * @param username Username from Github.
+     * @param email Email from Github.
+     * @param avatar Avatar URL from Github.
+     * @param githubToken Github Access token.
      * @return User.
+     * @checkstyle ParameterNumber (10 lines)
      */
-    User authenticated();
+    User githubLogin(
+        final String username, final String email,
+        final URL avatar, final String githubToken
+    );
+
+    /**
+     * Get the User authenticated via GitLab OAuth2.
+     * @param username Username from GitLab.
+     * @param email Email from GitLab.
+     * @param avatar Avatar URL from GitLab.
+     * @param gitLabToken GitLab Access token.
+     * @return User.
+     * @checkstyle ParameterNumber (10 lines)
+     */
+    User gitlabLogin(
+        final String username, final String email,
+        final URL avatar, final String gitLabToken
+    );
 
 }

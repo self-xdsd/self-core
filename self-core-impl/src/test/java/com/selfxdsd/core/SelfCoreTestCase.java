@@ -33,26 +33,25 @@ import org.junit.Test;
 import java.net.URL;
 
 /**
- * Unit tests for {@link GithubSelf}.
+ * Unit tests for {@link SelfCore}.
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
  */
-public final class GithubSelfTestCase {
+public final class SelfCoreTestCase {
 
     /**
-     * GithubSelf can authenticate a given user.
+     * SelfCore can sign up a Github User.
      * @throws Exception If something goes wrong.
      */
     @Test
-    public void authenticatesUser() throws Exception {
+    public void githubLoginWorks() throws Exception {
         final Storage storage = new InMemory();
-        final Self self = new GithubSelf(
+        final Self self = new SelfCore(storage);
+        final User amihaiemil = self.githubLogin(
             "amihaiemil", "amihaiemil@gmail.com",
-            new URL("https://gravatar.com/amihaiemil"), "gh123token",
-            storage
+            new URL("https://gravatar.com/amihaiemil"), "gh123token"
         );
-        final User amihaiemil = self.authenticated();
         MatcherAssert.assertThat(
             amihaiemil.username(),
             Matchers.equalTo("amihaiemil")
@@ -62,10 +61,47 @@ public final class GithubSelfTestCase {
             Matchers.instanceOf(Github.class)
         );
         MatcherAssert.assertThat(
+            amihaiemil.provider().name(),
+            Matchers.equalTo("github")
+        );
+        MatcherAssert.assertThat(
             storage.users(), Matchers.iterableWithSize(1)
         );
         MatcherAssert.assertThat(
             storage.users().user("amihaiemil", "github").username(),
+            Matchers.equalTo("amihaiemil")
+        );
+    }
+
+    /**
+     * SelfCore can sign up a GitLab User.
+     * @throws Exception If something goes wrong.
+     */
+    @Test
+    public void gitlabLoginWorks() throws Exception {
+        final Storage storage = new InMemory();
+        final Self self = new SelfCore(storage);
+        final User amihaiemil = self.gitlabLogin(
+            "amihaiemil", "amihaiemil@gmail.com",
+            new URL("https://gravatar.com/amihaiemil"), "gl123token"
+        );
+        MatcherAssert.assertThat(
+            amihaiemil.username(),
+            Matchers.equalTo("amihaiemil")
+        );
+        MatcherAssert.assertThat(
+            amihaiemil.provider(),
+            Matchers.instanceOf(Gitlab.class)
+        );
+        MatcherAssert.assertThat(
+            amihaiemil.provider().name(),
+            Matchers.equalTo("gitlab")
+        );
+        MatcherAssert.assertThat(
+            storage.users(), Matchers.iterableWithSize(1)
+        );
+        MatcherAssert.assertThat(
+            storage.users().user("amihaiemil", "gitlab").username(),
             Matchers.equalTo("amihaiemil")
         );
     }
