@@ -31,6 +31,16 @@ import java.util.stream.StreamSupport;
 
 /**
  * In-Memory contracts for testing purposes.
+ * Has the role to link a contract to a project from storage: when calling
+ * {@link Contract#project()} should return a {@link Project} and when from
+ * that project we call {@link Project#contracts()} the initial contract should
+ * be among the items of the iterable.
+ * <br>
+ * Same for {@link Contributor}, but for now there's no storage api for them,
+ * so they are managed temporally in this class.
+ * <br>
+ * See {@link InMemoryContracts#addContract(int, int)} where the linking is
+ * happening.
  *
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
@@ -42,11 +52,30 @@ public final class InMemoryContracts implements Contracts {
      */
     private final Set<Contract> contracts = new HashSet<>();
     /**
-     * In memory holder of projects.
+     * In memory holder of linked projects with contracts.
+     * <br>
+     * He have to book-keep the linked projects here, because
+     * project manager from storage doesn't know how link a project
+     * and contract and vice-versa (well the StorageProject implementation).
+     * <br>
+     * This where ProjectInternal is doing its job:
+     * <ul>
+     *  <li>one to one relationship with the real Project from storage
+     *  (is using it as a delegate)</li>
+     *  <li> and links the contract to that concrete Project by adding it to an
+     * internal list (one project to many contracts relationship this time)</li>
+     * </ul>
+     * <br>
+     * So if we search for a project by iterating over in
+     * memory storage.projects() we will get a StoredProject.
+     * This object relies on storage to get contracts (see
+     * {@link com.selfxdsd.api.storage.StoredProject#contracts()}),
+     * which in theory should call
+     * this implementation: InMemoryContracts  see {@link InMemory#contracts()}
      */
     private final Set<ProjectInternal> projects = new HashSet<>();
     /**
-     * In memory holder of contributors.
+     * In memory holder of linked contributors with contracts.
      */
     private final Set<ContributorInternal> contributors = new HashSet<>();
     /**
@@ -115,13 +144,13 @@ public final class InMemoryContracts implements Contracts {
             .orElse(null);
         if (projectInternal == null) {
             Project projectFromStorage = StreamSupport
-                    .stream(storage.projects().spliterator(), false)
-                    .filter(p -> p.projectId() == projectId)
-                    .findFirst()
-                    .orElse(null);
-            if(projectFromStorage == null){
+                .stream(storage.projects().spliterator(), false)
+                .filter(p -> p.projectId() == projectId)
+                .findFirst()
+                .orElse(null);
+            if (projectFromStorage == null) {
                 throw new IllegalStateException("Project with id: "
-                    +projectId + " was not found in storage");
+                    + projectId + " was not found in storage");
             }
             projectInternal = new ProjectInternal(projectFromStorage, this);
             projects.add(projectInternal);
@@ -153,12 +182,22 @@ public final class InMemoryContracts implements Contracts {
 
     /**
      * In memory implementation of a {@link Project}.
-     * Wraps a real implementation of a Project.
      * <br>
-     * Aids {@link InMemoryContracts}
+     * Wraps a real implementation of a Project and delegates most
+     * of its methods to that object.
      * <br>
-     * Has capability to link a contract.
+     * Aids {@link InMemoryContracts#addContract(int, int)} in ImMemoryContract
+     * <br>
+     * Main purpose of this class:
+     * <ul>
+     *  <li>one to one relationship with the real Project from storage
+     *  (is using it as a delegate)</li>
+     *  <li> and links the contract to that concrete Project by adding it to an
+     * internal list (one project to many contracts relationship this time)</li>
+     * </ul>
      * See: {@link ProjectInternal#addContract(Contract)}.
+     * <br>
+     * See: {@link ProjectInternal#ownedContracts}.
      */
     private static final class ProjectInternal implements Project {
 
@@ -232,7 +271,7 @@ public final class InMemoryContracts implements Contracts {
 
         @Override
         public Repo deactivate() {
-            return null;
+            return delegate.deactivate();
         }
 
         @Override
@@ -252,6 +291,9 @@ public final class InMemoryContracts implements Contracts {
 
     /**
      * In memory implementation of a {@link Contributor}.
+     * <br>
+     * Almost same design as {@link ProjectInternal}, but is not using
+     * a real Contributor as delegate since there is no storage API for it.
      * <br>
      * Aids {@link InMemoryContracts}
      * <br>
@@ -340,10 +382,7 @@ public final class InMemoryContracts implements Contracts {
      * The primary key should be the project id and the contributor id.
      * <br>
      * This specification is reflected in the equals and hashcode class contract
-     *
-     * @author criske
-     * @version $Id$
-     * @since 0.0.1
+     * <br>
      */
     private static final class ContractInternal implements Contract {
         /**
@@ -407,6 +446,14 @@ public final class InMemoryContracts implements Contracts {
             final int thatCbId = other.contributor().contributorId();
             final boolean contributorEq = thisCbId == thatCbId;
             return projectEq && contributorEq;
+        }
+
+        @Override
+        public String toString() {
+            return "Contract: projectId: "
+                + project.projectId()
+                + " contributorId: "
+                + contributor.contributorId();
         }
     }
 

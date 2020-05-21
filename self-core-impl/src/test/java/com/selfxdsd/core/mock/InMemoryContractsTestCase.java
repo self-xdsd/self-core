@@ -9,8 +9,7 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.iterableWithSize;
+import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.mock;
 
 /**
@@ -26,6 +25,7 @@ public final class InMemoryContractsTestCase {
     /**
      * Adds a contract with a project and contributor id.
      * Contract must associated to that project and contributor.
+     * Project id must be valid, as in found in the storage.
      */
     @Test
     public void addContract() {
@@ -54,7 +54,7 @@ public final class InMemoryContractsTestCase {
 
     /**
      * After adding a contract, its project and contributor.
-     * must contain that contract
+     * must contain that contract in their contracts iterable
      */
     @Test
     public void contractShouldBeLinkedToProjectAndContributor() {
@@ -68,17 +68,21 @@ public final class InMemoryContractsTestCase {
             .projectId();
 
         contracts.addContract(projectId, 10);
+        contracts.addContract(projectId, 11);
         Contracts contractsForProject = contracts.ofProject(projectId);
 
         Contract foundContract = contractsForProject.iterator().next();
-        assertThat(foundContract.project().projectId(), equalTo(projectId));
-        assertThat(foundContract.contributor().contributorId(),
-            equalTo(10));
-
-        assertThat(toList(contractsForProject),
-            equalTo(toList(foundContract.project().contracts())));
-        assertThat(foundContract.contributor().contracts(),
-            iterableWithSize(1));
+        Project prjOfFoundContract = foundContract.project();
+        assertThat(
+            "Contract must be found in its project contracts",
+            toList(prjOfFoundContract.contracts()),
+            hasItem(foundContract));
+        Contributor cbOfFoundContract = foundContract.contributor();
+        assertThat(
+            "Contract must be found in its contributor contracts",
+            toList(cbOfFoundContract.contracts()),
+            hasItem(foundContract)
+        );
 
     }
 
@@ -105,9 +109,15 @@ public final class InMemoryContractsTestCase {
         contracts.addContract(projectIdOne, 11);
         contracts.addContract(projectIdTwo, 10);
 
-        assertThat(contracts.ofProject(projectIdOne), iterableWithSize(2));
-        assertThat(contracts.ofProject(projectIdTwo), iterableWithSize(1));
-        assertThat(contracts.ofProject(3), iterableWithSize(0));
+        assertThat(
+            "Project with id " + projectIdOne + " must have 2 contracts",
+            contracts.ofProject(projectIdOne), iterableWithSize(2));
+        assertThat(
+            "Project with id " + projectIdTwo + " must have 1 contracts",
+            contracts.ofProject(projectIdTwo), iterableWithSize(1));
+
+        assertThat("Total number of contracts must be 3",
+            contracts, iterableWithSize(3));
     }
 
     /**
@@ -142,7 +152,9 @@ public final class InMemoryContractsTestCase {
             .ofProject(projectIdOne)
             .ofProject(projectIdOne);
 
-        assertThat(contractsForProject, iterableWithSize(2));
+        assertThat(
+            "Project with id " + projectIdOne + " must have 2 contracts",
+            contractsForProject, iterableWithSize(2));
     }
 
     /**
