@@ -31,6 +31,12 @@ package com.selfxdsd.api;
 public interface Contributor {
 
     /**
+     * The contributor's ID.
+     * @return Integer.
+     */
+    int contributorId();
+
+    /**
      * This contributor's Project Contracts.
      * @return Contracts
      */
