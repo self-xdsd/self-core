@@ -2,8 +2,10 @@ docker:
   image: g4s8/rultor-jdk11:alpine3.10
 architect:
   - amihaiemil
-env:
-  MAVEN_OPTS: "-XX:MaxPermSize=256m -Xmx1g"
+decrypt:
+  settings.xml: "repo/rcfg/settings.xml.asc"
+  pubring.gpg: "repo/rcfg/pubring.gpg.asc"
+  secring.gpg: "repo/rcfg/secring.gpg.asc"
 merge:
   script: |-
     mvn clean install -Pcheckstyle,itcases
