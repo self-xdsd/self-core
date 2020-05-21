@@ -27,6 +27,7 @@ import com.selfxdsd.api.storage.Storage;
 
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.stream.StreamSupport;
 
 /**
  * In-Memory contracts for testing purposes.
@@ -86,7 +87,8 @@ public final class InMemoryContracts implements Contracts {
             .anyMatch(c -> c.contributor().contributorId() == contributorId
                 && c.project().projectId() == projectId);
         if (!contractExists) {
-            final ProjectInternal project = findOrCreateProject(projectId);
+            final ProjectInternal project = findOrCreateProjectInternal(
+                projectId);
             final ContributorInternal contributor =
                 findOrCreateContributor(contributorId);
             final ContractInternal contract =
@@ -106,16 +108,26 @@ public final class InMemoryContracts implements Contracts {
      * @param projectId Project's
      * @return Internal representation of a Project
      */
-    private ProjectInternal findOrCreateProject(final int projectId) {
-        ProjectInternal project = projects.stream()
+    private ProjectInternal findOrCreateProjectInternal(final int projectId) {
+        ProjectInternal projectInternal = projects.stream()
             .filter(p -> p.projectId() == projectId)
             .findFirst()
             .orElse(null);
-        if (project == null) {
-            project = new ProjectInternal(projectId, this);
-            projects.add(project);
+        if (projectInternal == null) {
+            Project projectFromStorage = StreamSupport
+                    .stream(storage.projects().spliterator(), false)
+                    .filter(p -> p.projectId() == projectId)
+                    .findFirst()
+                    .orElse(null);
+            if(projectFromStorage == null){
+                throw new IllegalStateException("Project with id: "
+                    +projectId + " was not found in storage");
+            }
+            projectInternal = new ProjectInternal(projectFromStorage, this);
+            projects.add(projectInternal);
         }
-        return project;
+
+        return projectInternal;
     }
 
     /**
@@ -141,6 +153,7 @@ public final class InMemoryContracts implements Contracts {
 
     /**
      * In memory implementation of a {@link Project}.
+     * Wraps a real implementation of a Project.
      * <br>
      * Aids {@link InMemoryContracts}
      * <br>
@@ -150,9 +163,9 @@ public final class InMemoryContracts implements Contracts {
     private static final class ProjectInternal implements Project {
 
         /**
-         * Project's id.
+         * Real implementation of a project.
          */
-        private final int id;
+        private final Project delegate;
         /**
          * Global contracts. Access to {@link InMemoryContracts }
          * Grants access to any arbitrary project's contracts using
@@ -168,12 +181,13 @@ public final class InMemoryContracts implements Contracts {
         /**
          * Constructor.
          *
-         * @param id Project id
+         * @param delegate Real implementation of a Project
          * @param rootContracts Global contracts.
          *                      Access to {@link InMemoryContracts }
          */
-        ProjectInternal(final int id, final Contracts rootContracts) {
-            this.id = id;
+        ProjectInternal(final Project delegate,
+                        final Contracts rootContracts) {
+            this.delegate = delegate;
             this.rootContracts = rootContracts;
         }
 
@@ -188,17 +202,17 @@ public final class InMemoryContracts implements Contracts {
 
         @Override
         public int projectId() {
-            return id;
+            return delegate.projectId();
         }
 
         @Override
         public ProjectManager projectManager() {
-            return null;
+            return delegate.projectManager();
         }
 
         @Override
         public Repo repo() {
-            return null;
+            return delegate.repo();
         }
 
         @Override
@@ -223,7 +237,7 @@ public final class InMemoryContracts implements Contracts {
 
         @Override
         public int hashCode() {
-            return Objects.hashCode(id);
+            return Objects.hashCode(delegate.projectId());
         }
 
         @Override
@@ -232,7 +246,7 @@ public final class InMemoryContracts implements Contracts {
                 return false;
             }
             final Project other = (Project) obj;
-            return other.projectId() == this.id;
+            return other.projectId() == delegate.projectId();
         }
     }
 
