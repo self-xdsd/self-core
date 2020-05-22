@@ -22,8 +22,61 @@
  */
 package com.selfxdsd.core.projects;
 
+import com.selfxdsd.api.Project;
+import com.selfxdsd.api.ProjectManager;
+import com.selfxdsd.api.Projects;
+import com.selfxdsd.api.Repo;
+
+import java.util.Iterator;
+
 /**
+ * Projects assigned to a certain PM.
  * @author Mihai Andronache (amihaiemil@gmail.com)
+ * @version $Id$
+ * @since 0.0.1
  */
-public class PmProjects {
+public final class PmProjects implements Projects {
+
+    /**
+     * ID of the manager.
+     */
+    private final int projectManagerId;
+
+    /**
+     * Projects to choose from.
+     */
+    private final Projects projects;
+
+    /**
+     * Constructor.
+     * @param projectManagerId ID of the manager.
+     * @param projects Projects to choose from.
+     */
+    public PmProjects(final int projectManagerId, final Projects projects) {
+        this.projectManagerId = projectManagerId;
+        this.projects = projects;
+    }
+
+    @Override
+    public Project register(final Repo repo, final ProjectManager manager) {
+        throw new IllegalStateException(
+            "Projects of a PM are immutable, "
+          + "can't register a new one here."
+        );
+    }
+
+    @Override
+    public Projects assignedTo(final int projectManagerId) {
+        if(projectManagerId == this.projectManagerId) {
+            return this;
+        }
+        throw new IllegalStateException(
+            "Already seeing the projects of PM " + this.projectManagerId
+        );
+    }
+
+    @Override
+    public Iterator<Project> iterator() {
+        return null;
+    }
 }
