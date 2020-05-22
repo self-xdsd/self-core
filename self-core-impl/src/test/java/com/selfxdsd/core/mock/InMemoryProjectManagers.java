@@ -56,7 +56,7 @@ public final class InMemoryProjectManagers implements ProjectManagers {
         this.storage = storage;
         this.pms.put(
             1,
-            new StoredProjectManager(1, "123token", storage)
+            new StoredProjectManager(1, "github", "123token", storage)
         );
     }
 
