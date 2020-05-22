@@ -22,12 +22,11 @@
  */
 package com.selfxdsd.core.projects;
 
-import com.selfxdsd.api.Project;
-import com.selfxdsd.api.ProjectManager;
-import com.selfxdsd.api.Projects;
-import com.selfxdsd.api.Repo;
+import com.selfxdsd.api.*;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * Projects assigned to a certain PM. This class <b>just represents</b>
@@ -76,6 +75,19 @@ public final class PmProjects implements Projects {
         throw new IllegalStateException(
             "Already seeing the projects of PM " + this.pmId + "."
         );
+    }
+
+    @Override
+    public Projects ownedBy(final User user) {
+        final List<Project> owned = new ArrayList<>();
+        for(final Project project : this.projects) {
+            final User owner = project.owner();
+            if(owner.username().equals(user.username())
+                && owner.provider().name().equals(user.provider().name())) {
+                owned.add(project);
+            }
+        }
+        return new UserProjects(user, owned);
     }
 
     @Override

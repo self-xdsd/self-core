@@ -22,10 +22,7 @@
  */
 package com.selfxdsd.core.projects;
 
-import com.selfxdsd.api.Project;
-import com.selfxdsd.api.ProjectManager;
-import com.selfxdsd.api.Projects;
-import com.selfxdsd.api.User;
+import com.selfxdsd.api.*;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -75,6 +72,51 @@ public final class UserProjectsTestCase {
             Mockito.mock(User.class), list
         );
         MatcherAssert.assertThat(projects, Matchers.iterableWithSize(3));
+    }
+
+    /**
+     * Method ownedBy() returns itself if the User matches.
+     */
+    @Test
+    public void ownedByReturnsItself() {
+        final Projects projects = new UserProjects(
+            this.mockUser("mihai", "github"),
+            new ArrayList<>()
+        );
+        MatcherAssert.assertThat(
+            projects.ownedBy(this.mockUser("mihai", "github")),
+            Matchers.is(projects)
+        );
+    }
+
+    /**
+     * Method ownedBy() throws an exception if the specified id
+     * is the one of a different User.
+     */
+    @Test (expected = IllegalStateException.class)
+    public void ownedByComplainsOnDifferendUser() {
+        final Projects projects = new UserProjects(
+            this.mockUser("mihai", "github"),
+            new ArrayList<>()
+        );
+        projects.ownedBy(this.mockUser("vlad", "github"));
+    }
+
+    /**
+     * Mock a User.
+     * @param username Username.
+     * @param providerName Name of the provider.
+     * @return User.
+     */
+    private User mockUser(final String username, final String providerName) {
+        final User user = Mockito.mock(User.class);
+        Mockito.when(user.username()).thenReturn(username);
+
+        final Provider provider = Mockito.mock(Provider.class);
+        Mockito.when(provider.name()).thenReturn(providerName);
+
+        Mockito.when(user.provider()).thenReturn(provider);
+        return user;
     }
 
     /**

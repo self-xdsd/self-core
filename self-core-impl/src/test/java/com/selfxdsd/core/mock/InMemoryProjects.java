@@ -26,6 +26,7 @@ import com.selfxdsd.api.*;
 import com.selfxdsd.api.storage.Storage;
 import com.selfxdsd.api.storage.StoredProject;
 import com.selfxdsd.core.projects.PmProjects;
+import com.selfxdsd.core.projects.UserProjects;
 
 import java.util.*;
 
@@ -88,6 +89,19 @@ public final class InMemoryProjects implements Projects {
             }
         }
         return new PmProjects(projectManagerId, assigned);
+    }
+
+    @Override
+    public Projects ownedBy(final User user) {
+        final List<Project> owned = new ArrayList<>();
+        for(final Project project : this.projects.values()) {
+            final User owner = project.owner();
+            if(owner.username().equals(owner.username())
+                && owner.provider().name().equals(user.provider().name())) {
+                owned.add(project);
+            }
+        }
+        return new UserProjects(user, owned);
     }
 
     @Override

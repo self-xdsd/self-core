@@ -86,6 +86,18 @@ public final class UserProjects implements Projects {
     }
 
     @Override
+    public Projects ownedBy(final User usr) {
+        if(this.user.username().equals(usr.username())
+            && this.user.provider().name().equals(usr.provider().name())) {
+            return this;
+        }
+        throw new IllegalStateException(
+            "Already seeing the projects of User " + this.user.username()
+          + ", from provider " + this.user.provider().name()
+        );
+    }
+
+    @Override
     public Iterator<Project> iterator() {
         return this.projects.iterator();
     }

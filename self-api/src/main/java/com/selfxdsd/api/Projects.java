@@ -45,4 +45,10 @@ public interface Projects extends Iterable<Project> {
      */
     Projects assignedTo(final int projectManagerId);
 
+    /**
+     * Get the Project owned by the specified User.
+     * @param user Owner of the projects.
+     * @return Projects.
+     */
+    Projects ownedBy(final User user);
 }

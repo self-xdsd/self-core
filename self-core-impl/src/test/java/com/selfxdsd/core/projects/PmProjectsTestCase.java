@@ -22,10 +22,7 @@
  */
 package com.selfxdsd.core.projects;
 
-import com.selfxdsd.api.Project;
-import com.selfxdsd.api.ProjectManager;
-import com.selfxdsd.api.Projects;
-import com.selfxdsd.api.Repo;
+import com.selfxdsd.api.*;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -86,5 +83,58 @@ public final class PmProjectsTestCase {
         list.add(Mockito.mock(Project.class));
         final Projects projects = new PmProjects(1, list);
         MatcherAssert.assertThat(projects, Matchers.iterableWithSize(3));
+    }
+
+    /**
+     * Method ownedBy(User) returns the User's projects.
+     */
+    @Test
+    public void ownedByWorks() {
+        final List<Project> list = new ArrayList<>();
+        list.add(this.projectOwnedBy("mihai", "github"));
+        list.add(this.projectOwnedBy("mihai", "github"));
+        list.add(this.projectOwnedBy("vlad", "github"));
+        list.add(this.projectOwnedBy("mihai", "gitlab"));
+        list.add(this.projectOwnedBy("mihai", "github"));
+        final Projects projects = new PmProjects(1, list);
+        MatcherAssert.assertThat(
+            projects.ownedBy(
+                this.mockUser("mihai", "github")
+            ),
+            Matchers.iterableWithSize(3)
+        );
+    }
+
+    /**
+     * Mock a Project owned by a User.
+     * @param username User's name.
+     * @param providerName Provider's name.
+     * @return Project.
+     */
+    private Project projectOwnedBy(
+        final String username, final String providerName
+    ) {
+        final Project project = Mockito.mock(Project.class);
+        final User owner = this.mockUser(username, providerName);
+        Mockito.when(project.owner()).thenReturn(owner);
+
+        return project;
+    }
+
+    /**
+     * Mock a User.
+     * @param username Username.
+     * @param providerName Name of the provider.
+     * @return User.
+     */
+    private User mockUser(final String username, final String providerName) {
+        final User user = Mockito.mock(User.class);
+        Mockito.when(user.username()).thenReturn(username);
+
+        final Provider provider = Mockito.mock(Provider.class);
+        Mockito.when(provider.name()).thenReturn(providerName);
+
+        Mockito.when(user.provider()).thenReturn(provider);
+        return user;
     }
 }
