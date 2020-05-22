@@ -30,7 +30,10 @@ import com.selfxdsd.api.Repo;
 import java.util.Iterator;
 
 /**
- * Projects assigned to a certain PM.
+ * Projects assigned to a certain PM. This class <b>just represents</b>
+ * the projects. The actual filtering has to be done in an upper layer,
+ * so we can take care of e.g. pagination.
+ *
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
@@ -40,20 +43,20 @@ public final class PmProjects implements Projects {
     /**
      * ID of the manager.
      */
-    private final int projectManagerId;
+    private final int pmId;
 
     /**
-     * Projects to choose from.
+     * Projects of the PM.
      */
-    private final Projects projects;
+    private final Iterable<Project> projects;
 
     /**
      * Constructor.
-     * @param projectManagerId ID of the manager.
+     * @param pmId ID of the manager.
      * @param projects Projects to choose from.
      */
-    public PmProjects(final int projectManagerId, final Projects projects) {
-        this.projectManagerId = projectManagerId;
+    public PmProjects(final int pmId, final Iterable<Project> projects) {
+        this.pmId = pmId;
         this.projects = projects;
     }
 
@@ -67,16 +70,16 @@ public final class PmProjects implements Projects {
 
     @Override
     public Projects assignedTo(final int projectManagerId) {
-        if(projectManagerId == this.projectManagerId) {
+        if(projectManagerId == this.pmId) {
             return this;
         }
         throw new IllegalStateException(
-            "Already seeing the projects of PM " + this.projectManagerId
+            "Already seeing the projects of PM " + this.pmId + "."
         );
     }
 
     @Override
     public Iterator<Project> iterator() {
-        return null;
+        return this.projects.iterator();
     }
 }
