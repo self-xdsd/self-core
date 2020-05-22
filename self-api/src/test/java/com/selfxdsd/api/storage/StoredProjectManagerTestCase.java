@@ -54,6 +54,20 @@ public final class StoredProjectManagerTestCase {
     }
 
     /**
+     * StoredProjectManager returns its provider.
+     */
+    @Test
+    public void returnsProvider() {
+        final ProjectManager manager = new StoredProjectManager(
+            1, "github", "123token", Mockito.mock(Storage.class)
+        );
+        MatcherAssert.assertThat(
+            manager.provider(),
+            Matchers.equalTo("github")
+        );
+    }
+
+    /**
      * StoredProjectManager returns its access token.
      */
     @Test
