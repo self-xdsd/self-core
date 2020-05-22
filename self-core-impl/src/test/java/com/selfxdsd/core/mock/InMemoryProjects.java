@@ -25,6 +25,7 @@ package com.selfxdsd.core.mock;
 import com.selfxdsd.api.*;
 import com.selfxdsd.api.storage.Storage;
 import com.selfxdsd.api.storage.StoredProject;
+import com.selfxdsd.core.projects.PmProjects;
 
 import java.util.*;
 
@@ -79,44 +80,14 @@ public final class InMemoryProjects implements Projects {
 
     @Override
     public Projects assignedTo(final int projectManagerId) {
-        return new Projects() {
-            /**
-             * The manager's ID.
-             */
-            private final int pmId = projectManagerId;
-
-            @Override
-            public Project register(
-                final Repo repo,
-                final ProjectManager manager
-            ) {
-                throw new UnsupportedOperationException(
-                    "A manager's assigned Projects are immutable, "
-                  + "can't register here."
-                );
+        final List<Project> assigned = new ArrayList<>();
+        final Collection<Project> all = this.projects.values();
+        for(final Project project : all) {
+            if(project.projectManager().id() == projectManagerId) {
+                assigned.add(project);
             }
-
-            @Override
-            public Projects assignedTo(final int projectManagerId) {
-                throw new UnsupportedOperationException(
-                    "You're already seeing the projects assigned "
-                  + "to the manager with id " + this.pmId
-                );
-            }
-
-            @Override
-            public Iterator<Project> iterator() {
-                final List<Project> assigned = new ArrayList<>();
-                final Collection<Project> all = InMemoryProjects.this.projects
-                    .values();
-                for(final Project project : all) {
-                    if(project.projectManager().id() == this.pmId) {
-                        assigned.add(project);
-                    }
-                }
-                return assigned.iterator();
-            }
-        };
+        }
+        return new PmProjects(projectManagerId, assigned);
     }
 
     @Override
