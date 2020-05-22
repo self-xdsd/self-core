@@ -20,89 +20,86 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package com.selfxdsd.api.storage;
+package com.selfxdsd.core.managers;
 
-import com.selfxdsd.api.*;
+import com.selfxdsd.api.Project;
+import com.selfxdsd.api.ProjectManager;
+import com.selfxdsd.api.Projects;
+import com.selfxdsd.api.Repo;
+import com.selfxdsd.api.storage.Storage;
 
 /**
- * A Project stored in Self.<br><br>
+ * A Project Manager stored in Self. Use this class when implementing
+ * the Storage.<br><br>
  *
- * This class is in the API because it is implementation-agnostic!
- * It only works with API interfaces and nothing else.
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
- * @todo #31:30min Implement the deactivate method which should remove the
- *  Project form the DB (it means Self will stop managing it). Return the
- *  corresponding Repo when done. Don't forget the tests.
  */
-public final class StoredProject implements Project {
+public final class StoredProjectManager implements ProjectManager {
 
     /**
-     * Project ID.
+     * This PMs id.
      */
-    private final int projectId;
+    private final int id;
 
     /**
-     * Repo of this Project.
+     * Provider's name.
      */
-    private final Repo repo;
+    private final String provider;
 
     /**
-     * Manager in charge of this Project.
+     * This PM's access token.
      */
-    private final ProjectManager projectManager;
+    private final String accessToken;
 
     /**
-     * Self's Storage.
+     * Self's storage.
      */
     private final Storage storage;
 
     /**
      * Constructor.
-     * @param projectId This project's ID.
-     * @param repo Repo of this project.
-     * @param projectManager Manager in charge.
-     * @param storage Storage of Self.
+     * @param id PM's id.
+     * @param provider The provider's name (Gitlab, Github etc).
+     * @param accessToken API Access token.
+     * @param storage Self's storage.
      * @checkstyle ParameterNumber (10 lines)
      */
-    public StoredProject(
-        final int projectId, final Repo repo,
-        final ProjectManager projectManager, final Storage storage
+    public StoredProjectManager(
+        final int id,
+        final String provider,
+        final String accessToken,
+        final Storage storage
     ) {
-        this.projectId = projectId;
-        this.repo = repo;
-        this.projectManager = projectManager;
+        this.id = id;
+        this.provider = provider;
+        this.accessToken = accessToken;
         this.storage = storage;
     }
 
     @Override
-    public int projectId() {
-        return this.projectId;
+    public int id() {
+        return this.id;
     }
 
     @Override
-    public User owner() {
-        return this.repo.owner();
+    public String provider() {
+        return this.provider;
     }
 
     @Override
-    public ProjectManager projectManager() {
-        return this.projectManager;
+    public String accessToken() {
+        return this.accessToken;
     }
 
     @Override
-    public Repo repo() {
-        return this.repo;
+    public Project assign(final Repo repo) {
+        return this.storage.projects().register(repo, this);
     }
 
     @Override
-    public Contracts contracts() {
-        return this.storage.contracts().ofProject(this.projectId);
-    }
-
-    @Override
-    public Repo deactivate() {
-        return null;
+    public Projects projects() {
+        return this.storage.projects().assignedTo(this.id);
     }
 }

@@ -24,7 +24,7 @@ package com.selfxdsd.core.mock;
 
 import com.selfxdsd.api.*;
 import com.selfxdsd.api.storage.Storage;
-import com.selfxdsd.api.storage.StoredProjectManager;
+import com.selfxdsd.core.managers.StoredProjectManager;
 
 import java.util.HashMap;
 import java.util.Iterator;

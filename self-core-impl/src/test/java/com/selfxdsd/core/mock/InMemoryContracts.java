@@ -24,6 +24,7 @@ package com.selfxdsd.core.mock;
 
 import com.selfxdsd.api.*;
 import com.selfxdsd.api.storage.Storage;
+import com.selfxdsd.core.projects.StoredProject;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -69,7 +70,7 @@ public final class InMemoryContracts implements Contracts {
      * So if we search for a project by iterating over in
      * memory storage.projects() we will get a StoredProject.
      * This object relies on storage to get contracts (see
-     * {@link com.selfxdsd.api.storage.StoredProject#contracts()}),
+     * {@link StoredProject#contracts()}),
      * which in theory should call
      * this implementation: InMemoryContracts  see {@link InMemory#contracts()}
      */

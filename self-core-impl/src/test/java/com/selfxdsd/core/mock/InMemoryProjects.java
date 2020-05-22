@@ -24,7 +24,7 @@ package com.selfxdsd.core.mock;
 
 import com.selfxdsd.api.*;
 import com.selfxdsd.api.storage.Storage;
-import com.selfxdsd.api.storage.StoredProject;
+import com.selfxdsd.core.projects.StoredProject;
 import com.selfxdsd.core.projects.PmProjects;
 import com.selfxdsd.core.projects.UserProjects;
 
