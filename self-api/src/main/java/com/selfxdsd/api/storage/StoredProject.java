@@ -22,10 +22,7 @@
  */
 package com.selfxdsd.api.storage;
 
-import com.selfxdsd.api.Contracts;
-import com.selfxdsd.api.Project;
-import com.selfxdsd.api.ProjectManager;
-import com.selfxdsd.api.Repo;
+import com.selfxdsd.api.*;
 
 /**
  * A Project stored in Self.<br><br>
@@ -82,6 +79,11 @@ public final class StoredProject implements Project {
     @Override
     public int projectId() {
         return this.projectId;
+    }
+
+    @Override
+    public User owner() {
+        return this.repo.owner();
     }
 
     @Override

@@ -41,6 +41,12 @@ public interface Project {
     int projectId();
 
     /**
+     * Who owns this project?
+     * @return User.
+     */
+    User owner();
+
+    /**
      * Project Manager in charge of this Project.
      * @return ProjectManager.
      */

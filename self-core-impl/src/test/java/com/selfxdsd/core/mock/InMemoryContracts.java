@@ -245,6 +245,11 @@ public final class InMemoryContracts implements Contracts {
         }
 
         @Override
+        public User owner() {
+            return this.delegate.owner();
+        }
+
+        @Override
         public ProjectManager projectManager() {
             return delegate.projectManager();
         }
