@@ -77,7 +77,7 @@ public final class SelfCore extends BaseSelf {
 
                 @Override
                 public Projects projects() {
-                    return null;
+                    return SelfCore.this.storage().projects().ownedBy(this);
                 }
             }
         );
@@ -114,7 +114,7 @@ public final class SelfCore extends BaseSelf {
 
                 @Override
                 public Projects projects() {
-                    return null;
+                    return SelfCore.this.storage().projects().ownedBy(this);
                 }
             }
         );
