@@ -73,8 +73,38 @@ public final class InMemoryContracts implements Contracts {
             }
 
             @Override
+            public Contracts ofContributor(final int contributorId) {
+                return null;
+            }
+
+            @Override
             public Iterator<Contract> iterator() {
                 return ofProject.iterator();
+            }
+        };
+    }
+
+    @Override
+    public Contracts ofContributor(final int contributorId) {
+        final List<Contract> ofContributor = this.contracts.keySet()
+            .stream()
+            .filter(key -> key.contributorId == contributorId)
+            .map(key -> this.contracts.get(key))
+            .collect(Collectors.toList());
+        return new Contracts() {
+            @Override
+            public Contracts ofProject(final int projectId) {
+                return null;
+            }
+
+            @Override
+            public Contracts ofContributor(final int contributorId) {
+                return this;
+            }
+
+            @Override
+            public Iterator<Contract> iterator() {
+                return ofContributor.iterator();
             }
         };
     }

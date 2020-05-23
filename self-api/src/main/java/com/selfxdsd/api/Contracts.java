@@ -41,6 +41,13 @@ public interface Contracts extends Iterable<Contract> {
     Contracts ofProject(final int projectId);
 
     /**
+     * Get the Contracts belonging to a Contributor.
+     * @param contributorId Contributor ID.
+     * @return Contracts.
+     */
+    Contracts ofContributor(final int contributorId);
+
+    /**
      * Empty Contracts. Return an instance of this when you cannot
      * find the Contracts you are looking for.
      * @author Mihai Andronache (amihaiemil@gmail.com)
@@ -50,6 +57,11 @@ public interface Contracts extends Iterable<Contract> {
     final class Empty implements Contracts {
         @Override
         public Contracts ofProject(final int projectId) {
+            return new Empty();
+        }
+
+        @Override
+        public Contracts ofContributor(final int contributorId) {
             return new Empty();
         }
 
