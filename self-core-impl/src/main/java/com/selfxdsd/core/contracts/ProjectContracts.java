@@ -27,6 +27,7 @@ import com.selfxdsd.api.Contracts;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Contracts belonging to a Project. Pay attention:
@@ -74,7 +75,14 @@ public final class ProjectContracts implements Contracts {
 
     @Override
     public Contracts ofContributor(final int contributorId) {
-        return null;
+        final List<Contract> ofContributor = this.contracts
+            .stream()
+            .filter(
+                //@checkstyle LineLength (1 line)
+                contract -> contract.contributor().contributorId() == contributorId
+            )
+            .collect(Collectors.toList());
+        return new ContributorContracts(projectId, ofContributor);
     }
 
     @Override

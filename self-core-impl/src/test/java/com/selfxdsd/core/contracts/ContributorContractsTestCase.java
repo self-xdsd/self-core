@@ -72,6 +72,10 @@ public final class ContributorContractsTestCase {
             new ContributorContracts(1, new ArrayList<>()).ofProject(10),
             Matchers.emptyIterable()
         );
+        MatcherAssert.assertThat(
+            new ContributorContracts(1, new ArrayList<>()).ofProject(10),
+            Matchers.instanceOf(ProjectContracts.class)
+        );
     }
 
     /**

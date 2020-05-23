@@ -24,6 +24,8 @@ package com.selfxdsd.core.contracts;
 
 import com.selfxdsd.api.Contract;
 import com.selfxdsd.api.Contracts;
+import com.selfxdsd.api.Contributor;
+import com.selfxdsd.api.Project;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -39,6 +41,42 @@ import java.util.List;
  * @since 0.0.1
  */
 public final class ProjectContractsTestCase {
+
+    /**
+     * ProjectContracts can return the Contracts
+     * of a certain Contributor.
+     */
+    @Test
+    public void returnsContractsOfContributor() {
+        final List<Contract> list = new ArrayList<>();
+        list.add(this.mockContract(1, 1));
+        list.add(this.mockContract(1, 2));
+        list.add(this.mockContract(1, 1));
+        list.add(this.mockContract(1, 3));
+        list.add(this.mockContract(1, 4));
+        list.add(this.mockContract(1, 1));
+        final Contracts contracts = new ProjectContracts(1, list);
+        MatcherAssert.assertThat(
+            contracts.ofContributor(1),
+            Matchers.iterableWithSize(3)
+        );
+        MatcherAssert.assertThat(
+            contracts.ofContributor(2),
+            Matchers.iterableWithSize(1)
+        );
+        MatcherAssert.assertThat(
+            contracts.ofContributor(10),
+            Matchers.emptyIterable()
+        );
+        MatcherAssert.assertThat(
+            new ProjectContracts(1, new ArrayList<>()).ofContributor(10),
+            Matchers.emptyIterable()
+        );
+        MatcherAssert.assertThat(
+            new ProjectContracts(1, new ArrayList<>()).ofContributor(10),
+            Matchers.instanceOf(ContributorContracts.class)
+        );
+    }
 
     /**
      * Method ofProject returns the same instance when
@@ -83,5 +121,28 @@ public final class ProjectContractsTestCase {
             Matchers.emptyIterable()
         );
     }
+
+    /**
+     * Mock a Contract for test.
+     * @param projectId Project's ID.
+     * @param contributorId Contributor's ID.
+     * @return Contract.
+     */
+    private Contract mockContract(
+        final int projectId, final int contributorId
+    ) {
+        final Project project = Mockito.mock(Project.class);
+        Mockito.when(project.projectId()).thenReturn(projectId);
+
+        final Contributor contributor = Mockito.mock(Contributor.class);
+        Mockito.when(contributor.contributorId()).thenReturn(contributorId);
+
+        final Contract contract = Mockito.mock(Contract.class);
+        Mockito.when(contract.contributor()).thenReturn(contributor);
+        Mockito.when(contract.project()).thenReturn(project);
+
+        return contract;
+    }
+
 
 }
