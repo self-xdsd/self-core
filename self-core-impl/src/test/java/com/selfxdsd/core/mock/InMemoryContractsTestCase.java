@@ -8,10 +8,8 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.equalTo;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.hamcrest.Matchers.*;
+import static org.mockito.Mockito.*;
 
 /**
  * Units tests for In-Memory Contracts.
@@ -48,6 +46,28 @@ public final class InMemoryContractsTestCase {
     }
 
     /**
+     * When a contract is already created should not make extra
+     * calls to storage.
+     */
+    @Test
+    public void shouldNotCreateAnExistingContract() {
+        Storage storage = new InMemory();
+        ProjectManager projectManager = storage.projectManagers().pick();
+        Project project = storage.projects()
+            .register(mock(Repo.class), projectManager);
+        InMemoryContracts contracts = (InMemoryContracts) storage.contracts();
+
+        contracts.addContract(project.projectId(),
+            1, BigDecimal.ONE, "DEV");
+        contracts.addContract(project.projectId(),
+            1, BigDecimal.ONE, "DEV");
+
+        assertThat(contracts, iterableWithSize(1));
+
+
+    }
+
+    /**
      * Throw exception when creating a contract with invalid project
      * or contributor.
      */
@@ -65,5 +85,6 @@ public final class InMemoryContractsTestCase {
         contracts.addContract(1,
             1, BigDecimal.ONE, "DEV");
     }
+
 
 }
