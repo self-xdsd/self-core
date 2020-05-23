@@ -133,8 +133,8 @@ public final class InMemoryContracts implements Contracts {
      * Get a contributor from storage by id,
      * or null if contributor is not found.
      *
-     * @param contributorId Project id
-     * @return Found Project or null
+     * @param contributorId Contributor id
+     * @return Found Contributor or null
      */
     private Contributor getContributorById(final int contributorId) {
         //placeholder until there is a way to get contributors from storage API
