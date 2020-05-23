@@ -38,8 +38,8 @@ import java.util.stream.StreamSupport;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @todo #74:30min When Storage API has contributors available, update
- * InMemoryContracts#getContributorById() to use storage. Then update
- * InMemoryContractsTestCase tests to reflect that.
+ *  InMemoryContracts#getContributorById() to use storage. Then update
+ *  InMemoryContractsTestCase tests to reflect that.
  * @since 0.0.1
  */
 public final class InMemoryContracts implements Contracts {
@@ -63,7 +63,6 @@ public final class InMemoryContracts implements Contracts {
         this.storage = storage;
     }
 
-
     /**
      * Adds a contract based on valid projectId and contributorId.
      * If either one of ids is invalid, an exception will be thrown.
@@ -75,6 +74,7 @@ public final class InMemoryContracts implements Contracts {
      * @return Contract
      * @checkstyle ParameterNumber (10 lines)
      */
+    @Override
     public Contract addContract(final int projectId,
                                 final int contributorId,
                                 final BigDecimal hourlyRate,

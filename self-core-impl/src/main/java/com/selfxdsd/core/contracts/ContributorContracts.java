@@ -25,6 +25,7 @@ package com.selfxdsd.core.contracts;
 import com.selfxdsd.api.Contract;
 import com.selfxdsd.api.Contracts;
 
+import java.math.BigDecimal;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -81,6 +82,26 @@ public final class ContributorContracts implements Contracts {
             "Already seeing the contracts of Contributor "
           + this.contributorId + "."
         );
+    }
+
+    /**
+     * Adds a contract based on valid projectId and contributorId.
+     * If either one of ids is invalid, an exception will be thrown.
+     *
+     * @param projectId Valid project id
+     * @param contributorId Valid contributor id
+     * @param hourlyRate Contract's hourly rate
+     * @param role Contract's role
+     * @return Contract
+     * @checkstyle ParameterNumber (10 lines)
+     * @checkstyle HiddenField (10 lines)
+     */
+    @Override
+    public Contract addContract(final int projectId,
+                                final int contributorId,
+                                final BigDecimal hourlyRate,
+                                final String role) {
+        throw new UnsupportedOperationException("Not yet implemented");
     }
 
     @Override

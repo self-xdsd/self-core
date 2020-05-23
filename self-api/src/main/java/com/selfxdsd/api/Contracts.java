@@ -22,6 +22,7 @@
  */
 package com.selfxdsd.api;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -48,6 +49,22 @@ public interface Contracts extends Iterable<Contract> {
     Contracts ofContributor(final int contributorId);
 
     /**
+     * Adds a contract based on valid projectId and contributorId.
+     * If either one of ids is invalid, an exception will be thrown.
+     *
+     * @param projectId Valid project id
+     * @param contributorId Valid contributor id
+     * @param hourlyRate Contract's hourly rate
+     * @param role Contract's role
+     * @return Contract
+     * @checkstyle ParameterNumber (10 lines)
+     */
+    Contract addContract(final int projectId,
+                         final int contributorId,
+                         final BigDecimal hourlyRate,
+                         final String role);
+
+    /**
      * Empty Contracts. Return an instance of this when you cannot
      * find the Contracts you are looking for.
      * @author Mihai Andronache (amihaiemil@gmail.com)
@@ -63,6 +80,24 @@ public interface Contracts extends Iterable<Contract> {
         @Override
         public Contracts ofContributor(final int contributorId) {
             return new Empty();
+        }
+
+        /**
+         * Throws UnsupportedOperationException.
+         * @param projectId Valid project id
+         * @param contributorId Valid contributor id
+         * @param hourlyRate Contract's hourly rate
+         * @param role Contract's role
+         * @return Throws UnsupportedOperationException
+         * @checkstyle ParameterNumber (10 lines)
+         */
+        @Override
+        public Contract addContract(final int projectId,
+                                    final int contributorId,
+                                    final BigDecimal hourlyRate,
+                                    final String role) {
+            throw new UnsupportedOperationException(
+                "Adding contract not supported");
         }
 
         @Override

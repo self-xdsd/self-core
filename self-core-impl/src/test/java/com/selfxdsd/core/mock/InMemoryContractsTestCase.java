@@ -15,7 +15,7 @@ import static org.mockito.Mockito.*;
  * Units tests for In-Memory Contracts.
  *
  * @author criske
- * @version $Id$ it.
+ * @version $Id$
  * @since 0.0.1
  */
 public final class InMemoryContractsTestCase {
@@ -63,8 +63,6 @@ public final class InMemoryContractsTestCase {
             1, BigDecimal.ONE, "DEV");
 
         assertThat(contracts, iterableWithSize(1));
-
-
     }
 
     /**
