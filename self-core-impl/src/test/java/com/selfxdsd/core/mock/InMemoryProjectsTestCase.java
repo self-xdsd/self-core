@@ -3,8 +3,13 @@ package com.selfxdsd.core.mock;
 import com.selfxdsd.api.*;
 import com.selfxdsd.api.storage.Storage;
 import com.selfxdsd.core.projects.UserProjects;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
 import org.junit.Test;
+
 import java.util.ArrayList;
+import java.util.List;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.mock;
@@ -15,7 +20,7 @@ import static org.mockito.Mockito.when;
  * @author hpetrila
  * @version $Id$
  * @since 0.0.1
- * @todo #16:30min Continue writing unit tests for the InMemory storage
+ * @todo #39:30min Continue writing unit tests for the InMemory storage
  *  infrastructure. In the end all classes and methods should be covered
  *  with unit tests so we can rely 100% on them.
  */
@@ -29,35 +34,33 @@ public final class InMemoryProjectsTestCase {
         final Storage storage = new InMemory();
         ProjectManager projectManager = storage
                 .projectManagers().pick();
-        InMemoryProjects projects = (InMemoryProjects)
-                storage.projects();
-        Project project = projects.register(
+        final Project registered = storage.projects().register(
                 mock(Repo.class), projectManager);
 
-        assertThat(project.projectManager(),
-                equalTo(projectManager));
-        assertThat(project.projectId(),
+        assertThat(registered.projectManager(),
+                is(projectManager));
+        assertThat(registered.projectId(),
                 equalTo(0));
-        assertThat(storage.projects(), contains(project));
+        assertThat(storage.projects(), contains(registered));
     }
     /**
-     * Register a project twice, making sure id is incremented.
+     * Register two projects, making sure id is incremented.
      */
     @Test
-    public void projectRegisterTwice() {
+    public void projectRegisterForTwoProjects() {
         final Storage storage = new InMemory();
         ProjectManager projectManager = storage
                 .projectManagers().pick();
         InMemoryProjects projects = (InMemoryProjects)
                 storage.projects();
-        Project project = projects.register(
+        Project first = projects.register(
                 mock(Repo.class), projectManager);
-        Project projectcopy = projects.register(mock(
+        Project second = projects.register(mock(
                 Repo.class), projectManager);
 
-        assertThat(project.projectId(),
+        assertThat(first.projectId(),
                 equalTo(0));
-        assertThat(projectcopy.projectId(), equalTo(1));
+        assertThat(second.projectId(), equalTo(1));
     }
     /**
      * Check if project is owned by.
@@ -65,16 +68,20 @@ public final class InMemoryProjectsTestCase {
     @Test
     public void projectOwnedBy() {
         final Storage storage = new InMemory();
-        ProjectManager projectManager = storage.projectManagers().pick();
-        InMemoryProjects projects = (InMemoryProjects)
-                storage.projects();
+        InMemoryProjects projects = (InMemoryProjects) storage.projects();
+        ProjectManager projectManager = storage
+                .projectManagers().pick();
+        Project project = projects.register(mock(Repo.class), projectManager);
+        List<Project> ProjectList = new ArrayList<>();
+        ProjectList.add(project);
         final Projects userprojects = new UserProjects(
                 this.mockUser("mihai", "github"),
-                new ArrayList<>()
+                ProjectList
         );
-        assertThat(userprojects.ownedBy(this.mockUser(
-                "mihai", "github")), equalTo(userprojects));
-
+        MatcherAssert.assertThat(
+                userprojects.ownedBy(this.mockUser(
+                        "mihai", "github")),
+                Matchers.iterableWithSize(1));
     }
 
     /**
@@ -94,4 +101,5 @@ public final class InMemoryProjectsTestCase {
 
         return user;
     }
+
 }
