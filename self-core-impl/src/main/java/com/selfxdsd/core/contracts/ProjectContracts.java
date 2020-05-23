@@ -82,7 +82,7 @@ public final class ProjectContracts implements Contracts {
                 contract -> contract.contributor().contributorId() == contributorId
             )
             .collect(Collectors.toList());
-        return new ContributorContracts(projectId, ofContributor);
+        return new ContributorContracts(contributorId, ofContributor);
     }
 
     @Override
