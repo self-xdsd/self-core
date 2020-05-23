@@ -24,6 +24,8 @@ package com.selfxdsd.core.mock;
 
 import com.selfxdsd.api.*;
 import com.selfxdsd.api.storage.Storage;
+import com.selfxdsd.core.contracts.ContributorContracts;
+import com.selfxdsd.core.contracts.ProjectContracts;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -34,10 +36,8 @@ import java.util.stream.Collectors;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
- * @todo #71:30min Implement method Contracts.addContract(...).
- *  Implement ProjectContracts to replace the anonymous class used
- *  here inside ofProject(...). Once we can test this class, write
- *  some unit tests for it.
+ * @todo #73:30min Implement method Contracts.addContract(...).
+ *  Once we can test this class, write some unit tests for it.
  */
 public final class InMemoryContracts implements Contracts {
 
@@ -66,22 +66,7 @@ public final class InMemoryContracts implements Contracts {
             .filter(key -> key.projectId == projectId)
             .map(key -> this.contracts.get(key))
             .collect(Collectors.toList());
-        return new Contracts() {
-            @Override
-            public Contracts ofProject(final int projectId) {
-                return this;
-            }
-
-            @Override
-            public Contracts ofContributor(final int contributorId) {
-                return null;
-            }
-
-            @Override
-            public Iterator<Contract> iterator() {
-                return ofProject.iterator();
-            }
-        };
+        return new ProjectContracts(projectId, ofProject);
     }
 
     @Override
@@ -91,22 +76,7 @@ public final class InMemoryContracts implements Contracts {
             .filter(key -> key.contributorId == contributorId)
             .map(key -> this.contracts.get(key))
             .collect(Collectors.toList());
-        return new Contracts() {
-            @Override
-            public Contracts ofProject(final int projectId) {
-                return null;
-            }
-
-            @Override
-            public Contracts ofContributor(final int contributorId) {
-                return this;
-            }
-
-            @Override
-            public Iterator<Contract> iterator() {
-                return ofContributor.iterator();
-            }
-        };
+        return new ContributorContracts(contributorId, ofContributor);
     }
 
     @Override
