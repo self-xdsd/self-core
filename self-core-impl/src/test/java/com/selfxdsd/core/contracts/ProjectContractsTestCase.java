@@ -31,6 +31,7 @@ import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -99,6 +100,15 @@ public final class ProjectContractsTestCase {
     public void ofProjectComplainsWhenDifferentId() {
         final Contracts contracts = new ProjectContracts(1, new ArrayList<>());
         contracts.ofProject(2);
+    }
+
+    /**
+     * Should throw UnsupportedOperationException when adding a contract.
+     */
+    @Test(expected = UnsupportedOperationException.class)
+    public void addContract(){
+        new ProjectContracts(0, List.of())
+            .addContract(1, 1, BigDecimal.TEN, "DEV");
     }
 
     /**

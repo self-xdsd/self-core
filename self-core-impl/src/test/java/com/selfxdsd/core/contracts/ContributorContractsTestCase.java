@@ -31,6 +31,7 @@ import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -126,6 +127,16 @@ public final class ContributorContractsTestCase {
         );
     }
 
+
+    /**
+     * Should throw UnsupportedOperationException when adding a contract.
+     */
+    @Test(expected = UnsupportedOperationException.class)
+    public void addContract(){
+        new ContributorContracts(0, List.of())
+            .addContract(1, 1, BigDecimal.TEN, "DEV");
+    }
+
     /**
      * Mock a Contract for test.
      * @param contributorId Contributor's ID.
@@ -147,4 +158,5 @@ public final class ContributorContractsTestCase {
 
         return contract;
     }
+
 }
