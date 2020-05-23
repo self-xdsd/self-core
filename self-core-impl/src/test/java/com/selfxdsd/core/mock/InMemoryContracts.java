@@ -27,17 +27,20 @@ import com.selfxdsd.api.storage.Storage;
 import com.selfxdsd.core.contracts.ContributorContracts;
 import com.selfxdsd.core.contracts.ProjectContracts;
 
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 /**
  * In-Memory Contracts for testing purposes.
  *
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
+ * @todo #74:30min When Storage API has contributors available, update
+ * InMemoryContracts#getContributorById() to use storage. Then update
+ * InMemoryContractsTestCase tests to reflect that.
  * @since 0.0.1
- * @todo #73:30min Implement method Contracts.addContract(...).
- *  Once we can test this class, write some unit tests for it.
  */
 public final class InMemoryContracts implements Contracts {
 
@@ -53,10 +56,99 @@ public final class InMemoryContracts implements Contracts {
 
     /**
      * Constructor.
+     *
      * @param storage Parent storage
      */
     public InMemoryContracts(final Storage storage) {
         this.storage = storage;
+    }
+
+
+    /**
+     * Adds a contract based on valid projectId and contributorId.
+     * If either one of ids is invalid, an exception will be thrown.
+     *
+     * @param projectId Valid project id
+     * @param contributorId Valid contributor id
+     * @param hourlyRate Contract's hourly rate
+     * @param role Contract's role
+     * @return Contract
+     * @checkstyle ParameterNumber (10 lines)
+     */
+    public Contract addContract(final int projectId,
+                                final int contributorId,
+                                final BigDecimal hourlyRate,
+                                final String role) {
+        final ContractKey key = new ContractKey(projectId, contributorId);
+        Contract contract = contracts.get(key);
+        if(contract == null) {
+            final Project project = getProjectById(projectId);
+            final Contributor contributor = getContributorById(contributorId);
+            if (project != null && contributor != null) {
+                contract = new Contract() {
+                    @Override
+                    public Project project() {
+                        return project;
+                    }
+
+                    @Override
+                    public Contributor contributor() {
+                        return contributor;
+                    }
+
+                    @Override
+                    public BigDecimal hourlyRate() {
+                        return hourlyRate;
+                    }
+
+                    @Override
+                    public String role() {
+                        return role;
+                    }
+                };
+                contracts.put(key, contract);
+            } else {
+                throw new IllegalStateException("Contract was not created:"
+                    + " project or contributor was not found in storage");
+            }
+        }
+        return contract;
+    }
+
+    /**
+     * Get a project from storage by id,
+     * or null if project is not found.
+     *
+     * @param projectId Project id
+     * @return Found Project or null
+     */
+    private Project getProjectById(final int projectId) {
+        return StreamSupport
+            .stream(storage.projects().spliterator(), false)
+            .filter(p -> p.projectId() == projectId)
+            .findFirst()
+            .orElse(null);
+    }
+    /**
+     * Get a contributor from storage by id,
+     * or null if contributor is not found.
+     *
+     * @param contributorId Project id
+     * @return Found Project or null
+     */
+    private Contributor getContributorById(final int contributorId) {
+        //placeholder until there is a way to get contributors from storage API
+        return new Contributor() {
+            @Override
+            public int contributorId() {
+                return contributorId;
+            }
+
+            @Override
+            public Contracts contracts() {
+                return ofContributor(contributorId);
+            }
+        };
     }
 
     @Override
@@ -86,6 +178,7 @@ public final class InMemoryContracts implements Contracts {
 
     /**
      * Contract primary key.
+     *
      * @checkstyle VisibilityModifier (50 lines)
      */
     private static class ContractKey {
@@ -101,6 +194,7 @@ public final class InMemoryContracts implements Contracts {
 
         /**
          * Constructor.
+         *
          * @param projectId Project ID.
          * @param contributorId Contributor ID.
          */
