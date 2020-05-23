@@ -38,9 +38,10 @@ public interface ProjectManagers extends Iterable<ProjectManager> {
     ProjectManager getById(final int id);
 
     /**
-     * Pick a ProjectManager.
+     * Pick a ProjectManager from a specific repository.
+     * @param provider Provider name of the repository.
      * @return ProjectManager.
      */
-    ProjectManager pick();
+    ProjectManager pick(final String provider);
 
 }

@@ -26,7 +26,8 @@ public final class InMemoryContractsTestCase {
     @Test
     public void addContract() {
         Storage storage = new InMemory();
-        ProjectManager projectManager = storage.projectManagers().pick();
+        ProjectManager projectManager = storage.projectManagers()
+                .pick("github");
         Project project = storage.projects()
             .register(mock(Repo.class), projectManager);
         InMemoryContracts contracts = (InMemoryContracts) storage.contracts();
@@ -52,7 +53,8 @@ public final class InMemoryContractsTestCase {
     @Test
     public void shouldNotCreateAnExistingContract() {
         Storage storage = new InMemory();
-        ProjectManager projectManager = storage.projectManagers().pick();
+        ProjectManager projectManager = storage.projectManagers()
+                .pick("github");
         Project project = storage.projects()
             .register(mock(Repo.class), projectManager);
         InMemoryContracts contracts = (InMemoryContracts) storage.contracts();

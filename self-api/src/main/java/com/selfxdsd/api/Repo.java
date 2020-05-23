@@ -51,4 +51,10 @@ public interface Repo {
      * @return Project.
      */
     Project activate();
+
+    /**
+     * Provider name of this repository.
+     * @return Provider.
+     */
+    String provider();
 }

@@ -35,6 +35,8 @@ import java.util.Map;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
+ * @todo #68:30min Add ProjectManager from each repository to the pms map.
+ *  Refactor {@link this#pick(String)} to take into consideration the provider.
  */
 public final class InMemoryProjectManagers implements ProjectManagers {
 
@@ -71,7 +73,7 @@ public final class InMemoryProjectManagers implements ProjectManagers {
     }
 
     @Override
-    public ProjectManager pick() {
+    public ProjectManager pick(final String provider) {
         return this.pms.get(1);
     }
 }
