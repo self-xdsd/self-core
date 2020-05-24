@@ -4,7 +4,6 @@ import com.selfxdsd.api.ProjectManager;
 import com.selfxdsd.api.ProjectManagers;
 import com.selfxdsd.api.storage.Storage;
 import org.junit.Test;
-
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.mock;
@@ -25,10 +24,10 @@ public final class InMemoryProjectManagersTestCase {
     public void getProjectManagerById() {
         final Storage storage = new InMemory();
         InMemoryProjectManagers inMemoryPm =
-            new InMemoryProjectManagers(storage);
+                new InMemoryProjectManagers(storage);
 
         assertThat(inMemoryPm.getById(1).id(),
-            equalTo(storage.projectManagers().getById(1).id()));
+                equalTo(storage.projectManagers().getById(1).id()));
     }
 
     /**
@@ -59,7 +58,7 @@ public final class InMemoryProjectManagersTestCase {
     public void pickProjectManager() {
         final Storage storage = new InMemory();
         InMemoryProjectManagers inMemoryPm =
-            new InMemoryProjectManagers(storage);
+                new InMemoryProjectManagers(storage);
         assertThat(inMemoryPm.pick("github"), is(notNullValue()));
 
 
@@ -102,5 +101,6 @@ public final class InMemoryProjectManagersTestCase {
         assertThat(projectManagers.pick("foo-provider"),
             equalTo(projectManager));
     }
+
 
 }
