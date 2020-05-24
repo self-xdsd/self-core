@@ -35,7 +35,7 @@ import java.util.Map;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
- * @todo #68:30min Add ProjectManager from each repository to the pms map.
+ * @todo #68:20min Add ProjectManager with gitlab provider to the pms map.
  *  Refactor {@link this#pick(String)} to take into consideration the provider.
  */
 public final class InMemoryProjectManagers implements ProjectManagers {
