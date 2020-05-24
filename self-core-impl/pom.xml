@@ -17,8 +17,12 @@
         <dependency>
             <groupId>com.selfxdsd</groupId>
             <artifactId>self-api</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-            <scope>compile</scope>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+            <!--
+                The self-api jar should be provided
+                by the integrator (e.g. self-web).
+            -->
         </dependency>
         <dependency>
             <groupId>org.glassfish</groupId>

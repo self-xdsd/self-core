@@ -102,5 +102,4 @@ public final class InMemoryProjectManagersTestCase {
             equalTo(projectManager));
     }
 
-
 }

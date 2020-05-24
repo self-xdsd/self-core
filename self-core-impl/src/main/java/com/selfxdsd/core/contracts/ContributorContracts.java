@@ -24,6 +24,7 @@ package com.selfxdsd.core.contracts;
 
 import com.selfxdsd.api.Contract;
 import com.selfxdsd.api.Contracts;
+import com.selfxdsd.api.Contributor;
 
 import java.math.BigDecimal;
 import java.util.Iterator;
@@ -42,9 +43,9 @@ import java.util.stream.Collectors;
 public final class ContributorContracts implements Contracts {
 
     /**
-     * ID of the Contributor.
+     * The Contributor.
      */
-    private final int contributorId;
+    private final Contributor contributor;
 
     /**
      * The contributor's contracts.
@@ -53,14 +54,14 @@ public final class ContributorContracts implements Contracts {
 
     /**
      * Constructor.
-     * @param contributorId Contributor ID.
+     * @param contributor Contributor.
      * @param contracts Contributor's contracts.
      */
     public ContributorContracts(
-        final int contributorId,
+        final Contributor contributor,
         final List<Contract> contracts
     ) {
-        this.contributorId = contributorId;
+        this.contributor = contributor;
         this.contracts = contracts;
     }
 
@@ -74,31 +75,23 @@ public final class ContributorContracts implements Contracts {
     }
 
     @Override
-    public Contracts ofContributor(final int contribId) {
-        if(this.contributorId == contribId) {
+    public Contracts ofContributor(final Contributor contributor) {
+        if(this.contributor.username().equals(contributor.username())
+            && this.contributor.provider().equals(contributor.provider())
+        ) {
             return this;
         }
         throw new IllegalStateException(
             "Already seeing the contracts of Contributor "
-          + this.contributorId + "."
+          + this.contributor.username() + ", working at "
+          + this.contributor.provider() + " ."
         );
     }
 
-    /**
-     * Adds a contract based on valid projectId and contributorId.
-     * If either one of ids is invalid, an exception will be thrown.
-     *
-     * @param projectId Valid project id
-     * @param contributorId Valid contributor id
-     * @param hourlyRate Contract's hourly rate
-     * @param role Contract's role
-     * @return Contract
-     * @checkstyle ParameterNumber (10 lines)
-     * @checkstyle HiddenField (10 lines)
-     */
     @Override
     public Contract addContract(final int projectId,
-                                final int contributorId,
+                                final String contributorUsername,
+                                final String contributorProvider,
                                 final BigDecimal hourlyRate,
                                 final String role) {
         throw new UnsupportedOperationException("Not yet implemented");
