@@ -26,7 +26,6 @@ import com.selfxdsd.api.*;
 import com.selfxdsd.api.storage.Storage;
 import com.selfxdsd.core.contracts.ContributorContracts;
 import com.selfxdsd.core.contracts.ProjectContracts;
-import com.selfxdsd.core.contributors.StoredContributor;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -38,10 +37,10 @@ import java.util.stream.StreamSupport;
  *
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
- * @todo #74:30min When Storage API has contributors available, update
- *  InMemoryContracts#getContributorById() to use storage. Then update
- *  InMemoryContractsTestCase tests to reflect that.
  * @since 0.0.1
+ * @todo #79:30min Implement and test Project :: Projects.getById(...).
+ *  Once that is ready, use it here and remove the private
+ *  method getProjectById(...).
  */
 public final class InMemoryContracts implements Contracts {
 
@@ -65,20 +64,21 @@ public final class InMemoryContracts implements Contracts {
     }
 
     @Override
-    public Contract addContract(final int projectId,
-                                final String contributorUsername,
-                                final String contributorProvider,
-                                final BigDecimal hourlyRate,
-                                final String role) {
+    public Contract addContract(
+        final int projectId,
+        final String contributorUsername,
+        final String contributorProvider,
+        final BigDecimal hourlyRate,
+        final String role
+    ) {
         final ContractKey key = new ContractKey(
             projectId, contributorUsername, contributorProvider
         );
-        Contract contract = contracts.get(key);
+        Contract contract = this.contracts.get(key);
         if(contract == null) {
             final Project project = getProjectById(projectId);
-            final Contributor contributor = getContributorById(
-                contributorUsername, contributorProvider
-            );
+            final Contributor contributor = this.storage.contributors()
+                .getById(contributorUsername, contributorProvider);
             if (project != null && contributor != null) {
                 contract = new Contract() {
                     @Override
@@ -101,10 +101,20 @@ public final class InMemoryContracts implements Contracts {
                         return role;
                     }
                 };
-                contracts.put(key, contract);
+                this.contracts.put(key, contract);
             } else {
-                throw new IllegalStateException("Contract was not created:"
-                    + " project or contributor was not found in storage");
+                if(project == null) {
+                    throw new IllegalStateException(
+                        "Contract was not created:"
+                      + " project was not found in storage"
+                    );
+                }
+                if(contributor == null) {
+                    throw new IllegalStateException(
+                        "Contract was not created:"
+                      + " contributor was not found in storage"
+                    );
+                }
             }
         }
         return contract;
@@ -123,39 +133,6 @@ public final class InMemoryContracts implements Contracts {
             .filter(p -> p.projectId() == projectId)
             .findFirst()
             .orElse(null);
-    }
-    /**
-     * Get a contributor from storage by id,
-     * or null if contributor is not found.
-     *
-     * @param username Contributor's username.
-     * @param provider Contributor's provider.
-     * @return Found Contributor or null
-     */
-    private Contributor getContributorById(
-        final String username,
-        final String provider
-    ) {
-        //placeholder until there is a way to get contributors from storage API
-        return new Contributor() {
-
-            @Override
-            public String username() {
-                return username;
-            }
-
-            @Override
-            public String provider() {
-                return provider;
-            }
-
-            @Override
-            public Contracts contracts() {
-                return ofContributor(
-                    new StoredContributor(username, provider, null)
-                );
-            }
-        };
     }
 
     @Override

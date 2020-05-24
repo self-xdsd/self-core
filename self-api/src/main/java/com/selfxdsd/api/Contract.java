@@ -29,6 +29,9 @@ import java.math.BigDecimal;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
+ * @todo #79:30min Implement and test StoredContract, following the
+ *  pattern of StoredContributor and others. This is a good ticket
+ *  for first-time contributors.
  */
 public interface Contract {
 

@@ -3,10 +3,7 @@ package com.selfxdsd.core.mock;
 import com.selfxdsd.api.*;
 import com.selfxdsd.api.storage.Storage;
 import org.junit.Test;
-
 import java.math.BigDecimal;
-import java.util.List;
-
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.*;
@@ -25,15 +22,22 @@ public final class InMemoryContractsTestCase {
      */
     @Test
     public void addContract() {
-        Storage storage = new InMemory();
-        ProjectManager projectManager = storage.projectManagers()
+        final Storage storage = new InMemory();
+        final ProjectManager projectManager = storage.projectManagers()
                 .pick("github");
-        Project project = storage.projects()
+        final Project project = storage.projects()
             .register(mock(Repo.class), projectManager);
-        InMemoryContracts contracts = (InMemoryContracts) storage.contracts();
+        final Contributor contributor = storage.contributors()
+            .register("mihai", "github");
+        final Contracts contracts = storage.contracts();
 
-        Contract contract = contracts.addContract(project.projectId(),
-            "mihai", "github", BigDecimal.ONE, "DEV");
+        final Contract contract = contracts.addContract(
+            project.projectId(),
+            contributor.username(),
+            contributor.provider(),
+            BigDecimal.ONE,
+            "DEV"
+        );
 
         assertThat(contract.project().projectId(),
             equalTo(project.projectId()));
@@ -49,43 +53,75 @@ public final class InMemoryContractsTestCase {
     }
 
     /**
-     * When a contract is already created should not make extra
-     * calls to storage.
+     * When a contract is already created a second one should not
+     * be created.
      */
     @Test
     public void shouldNotCreateAnExistingContract() {
-        Storage storage = new InMemory();
-        ProjectManager projectManager = storage.projectManagers()
+        final Storage storage = new InMemory();
+        final ProjectManager projectManager = storage.projectManagers()
                 .pick("github");
-        Project project = storage.projects()
+        final Project project = storage.projects()
             .register(mock(Repo.class), projectManager);
-        InMemoryContracts contracts = (InMemoryContracts) storage.contracts();
+        final Contributor contributor = storage.contributors()
+            .register("mihai", "github");
+        final Contracts contracts = storage.contracts();
 
-        contracts.addContract(project.projectId(),
-            "mihai", "github", BigDecimal.ONE, "DEV");
-        contracts.addContract(project.projectId(),
-            "mihai", "github", BigDecimal.ONE, "DEV");
+        contracts.addContract(
+            project.projectId(),
+            contributor.username(),
+            contributor.provider(),
+            BigDecimal.ONE,
+            "DEV"
+        );
+        contracts.addContract(
+            project.projectId(),
+            contributor.username(),
+            contributor.provider(),
+            BigDecimal.ONE,
+            "DEV"
+        );
 
         assertThat(contracts, iterableWithSize(1));
     }
 
     /**
-     * Throw exception when creating a contract with invalid project
-     * or contributor.
+     * Method addContract(...) throws ISE if the specified Project
+     * does not exist.
      */
-    @SuppressWarnings("RedundantOperationOnEmptyContainer")
     @Test(expected = IllegalStateException.class)
-    public void throwExceptionWhenProjectOrContributorNotFound() {
-        Storage storage = mock(Storage.class);
-        Projects projects = mock(Projects.class);
-        InMemoryContracts contracts = new InMemoryContracts(storage);
+    public void addThrowsExceptionWhenProjectNotFound() {
+        final Storage storage = new InMemory();
+        final Contributor contributor = storage.contributors()
+            .register("mihai", "github");
+        storage.contracts().addContract(
+            100,
+            contributor.username(),
+            contributor.provider(),
+            BigDecimal.ONE,
+            "DEV"
+        );
+    }
 
-        when(storage.projects()).thenReturn(projects);
-        when(projects.spliterator())
-            .thenReturn(List.<Project>of().spliterator());
-
-        contracts.addContract(1,
-            "mihai", "github", BigDecimal.ONE, "DEV");
+    /**
+     * Method addContract(...) throws ISE if the specified Contributor
+     * does not exist.
+     */
+    @Test(expected = IllegalStateException.class)
+    public void addThrowsExceptionWhenContributorNotFound() {
+        final Storage storage = new InMemory();
+        final Project project = storage.projects()
+            .register(
+                mock(Repo.class),
+                storage.projectManagers().pick("github")
+            );
+        storage.contracts().addContract(
+            project.projectId(),
+            "jhon_doe",
+            "github",
+            BigDecimal.ONE,
+            "DEV"
+        );
     }
 
 

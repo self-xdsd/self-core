@@ -1,13 +1,13 @@
 /**
  * Copyright (c) 2020, Self XDSD Contributors
  * All rights reserved.
- *
+ * <p>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"),
  * to read the Software only. Permission is hereby NOT GRANTED to use, copy,
  * modify, merge, publish, distribute, sublicense, and/or sell copies of
  * the Software.
- *
+ * <p>
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -20,66 +20,30 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package com.selfxdsd.core.mock;
-
-import com.selfxdsd.api.*;
-import com.selfxdsd.api.storage.Storage;
+package com.selfxdsd.api;
 
 /**
- * In Memory storage used for testing.
+ * Contributors in Self.
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
  */
-public final class InMemory implements Storage {
+public interface Contributors extends Iterable<Contributor> {
 
     /**
-     * In-memory users.
+     * Register a new contributor in Self.
+     * @param username Username.
+     * @param provider Password.
+     * @return Contributor.
      */
-    private Users users = new InMemoryUsers();
-    /**
-     * In-memory project-managers.
-     */
-    private ProjectManagers projectManagers = new InMemoryProjectManagers(this);
-
-    /**
-     * In-memory projects.
-     */
-    private Projects projects = new InMemoryProjects(this);
+    Contributor register(final String username, final String provider);
 
     /**
-     * In-memory contracts.
+     * Get a Contributor by his id.
+     * @param username Username.
+     * @param provider Provider name.
+     * @return Contributor or null if not found.
      */
-    private Contracts contracts = new InMemoryContracts(this);
+    Contributor getById(final String username, final String provider);
 
-    /**
-     * In-memory contributors.
-     */
-    private Contributors contributors = new InMemoryContributors(this);
-
-
-    @Override
-    public Users users() {
-        return this.users;
-    }
-
-    @Override
-    public ProjectManagers projectManagers() {
-        return this.projectManagers;
-    }
-
-    @Override
-    public Projects projects() {
-        return this.projects;
-    }
-
-    @Override
-    public Contracts contracts() {
-        return this.contracts;
-    }
-
-    @Override
-    public Contributors contributors() {
-        return this.contributors;
-    }
 }
