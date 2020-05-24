@@ -44,10 +44,10 @@ public interface Contracts extends Iterable<Contract> {
 
     /**
      * Get the Contracts belonging to a Contributor.
-     * @param contributorId Contributor ID.
+     * @param contributor Contributor.
      * @return Contracts.
      */
-    Contracts ofContributor(final int contributorId);
+    Contracts ofContributor(final Contributor contributor);
 
     /**
      * Adds a contract based on valid projectId and contributorId.
@@ -80,7 +80,7 @@ public interface Contracts extends Iterable<Contract> {
         }
 
         @Override
-        public Contracts ofContributor(final int contributorId) {
+        public Contracts ofContributor(final Contributor contributor) {
             return new Empty();
         }
 

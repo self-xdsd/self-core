@@ -150,7 +150,7 @@ public final class InMemoryContracts implements Contracts {
 
             @Override
             public Contracts contracts() {
-                return ofContributor(contributorId);
+                return null;
             }
         };
     }
@@ -166,13 +166,19 @@ public final class InMemoryContracts implements Contracts {
     }
 
     @Override
-    public Contracts ofContributor(final int contributorId) {
+    public Contracts ofContributor(final Contributor contributor) {
         final List<Contract> ofContributor = this.contracts.keySet()
             .stream()
-            .filter(key -> key.contributorId == contributorId)
+            .filter(
+                //@checkstyle LineLength (5 lines)
+                key -> {
+                    return key.contributorUsername.equals(contributor.username())
+                        && key.contributorProvider.equals(contributor.provider());
+                }
+            )
             .map(key -> this.contracts.get(key))
             .collect(Collectors.toList());
-        return new ContributorContracts(contributorId, ofContributor);
+        return new ContributorContracts(contributor, ofContributor);
     }
 
     @Override
@@ -228,6 +234,7 @@ public final class InMemoryContracts implements Contracts {
             }
             final InMemoryContracts.ContractKey contractKey =
                 (InMemoryContracts.ContractKey) object;
+            //@checkstyle LineLength (5 lines)
             return this.projectId == contractKey.projectId
                 && this.contributorUsername.equals(contractKey.contributorUsername)
                 && this.contributorProvider.equals(contractKey.contributorProvider);

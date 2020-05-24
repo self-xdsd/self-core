@@ -24,6 +24,7 @@ package com.selfxdsd.core.contracts;
 
 import com.selfxdsd.api.Contract;
 import com.selfxdsd.api.Contracts;
+import com.selfxdsd.api.Contributor;
 
 import java.math.BigDecimal;
 import java.util.Iterator;
@@ -75,15 +76,23 @@ public final class ProjectContracts implements Contracts {
     }
 
     @Override
-    public Contracts ofContributor(final int contributorId) {
+    public Contracts ofContributor(final Contributor contributor) {
         final List<Contract> ofContributor = this.contracts
             .stream()
             .filter(
-                //@checkstyle LineLength (1 line)
-                contract -> contract.contributor().contributorId() == contributorId
+                contract -> {
+                    return contract
+                        .contributor()
+                        .username()
+                        .equals(contributor.username())
+                        && contract
+                            .contributor()
+                            .provider()
+                            .equals(contributor.provider());
+                }
             )
             .collect(Collectors.toList());
-        return new ContributorContracts(contributorId, ofContributor);
+        return new ContributorContracts(contributor, ofContributor);
     }
 
     @Override
