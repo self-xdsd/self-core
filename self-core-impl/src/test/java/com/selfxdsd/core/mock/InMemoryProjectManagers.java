@@ -35,8 +35,10 @@ import java.util.Map;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
- * @todo #68:20min Add ProjectManager with gitlab provider to the pms map.
- *  Refactor {@link this#pick(String)} to take into consideration the provider.
+ * @todo #69:20min Add to the ability for {@link ProjectManagers} to add a
+ *  project manager `addProjectManager(...)` and then test that using
+ *  {@link InMemoryProjectManagers#getById(int)} and
+ *  {@link InMemoryProjectManagers#pick(String)}
  */
 public final class InMemoryProjectManagers implements ProjectManagers {
 
@@ -60,6 +62,10 @@ public final class InMemoryProjectManagers implements ProjectManagers {
             1,
             new StoredProjectManager(1, "github", "123token", storage)
         );
+        this.pms.put(
+            2,
+            new StoredProjectManager(2, "gitlab", "123token", storage)
+        );
     }
 
     @Override
@@ -74,6 +80,9 @@ public final class InMemoryProjectManagers implements ProjectManagers {
 
     @Override
     public ProjectManager pick(final String provider) {
-        return this.pms.get(1);
+        return pms.values().stream()
+            .filter(pm -> pm.provider().equals(provider))
+            .findFirst()
+            .orElse(null);
     }
 }

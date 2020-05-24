@@ -40,7 +40,7 @@ public interface ProjectManagers extends Iterable<ProjectManager> {
     /**
      * Pick a ProjectManager from a specific repository.
      * @param provider Provider name of the repository.
-     * @return ProjectManager.
+     * @return ProjectManager or null if it's not found.
      */
     ProjectManager pick(final String provider);
 

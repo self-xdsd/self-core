@@ -50,8 +50,9 @@ public final class GitlabRepoTestCase {
                 storage.projects(),
                 Matchers.iterableWithSize(0)
         );
+        final int gitlabPmId = 2;
         MatcherAssert.assertThat(
-                storage.projects().assignedTo(1),
+                storage.projects().assignedTo(gitlabPmId),
                 Matchers.iterableWithSize(0)
         );
 
@@ -70,7 +71,7 @@ public final class GitlabRepoTestCase {
                 Matchers.iterableWithSize(1)
         );
         MatcherAssert.assertThat(
-                storage.projects().assignedTo(1),
+                storage.projects().assignedTo(gitlabPmId),
                 Matchers.iterableWithSize(1)
         );
     }
