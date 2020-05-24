@@ -2,17 +2,14 @@ package com.selfxdsd.core.mock;
 
 import com.selfxdsd.api.storage.Storage;
 import org.junit.Test;
-
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
 
 /**
  * Unit tests for class {@link InMemoryProjectManagers}.
  *
  * @author hpetrila
  * @version $Id$
- * @todo #82:5min Rename InMemoryTestCase to InMemoryUsersTestCase.
  * @since 0.0.1
  */
 
@@ -25,8 +22,9 @@ public final class InMemoryProjectManagersTestCase {
         final Storage storage = new InMemory();
         InMemoryProjectManagers inMemoryPm =
                 new InMemoryProjectManagers(storage);
-        assertThat(inMemoryPm.getById(1),
-                is(inMemoryPm.pick("github")));
+
+        assertThat(inMemoryPm.getById(1).id(), is(
+                (storage.projectManagers().getById(1)).id()));
     }
 
     /**
@@ -47,18 +45,19 @@ public final class InMemoryProjectManagersTestCase {
         final Storage storage = new InMemory();
         new InMemoryProjectManagers(storage);
         new InMemoryProjectManagers(storage);
-        assertThat(storage.projectManagers().getById(3), equalTo(null));
+        assertThat(storage.projectManagers(), iterableWithSize(2));
     }
 
     /**
      * Pick project manager should return Project Manager with id 1.
      */
+    @Test
     public void pickProjectManager() {
         final Storage storage = new InMemory();
         InMemoryProjectManagers inMemoryPm =
                 new InMemoryProjectManagers(storage);
-        assertThat(inMemoryPm.pick("github"),
-                is(inMemoryPm.getById(1)));
+        assertThat(inMemoryPm.pick("github"), is(notNullValue()));
+
 
     }
 
