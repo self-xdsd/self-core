@@ -12,13 +12,28 @@ import com.selfxdsd.api.storage.Storage;
 public interface Login {
 
     /**
-     * Signs up a user using credentials given by the implementations
-     * of {@link Login} (like username, access-token etc...).
+     * Signs up a user created by the implementations of {@link Login}
      * <br>.
      * The Authentication process is delegated to a storage.
-     * @param storage Storage used to sign up
+     * @param storage Storage used to sign up.
      * @return An authenticated User.
      */
-    User signUp(final Storage storage);
+    default User signUp(final Storage storage) {
+        User user = user(storage);
+        User authenticated = storage.users().user(
+            user.username(), user.provider().name()
+        );
+        if (authenticated == null) {
+            authenticated = storage.users().signUp(user);
+        }
+        return authenticated;
+    }
+
+    /**
+     * User created by implementations of {@link Login}.
+     * @param storage Storage that might be used to create the user.
+     * @return User
+     */
+    User user(final Storage storage);
 
 }

@@ -1,5 +1,6 @@
 package com.selfxdsd.core;
 
+import com.selfxdsd.api.Login;
 import com.selfxdsd.api.Projects;
 import com.selfxdsd.api.Provider;
 import com.selfxdsd.api.User;
@@ -13,7 +14,7 @@ import java.net.URL;
  * @version $Id$
  * @since 0.0.1
  */
-public final class GitlabLogin extends BaseLogin {
+public final class GitlabLogin implements Login {
 
     /**
      * Username from Gitlab.
@@ -49,7 +50,7 @@ public final class GitlabLogin extends BaseLogin {
     }
     
     @Override
-    protected User userCredentials(final Storage storage) {
+    public User user(final Storage storage) {
         return new User() {
 
             private final String token = GitlabLogin.this.gitlabToken;
