@@ -32,15 +32,17 @@ public final class InMemoryContractsTestCase {
         InMemoryContracts contracts = (InMemoryContracts) storage.contracts();
 
         Contract contract = contracts.addContract(project.projectId(),
-            1, BigDecimal.ONE, "DEV");
+            "mihai", "github", BigDecimal.ONE, "DEV");
 
         assertThat(contract.project().projectId(),
             equalTo(project.projectId()));
         assertThat(contract.project().contracts(),
             contains(contract));
 
-        assertThat(contract.contributor().contributorId(),
-            equalTo(1));
+        assertThat(contract.contributor().username(),
+            equalTo("mihai"));
+        assertThat(contract.contributor().provider(),
+            equalTo("github"));
         assertThat(contract.contributor().contracts(),
             contains(contract));
     }
@@ -58,9 +60,9 @@ public final class InMemoryContractsTestCase {
         InMemoryContracts contracts = (InMemoryContracts) storage.contracts();
 
         contracts.addContract(project.projectId(),
-            1, BigDecimal.ONE, "DEV");
+            "mihai", "github", BigDecimal.ONE, "DEV");
         contracts.addContract(project.projectId(),
-            1, BigDecimal.ONE, "DEV");
+            "mihai", "github", BigDecimal.ONE, "DEV");
 
         assertThat(contracts, iterableWithSize(1));
     }
@@ -81,7 +83,7 @@ public final class InMemoryContractsTestCase {
             .thenReturn(List.<Project>of().spliterator());
 
         contracts.addContract(1,
-            1, BigDecimal.ONE, "DEV");
+            "mihai", "github", BigDecimal.ONE, "DEV");
     }
 
 

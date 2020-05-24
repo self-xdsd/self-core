@@ -26,6 +26,7 @@ import com.selfxdsd.api.*;
 import com.selfxdsd.api.storage.Storage;
 import com.selfxdsd.core.contracts.ContributorContracts;
 import com.selfxdsd.core.contracts.ProjectContracts;
+import com.selfxdsd.core.contributors.StoredContributor;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -140,17 +141,19 @@ public final class InMemoryContracts implements Contracts {
 
             @Override
             public String username() {
-                return null;
+                return username;
             }
 
             @Override
             public String provider() {
-                return null;
+                return provider;
             }
 
             @Override
             public Contracts contracts() {
-                return null;
+                return ofContributor(
+                    new StoredContributor(username, provider, null)
+                );
             }
         };
     }
