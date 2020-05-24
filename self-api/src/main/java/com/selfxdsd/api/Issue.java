@@ -20,50 +20,25 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package com.selfxdsd.core;
+package com.selfxdsd.api;
 
-import com.selfxdsd.api.Issues;
-import com.selfxdsd.api.Project;
-import com.selfxdsd.api.storage.Storage;
-import com.selfxdsd.api.User;
-import com.selfxdsd.core.issues.GithubIssues;
-
-import java.net.URI;
+import javax.json.JsonObject;
 
 /**
- * A Github repository.
+ * Issue in a repository.
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
+ * @todo #97:30min Implement Comments::Issue.comments(). This method
+ *  should be the entry point to an Issue's comments and have methods for
+ *  both listing and posting new comments.
  */
-final class GithubRepo extends BaseRepo {
+public interface Issue {
 
     /**
-     * Constructor.
-     * @param owner Owner of this repo.
-     * @param uri URI Pointing to this repo.
-     * @param storage Storage used to save the Project when
-     *  this repo is activated.
+     * The Issue in JSON format as returned by the provider's API.
+     * @return JsonObject.
      */
-    GithubRepo(
-        final User owner,
-        final URI uri,
-        final Storage storage
-    ) {
-        super(owner, uri, storage);
-    }
-
-    @Override
-    public Project activate() {
-        return this.storage().projectManagers().pick(provider()).assign(this);
-    }
-
-    @Override
-    public Issues issues() {
-        return new GithubIssues(
-            URI.create(this.repoUri().toString() + "/issues"),
-            this.storage()
-        );
-    }
+    JsonObject json();
 
 }

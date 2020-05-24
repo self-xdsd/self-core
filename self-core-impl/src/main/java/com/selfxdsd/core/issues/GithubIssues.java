@@ -20,50 +20,56 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package com.selfxdsd.core;
+package com.selfxdsd.core.issues;
 
+import com.selfxdsd.api.Issue;
 import com.selfxdsd.api.Issues;
-import com.selfxdsd.api.Project;
 import com.selfxdsd.api.storage.Storage;
-import com.selfxdsd.api.User;
-import com.selfxdsd.core.issues.GithubIssues;
 
 import java.net.URI;
+import java.util.Iterator;
 
 /**
- * A Github repository.
+ * Issues in a Github repository.
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
+ * @todo #97 Implement and unit test method json() here. It
+ *  should call Github's API to fetch the Issue json and then
+ *  use it to return a GithubIssue. If the API returns 404 or 204,
+ *  then the method should return null.
  */
-final class GithubRepo extends BaseRepo {
+public final class GithubIssues implements Issues {
 
     /**
-     * Constructor.
-     * @param owner Owner of this repo.
-     * @param uri URI Pointing to this repo.
-     * @param storage Storage used to save the Project when
-     *  this repo is activated.
+     * Github repo Issues base uri.
      */
-    GithubRepo(
-        final User owner,
-        final URI uri,
-        final Storage storage
-    ) {
-        super(owner, uri, storage);
+    private URI issuesUri;
+
+    /**
+     * Self storage, in case we want to store something.
+     */
+    private Storage storage;
+
+    /**
+     * Ctor.
+     * @param issuesUri Issues base URI.
+     * @param storage Storage.
+     */
+    public GithubIssues(final URI issuesUri, final Storage storage) {
+        this.issuesUri = issuesUri;
+        this.storage = storage;
     }
 
     @Override
-    public Project activate() {
-        return this.storage().projectManagers().pick(provider()).assign(this);
+    public Issue getById(final int issueId) {
+        throw new UnsupportedOperationException("Not yet implemented.");
     }
 
     @Override
-    public Issues issues() {
-        return new GithubIssues(
-            URI.create(this.repoUri().toString() + "/issues"),
-            this.storage()
+    public Iterator<Issue> iterator() {
+        throw new IllegalStateException(
+            "You cannot iterate over all the issues in a repo."
         );
     }
-
 }

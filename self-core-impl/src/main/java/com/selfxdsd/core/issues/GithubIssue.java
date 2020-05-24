@@ -20,50 +20,57 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package com.selfxdsd.core;
+package com.selfxdsd.core.issues;
 
-import com.selfxdsd.api.Issues;
-import com.selfxdsd.api.Project;
+import com.selfxdsd.api.Issue;
 import com.selfxdsd.api.storage.Storage;
-import com.selfxdsd.api.User;
-import com.selfxdsd.core.issues.GithubIssues;
 
+import javax.json.JsonObject;
 import java.net.URI;
 
 /**
- * A Github repository.
+ * An Issue in a Github repository.
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
+ * @todo #97:30min Write unit tests for this class
+ *  and for GithubRepo.issues.
  */
-final class GithubRepo extends BaseRepo {
+public final class GithubIssue implements Issue {
 
     /**
-     * Constructor.
-     * @param owner Owner of this repo.
-     * @param uri URI Pointing to this repo.
-     * @param storage Storage used to save the Project when
-     *  this repo is activated.
+     * Issue base uri.
      */
-    GithubRepo(
-        final User owner,
-        final URI uri,
+    private final URI issueUri;
+
+    /**
+     * Issue JSON as returned by Github's API.
+     */
+    private final JsonObject json;
+
+    /**
+     * Self storage, in case we want to store something.
+     */
+    private final Storage storage;
+
+    /**
+     * Ctor.
+     * @param issueUri Issues base URI.
+     * @param json Json Issue as returned by Github's API.
+     * @param storage Storage.
+     */
+    public GithubIssue(
+        final URI issueUri,
+        final JsonObject json,
         final Storage storage
     ) {
-        super(owner, uri, storage);
+        this.issueUri = issueUri;
+        this.json = json;
+        this.storage = storage;
     }
 
     @Override
-    public Project activate() {
-        return this.storage().projectManagers().pick(provider()).assign(this);
+    public JsonObject json() {
+        return this.json;
     }
-
-    @Override
-    public Issues issues() {
-        return new GithubIssues(
-            URI.create(this.repoUri().toString() + "/issues"),
-            this.storage()
-        );
-    }
-
 }

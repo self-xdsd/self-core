@@ -20,50 +20,21 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package com.selfxdsd.core;
-
-import com.selfxdsd.api.Issues;
-import com.selfxdsd.api.Project;
-import com.selfxdsd.api.storage.Storage;
-import com.selfxdsd.api.User;
-import com.selfxdsd.core.issues.GithubIssues;
-
-import java.net.URI;
+package com.selfxdsd.api;
 
 /**
- * A Github repository.
+ * Issues in a repository.
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
  */
-final class GithubRepo extends BaseRepo {
+public interface Issues extends Iterable<Issue> {
 
     /**
-     * Constructor.
-     * @param owner Owner of this repo.
-     * @param uri URI Pointing to this repo.
-     * @param storage Storage used to save the Project when
-     *  this repo is activated.
+     * Get an Issue.
+     * @param issueId Issue's ID.
+     * @return Issue or null if it's not found.
      */
-    GithubRepo(
-        final User owner,
-        final URI uri,
-        final Storage storage
-    ) {
-        super(owner, uri, storage);
-    }
-
-    @Override
-    public Project activate() {
-        return this.storage().projectManagers().pick(provider()).assign(this);
-    }
-
-    @Override
-    public Issues issues() {
-        return new GithubIssues(
-            URI.create(this.repoUri().toString() + "/issues"),
-            this.storage()
-        );
-    }
+    Issue getById(final int issueId);
 
 }

@@ -124,6 +124,14 @@ abstract class BaseRepo implements Repo {
         return this.storage;
     }
 
+    /**
+     * Get the URI.
+     * @return URI.
+     */
+    URI repoUri() {
+        return this.uri;
+    }
+
     @Override
     public abstract Project activate();
 

@@ -22,6 +22,7 @@
  */
 package com.selfxdsd.core;
 
+import com.selfxdsd.api.Issues;
 import com.selfxdsd.api.Project;
 import com.selfxdsd.api.User;
 import com.selfxdsd.api.storage.Storage;
@@ -54,6 +55,11 @@ final class GitlabRepo extends BaseRepo {
     @Override
     public Project activate() {
         return this.storage().projectManagers().pick(provider()).assign(this);
+    }
+
+    @Override
+    public Issues issues() {
+        throw new UnsupportedOperationException("Not yet implemented.");
     }
 
 }
