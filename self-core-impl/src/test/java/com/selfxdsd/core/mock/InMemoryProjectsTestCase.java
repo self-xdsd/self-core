@@ -33,7 +33,7 @@ public final class InMemoryProjectsTestCase {
     public void projectRegister() {
         final Storage storage = new InMemory();
         ProjectManager projectManager = storage
-                .projectManagers().pick();
+                .projectManagers().pick("github");
         final Project registered = storage.projects().register(
                 mock(Repo.class), projectManager);
 
@@ -50,7 +50,7 @@ public final class InMemoryProjectsTestCase {
     public void projectRegisterForTwoProjects() {
         final Storage storage = new InMemory();
         ProjectManager projectManager = storage
-                .projectManagers().pick();
+                .projectManagers().pick("github");
         InMemoryProjects projects = (InMemoryProjects)
                 storage.projects();
         Project first = projects.register(
@@ -70,7 +70,7 @@ public final class InMemoryProjectsTestCase {
         final Storage storage = new InMemory();
         InMemoryProjects projects = (InMemoryProjects) storage.projects();
         ProjectManager projectManager = storage
-                .projectManagers().pick();
+                .projectManagers().pick("github");
         Project project = projects.register(mock(Repo.class), projectManager);
         List<Project> ProjectList = new ArrayList<>();
         ProjectList.add(project);
