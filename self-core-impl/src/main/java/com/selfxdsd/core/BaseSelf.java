@@ -58,7 +58,7 @@ abstract class BaseSelf implements Self {
 
     @Override
     public User login(final Login login) {
-        return login.signUp(storage);
+        return login.signUp(storage());
     }
 
 }

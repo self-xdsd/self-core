@@ -5,11 +5,12 @@ import com.selfxdsd.api.Self;
 import com.selfxdsd.api.User;
 import com.selfxdsd.api.storage.Storage;
 import com.selfxdsd.core.mock.InMemory;
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
 import org.junit.Test;
 
 import java.net.URL;
+
+import static org.hamcrest.MatcherAssert.*;
+import static org.hamcrest.Matchers.*;
 
 /**
  * Unit tests for {@link GitlabLogin}.
@@ -31,25 +32,19 @@ public final class GitlabLoginTestCase {
             "amihaiemil", "amihaiemil@gmail.com",
             new URL("https://gravatar.com/amihaiemil"), "gl123token"
         );
+
         final User amihaiemil = self.login(gitlabLogin);
-        MatcherAssert.assertThat(
-            amihaiemil.username(),
-            Matchers.equalTo("amihaiemil")
-        );
-        MatcherAssert.assertThat(
-            amihaiemil.provider(),
-            Matchers.instanceOf(Gitlab.class)
-        );
-        MatcherAssert.assertThat(
-            amihaiemil.provider().name(),
-            Matchers.equalTo("gitlab")
-        );
-        MatcherAssert.assertThat(
-            storage.users(), Matchers.iterableWithSize(1)
-        );
-        MatcherAssert.assertThat(
-            storage.users().user("amihaiemil", "gitlab").username(),
-            Matchers.equalTo("amihaiemil")
-        );
+        assertThat(amihaiemil.username(), equalTo("amihaiemil"));
+        assertThat(amihaiemil.email(), equalTo("amihaiemil@gmail.com"));
+        assertThat(amihaiemil.avatar(),
+            equalTo(new URL("https://gravatar.com/amihaiemil")));
+        assertThat(amihaiemil.provider(), instanceOf(Gitlab.class));
+        assertThat(amihaiemil.provider().name(), equalTo("gitlab"));
+
+        assertThat(storage.users(), iterableWithSize(1));
+        assertThat(storage.users().user("amihaiemil", "gitlab")
+            .username(),
+            equalTo("amihaiemil"));
+
     }
 }
