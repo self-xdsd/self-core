@@ -20,9 +20,6 @@ import static org.mockito.Mockito.when;
  * @author hpetrila
  * @version $Id$
  * @since 0.0.1
- * @todo #39:30min Continue writing unit tests for the InMemory storage
- *  infrastructure. In the end all classes and methods should be covered
- *  with unit tests so we can rely 100% on them.
  */
 public final class InMemoryProjectsTestCase {
 
