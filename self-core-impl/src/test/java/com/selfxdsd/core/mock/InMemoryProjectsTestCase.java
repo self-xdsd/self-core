@@ -20,6 +20,8 @@ import static org.mockito.Mockito.when;
  * @author hpetrila
  * @version $Id$
  * @since 0.0.1
+ * @todo #96:30min Continue tests for {@link Projects#getProjectById(int)}
+ *  in PmProjectsTestCase and UserProjectsTestCase.
  */
 public final class InMemoryProjectsTestCase {
 
@@ -79,6 +81,37 @@ public final class InMemoryProjectsTestCase {
                 userprojects.ownedBy(this.mockUser(
                         "mihai", "github")),
                 Matchers.iterableWithSize(1));
+    }
+
+    /**
+     * Check if the right project is returned.
+     */
+    @Test
+    public void getProjectById() {
+        final Storage storage = new InMemory();
+        ProjectManager projectManager = storage
+                .projectManagers().pick("github");
+        InMemoryProjects projects = (InMemoryProjects)
+                storage.projects();
+        projects.register(mock(Repo.class), projectManager);
+        projects.register(mock(Repo.class), projectManager);
+        Project project = projects.getProjectById(1);
+        assertThat(project.projectId(), equalTo(1));
+    }
+
+    /**
+     * Check if no project is returned when id is not found.
+     */
+    @Test
+    public void getProjectByNotFoundId() {
+        final Storage storage = new InMemory();
+        ProjectManager projectManager = storage
+                .projectManagers().pick("github");
+        InMemoryProjects projects = (InMemoryProjects)
+                storage.projects();
+        projects.register(mock(Repo.class), projectManager);
+        Project project = projects.getProjectById(-1);
+        assertThat(project, nullValue());
     }
 
     /**
