@@ -22,15 +22,10 @@
  */
 package com.selfxdsd.core;
 
-import com.selfxdsd.api.Provider;
-import com.selfxdsd.api.User;
 import com.selfxdsd.api.storage.Storage;
-import com.selfxdsd.api.Projects;
-
-import java.net.URL;
 
 /**
- * Self operating at Github.
+ * Self core implementation.
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
@@ -46,95 +41,4 @@ public final class SelfCore extends BaseSelf {
         super(storage);
     }
 
-    @Override
-    public User githubLogin(
-        final String username, final String email,
-        final URL avatar, final String githubToken
-    ) {
-        return this.signUp(
-            new User() {
-                private final String token = githubToken;
-
-                @Override
-                public String username() {
-                    return username;
-                }
-
-                @Override
-                public String email() {
-                    return email;
-                }
-
-                @Override
-                public URL avatar() {
-                    return avatar;
-                }
-
-                @Override
-                public Provider provider() {
-                    return new Github(this, SelfCore.this.storage());
-                }
-
-                @Override
-                public Projects projects() {
-                    return SelfCore.this.storage().projects().ownedBy(this);
-                }
-            }
-        );
-    }
-
-    @Override
-    public User gitlabLogin(
-        final String username, final String email,
-        final URL avatar, final String gitLabToken
-    ) {
-        return this.signUp(
-            new User() {
-                private final String token = gitLabToken;
-
-                @Override
-                public String username() {
-                    return username;
-                }
-
-                @Override
-                public String email() {
-                    return email;
-                }
-
-                @Override
-                public URL avatar() {
-                    return avatar;
-                }
-
-                @Override
-                public Provider provider() {
-                    return new Gitlab(this, SelfCore.this.storage());
-                }
-
-                @Override
-                public Projects projects() {
-                    return SelfCore.this.storage().projects().ownedBy(this);
-                }
-            }
-        );
-    }
-
-    /**
-     * Sign up a given user. Check if we already have him/her
-     * in the Storage (from a previous authentication) and register him/her
-     * if we do not.
-     * @param user User to sing up.
-     * @return User.
-     */
-    private User signUp(final User user) {
-        final Storage storage = this.storage();
-        User authenticated = storage.users().user(
-            user.username(), user.provider().name()
-        );
-        if(authenticated == null) {
-            authenticated = storage.users().signUp(user);
-        }
-        return authenticated;
-    }
 }

@@ -22,7 +22,9 @@
  */
 package com.selfxdsd.core;
 
+import com.selfxdsd.api.Login;
 import com.selfxdsd.api.Self;
+import com.selfxdsd.api.User;
 import com.selfxdsd.api.storage.Storage;
 
 /**
@@ -53,4 +55,10 @@ abstract class BaseSelf implements Self {
     Storage storage() {
         return this.storage;
     }
+
+    @Override
+    public User login(final Login login) {
+        return login.signUp(storage);
+    }
+
 }

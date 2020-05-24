@@ -22,8 +22,6 @@
  */
 package com.selfxdsd.api;
 
-import java.net.URL;
-
 /**
  * The Self Platform. This is the highest abstraction.
  * @author Mihai Andronache (amihaiemil@gmail.com)
@@ -33,31 +31,12 @@ import java.net.URL;
 public interface Self {
 
     /**
-     * Get the User authenticated via Github OAuth2.
-     * @param username Username from Github.
-     * @param email Email from Github.
-     * @param avatar Avatar URL from Github.
-     * @param githubToken Github Access token.
-     * @return User.
-     * @checkstyle ParameterNumber (10 lines)
+     * Get the User authenticated via a {@link Login} strategy.
+     * This strategy might be a github login, gitlab login or any
+     * other platform login used by Self clients.
+     * @param login Login strategy
+     * @return An authenticated User.
      */
-    User githubLogin(
-        final String username, final String email,
-        final URL avatar, final String githubToken
-    );
-
-    /**
-     * Get the User authenticated via GitLab OAuth2.
-     * @param username Username from GitLab.
-     * @param email Email from GitLab.
-     * @param avatar Avatar URL from GitLab.
-     * @param gitLabToken GitLab Access token.
-     * @return User.
-     * @checkstyle ParameterNumber (10 lines)
-     */
-    User gitlabLogin(
-        final String username, final String email,
-        final URL avatar, final String gitLabToken
-    );
+    User login(final Login login);
 
 }

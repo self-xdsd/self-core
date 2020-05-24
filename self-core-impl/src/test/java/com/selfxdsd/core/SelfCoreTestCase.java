@@ -22,6 +22,7 @@
  */
 package com.selfxdsd.core;
 
+import com.selfxdsd.api.Login;
 import com.selfxdsd.api.Self;
 import com.selfxdsd.api.storage.Storage;
 import com.selfxdsd.api.User;
@@ -48,10 +49,11 @@ public final class SelfCoreTestCase {
     public void githubLoginWorks() throws Exception {
         final Storage storage = new InMemory();
         final Self self = new SelfCore(storage);
-        final User amihaiemil = self.githubLogin(
+        final Login githubLogin = new GithubLogin(
             "amihaiemil", "amihaiemil@gmail.com",
             new URL("https://gravatar.com/amihaiemil"), "gh123token"
         );
+        final User amihaiemil = self.login(githubLogin);
         MatcherAssert.assertThat(
             amihaiemil.username(),
             Matchers.equalTo("amihaiemil")
@@ -81,10 +83,11 @@ public final class SelfCoreTestCase {
     public void gitlabLoginWorks() throws Exception {
         final Storage storage = new InMemory();
         final Self self = new SelfCore(storage);
-        final User amihaiemil = self.gitlabLogin(
+        final Login gitlabLogin = new GitlabLogin(
             "amihaiemil", "amihaiemil@gmail.com",
             new URL("https://gravatar.com/amihaiemil"), "gl123token"
         );
+        final User amihaiemil = self.login(gitlabLogin);
         MatcherAssert.assertThat(
             amihaiemil.username(),
             Matchers.equalTo("amihaiemil")
