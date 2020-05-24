@@ -1,9 +1,12 @@
 package com.selfxdsd.core.mock;
 
+import com.selfxdsd.api.ProjectManager;
+import com.selfxdsd.api.ProjectManagers;
 import com.selfxdsd.api.storage.Storage;
 import org.junit.Test;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
+import static org.mockito.Mockito.mock;
 
 /**
  * Unit tests for class {@link InMemoryProjectManagers}.
@@ -61,5 +64,42 @@ public final class InMemoryProjectManagersTestCase {
 
     }
 
+    /**
+     * Register a project manager.
+     */
+    @Test
+    public void registerProjectManager() {
+        final ProjectManagers projectManagers = new InMemoryProjectManagers(
+            mock(Storage.class));
+        projectManagers.register("foo-provider", "122token");
+        assertThat(
+            "Should have pms for: github, gitlab, foo-provider",
+            projectManagers, iterableWithSize(3));
+    }
+
+    /**
+     * Get the registered project manager by id.
+     */
+    @Test
+    public void findRegisteredProjectManagerById() {
+        final ProjectManagers projectManagers = new InMemoryProjectManagers(
+            mock(Storage.class));
+        final ProjectManager projectManager = projectManagers
+            .register("foo-provider", "122token");
+        assertThat(projectManagers.getById(3), equalTo(projectManager));
+    }
+
+    /**
+     * Get the registered project manager by provider name.
+     */
+    @Test
+    public void findRegisteredProjectManagerByProvider() {
+        final ProjectManagers projectManagers = new InMemoryProjectManagers(
+            mock(Storage.class));
+        final ProjectManager projectManager = projectManagers
+            .register("foo-provider", "122token");
+        assertThat(projectManagers.pick("foo-provider"),
+            equalTo(projectManager));
+    }
 
 }

@@ -32,13 +32,10 @@ import java.util.Map;
 
 /**
  * In memory PMs for testing purposes.
+ *
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
- * @todo #69:20min Add to the ability for {@link ProjectManagers} to add a
- *  project manager `addProjectManager(...)` and then test that using
- *  {@link InMemoryProjectManagers#getById(int)} and
- *  {@link InMemoryProjectManagers#pick(String)}
  */
 public final class InMemoryProjectManagers implements ProjectManagers {
 
@@ -53,19 +50,19 @@ public final class InMemoryProjectManagers implements ProjectManagers {
     private final Map<Integer, ProjectManager> pms = new HashMap<>();
 
     /**
+     * ProjectManagers' id counter.
+     */
+    private int idCounter;
+
+    /**
      * Constructor.
+     *
      * @param storage Parent storage.
      */
     public InMemoryProjectManagers(final Storage storage) {
         this.storage = storage;
-        this.pms.put(
-            1,
-            new StoredProjectManager(1, "github", "123token", storage)
-        );
-        this.pms.put(
-            2,
-            new StoredProjectManager(2, "gitlab", "123token", storage)
-        );
+        register("github", "123token");
+        register("gitlab", "123token");
     }
 
     @Override
@@ -84,5 +81,15 @@ public final class InMemoryProjectManagers implements ProjectManagers {
             .filter(pm -> pm.provider().equals(provider))
             .findFirst()
             .orElse(null);
+    }
+
+    @Override
+    public ProjectManager register(final String provider,
+                                   final String accessToken) {
+        final int id = ++idCounter;
+        final StoredProjectManager projectManager = new StoredProjectManager(
+            id, provider, accessToken, storage);
+        pms.put(id, projectManager);
+        return projectManager;
     }
 }
