@@ -20,32 +20,63 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package com.selfxdsd.api;
+package com.selfxdsd.core.contributors;
+
+import com.selfxdsd.api.Contracts;
+import com.selfxdsd.api.Contributor;
+import com.selfxdsd.api.storage.Storage;
 
 /**
- * A Contributor. Username + provider = PK.
+ * A Contributor stored in Self.
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
  */
-public interface Contributor {
+public final class StoredContributor implements Contributor {
 
     /**
-     * The contributor's username.
-     * @return Integer.
+     * Username.
      */
-    String username();
+    private final String username;
 
     /**
-     * The provider (github, gitlab etc).
-     * @return Provider's name.
+     * Provider.
      */
-    String provider();
+    private final String provider;
 
     /**
-     * This contributor's Project Contracts.
-     * @return Contracts
+     * Self's Storage.
      */
-    Contracts contracts();
+    private final Storage storage;
 
+    /**
+     * Constructor.
+     * @param username Username.
+     * @param provider Provider.
+     * @param storage Storage.
+     */
+    public StoredContributor(
+        final String username,
+        final String provider,
+        final Storage storage
+    ) {
+        this.username = username;
+        this.provider = provider;
+        this.storage = storage;
+    }
+
+    @Override
+    public String username() {
+        return this.username;
+    }
+
+    @Override
+    public String provider() {
+        return this.provider;
+    }
+
+    @Override
+    public Contracts contracts() {
+        return this.storage.contracts().ofContributor(this);
+    }
 }

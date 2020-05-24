@@ -26,6 +26,8 @@ import com.selfxdsd.api.Contract;
 import com.selfxdsd.api.Contracts;
 import com.selfxdsd.api.Contributor;
 import com.selfxdsd.api.Project;
+import com.selfxdsd.api.storage.Storage;
+import com.selfxdsd.core.contributors.StoredContributor;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -50,13 +52,17 @@ public final class ContributorContractsTestCase {
     @Test
     public void returnsContractsOfProject() {
         final List<Contract> list = new ArrayList<>();
-        list.add(this.mockContract(1, 1));
-        list.add(this.mockContract(1, 2));
-        list.add(this.mockContract(1, 1));
-        list.add(this.mockContract(1, 3));
-        list.add(this.mockContract(1, 4));
-        list.add(this.mockContract(1, 1));
-        final Contracts contracts = new ContributorContracts(1, list);
+        list.add(this.mockContract("mihai", "github", 1));
+        list.add(this.mockContract("mihai", "github", 2));
+        list.add(this.mockContract("mihai", "github", 1));
+        list.add(this.mockContract("mihai", "github", 3));
+        list.add(this.mockContract("mihai", "github", 1));
+        final Contracts contracts = new ContributorContracts(
+            new StoredContributor(
+                "mihai", "github", Mockito.mock(Storage.class)
+            ),
+            list
+        );
         MatcherAssert.assertThat(
             contracts.ofProject(1),
             Matchers.iterableWithSize(3)
@@ -70,11 +76,21 @@ public final class ContributorContractsTestCase {
             Matchers.emptyIterable()
         );
         MatcherAssert.assertThat(
-            new ContributorContracts(1, new ArrayList<>()).ofProject(10),
+            new ContributorContracts(
+                new StoredContributor(
+                "mihai", "github", Mockito.mock(Storage.class)
+                ),
+                new ArrayList<>()
+            ).ofProject(10),
             Matchers.emptyIterable()
         );
         MatcherAssert.assertThat(
-            new ContributorContracts(1, new ArrayList<>()).ofProject(10),
+            new ContributorContracts(
+                new StoredContributor(
+                "mihai", "github", Mockito.mock(Storage.class)
+                ),
+                new ArrayList<>()
+            ).ofProject(10),
             Matchers.instanceOf(ProjectContracts.class)
         );
     }
@@ -86,10 +102,21 @@ public final class ContributorContractsTestCase {
     @Test
     public void ofContributorReturnsItself() {
         final Contracts contracts = new ContributorContracts(
-            1, new ArrayList<>()
+            new StoredContributor(
+                "mihai",
+                "github",
+                Mockito.mock(Storage.class)
+            ),
+            new ArrayList<>()
         );
         MatcherAssert.assertThat(
-            contracts.ofContributor(1),
+            contracts.ofContributor(
+                new StoredContributor(
+                    "mihai",
+                    "github",
+                    Mockito.mock(Storage.class)
+                )
+            ),
             Matchers.is(contracts)
         );
     }
@@ -101,9 +128,20 @@ public final class ContributorContractsTestCase {
     @Test(expected = IllegalStateException.class)
     public void ofContributorComplainsWhenDifferentId() {
         final Contracts contracts = new ContributorContracts(
-            1, new ArrayList<>()
+            new StoredContributor(
+                "mihai",
+                "github",
+                Mockito.mock(Storage.class)
+            ),
+            new ArrayList<>()
         );
-        contracts.ofContributor(2);
+        contracts.ofContributor(
+            new StoredContributor(
+                "vlad",
+                "gitlab",
+                Mockito.mock(Storage.class)
+            )
+        );
     }
 
     /**
@@ -117,12 +155,15 @@ public final class ContributorContractsTestCase {
         list.add(Mockito.mock(Contract.class));
 
         MatcherAssert.assertThat(
-            new ContributorContracts(1, list),
+            new ContributorContracts(Mockito.mock(Contributor.class), list),
             Matchers.iterableWithSize(3)
         );
 
         MatcherAssert.assertThat(
-            new ContributorContracts(1, new ArrayList<>()),
+            new ContributorContracts(
+                Mockito.mock(Contributor.class),
+                new ArrayList<>()
+            ),
             Matchers.emptyIterable()
         );
     }
@@ -133,21 +174,32 @@ public final class ContributorContractsTestCase {
      */
     @Test(expected = UnsupportedOperationException.class)
     public void addContract(){
-        new ContributorContracts(0, List.of())
-            .addContract(1, 1, BigDecimal.TEN, "DEV");
+        new ContributorContracts(Mockito.mock(Contributor.class), List.of())
+            .addContract(
+                1,
+                "mihai",
+                "github",
+                BigDecimal.TEN,
+                "DEV");
     }
 
     /**
      * Mock a Contract for test.
-     * @param contributorId Contributor's ID.
+     * @param contributorUsername Contributor's username.
+     * @param contributorProvider Contributor's provider.
      * @param projectId Project's ID.
      * @return Contract.
      */
     private Contract mockContract(
-        final int contributorId, final int projectId
+        final String contributorUsername,
+        final String contributorProvider,
+        final int projectId
     ) {
-        final Contributor contributor = Mockito.mock(Contributor.class);
-        Mockito.when(contributor.contributorId()).thenReturn(contributorId);
+        final Contributor contributor = new StoredContributor(
+            contributorUsername,
+            contributorProvider,
+            Mockito.mock(Storage.class)
+        );
 
         final Project project = Mockito.mock(Project.class);
         Mockito.when(project.projectId()).thenReturn(projectId);

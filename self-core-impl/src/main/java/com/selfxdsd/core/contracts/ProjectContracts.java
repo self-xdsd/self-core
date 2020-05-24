@@ -24,6 +24,7 @@ package com.selfxdsd.core.contracts;
 
 import com.selfxdsd.api.Contract;
 import com.selfxdsd.api.Contracts;
+import com.selfxdsd.api.Contributor;
 
 import java.math.BigDecimal;
 import java.util.Iterator;
@@ -75,32 +76,29 @@ public final class ProjectContracts implements Contracts {
     }
 
     @Override
-    public Contracts ofContributor(final int contributorId) {
+    public Contracts ofContributor(final Contributor contributor) {
         final List<Contract> ofContributor = this.contracts
             .stream()
             .filter(
-                //@checkstyle LineLength (1 line)
-                contract -> contract.contributor().contributorId() == contributorId
+                contract -> {
+                    return contract
+                        .contributor()
+                        .username()
+                        .equals(contributor.username())
+                        && contract
+                            .contributor()
+                            .provider()
+                            .equals(contributor.provider());
+                }
             )
             .collect(Collectors.toList());
-        return new ContributorContracts(contributorId, ofContributor);
+        return new ContributorContracts(contributor, ofContributor);
     }
 
-    /**
-     * Adds a contract based on valid projectId and contributorId.
-     * If either one of ids is invalid, an exception will be thrown.
-     *
-     * @param projectId Valid project id
-     * @param contributorId Valid contributor id
-     * @param hourlyRate Contract's hourly rate
-     * @param role Contract's role
-     * @return Contract
-     * @checkstyle ParameterNumber (10 lines)
-     * @checkstyle HiddenField (10 lines)
-     */
     @Override
     public Contract addContract(final int projectId,
-                                final int contributorId,
+                                final String contributorUsername,
+                                final String contributorProvider,
                                 final BigDecimal hourlyRate,
                                 final String role) {
         throw new UnsupportedOperationException("Not yet implemented");
