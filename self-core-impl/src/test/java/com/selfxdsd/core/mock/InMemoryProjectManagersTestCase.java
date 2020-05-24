@@ -26,7 +26,7 @@ public final class InMemoryProjectManagersTestCase {
         InMemoryProjectManagers inMemoryPm =
                 new InMemoryProjectManagers(storage);
         assertThat(inMemoryPm.getById(1),
-                is(inMemoryPm.pick()));
+                is(inMemoryPm.pick("github")));
     }
 
     /**
@@ -36,7 +36,7 @@ public final class InMemoryProjectManagersTestCase {
     public void getInexistentProjectManagerById() {
         final Storage storage = new InMemory();
         new InMemoryProjectManagers(storage);
-        assertThat(storage.projectManagers().getById(2), equalTo(null));
+        assertThat(storage.projectManagers().getById(3), equalTo(null));
     }
 
     /**
@@ -47,7 +47,7 @@ public final class InMemoryProjectManagersTestCase {
         final Storage storage = new InMemory();
         new InMemoryProjectManagers(storage);
         new InMemoryProjectManagers(storage);
-        assertThat(storage.projectManagers().getById(2), equalTo(null));
+        assertThat(storage.projectManagers().getById(3), equalTo(null));
     }
 
     /**
@@ -57,7 +57,7 @@ public final class InMemoryProjectManagersTestCase {
         final Storage storage = new InMemory();
         InMemoryProjectManagers inMemoryPm =
                 new InMemoryProjectManagers(storage);
-        assertThat(inMemoryPm.pick(),
+        assertThat(inMemoryPm.pick("github"),
                 is(inMemoryPm.getById(1)));
 
     }
