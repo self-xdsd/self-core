@@ -8,10 +8,12 @@ import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.mockito.Mockito;
+
 import java.math.BigDecimal;
 
 /**
  * Unit tests for {@link StoredContract}.
+ *
  * @author hpetrila
  * @version $Id$
  * @since 0.0.1
@@ -22,13 +24,13 @@ public final class StoredContractTestCase {
      * StoredContract returns its id.
      */
     @Test
-    public void returnsProject(){
+    public void returnsProject() {
         final Project project = Mockito.mock(Project.class);
         final Contract contract = new StoredContract(
-                project,
-                Mockito.mock(Contributor.class),
-                BigDecimal.ONE, "DEV",
-                Mockito.mock(Storage.class)
+            project,
+            Mockito.mock(Contributor.class),
+            BigDecimal.ONE, "DEV",
+            Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(contract.project(), Matchers.is(project));
     }
@@ -37,46 +39,45 @@ public final class StoredContractTestCase {
      * StoredContract returns its contributor.
      */
     @Test
-    public void returnsContributor(){
+    public void returnsContributor() {
         final Contributor contributor = Mockito.mock(Contributor.class);
         final Contract contract = new StoredContract(
-                Mockito.mock(Project.class),
-                contributor,
-                BigDecimal.ONE, "DEV",
-                Mockito.mock(Storage.class)
+            Mockito.mock(Project.class),
+            contributor,
+            BigDecimal.ONE, "DEV",
+            Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(
-                contract.contributor(),
-                Matchers.is(contributor));
+            contract.contributor(),
+            Matchers.is(contributor));
     }
 
     /**
      * StoredContract returns its hourly rate.
      */
     @Test
-    public void returnsHourlyRate(){
+    public void returnsHourlyRate() {
         final Contract contract = new StoredContract(
-                Mockito.mock(Project.class),
-                Mockito.mock(Contributor.class),
-                BigDecimal.ONE, "DEV",
-                Mockito.mock(Storage.class)
+            Mockito.mock(Project.class),
+            Mockito.mock(Contributor.class),
+            BigDecimal.ONE, "DEV",
+            Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(
-                contract.hourlyRate(),
-                Matchers.equalTo(BigDecimal.ONE));
+            contract.hourlyRate(),
+            Matchers.equalTo(BigDecimal.ONE));
     }
 
     /**
      * StoredContract returns its role.
      */
     @Test
-    public void returnsRole(){
+    public void returnsRole() {
         final Contract contract = new StoredContract(
-                Mockito.mock(Project.class),
-                Mockito.mock(Contributor.class),
-                BigDecimal.ONE, "DEV",
-                Mockito.mock(Storage.class)
-        );
+            Mockito.mock(Project.class),
+            Mockito.mock(Contributor.class),
+            BigDecimal.ONE, "DEV",
+            Mockito.mock(Storage.class));
         MatcherAssert.assertThat(contract.role(), Matchers.equalTo("DEV"));
     }
 }

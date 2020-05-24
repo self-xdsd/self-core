@@ -26,6 +26,7 @@ import com.selfxdsd.api.*;
 import com.selfxdsd.api.storage.Storage;
 import com.selfxdsd.core.contracts.ContributorContracts;
 import com.selfxdsd.core.contracts.ProjectContracts;
+import com.selfxdsd.core.contracts.StoredContract;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -80,27 +81,14 @@ public final class InMemoryContracts implements Contracts {
             final Contributor contributor = this.storage.contributors()
                 .getById(contributorUsername, contributorProvider);
             if (project != null && contributor != null) {
-                contract = new Contract() {
-                    @Override
-                    public Project project() {
-                        return project;
-                    }
+                contract = new StoredContract(
+                        project,
+                        contributor,
+                        hourlyRate,
+                        role,
+                        storage
+                        );
 
-                    @Override
-                    public Contributor contributor() {
-                        return contributor;
-                    }
-
-                    @Override
-                    public BigDecimal hourlyRate() {
-                        return hourlyRate;
-                    }
-
-                    @Override
-                    public String role() {
-                        return role;
-                    }
-                };
                 this.contracts.put(key, contract);
             } else {
                 if(project == null) {
