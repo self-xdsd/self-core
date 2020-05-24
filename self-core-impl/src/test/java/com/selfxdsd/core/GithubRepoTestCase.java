@@ -22,6 +22,7 @@
  */
 package com.selfxdsd.core;
 
+import com.selfxdsd.api.Provider;
 import com.selfxdsd.api.Repo;
 import com.selfxdsd.api.storage.Storage;
 import com.selfxdsd.api.User;
@@ -32,6 +33,8 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import java.net.URI;
+
+import static org.mockito.Mockito.when;
 
 /**
  * Unit tests for {@link GithubRepo}.
@@ -72,8 +75,12 @@ public final class GithubRepoTestCase {
             Matchers.iterableWithSize(0)
         );
 
+        final User user = Mockito.mock(User.class);
+        final Provider provider = Mockito.mock(Provider.class);
+        when(provider.name()).thenReturn("github");
+        when(user.provider()).thenReturn(provider);
         final Repo repo = new GithubRepo(
-            Mockito.mock(User.class),
+            user,
             URI.create("http://localhost:8080"),
             storage
         );

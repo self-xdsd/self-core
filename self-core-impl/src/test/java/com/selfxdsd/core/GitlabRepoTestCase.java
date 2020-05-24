@@ -1,5 +1,6 @@
 package com.selfxdsd.core;
 
+import com.selfxdsd.api.Provider;
 import com.selfxdsd.api.Repo;
 import com.selfxdsd.api.User;
 import com.selfxdsd.api.storage.Storage;
@@ -10,6 +11,8 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import java.net.URI;
+
+import static org.mockito.Mockito.when;
 
 /**
  * Unit tests for {@link GitlabRepo}.
@@ -52,8 +55,12 @@ public final class GitlabRepoTestCase {
                 Matchers.iterableWithSize(0)
         );
 
+        final User user = Mockito.mock(User.class);
+        final Provider provider = Mockito.mock(Provider.class);
+        when(provider.name()).thenReturn("gitlab");
+        when(user.provider()).thenReturn(provider);
         final Repo repo = new GitlabRepo(
-                Mockito.mock(User.class),
+                user,
                 URI.create("http://localhost:8080"),
                 storage
         );

@@ -56,8 +56,4 @@ final class GitlabRepo extends BaseRepo {
         return this.storage().projectManagers().pick(provider()).assign(this);
     }
 
-    @Override
-    public String provider() {
-        return "gitlab";
-    }
 }

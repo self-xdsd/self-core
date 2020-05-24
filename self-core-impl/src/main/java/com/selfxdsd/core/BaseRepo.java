@@ -127,4 +127,9 @@ abstract class BaseRepo implements Repo {
     @Override
     public abstract Project activate();
 
+    @Override
+    public String provider() {
+        return owner().provider().name();
+    }
+
 }

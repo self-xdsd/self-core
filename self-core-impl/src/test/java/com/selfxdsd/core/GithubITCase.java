@@ -87,7 +87,10 @@ public final class GithubITCase {
      */
     @Test
     public void assignsRepoToManager() {
+        final Provider provider = Mockito.mock(Provider.class);
+        Mockito.when(provider.name()).thenReturn("github");
         final User user = Mockito.mock(User.class);
+        Mockito.when(user.provider()).thenReturn(provider);
         Mockito.when(user.username()).thenReturn("amihaiemil");
         final Storage storage = new InMemory();
 
