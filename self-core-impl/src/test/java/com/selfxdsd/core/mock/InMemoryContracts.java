@@ -63,27 +63,21 @@ public final class InMemoryContracts implements Contracts {
         this.storage = storage;
     }
 
-    /**
-     * Adds a contract based on valid projectId and contributorId.
-     * If either one of ids is invalid, an exception will be thrown.
-     *
-     * @param projectId Valid project id
-     * @param contributorId Valid contributor id
-     * @param hourlyRate Contract's hourly rate
-     * @param role Contract's role
-     * @return Contract
-     * @checkstyle ParameterNumber (10 lines)
-     */
     @Override
     public Contract addContract(final int projectId,
-                                final int contributorId,
+                                final String contributorUsername,
+                                final String contributorProvider,
                                 final BigDecimal hourlyRate,
                                 final String role) {
-        final ContractKey key = new ContractKey(projectId, contributorId);
+        final ContractKey key = new ContractKey(
+            projectId, contributorUsername, contributorProvider
+        );
         Contract contract = contracts.get(key);
         if(contract == null) {
             final Project project = getProjectById(projectId);
-            final Contributor contributor = getContributorById(contributorId);
+            final Contributor contributor = getContributorById(
+                contributorUsername, contributorProvider
+            );
             if (project != null && contributor != null) {
                 contract = new Contract() {
                     @Override
@@ -133,15 +127,25 @@ public final class InMemoryContracts implements Contracts {
      * Get a contributor from storage by id,
      * or null if contributor is not found.
      *
-     * @param contributorId Contributor id
+     * @param username Contributor's username.
+     * @param provider Contributor's provider.
      * @return Found Contributor or null
      */
-    private Contributor getContributorById(final int contributorId) {
+    private Contributor getContributorById(
+        final String username,
+        final String provider
+    ) {
         //placeholder until there is a way to get contributors from storage API
         return new Contributor() {
+
             @Override
-            public int contributorId() {
-                return contributorId;
+            public String username() {
+                return null;
+            }
+
+            @Override
+            public String provider() {
+                return null;
             }
 
             @Override
@@ -188,19 +192,30 @@ public final class InMemoryContracts implements Contracts {
          */
         final int projectId;
         /**
-         * Contributor.
+         * Contributor's username.
          */
-        final int contributorId;
+        final String contributorUsername;
+
+        /**
+         * Contributor's provider.
+         */
+        final String contributorProvider;
 
         /**
          * Constructor.
          *
          * @param projectId Project ID.
-         * @param contributorId Contributor ID.
-         */
-        ContractKey(final int projectId, final int contributorId) {
+         * @param contributorUsername Contributor's username.
+         * @param contributorProvider Contributor's provider.
+         * */
+        ContractKey(
+            final int projectId,
+            final String contributorUsername,
+            final String contributorProvider
+        ) {
             this.projectId = projectId;
-            this.contributorId = contributorId;
+            this.contributorUsername = contributorUsername;
+            this.contributorProvider = contributorProvider;
         }
 
         @Override
@@ -214,12 +229,17 @@ public final class InMemoryContracts implements Contracts {
             final InMemoryContracts.ContractKey contractKey =
                 (InMemoryContracts.ContractKey) object;
             return this.projectId == contractKey.projectId
-                && this.contributorId == contractKey.contributorId;
+                && this.contributorUsername.equals(contractKey.contributorUsername)
+                && this.contributorProvider.equals(contractKey.contributorProvider);
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(this.projectId, this.contributorId);
+            return Objects.hash(
+                this.projectId,
+                this.contributorUsername,
+                this.contributorProvider
+            );
         }
     }
 }

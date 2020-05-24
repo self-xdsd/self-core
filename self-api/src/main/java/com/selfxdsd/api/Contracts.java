@@ -31,6 +31,7 @@ import java.util.Iterator;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
+ * @checkstyle ParameterNumber (200 lines)
  */
 public interface Contracts extends Iterable<Contract> {
 
@@ -53,14 +54,15 @@ public interface Contracts extends Iterable<Contract> {
      * If either one of ids is invalid, an exception will be thrown.
      *
      * @param projectId Valid project id
-     * @param contributorId Valid contributor id
+     * @param contributorUsername Contributor's username.
+     * @param contributorProvider Contributor's provider.
      * @param hourlyRate Contract's hourly rate
      * @param role Contract's role
      * @return Contract
-     * @checkstyle ParameterNumber (10 lines)
      */
     Contract addContract(final int projectId,
-                         final int contributorId,
+                         final String contributorUsername,
+                         final String contributorProvider,
                          final BigDecimal hourlyRate,
                          final String role);
 
@@ -82,18 +84,10 @@ public interface Contracts extends Iterable<Contract> {
             return new Empty();
         }
 
-        /**
-         * Throws UnsupportedOperationException.
-         * @param projectId Valid project id
-         * @param contributorId Valid contributor id
-         * @param hourlyRate Contract's hourly rate
-         * @param role Contract's role
-         * @return Throws UnsupportedOperationException
-         * @checkstyle ParameterNumber (10 lines)
-         */
         @Override
         public Contract addContract(final int projectId,
-                                    final int contributorId,
+                                    final String contributorUsername,
+                                    final String contributorProvider,
                                     final BigDecimal hourlyRate,
                                     final String role) {
             throw new UnsupportedOperationException(

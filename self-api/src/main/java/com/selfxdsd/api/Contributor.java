@@ -23,7 +23,7 @@
 package com.selfxdsd.api;
 
 /**
- * A Contributor.
+ * A Contributor. Username + provider = PK.
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
@@ -31,10 +31,16 @@ package com.selfxdsd.api;
 public interface Contributor {
 
     /**
-     * The contributor's ID.
+     * The contributor's username.
      * @return Integer.
      */
-    int contributorId();
+    String username();
+
+    /**
+     * The provider (github, gitlab etc).
+     * @return Provider's name.
+     */
+    String provider();
 
     /**
      * This contributor's Project Contracts.

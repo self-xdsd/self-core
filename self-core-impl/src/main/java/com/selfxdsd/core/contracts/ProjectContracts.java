@@ -86,21 +86,10 @@ public final class ProjectContracts implements Contracts {
         return new ContributorContracts(contributorId, ofContributor);
     }
 
-    /**
-     * Adds a contract based on valid projectId and contributorId.
-     * If either one of ids is invalid, an exception will be thrown.
-     *
-     * @param projectId Valid project id
-     * @param contributorId Valid contributor id
-     * @param hourlyRate Contract's hourly rate
-     * @param role Contract's role
-     * @return Contract
-     * @checkstyle ParameterNumber (10 lines)
-     * @checkstyle HiddenField (10 lines)
-     */
     @Override
     public Contract addContract(final int projectId,
-                                final int contributorId,
+                                final String contributorUsername,
+                                final String contributorProvider,
                                 final BigDecimal hourlyRate,
                                 final String role) {
         throw new UnsupportedOperationException("Not yet implemented");
