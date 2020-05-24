@@ -22,15 +22,14 @@
  */
 package com.selfxdsd.core;
 
+import com.selfxdsd.api.Login;
 import com.selfxdsd.api.Self;
-import com.selfxdsd.api.storage.Storage;
 import com.selfxdsd.api.User;
-import com.selfxdsd.core.mock.InMemory;
+import com.selfxdsd.api.storage.Storage;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
-
-import java.net.URL;
+import org.mockito.Mockito;
 
 /**
  * Unit tests for {@link SelfCore}.
@@ -41,69 +40,21 @@ import java.net.URL;
 public final class SelfCoreTestCase {
 
     /**
-     * SelfCore can sign up a Github User.
-     * @throws Exception If something goes wrong.
+     * SelfCore can sign up a User on any platform.
      */
     @Test
-    public void githubLoginWorks() throws Exception {
-        final Storage storage = new InMemory();
+    public void platformLoginWorks(){
+        final Storage storage = Mockito.mock(Storage.class);
         final Self self = new SelfCore(storage);
-        final User amihaiemil = self.githubLogin(
-            "amihaiemil", "amihaiemil@gmail.com",
-            new URL("https://gravatar.com/amihaiemil"), "gh123token"
-        );
-        MatcherAssert.assertThat(
-            amihaiemil.username(),
-            Matchers.equalTo("amihaiemil")
-        );
-        MatcherAssert.assertThat(
-            amihaiemil.provider(),
-            Matchers.instanceOf(Github.class)
-        );
-        MatcherAssert.assertThat(
-            amihaiemil.provider().name(),
-            Matchers.equalTo("github")
-        );
-        MatcherAssert.assertThat(
-            storage.users(), Matchers.iterableWithSize(1)
-        );
-        MatcherAssert.assertThat(
-            storage.users().user("amihaiemil", "github").username(),
-            Matchers.equalTo("amihaiemil")
-        );
+        final Login plafLogin  = Mockito.mock(Login.class);
+        final User authUser = Mockito.mock(User.class);
+
+        Mockito.when(authUser.username()).thenReturn("amihaiemil");
+        Mockito.when(plafLogin.signUp(storage)).thenReturn(authUser);
+
+        MatcherAssert.assertThat(self.login(plafLogin),
+            Matchers.equalTo(authUser));
     }
 
-    /**
-     * SelfCore can sign up a GitLab User.
-     * @throws Exception If something goes wrong.
-     */
-    @Test
-    public void gitlabLoginWorks() throws Exception {
-        final Storage storage = new InMemory();
-        final Self self = new SelfCore(storage);
-        final User amihaiemil = self.gitlabLogin(
-            "amihaiemil", "amihaiemil@gmail.com",
-            new URL("https://gravatar.com/amihaiemil"), "gl123token"
-        );
-        MatcherAssert.assertThat(
-            amihaiemil.username(),
-            Matchers.equalTo("amihaiemil")
-        );
-        MatcherAssert.assertThat(
-            amihaiemil.provider(),
-            Matchers.instanceOf(Gitlab.class)
-        );
-        MatcherAssert.assertThat(
-            amihaiemil.provider().name(),
-            Matchers.equalTo("gitlab")
-        );
-        MatcherAssert.assertThat(
-            storage.users(), Matchers.iterableWithSize(1)
-        );
-        MatcherAssert.assertThat(
-            storage.users().user("amihaiemil", "gitlab").username(),
-            Matchers.equalTo("amihaiemil")
-        );
-    }
 
 }
