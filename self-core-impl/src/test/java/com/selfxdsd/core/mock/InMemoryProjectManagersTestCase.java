@@ -23,8 +23,8 @@ public final class InMemoryProjectManagersTestCase {
         InMemoryProjectManagers inMemoryPm =
                 new InMemoryProjectManagers(storage);
 
-        assertThat(inMemoryPm.getById(1).id(), is(
-                (storage.projectManagers().getById(1)).id()));
+        assertThat(inMemoryPm.getById(1).id(),
+                equalTo(storage.projectManagers().getById(1).id()));
     }
 
     /**
