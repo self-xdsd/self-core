@@ -31,7 +31,6 @@ import com.selfxdsd.core.contracts.StoredContract;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 /**
  * In-Memory Contracts for testing purposes.
@@ -77,7 +76,8 @@ public final class InMemoryContracts implements Contracts {
         );
         Contract contract = this.contracts.get(key);
         if(contract == null) {
-            final Project project = getProjectById(projectId);
+            final Project project = storage.projects()
+                    .getProjectById(projectId);
             final Contributor contributor = this.storage.contributors()
                 .getById(contributorUsername, contributorProvider);
             if (project != null && contributor != null) {
@@ -106,21 +106,6 @@ public final class InMemoryContracts implements Contracts {
             }
         }
         return contract;
-    }
-
-    /**
-     * Get a project from storage by id,
-     * or null if project is not found.
-     *
-     * @param projectId Project id
-     * @return Found Project or null
-     */
-    private Project getProjectById(final int projectId) {
-        return StreamSupport
-            .stream(storage.projects().spliterator(), false)
-            .filter(p -> p.projectId() == projectId)
-            .findFirst()
-            .orElse(null);
     }
 
     @Override

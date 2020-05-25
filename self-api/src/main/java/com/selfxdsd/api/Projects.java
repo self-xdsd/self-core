@@ -22,6 +22,8 @@
  */
 package com.selfxdsd.api;
 
+import java.util.Iterator;
+
 /**
  * Projects managed by Self.
  * @author Mihai Andronache (amihaiemil@gmail.com)
@@ -51,4 +53,22 @@ public interface Projects extends Iterable<Project> {
      * @return Projects.
      */
     Projects ownedBy(final User user);
+
+    /**
+     * Get the Project with the corresponding projectId.
+     * @param projectId Id of the Project.
+     * @return Project, or null if no Project with this id is found.
+     */
+    default Project getProjectById(final int projectId) {
+        Iterator<Project> iterator = iterator();
+        Project project = null;
+        while (iterator.hasNext()) {
+            Project nextProject = iterator.next();
+            if (nextProject.projectId() == projectId) {
+                project = nextProject;
+                break;
+            }
+        }
+        return project;
+    }
 }
