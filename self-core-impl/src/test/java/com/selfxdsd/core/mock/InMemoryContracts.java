@@ -69,7 +69,7 @@ public final class InMemoryContracts implements Contracts {
         final String role
     ) {
         final ContractKey key = new ContractKey(
-            projectId, contributorUsername, contributorProvider
+            projectId, contributorUsername, contributorProvider, role
         );
         Contract contract = this.contracts.get(key);
         if(contract == null) {
@@ -138,24 +138,27 @@ public final class InMemoryContracts implements Contracts {
 
     /**
      * Contract primary key.
-     *
-     * @checkstyle VisibilityModifier (50 lines)
      */
     private static class ContractKey {
 
         /**
          * Project.
          */
-        final int projectId;
+        private final int projectId;
         /**
          * Contributor's username.
          */
-        final String contributorUsername;
+        private final String contributorUsername;
 
         /**
          * Contributor's provider.
          */
-        final String contributorProvider;
+        private final String contributorProvider;
+
+        /**
+         * Contributor's role.
+         */
+        private final String role;
 
         /**
          * Constructor.
@@ -163,15 +166,18 @@ public final class InMemoryContracts implements Contracts {
          * @param projectId Project ID.
          * @param contributorUsername Contributor's username.
          * @param contributorProvider Contributor's provider.
-         * */
+         * @param role Contributor's role.
+         */
         ContractKey(
             final int projectId,
             final String contributorUsername,
-            final String contributorProvider
+            final String contributorProvider,
+            final String role
         ) {
             this.projectId = projectId;
             this.contributorUsername = contributorUsername;
             this.contributorProvider = contributorProvider;
+            this.role = role;
         }
 
         @Override
@@ -187,7 +193,8 @@ public final class InMemoryContracts implements Contracts {
             //@checkstyle LineLength (5 lines)
             return this.projectId == contractKey.projectId
                 && this.contributorUsername.equals(contractKey.contributorUsername)
-                && this.contributorProvider.equals(contractKey.contributorProvider);
+                && this.contributorProvider.equals(contractKey.contributorProvider)
+                && this.role.equals(contractKey.role);
         }
 
         @Override
@@ -195,7 +202,8 @@ public final class InMemoryContracts implements Contracts {
             return Objects.hash(
                 this.projectId,
                 this.contributorUsername,
-                this.contributorProvider
+                this.contributorProvider,
+                this.role
             );
         }
     }

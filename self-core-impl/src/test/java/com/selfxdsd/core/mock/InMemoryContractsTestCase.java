@@ -53,8 +53,7 @@ public final class InMemoryContractsTestCase {
     }
 
     /**
-     * When a contract is already created a second one should not
-     * be created.
+     * A Contributor can only have one contract/role with a Project.
      */
     @Test
     public void shouldNotCreateAnExistingContract() {
@@ -63,27 +62,75 @@ public final class InMemoryContractsTestCase {
                 .pick("github");
         final Project project = storage.projects()
             .register(mock(Repo.class), projectManager);
-        final Contributor contributor = storage.contributors()
+        final Contributor mihai = storage.contributors()
             .register("mihai", "github");
         final Contracts contracts = storage.contracts();
 
         contracts.addContract(
             project.projectId(),
-            contributor.username(),
-            contributor.provider(),
+            mihai.username(),
+            mihai.provider(),
             BigDecimal.ONE,
             "DEV"
         );
         contracts.addContract(
             project.projectId(),
-            contributor.username(),
-            contributor.provider(),
+            mihai.username(),
+            mihai.provider(),
             BigDecimal.ONE,
             "DEV"
         );
 
-        assertThat(contracts, iterableWithSize(1));
+        assertThat(
+            contracts.ofProject(project.projectId()),
+            iterableWithSize(1)
+        );
+        assertThat(
+            contracts.ofContributor(mihai),
+            iterableWithSize(1)
+        );
     }
+
+    /**
+     * A Contributor can have more contracts with a Project,
+     * each contract for a given role.
+     */
+    @Test
+    public void moreContractsDifferentRoles() {
+        final Storage storage = new InMemory();
+        final ProjectManager projectManager = storage.projectManagers()
+            .pick("github");
+        final Project project = storage.projects()
+            .register(mock(Repo.class), projectManager);
+        final Contributor mihai = storage.contributors()
+            .register("mihai", "github");
+        final Contracts contracts = storage.contracts();
+
+        contracts.addContract(
+            project.projectId(),
+            mihai.username(),
+            mihai.provider(),
+            BigDecimal.ONE,
+            "DEV"
+        );
+        contracts.addContract(
+            project.projectId(),
+            mihai.username(),
+            mihai.provider(),
+            BigDecimal.ONE,
+            "REV"
+        );
+
+        assertThat(
+            contracts.ofProject(project.projectId()),
+            iterableWithSize(2)
+        );
+        assertThat(
+            contracts.ofContributor(mihai),
+            iterableWithSize(2)
+        );
+    }
+
 
     /**
      * Method addContract(...) throws ISE if the specified Project
