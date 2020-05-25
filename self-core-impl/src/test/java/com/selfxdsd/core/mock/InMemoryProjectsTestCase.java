@@ -20,8 +20,9 @@ import static org.mockito.Mockito.when;
  * @author hpetrila
  * @version $Id$
  * @since 0.0.1
- * @todo #96:30min Continue tests for {@link Projects#getProjectById(int)}
- *  in PmProjectsTestCase and UserProjectsTestCase.
+ * @todo #96:30min Provide implementation of
+ *  {@link Projects#getProjectById(int)} for each class
+ *  implementation and create unit tests.
  */
 public final class InMemoryProjectsTestCase {
 
@@ -91,11 +92,10 @@ public final class InMemoryProjectsTestCase {
         final Storage storage = new InMemory();
         ProjectManager projectManager = storage
                 .projectManagers().pick("github");
-        InMemoryProjects projects = (InMemoryProjects)
-                storage.projects();
-        projects.register(mock(Repo.class), projectManager);
-        projects.register(mock(Repo.class), projectManager);
-        Project project = projects.getProjectById(1);
+        Projects all = storage.projects();
+        all.register(mock(Repo.class), projectManager);
+        all.register(mock(Repo.class), projectManager);
+        Project project = all.getProjectById(1);
         assertThat(project.projectId(), equalTo(1));
     }
 
@@ -105,12 +105,8 @@ public final class InMemoryProjectsTestCase {
     @Test
     public void getProjectByNotFoundId() {
         final Storage storage = new InMemory();
-        ProjectManager projectManager = storage
-                .projectManagers().pick("github");
-        InMemoryProjects projects = (InMemoryProjects)
-                storage.projects();
-        projects.register(mock(Repo.class), projectManager);
-        Project project = projects.getProjectById(-1);
+        Projects all = storage.projects();
+        Project project = all.getProjectById(-1);
         assertThat(project, nullValue());
     }
 
