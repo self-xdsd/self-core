@@ -71,11 +71,11 @@ public final class StoredContract implements Contract {
      * @param storage The self's storage
      */
     public StoredContract(
-           final Project project,
-           final Contributor contributor,
-           final BigDecimal hourlyRate,
-           final String role,
-           final Storage storage
+        final Project project,
+        final Contributor contributor,
+        final BigDecimal hourlyRate,
+        final String role,
+        final Storage storage
     ) {
         this.project = project;
         this.contributor = contributor;

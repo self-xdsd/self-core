@@ -79,13 +79,12 @@ public final class InMemoryContracts implements Contracts {
                 .getById(contributorUsername, contributorProvider);
             if (project != null && contributor != null) {
                 contract = new StoredContract(
-                        project,
-                        contributor,
-                        hourlyRate,
-                        role,
-                        storage
-                        );
-
+                    project,
+                    contributor,
+                    hourlyRate,
+                    role,
+                    this.storage
+                );
                 this.contracts.put(key, contract);
             } else {
                 if(project == null) {
@@ -101,6 +100,10 @@ public final class InMemoryContracts implements Contracts {
                     );
                 }
             }
+        } else {
+            throw new IllegalStateException(
+                "The specified Contract is already registered."
+            );
         }
         return contract;
     }
@@ -112,7 +115,7 @@ public final class InMemoryContracts implements Contracts {
             .filter(key -> key.projectId == projectId)
             .map(key -> this.contracts.get(key))
             .collect(Collectors.toList());
-        return new ProjectContracts(projectId, ofProject);
+        return new ProjectContracts(projectId, ofProject, this.storage);
     }
 
     @Override

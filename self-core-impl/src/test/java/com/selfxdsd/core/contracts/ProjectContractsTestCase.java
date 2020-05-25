@@ -22,10 +22,7 @@
  */
 package com.selfxdsd.core.contracts;
 
-import com.selfxdsd.api.Contract;
-import com.selfxdsd.api.Contracts;
-import com.selfxdsd.api.Contributor;
-import com.selfxdsd.api.Project;
+import com.selfxdsd.api.*;
 import com.selfxdsd.api.storage.Storage;
 import com.selfxdsd.core.contributors.StoredContributor;
 import org.hamcrest.MatcherAssert;
@@ -58,7 +55,9 @@ public final class ProjectContractsTestCase {
         list.add(this.mockContract(1, "george", "gitlab"));
         list.add(this.mockContract(1, "alin", "bitbucket"));
         list.add(this.mockContract(1, "mihai", "github"));
-        final Contracts contracts = new ProjectContracts(1, list);
+        final Contracts contracts = new ProjectContracts(
+            1, list, Mockito.mock(Storage.class)
+        );
         MatcherAssert.assertThat(
             contracts.ofContributor(
                 new StoredContributor(
@@ -84,21 +83,23 @@ public final class ProjectContractsTestCase {
             Matchers.emptyIterable()
         );
         MatcherAssert.assertThat(
-            new ProjectContracts(1, new ArrayList<>())
-                .ofContributor(
-                    new StoredContributor(
-                        "cristi", "github", Mockito.mock(Storage.class)
-                    )
-                ),
+            new ProjectContracts(
+                1, new ArrayList<>(), Mockito.mock(Storage.class)
+            ).ofContributor(
+                new StoredContributor(
+                    "cristi", "github", Mockito.mock(Storage.class)
+                )
+            ),
             Matchers.emptyIterable()
         );
         MatcherAssert.assertThat(
-            new ProjectContracts(1, new ArrayList<>())
-                .ofContributor(
-                    new StoredContributor(
-                        "cristi", "github", Mockito.mock(Storage.class)
-                    )
-                ),
+            new ProjectContracts(
+                1, new ArrayList<>(), Mockito.mock(Storage.class)
+            ).ofContributor(
+                new StoredContributor(
+                    "cristi", "github", Mockito.mock(Storage.class)
+                )
+            ),
             Matchers.instanceOf(ContributorContracts.class)
         );
     }
@@ -109,7 +110,9 @@ public final class ProjectContractsTestCase {
      */
     @Test
     public void ofProjectReturnsItself() {
-        final Contracts contracts = new ProjectContracts(1, new ArrayList<>());
+        final Contracts contracts = new ProjectContracts(
+            1, new ArrayList<>(), Mockito.mock(Storage.class)
+        );
         MatcherAssert.assertThat(
             contracts.ofProject(1),
             Matchers.is(contracts)
@@ -122,22 +125,61 @@ public final class ProjectContractsTestCase {
      */
     @Test (expected = IllegalStateException.class)
     public void ofProjectComplainsWhenDifferentId() {
-        final Contracts contracts = new ProjectContracts(1, new ArrayList<>());
+        final Contracts contracts = new ProjectContracts(
+            1, new ArrayList<>(), Mockito.mock(Storage.class)
+        );
         contracts.ofProject(2);
     }
 
     /**
-     * Should throw UnsupportedOperationException when adding a contract.
+     * We should be able to register a contract for the same Project.
      */
-    @Test(expected = UnsupportedOperationException.class)
-    public void addContract(){
-        new ProjectContracts(0, List.of())
-            .addContract(
+    @Test
+    public void addsNewContract() {
+        final Contract newContract = Mockito.mock(Contract.class);
+        final Contracts all = Mockito.mock(Contracts.class);
+        Mockito.when(
+            all.addContract(
                 1,
                 "mihai",
-                "github'",
-                BigDecimal.TEN,
-                Contract.Roles.DEV);
+                "github",
+                BigDecimal.valueOf(10000),
+                Contract.Roles.DEV
+            )
+        ).thenReturn(newContract);
+        final Storage storage = Mockito.mock(Storage.class);
+        Mockito.when(storage.contracts()).thenReturn(all);
+
+        final Contracts ofOne = new ProjectContracts(1, List.of(), storage);
+        MatcherAssert.assertThat(ofOne, Matchers.iterableWithSize(0));
+        MatcherAssert.assertThat(
+            ofOne.addContract(
+                1,
+                "mihai",
+                "github",
+                BigDecimal.valueOf(10000),
+                Contract.Roles.DEV
+            ),
+            Matchers.is(newContract)
+        );
+        MatcherAssert.assertThat(ofOne, Matchers.iterableWithSize(1));
+    }
+
+    /**
+     * Method addContract should throw ISE if the id of a different Project is
+     * specified.
+     */
+    @Test (expected = IllegalArgumentException.class)
+    public void doesNotAddContractForDifferentProject() {
+        new ProjectContracts(
+            1, new ArrayList<>(), Mockito.mock(Storage.class)
+        ).addContract(
+            2,
+            "mihai",
+            "github",
+            BigDecimal.valueOf(10000),
+            Contract.Roles.DEV
+        );
     }
 
     /**
@@ -151,12 +193,14 @@ public final class ProjectContractsTestCase {
         list.add(Mockito.mock(Contract.class));
 
         MatcherAssert.assertThat(
-            new ProjectContracts(1, list),
+            new ProjectContracts(1, list, Mockito.mock(Storage.class)),
             Matchers.iterableWithSize(3)
         );
 
         MatcherAssert.assertThat(
-            new ProjectContracts(1, new ArrayList<>()),
+            new ProjectContracts(
+                1, new ArrayList<>(), Mockito.mock(Storage.class)
+            ),
             Matchers.emptyIterable()
         );
     }

@@ -39,6 +39,10 @@ import java.util.stream.Collectors;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
+ * @todo #110:30min Implement and unit testContributorContracts.addContract.
+ *  A Contract added via this method can only belong to the Contributor who
+ *  owns these Contracts. Check ProjectContracts.addContract(...) for a
+ *  similar example.
  */
 public final class ContributorContracts implements Contracts {
 
@@ -71,7 +75,7 @@ public final class ContributorContracts implements Contracts {
             .stream()
             .filter(contract -> contract.project().projectId() == projectId)
             .collect(Collectors.toList());
-        return new ProjectContracts(projectId, ofProject);
+        return new ProjectContracts(projectId, ofProject, null);
     }
 
     @Override

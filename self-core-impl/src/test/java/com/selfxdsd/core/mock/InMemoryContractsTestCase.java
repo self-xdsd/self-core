@@ -55,7 +55,7 @@ public final class InMemoryContractsTestCase {
     /**
      * A Contributor can only have one contract/role with a Project.
      */
-    @Test
+    @Test (expected = IllegalStateException.class)
     public void shouldNotCreateAnExistingContract() {
         final Storage storage = new InMemory();
         final ProjectManager projectManager = storage.projectManagers()
@@ -79,15 +79,6 @@ public final class InMemoryContractsTestCase {
             mihai.provider(),
             BigDecimal.ONE,
             Contract.Roles.DEV
-        );
-
-        assertThat(
-            contracts.ofProject(project.projectId()),
-            iterableWithSize(1)
-        );
-        assertThat(
-            contracts.ofContributor(mihai),
-            iterableWithSize(1)
         );
     }
 

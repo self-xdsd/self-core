@@ -25,8 +25,10 @@ package com.selfxdsd.core.contracts;
 import com.selfxdsd.api.Contract;
 import com.selfxdsd.api.Contracts;
 import com.selfxdsd.api.Contributor;
+import com.selfxdsd.api.storage.Storage;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -53,16 +55,25 @@ public final class ProjectContracts implements Contracts {
     private final List<Contract> contracts;
 
     /**
+     * Self storage, to save new contracts.
+     */
+    private final Storage storage;
+
+    /**
      * Constructor.
      * @param projectId Project ID.
      * @param contracts Project's contracts.
+     * @param storage Self's storage, to save new contracts.
      */
     public ProjectContracts(
         final int projectId,
-        final List<Contract> contracts
+        final List<Contract> contracts,
+        final Storage storage
     ) {
         this.projectId = projectId;
-        this.contracts = contracts;
+        this.contracts = new ArrayList<>();
+        this.contracts.addAll(contracts);
+        this.storage = storage;
     }
 
     @Override
@@ -96,12 +107,29 @@ public final class ProjectContracts implements Contracts {
     }
 
     @Override
-    public Contract addContract(final int projectId,
-                                final String contributorUsername,
-                                final String contributorProvider,
-                                final BigDecimal hourlyRate,
-                                final String role) {
-        throw new UnsupportedOperationException("Not yet implemented");
+    public Contract addContract(
+        final int projectId,
+        final String contributorUsername,
+        final String contributorProvider,
+        final BigDecimal hourlyRate,
+        final String role
+    ) {
+        if(projectId != this.projectId) {
+            throw new IllegalArgumentException(
+                "These are the Contracts of Project " + this.projectId + ". "
+              + "You cannot register another Project's contracts here."
+            );
+        } else {
+            final Contract registered = this.storage.contracts().addContract(
+                this.projectId,
+                contributorUsername,
+                contributorProvider,
+                hourlyRate,
+                role
+            );
+            this.contracts.add(registered);
+            return registered;
+        }
     }
 
     @Override
