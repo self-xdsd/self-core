@@ -38,9 +38,6 @@ import java.util.stream.Collectors;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
- * @todo #79:30min Implement and test Project :: Projects.getById(...).
- *  Once that is ready, use it here and remove the private
- *  method getProjectById(...).
  */
 public final class InMemoryContracts implements Contracts {
 
