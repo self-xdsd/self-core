@@ -37,10 +37,8 @@ import java.util.Objects;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
- * @todo #79:30min Write some unit tests for this class, make sure
- *  it works fine. This is a good starting point if you want to start
- *  contributing to self-core.
- */
+ **/
+
 public final class InMemoryContributors implements Contributors {
 
     /**
