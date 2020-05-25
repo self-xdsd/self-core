@@ -26,18 +26,27 @@ import com.selfxdsd.api.Issue;
 import com.selfxdsd.api.Issues;
 import com.selfxdsd.api.storage.Storage;
 
+import javax.json.Json;
+import javax.json.JsonObject;
+import java.io.IOException;
+import java.io.StringReader;
+import java.net.HttpURLConnection;
 import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 /**
  * Issues in a Github repository.
+ *
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
+ * @todo #98 Extract the utility class `GithubIssues.JsonFetcher` into its
+ *  own file and then refactor `BaseRepo#json()` to use it.
  * @since 0.0.1
- * @todo #97 Implement and unit test method json() here. It
- *  should call Github's API to fetch the Issue json and then
- *  use it to return a GithubIssue. If the API returns 404 or 204,
- *  then the method should return null.
  */
 public final class GithubIssues implements Issues {
 
@@ -52,7 +61,13 @@ public final class GithubIssues implements Issues {
     private Storage storage;
 
     /**
+     * Temporary cache until {@link Storage} has that feature.
+     */
+    private final Map<Integer, Issue> cachedIssues = new HashMap<>();
+
+    /**
      * Ctor.
+     *
      * @param issuesUri Issues base URI.
      * @param storage Storage.
      */
@@ -63,7 +78,24 @@ public final class GithubIssues implements Issues {
 
     @Override
     public Issue getById(final int issueId) {
-        throw new UnsupportedOperationException("Not yet implemented.");
+        Issue issue = cachedIssues.get(issueId);
+        if (issue == null) {
+            JsonObject jsonObject;
+            final URI issueUri = URI.create(issuesUri.toString() + "/"
+                + issueId);
+            try {
+                jsonObject = JsonFetcher.fromUri(issueUri);
+            } catch (final IllegalStateException
+                | IOException
+                | InterruptedException ex) {
+                jsonObject = null;
+            }
+            if (jsonObject != null) {
+                issue = new GithubIssue(issueUri, jsonObject, storage);
+                cachedIssues.put(issueId, issue);
+            }
+        }
+        return issue;
     }
 
     @Override
@@ -71,5 +103,53 @@ public final class GithubIssues implements Issues {
         throw new IllegalStateException(
             "You cannot iterate over all the issues in a repo."
         );
+    }
+
+    /**
+     * Utility class used for fetching json objects over the network.
+     * @author criske
+     * @version $Id$
+     * @since 0.0.1
+     */
+    private static final class JsonFetcher {
+
+        /**
+         * Private constructor.
+         */
+        private JsonFetcher() {
+            throw new IllegalStateException("Singleton");
+        }
+
+        /**
+         * Fetches a json object over the network.
+         *
+         * @param uri Provided URI.
+         * @return JsonObject
+         * @throws IllegalStateException when the resource was not found.
+         * @throws IOException when there are network issues.
+         * @throws InterruptedException  when call was interrupted.
+         */
+        public static JsonObject fromUri(final URI uri)
+            throws IllegalStateException, IOException, InterruptedException {
+            final HttpResponse<String> response = HttpClient.newHttpClient()
+                .send(
+                    HttpRequest.newBuilder()
+                        .uri(uri)
+                        .header("Content-Type", "application/json")
+                        .build(),
+                    HttpResponse.BodyHandlers.ofString()
+                );
+            final int status = response.statusCode();
+            if (status == HttpURLConnection.HTTP_OK) {
+                return Json.createReader(
+                    new StringReader(response.body())
+                ).readObject();
+            } else {
+                throw new IllegalStateException(
+                    "Unexpected response when fetching [" + uri + "]. "
+                        + "Expected 200 OK, but got " + status + "."
+                );
+            }
+        }
     }
 }
