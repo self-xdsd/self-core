@@ -55,4 +55,40 @@ public interface Contract {
      * @return String.
      */
     String role();
+
+    /**
+     * Possible roles in a Contract.
+     */
+    class Roles {
+
+        /**
+         * Hidden ctor.
+         */
+        private Roles(){ }
+
+        /**
+         * Constant for the architect role.
+         */
+        public static final String ARCH = "ARCH";
+
+        /**
+         * Constant for the developer role.
+         */
+        public static final String DEV = "DEV";
+
+        /**
+         * Constant for the reviewer role.
+         */
+        public static final  String REV = "REV";
+
+        /**
+         * Constant for the QA role.
+         */
+        public static final String QA = "QA";
+
+        /**
+         * Constant for the chatbot role.
+         */
+        public static final String BOT = "BOT";
+    }
 }

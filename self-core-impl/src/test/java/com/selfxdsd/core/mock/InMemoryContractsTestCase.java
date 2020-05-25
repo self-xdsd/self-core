@@ -36,7 +36,7 @@ public final class InMemoryContractsTestCase {
             contributor.username(),
             contributor.provider(),
             BigDecimal.ONE,
-            "DEV"
+            Contract.Roles.DEV
         );
 
         assertThat(contract.project().projectId(),
@@ -71,14 +71,14 @@ public final class InMemoryContractsTestCase {
             mihai.username(),
             mihai.provider(),
             BigDecimal.ONE,
-            "DEV"
+            Contract.Roles.DEV
         );
         contracts.addContract(
             project.projectId(),
             mihai.username(),
             mihai.provider(),
             BigDecimal.ONE,
-            "DEV"
+            Contract.Roles.DEV
         );
 
         assertThat(
@@ -111,14 +111,15 @@ public final class InMemoryContractsTestCase {
             mihai.username(),
             mihai.provider(),
             BigDecimal.ONE,
-            "DEV"
+            Contract.Roles.DEV
+
         );
         contracts.addContract(
             project.projectId(),
             mihai.username(),
             mihai.provider(),
             BigDecimal.ONE,
-            "REV"
+            Contract.Roles.REV
         );
 
         assertThat(
@@ -146,7 +147,7 @@ public final class InMemoryContractsTestCase {
             contributor.username(),
             contributor.provider(),
             BigDecimal.ONE,
-            "DEV"
+            Contract.Roles.DEV
         );
     }
 
@@ -167,7 +168,7 @@ public final class InMemoryContractsTestCase {
             "jhon_doe",
             "github",
             BigDecimal.ONE,
-            "DEV"
+            Contract.Roles.DEV
         );
     }
 

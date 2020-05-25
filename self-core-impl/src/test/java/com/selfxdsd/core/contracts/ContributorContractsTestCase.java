@@ -180,7 +180,7 @@ public final class ContributorContractsTestCase {
                 "mihai",
                 "github",
                 BigDecimal.TEN,
-                "DEV");
+                Contract.Roles.DEV);
     }
 
     /**

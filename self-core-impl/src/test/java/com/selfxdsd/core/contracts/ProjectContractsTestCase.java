@@ -137,7 +137,7 @@ public final class ProjectContractsTestCase {
                 "mihai",
                 "github'",
                 BigDecimal.TEN,
-                "DEV");
+                Contract.Roles.DEV);
     }
 
     /**
