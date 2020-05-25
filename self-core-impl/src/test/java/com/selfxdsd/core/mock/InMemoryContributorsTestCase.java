@@ -45,6 +45,17 @@ public final class InMemoryContributorsTestCase {
     }
 
     /**
+     * Get contributor by an unknown id should return null.
+     */
+    @Test
+    public void notCreatedContributorGetById() {
+        final Storage storage = new InMemory();
+        assertThat(storage.contributors()
+                        .getById("horea", "github"),
+                equalTo(null));
+    }
+
+    /**
      * Check if iterator is working properly.
      */
     @Test
