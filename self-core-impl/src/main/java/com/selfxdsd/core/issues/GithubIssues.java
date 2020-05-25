@@ -117,7 +117,7 @@ public final class GithubIssues implements Issues {
          * Private constructor.
          */
         private JsonFetcher() {
-            throw new IllegalStateException("Singleton");
+            throw new UnsupportedOperationException();
         }
 
         /**
