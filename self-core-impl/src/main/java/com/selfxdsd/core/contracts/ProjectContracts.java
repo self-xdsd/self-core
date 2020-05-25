@@ -103,7 +103,9 @@ public final class ProjectContracts implements Contracts {
                 }
             )
             .collect(Collectors.toList());
-        return new ContributorContracts(contributor, ofContributor);
+        return new ContributorContracts(
+            contributor, ofContributor, this.storage
+        );
     }
 
     @Override

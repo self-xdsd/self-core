@@ -131,7 +131,9 @@ public final class InMemoryContracts implements Contracts {
             )
             .map(key -> this.contracts.get(key))
             .collect(Collectors.toList());
-        return new ContributorContracts(contributor, ofContributor);
+        return new ContributorContracts(
+            contributor, ofContributor, this.storage
+        );
     }
 
     @Override

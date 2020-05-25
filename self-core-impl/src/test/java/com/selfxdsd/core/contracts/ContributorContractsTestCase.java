@@ -61,7 +61,8 @@ public final class ContributorContractsTestCase {
             new StoredContributor(
                 "mihai", "github", Mockito.mock(Storage.class)
             ),
-            list
+            list,
+            Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(
             contracts.ofProject(1),
@@ -80,7 +81,8 @@ public final class ContributorContractsTestCase {
                 new StoredContributor(
                 "mihai", "github", Mockito.mock(Storage.class)
                 ),
-                new ArrayList<>()
+                new ArrayList<>(),
+                Mockito.mock(Storage.class)
             ).ofProject(10),
             Matchers.emptyIterable()
         );
@@ -89,7 +91,8 @@ public final class ContributorContractsTestCase {
                 new StoredContributor(
                 "mihai", "github", Mockito.mock(Storage.class)
                 ),
-                new ArrayList<>()
+                new ArrayList<>(),
+                Mockito.mock(Storage.class)
             ).ofProject(10),
             Matchers.instanceOf(ProjectContracts.class)
         );
@@ -107,7 +110,8 @@ public final class ContributorContractsTestCase {
                 "github",
                 Mockito.mock(Storage.class)
             ),
-            new ArrayList<>()
+            new ArrayList<>(),
+            Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(
             contracts.ofContributor(
@@ -133,7 +137,8 @@ public final class ContributorContractsTestCase {
                 "github",
                 Mockito.mock(Storage.class)
             ),
-            new ArrayList<>()
+            new ArrayList<>(),
+            Mockito.mock(Storage.class)
         );
         contracts.ofContributor(
             new StoredContributor(
@@ -155,14 +160,19 @@ public final class ContributorContractsTestCase {
         list.add(Mockito.mock(Contract.class));
 
         MatcherAssert.assertThat(
-            new ContributorContracts(Mockito.mock(Contributor.class), list),
+            new ContributorContracts(
+                Mockito.mock(Contributor.class),
+                list,
+                Mockito.mock(Storage.class)
+            ),
             Matchers.iterableWithSize(3)
         );
 
         MatcherAssert.assertThat(
             new ContributorContracts(
                 Mockito.mock(Contributor.class),
-                new ArrayList<>()
+                new ArrayList<>(),
+                Mockito.mock(Storage.class)
             ),
             Matchers.emptyIterable()
         );
@@ -174,13 +184,17 @@ public final class ContributorContractsTestCase {
      */
     @Test(expected = UnsupportedOperationException.class)
     public void addContract(){
-        new ContributorContracts(Mockito.mock(Contributor.class), List.of())
-            .addContract(
-                1,
-                "mihai",
-                "github",
-                BigDecimal.TEN,
-                Contract.Roles.DEV);
+        new ContributorContracts(
+            Mockito.mock(Contributor.class),
+            List.of(),
+            Mockito.mock(Storage.class)
+        ).addContract(
+            1,
+            "mihai",
+            "github",
+            BigDecimal.TEN,
+            Contract.Roles.DEV
+        );
     }
 
     /**

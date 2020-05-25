@@ -25,8 +25,10 @@ package com.selfxdsd.core.contracts;
 import com.selfxdsd.api.Contract;
 import com.selfxdsd.api.Contracts;
 import com.selfxdsd.api.Contributor;
+import com.selfxdsd.api.storage.Storage;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -57,16 +59,25 @@ public final class ContributorContracts implements Contracts {
     private final List<Contract> contracts;
 
     /**
+     * Self storage, to save new contracts.
+     */
+    private final Storage storage;
+
+    /**
      * Constructor.
      * @param contributor Contributor.
      * @param contracts Contributor's contracts.
+     * @param storage Self's storage, to save new contracts.
      */
     public ContributorContracts(
         final Contributor contributor,
-        final List<Contract> contracts
+        final List<Contract> contracts,
+        final Storage storage
     ) {
         this.contributor = contributor;
-        this.contracts = contracts;
+        this.contracts = new ArrayList<>();
+        this.contracts.addAll(contracts);
+        this.storage = storage;
     }
 
     @Override
@@ -75,7 +86,7 @@ public final class ContributorContracts implements Contracts {
             .stream()
             .filter(contract -> contract.project().projectId() == projectId)
             .collect(Collectors.toList());
-        return new ProjectContracts(projectId, ofProject, null);
+        return new ProjectContracts(projectId, ofProject, this.storage);
     }
 
     @Override
