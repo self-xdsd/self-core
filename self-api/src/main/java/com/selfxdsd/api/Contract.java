@@ -90,5 +90,15 @@ public interface Contract {
          * Constant for the chatbot role.
          */
         public static final String BOT = "BOT";
+
+        /**
+         * Constant for the Project Manager role.
+         */
+        public static final String PM = "PM";
+
+        /**
+         * Constant for the Project Owner role.
+         */
+        public static final String PO = "PO";
     }
 }
