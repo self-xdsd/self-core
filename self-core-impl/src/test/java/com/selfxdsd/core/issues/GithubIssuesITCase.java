@@ -37,20 +37,7 @@ public final class GithubIssuesITCase {
     }
 
     /**
-     * Fetches an issue from cache.
-     */
-    @Test
-    public void fetchesIssueFromCache(){
-        final URI uri = URI.create(
-            "https://api.github.com/repos/amihaiemil/docker-java-api/issues");
-        final Issues issues = new GithubIssues(uri, mock(Storage.class));
-        final Issue issue = issues.getById(346);
-        final Issue cachedIssue = issues.getById(346);
-        assertThat(issue, equalTo(cachedIssue));
-    }
-
-    /**
-     * Issue should be null if was not found.
+     * Should return null if issue was not found.
      */
     @Test
     public void fetchesIssueNotFound(){

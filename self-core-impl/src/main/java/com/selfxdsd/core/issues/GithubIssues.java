@@ -35,17 +35,13 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
 
 /**
  * Issues in a Github repository.
  *
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
- * @todo #98 Extract the utility class `GithubIssues.JsonFetcher` into its
- *  own file and then refactor `BaseRepo#json()` to use it.
  * @since 0.0.1
  */
 public final class GithubIssues implements Issues {
@@ -61,11 +57,6 @@ public final class GithubIssues implements Issues {
     private Storage storage;
 
     /**
-     * Temporary cache until {@link Storage} has that feature.
-     */
-    private final Map<Integer, Issue> cachedIssues = new HashMap<>();
-
-    /**
      * Ctor.
      *
      * @param issuesUri Issues base URI.
@@ -78,22 +69,11 @@ public final class GithubIssues implements Issues {
 
     @Override
     public Issue getById(final int issueId) {
-        Issue issue = cachedIssues.get(issueId);
-        if (issue == null) {
-            JsonObject jsonObject;
-            final URI issueUri = URI.create(issuesUri.toString() + "/"
-                + issueId);
-            try {
-                jsonObject = JsonFetcher.fromUri(issueUri);
-            } catch (final IllegalStateException
-                | IOException
-                | InterruptedException ex) {
-                jsonObject = null;
-            }
-            if (jsonObject != null) {
-                issue = new GithubIssue(issueUri, jsonObject, storage);
-                cachedIssues.put(issueId, issue);
-            }
+        final URI issueUri = URI.create(issuesUri.toString() + "/" + issueId);
+        JsonObject jsonObject = fromUri(issueUri, issueId);
+        Issue issue = null;
+        if(jsonObject != null){
+            issue = new GithubIssue(issueUri, jsonObject, storage);
         }
         return issue;
     }
@@ -106,31 +86,16 @@ public final class GithubIssues implements Issues {
     }
 
     /**
-     * Utility class used for fetching json objects over the network.
-     * @author criske
-     * @version $Id$
-     * @since 0.0.1
+     * Fetches a json object over the network.
+     *
+     * @param uri Provided URI.
+     * @param issueId Issue id.
+     * @return JsonObject or null if result status is 400 or 204
+     * @throws IllegalStateException when something went wrong.
      */
-    private static final class JsonFetcher {
-
-        /**
-         * Private constructor.
-         */
-        private JsonFetcher() {
-            throw new UnsupportedOperationException();
-        }
-
-        /**
-         * Fetches a json object over the network.
-         *
-         * @param uri Provided URI.
-         * @return JsonObject
-         * @throws IllegalStateException when the resource was not found.
-         * @throws IOException when there are network issues.
-         * @throws InterruptedException  when call was interrupted.
-         */
-        public static JsonObject fromUri(final URI uri)
-            throws IllegalStateException, IOException, InterruptedException {
+    private JsonObject fromUri(final URI uri, final int issueId) {
+        JsonObject jsonObject;
+        try {
             final HttpResponse<String> response = HttpClient.newHttpClient()
                 .send(
                     HttpRequest.newBuilder()
@@ -140,16 +105,25 @@ public final class GithubIssues implements Issues {
                     HttpResponse.BodyHandlers.ofString()
                 );
             final int status = response.statusCode();
-            if (status == HttpURLConnection.HTTP_OK) {
-                return Json.createReader(
-                    new StringReader(response.body())
-                ).readObject();
-            } else {
-                throw new IllegalStateException(
-                    "Unexpected response when fetching [" + uri + "]. "
-                        + "Expected 200 OK, but got " + status + "."
-                );
+            switch (status) {
+                case HttpURLConnection.HTTP_OK:
+                    jsonObject = Json.createReader(
+                        new StringReader(response.body())
+                    ).readObject();
+                    break;
+                case HttpURLConnection.HTTP_NOT_FOUND:
+                case HttpURLConnection.HTTP_NO_CONTENT:
+                    jsonObject = null;
+                    break;
+                default:
+                    throw new IllegalStateException("Could not get the issue "
+                        + issueId);
             }
+        } catch (final IOException | InterruptedException exception) {
+            throw new IllegalStateException("Could not get the issue "
+                + issueId);
         }
+
+        return jsonObject;
     }
 }
