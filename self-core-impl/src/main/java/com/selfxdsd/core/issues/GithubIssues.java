@@ -26,18 +26,23 @@ import com.selfxdsd.api.Issue;
 import com.selfxdsd.api.Issues;
 import com.selfxdsd.api.storage.Storage;
 
+import javax.json.Json;
+import javax.json.JsonObject;
+import java.io.IOException;
+import java.io.StringReader;
+import java.net.HttpURLConnection;
 import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.util.Iterator;
 
 /**
  * Issues in a Github repository.
+ *
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
- * @todo #97 Implement and unit test method json() here. It
- *  should call Github's API to fetch the Issue json and then
- *  use it to return a GithubIssue. If the API returns 404 or 204,
- *  then the method should return null.
  */
 public final class GithubIssues implements Issues {
 
@@ -53,6 +58,7 @@ public final class GithubIssues implements Issues {
 
     /**
      * Ctor.
+     *
      * @param issuesUri Issues base URI.
      * @param storage Storage.
      */
@@ -63,7 +69,13 @@ public final class GithubIssues implements Issues {
 
     @Override
     public Issue getById(final int issueId) {
-        throw new UnsupportedOperationException("Not yet implemented.");
+        final URI issueUri = URI.create(issuesUri.toString() + "/" + issueId);
+        JsonObject jsonObject = fromUri(issueUri, issueId);
+        Issue issue = null;
+        if(jsonObject != null){
+            issue = new GithubIssue(issueUri, jsonObject, storage);
+        }
+        return issue;
     }
 
     @Override
@@ -71,5 +83,47 @@ public final class GithubIssues implements Issues {
         throw new IllegalStateException(
             "You cannot iterate over all the issues in a repo."
         );
+    }
+
+    /**
+     * Fetches a json object over the network.
+     *
+     * @param uri Provided URI.
+     * @param issueId Issue id.
+     * @return JsonObject or null if result status is 400 or 204
+     * @throws IllegalStateException when something went wrong.
+     */
+    private JsonObject fromUri(final URI uri, final int issueId) {
+        JsonObject jsonObject;
+        try {
+            final HttpResponse<String> response = HttpClient.newHttpClient()
+                .send(
+                    HttpRequest.newBuilder()
+                        .uri(uri)
+                        .header("Content-Type", "application/json")
+                        .build(),
+                    HttpResponse.BodyHandlers.ofString()
+                );
+            final int status = response.statusCode();
+            switch (status) {
+                case HttpURLConnection.HTTP_OK:
+                    jsonObject = Json.createReader(
+                        new StringReader(response.body())
+                    ).readObject();
+                    break;
+                case HttpURLConnection.HTTP_NOT_FOUND:
+                case HttpURLConnection.HTTP_NO_CONTENT:
+                    jsonObject = null;
+                    break;
+                default:
+                    throw new IllegalStateException("Could not get the issue "
+                        + issueId);
+            }
+        } catch (final IOException | InterruptedException exception) {
+            throw new IllegalStateException("Could not get the issue "
+                + issueId);
+        }
+
+        return jsonObject;
     }
 }
