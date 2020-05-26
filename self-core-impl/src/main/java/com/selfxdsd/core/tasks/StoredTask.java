@@ -41,52 +41,59 @@ public final class StoredTask implements Task {
     /**
      * Issue representing this task on Github, Gitlab etc.
      */
-    private Issue issue;
+    private final Issue issue;
 
     /**
      * Project where this task belongs.
      */
-    private Project project;
+    private final Project project;
 
     /**
      * Role necessary to solve this task.
      */
-    private String role;
+    private final String role;
+
+    /**
+     * Provider.
+     */
+    private final String provider;
 
     /**
      * Contributor's username (the assignee).
      */
-    private String contributorUsername;
+    private final String contributorUsername;
 
     /**
      * Assignment date.
      */
-    private LocalDateTime assignmentDate;
+    private final LocalDateTime assignmentDate;
 
     /**
      * Deadline by when this Task should be closed.
      */
-    private LocalDateTime deadline;
+    private final LocalDateTime deadline;
 
     /**
      * Self Storage.
      */
-    private Storage storage;
+    private final Storage storage;
 
     /**
      * Constructor for an unassigned task.
      * @param project Project.
      * @param issue Issue.
      * @param role Role.
+     * @param provider Provider.
      * @param storage Storage.
      */
     public StoredTask(
         final Project project,
         final Issue issue,
         final String role,
+        final String provider,
         final Storage storage
     ) {
-        this(project, issue, role, storage, null, null, null);
+        this(project, issue, role, provider, storage, null, null, null);
     }
 
     /**
@@ -94,6 +101,7 @@ public final class StoredTask implements Task {
      * @param project Project.
      * @param issue Issue.
      * @param role Role.
+     * @param provider Provider.
      * @param storage Storage.
      * @param contributorUsername Contributor's username.
      * @param assignmentDate Timestamp when this task has been assigned.
@@ -103,6 +111,7 @@ public final class StoredTask implements Task {
         final Project project,
         final Issue issue,
         final String role,
+        final String provider,
         final Storage storage,
         final String contributorUsername,
         final LocalDateTime assignmentDate,
@@ -111,6 +120,7 @@ public final class StoredTask implements Task {
         this.project = project;
         this.issue = issue;
         this.role = role;
+        this.provider = provider;
         this.storage = storage;
         this.contributorUsername = contributorUsername;
         this.assignmentDate = assignmentDate;
@@ -140,7 +150,7 @@ public final class StoredTask implements Task {
         } else {
             assignee = this.storage.contributors().getById(
                 this.contributorUsername,
-                this.project.repo().owner().provider().name()
+                this.provider
             );
         }
         return assignee;
