@@ -100,6 +100,7 @@ public final class StoredProjectTestCase {
     /**
      * StoredProject can return its contributors.
      */
+    @Test
     public void returnsContributors(){
         final Contributors all = Mockito.mock(Contributors.class);
         final Contributors ofProject = Mockito.mock(Contributors.class);
