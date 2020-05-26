@@ -105,6 +105,16 @@ public final class InMemoryProjects implements Projects {
     }
 
     @Override
+    public Project getProjectById(final int projectId) {
+        return projects
+            .values()
+            .stream()
+            .filter(p -> p.projectId() == projectId)
+            .findFirst()
+            .orElse(null);
+    }
+
+    @Override
     public Iterator<Project> iterator() {
         return this.projects.values().iterator();
     }

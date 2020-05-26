@@ -120,6 +120,37 @@ public final class UserProjectsTestCase {
     }
 
     /**
+     * Mock a Project owned by a User.
+     *
+     * @param username User's name.
+     * @param providerName Provider's name.
+     * @return Project.
+     */
+    private Project projectOwnedBy(
+        final String username, final String providerName
+    ) {
+        final Project project = Mockito.mock(Project.class);
+        final User owner = this.mockUser(username, providerName);
+        Mockito.when(project.owner()).thenReturn(owner);
+
+        return project;
+    }
+
+    /**
+     * Should find a project by it's id.
+     */
+    @Test
+    public void projectByIdFound() {
+        final Projects projects = new PmProjects(1, List.of(
+            mockProject(1), mockProject(2)
+        ));
+        MatcherAssert.assertThat(1,
+            Matchers.equalTo(projects.getProjectById(1)
+                .projectId()));
+    }
+
+
+    /**
      * Mock a Project assigned to a PM.
      * @param projectManagerId Manager's ID.
      * @return Project.
@@ -131,6 +162,19 @@ public final class UserProjectsTestCase {
         final Project project = Mockito.mock(Project.class);
         Mockito.when(project.projectManager()).thenReturn(manager);
 
+        return project;
+    }
+
+
+    /**
+     * Mocks a bare minimum project.
+     *
+     * @param id Provided id
+     * @return Mocked Project
+     */
+    private Project mockProject(final int id) {
+        final Project project = Mockito.mock(Project.class);
+        Mockito.when(project.projectId()).thenReturn(id);
         return project;
     }
 }

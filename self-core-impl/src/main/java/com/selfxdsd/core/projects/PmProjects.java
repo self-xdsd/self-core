@@ -27,6 +27,7 @@ import com.selfxdsd.api.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.StreamSupport;
 
 /**
  * Projects assigned to a certain PM. This class <b>just represents</b>
@@ -88,6 +89,15 @@ public final class PmProjects implements Projects {
             }
         }
         return new UserProjects(user, owned);
+    }
+
+    @Override
+    public Project getProjectById(final int projectId) {
+        return StreamSupport
+            .stream(projects.spliterator(), false)
+            .filter(p -> p.projectId() == projectId)
+            .findFirst()
+            .orElse(null);
     }
 
     @Override

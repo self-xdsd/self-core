@@ -98,6 +98,15 @@ public final class UserProjects implements Projects {
     }
 
     @Override
+    public Project getProjectById(final int projectId) {
+        return projects
+            .stream()
+            .filter(p -> p.projectId() == projectId)
+            .findFirst()
+            .orElse(null);
+    }
+
+    @Override
     public Iterator<Project> iterator() {
         return this.projects.iterator();
     }

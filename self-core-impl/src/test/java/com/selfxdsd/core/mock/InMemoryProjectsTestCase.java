@@ -20,9 +20,6 @@ import static org.mockito.Mockito.when;
  * @author hpetrila
  * @version $Id$
  * @since 0.0.1
- * @todo #96:30min Provide implementation of
- *  {@link Projects#getProjectById(int)} for each class
- *  implementation and create unit tests.
  */
 public final class InMemoryProjectsTestCase {
 

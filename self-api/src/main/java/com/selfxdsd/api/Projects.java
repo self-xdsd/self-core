@@ -1,13 +1,13 @@
 /**
  * Copyright (c) 2020, Self XDSD Contributors
  * All rights reserved.
- *
+ * <p>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"),
  * to read the Software only. Permission is hereby NOT GRANTED to use, copy,
  * modify, merge, publish, distribute, sublicense, and/or sell copies of
  * the Software.
- *
+ * <p>
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -21,8 +21,6 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 package com.selfxdsd.api;
-
-import java.util.Iterator;
 
 /**
  * Projects managed by Self.
@@ -59,16 +57,5 @@ public interface Projects extends Iterable<Project> {
      * @param projectId Id of the Project.
      * @return Project, or null if no Project with this id is found.
      */
-    default Project getProjectById(final int projectId) {
-        Iterator<Project> iterator = iterator();
-        Project project = null;
-        while (iterator.hasNext()) {
-            Project nextProject = iterator.next();
-            if (nextProject.projectId() == projectId) {
-                project = nextProject;
-                break;
-            }
-        }
-        return project;
-    }
+    Project getProjectById(final int projectId);
 }

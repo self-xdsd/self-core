@@ -33,6 +33,7 @@ import java.util.List;
 
 /**
  * Unit tests for {@link PmProjects}.
+ *
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
@@ -66,7 +67,7 @@ public final class PmProjectsTestCase {
      * Method assignedTo() throws an exception if the specified id
      * is the one of a different PM.
      */
-    @Test (expected = IllegalStateException.class)
+    @Test(expected = IllegalStateException.class)
     public void assignedToComplainsOnDifferendId() {
         final Projects projects = new PmProjects(1, new ArrayList<>());
         projects.assignedTo(2);
@@ -107,6 +108,7 @@ public final class PmProjectsTestCase {
 
     /**
      * Mock a Project owned by a User.
+     *
      * @param username User's name.
      * @param providerName Provider's name.
      * @return Project.
@@ -122,7 +124,31 @@ public final class PmProjectsTestCase {
     }
 
     /**
+     * Should find a project by it's id.
+     */
+    @Test
+    public void projectByIdFound() {
+        final Projects projects = new PmProjects(1, List.of(
+            mockProject(1), mockProject(2)
+        ));
+        MatcherAssert.assertThat(1,
+            Matchers.equalTo(projects.getProjectById(1)
+                .projectId()));
+    }
+
+    /**
+     * Should return null is project is not found by id.
+     */
+    @Test
+    public void projectByIdNotFound() {
+        final Projects projects = new PmProjects(1, List.of());
+        MatcherAssert.assertThat(projects.getProjectById(1),
+            Matchers.nullValue());
+    }
+
+    /**
      * Mock a User.
+     *
      * @param username Username.
      * @param providerName Name of the provider.
      * @return User.
@@ -136,5 +162,17 @@ public final class PmProjectsTestCase {
 
         Mockito.when(user.provider()).thenReturn(provider);
         return user;
+    }
+
+    /**
+     * Mocks a bare minimum project.
+     *
+     * @param id Provided id
+     * @return Mocked Project
+     */
+    private Project mockProject(final int id) {
+        final Project project = Mockito.mock(Project.class);
+        Mockito.when(project.projectId()).thenReturn(id);
+        return project;
     }
 }
