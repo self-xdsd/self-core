@@ -180,19 +180,63 @@ public final class ContributorContractsTestCase {
 
 
     /**
-     * Should throw UnsupportedOperationException when adding a contract.
+     * We should be able to register a Contract for the same Contributor.
      */
-    @Test(expected = UnsupportedOperationException.class)
-    public void addContract(){
-        new ContributorContracts(
-            Mockito.mock(Contributor.class),
-            List.of(),
-            Mockito.mock(Storage.class)
-        ).addContract(
+    @Test
+    public void addsNewContract(){
+        final Contract newContract = Mockito.mock(Contract.class);
+        final Contracts all = Mockito.mock(Contracts.class);
+        Mockito.when(
+            all.addContract(
+                1,
+                "mihai",
+                "github",
+                BigDecimal.valueOf(10000),
+                Contract.Roles.DEV
+            )
+        ).thenReturn(newContract);
+        final Storage storage = Mockito.mock(Storage.class);
+        Mockito.when(storage.contracts()).thenReturn(all);
+        final Contributor mihai = new StoredContributor(
+            "mihai", "github", storage
+        );
+
+        final Contracts ofMihai = new ContributorContracts(
+            mihai, List.of(), storage
+        );
+        MatcherAssert.assertThat(ofMihai, Matchers.iterableWithSize(0));
+        MatcherAssert.assertThat(
+            ofMihai.addContract(
+                1,
+                "mihai",
+                "github",
+                BigDecimal.valueOf(10000),
+                Contract.Roles.DEV
+            ),
+            Matchers.is(newContract)
+        );
+        MatcherAssert.assertThat(ofMihai, Matchers.iterableWithSize(1));
+    }
+
+    /**
+     * Method addContract should throw ISE if a different Contributor is
+     * specified.
+     */
+    @Test (expected = IllegalArgumentException.class)
+    public void doesNotAddContractForDifferentContributor(){
+        final Storage storage = Mockito.mock(Storage.class);
+        final Contributor mihai = new StoredContributor(
+            "mihai", "github", storage
+        );
+
+        final Contracts ofMihai = new ContributorContracts(
+            mihai, List.of(), storage
+        );
+        ofMihai.addContract(
             1,
             "mihai",
-            "github",
-            BigDecimal.TEN,
+            "gitlab",
+            BigDecimal.valueOf(10000),
             Contract.Roles.DEV
         );
     }

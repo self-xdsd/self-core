@@ -41,10 +41,6 @@ import java.util.stream.Collectors;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
- * @todo #110:30min Implement and unit testContributorContracts.addContract.
- *  A Contract added via this method can only belong to the Contributor who
- *  owns these Contracts. Check ProjectContracts.addContract(...) for a
- *  similar example.
  */
 public final class ContributorContracts implements Contracts {
 
@@ -104,12 +100,32 @@ public final class ContributorContracts implements Contracts {
     }
 
     @Override
-    public Contract addContract(final int projectId,
-                                final String contributorUsername,
-                                final String contributorProvider,
-                                final BigDecimal hourlyRate,
-                                final String role) {
-        throw new UnsupportedOperationException("Not yet implemented");
+    public Contract addContract(
+        final int projectId,
+        final String contributorUsername,
+        final String contributorProvider,
+        final BigDecimal hourlyRate,
+        final String role
+    ) {
+        if(!this.contributor.username().equals(contributorUsername)
+            || !this.contributor.provider().equals(contributorProvider)) {
+            throw new IllegalArgumentException(
+                "These are the Contracts of Contributor "
+              + this.contributor.username() + ", working at "
+              + this.contributor.provider() + ". "
+              + "You cannot register another Contributor's contracts here."
+            );
+        } else {
+            final Contract registered = this.storage.contracts().addContract(
+                projectId,
+                this.contributor.username(),
+                this.contributor.provider(),
+                hourlyRate,
+                role
+            );
+            this.contracts.add(registered);
+            return registered;
+        }
     }
 
     @Override
