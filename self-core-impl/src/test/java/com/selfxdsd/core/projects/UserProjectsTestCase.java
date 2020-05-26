@@ -103,6 +103,32 @@ public final class UserProjectsTestCase {
     }
 
     /**
+     * Should find a project by it's id.
+     */
+    @Test
+    public void projectByIdFound() {
+        final Projects projects = new UserProjects(
+            this.mockUser("mihai", "github"), List.of(
+            mockProject(1), mockProject(2)
+        ));
+        MatcherAssert.assertThat(1,
+            Matchers.equalTo(projects.getProjectById(1)
+                .projectId()));
+    }
+
+    /**
+     * Should return null is project is not found by id.
+     */
+    @Test
+    public void projectByIdNotFound() {
+        final Projects projects = new UserProjects(
+            this.mockUser("mihai", "github"), List.of()
+        );
+        MatcherAssert.assertThat(projects.getProjectById(1),
+            Matchers.nullValue());
+    }
+
+    /**
      * Mock a User.
      * @param username Username.
      * @param providerName Name of the provider.
@@ -134,19 +160,6 @@ public final class UserProjectsTestCase {
         Mockito.when(project.owner()).thenReturn(owner);
 
         return project;
-    }
-
-    /**
-     * Should find a project by it's id.
-     */
-    @Test
-    public void projectByIdFound() {
-        final Projects projects = new PmProjects(1, List.of(
-            mockProject(1), mockProject(2)
-        ));
-        MatcherAssert.assertThat(1,
-            Matchers.equalTo(projects.getProjectById(1)
-                .projectId()));
     }
 
 
