@@ -22,10 +22,137 @@
  */
 package com.selfxdsd.core.tasks;
 
+import com.selfxdsd.api.*;
+import com.selfxdsd.api.storage.Storage;
+
+import java.time.LocalDateTime;
+
 /**
+ * A Task stored and managed by Self.
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
- * @since
+ * @since 0.0.1
+ * @todo #116:30min Once we have method Project.contributors() implemented,
+ *  use it here to fetch the assigned Contributor (it will be faster than
+ *  fetching him/her from all the contributors in the system).
  */
-public class StoredTask {
+public final class StoredTask implements Task {
+
+    /**
+     * Issue representing this task on Github, Gitlab etc.
+     */
+    private Issue issue;
+
+    /**
+     * Project where this task belongs.
+     */
+    private Project project;
+
+    /**
+     * Role necessary to solve this task.
+     */
+    private String role;
+
+    /**
+     * Contributor's username (the assignee).
+     */
+    private String contributorUsername;
+
+    /**
+     * Assignment date.
+     */
+    private LocalDateTime assignmentDate;
+
+    /**
+     * Deadline by when this Task should be closed.
+     */
+    private LocalDateTime deadline;
+
+    /**
+     * Self Storage.
+     */
+    private Storage storage;
+
+    /**
+     * Constructor for an unassigned task.
+     * @param project Project.
+     * @param issue Issue.
+     * @param role Role.
+     * @param storage Storage.
+     */
+    public StoredTask(
+        final Project project,
+        final Issue issue,
+        final String role,
+        final Storage storage
+    ) {
+        this(project, issue, role, storage, null, null, null);
+    }
+
+    /**
+     * Constructor for an assigned task.
+     * @param project Project.
+     * @param issue Issue.
+     * @param role Role.
+     * @param storage Storage.
+     * @param contributorUsername Contributor's username.
+     * @param assignmentDate Timestamp when this task has been assigned.
+     * @param deadline Deadline by when this task should be finished.
+     */
+    public StoredTask(
+        final Project project,
+        final Issue issue,
+        final String role,
+        final Storage storage,
+        final String contributorUsername,
+        final LocalDateTime assignmentDate,
+        final LocalDateTime deadline
+    ) {
+        this.project = project;
+        this.issue = issue;
+        this.role = role;
+        this.storage = storage;
+        this.contributorUsername = contributorUsername;
+        this.assignmentDate = assignmentDate;
+        this.deadline = deadline;
+    }
+
+    @Override
+    public Issue issue() {
+        return this.issue;
+    }
+
+    @Override
+    public String role() {
+        return this.role;
+    }
+
+    @Override
+    public Project project() {
+        return this.project;
+    }
+
+    @Override
+    public Contributor assignee() {
+        final Contributor assignee;
+        if(this.contributorUsername == null) {
+            assignee = null;
+        } else {
+            assignee = this.storage.contributors().getById(
+                this.contributorUsername,
+                this.project.repo().owner().provider().name()
+            );
+        }
+        return assignee;
+    }
+
+    @Override
+    public LocalDateTime assignmentDate() {
+        return this.assignmentDate;
+    }
+
+    @Override
+    public LocalDateTime deadline() {
+        return this.deadline;
+    }
 }

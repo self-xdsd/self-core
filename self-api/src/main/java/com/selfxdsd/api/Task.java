@@ -22,10 +22,49 @@
  */
 package com.selfxdsd.api;
 
+import java.time.LocalDateTime;
+
 /**
+ * A Task managed by Self.
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
- * @since
+ * @since 0.0.1
  */
 public interface Task {
+
+    /**
+     * Role that should take this Task.
+     * @return String.
+     */
+    String role();
+
+    /**
+     * Issue representing this Task on Github/Gitlab/Bitbucket etc.
+     * @return Issue.
+     */
+    Issue issue();
+
+    /**
+     * Project where this Task belongs.
+     * @return Project.
+     */
+    Project project();
+
+    /**
+     * Contributor to whom this Task is assigned.
+     * @return Contributor.
+     */
+    Contributor assignee();
+
+    /**
+     * When was this Task assigned?
+     * @return LocalDateTime.
+     */
+    LocalDateTime assignmentDate();
+
+    /**
+     * Deadline of this Task.
+     * @return LocalDateTime.
+     */
+    LocalDateTime deadline();
 }

@@ -23,9 +23,10 @@
 package com.selfxdsd.api;
 
 /**
+ * Tasks managed by Self.
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
- * @since
+ * @since 0.0.1
  */
 public interface Tasks {
 }
