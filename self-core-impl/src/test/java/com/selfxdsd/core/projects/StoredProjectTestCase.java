@@ -96,4 +96,23 @@ public final class StoredProjectTestCase {
         );
         MatcherAssert.assertThat(project.contracts(), Matchers.is(ofProject));
     }
+
+    /**
+     * StoredProject can return its contributors.
+     */
+    public void returnsContributors(){
+        final Contributors all = Mockito.mock(Contributors.class);
+        final Contributors ofProject = Mockito.mock(Contributors.class);
+        Mockito.when(all.ofProject(1)).thenReturn(ofProject);
+
+        final Storage storage = Mockito.mock(Storage.class);
+        Mockito.when(storage.contributors()).thenReturn(all);
+
+        final Project project = new StoredProject(
+            1, Mockito.mock(Repo.class), Mockito.mock(ProjectManager.class),
+            storage
+        );
+        MatcherAssert.assertThat(project.contributors(),
+            Matchers.is(ofProject));
+    }
 }

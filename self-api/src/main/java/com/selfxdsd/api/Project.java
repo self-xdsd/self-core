@@ -31,6 +31,8 @@ package com.selfxdsd.api;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
+ * @todo #97:30min In the "contributors" package of self-core-impl create
+ *  class ProjectContributors and test it.
  */
 public interface Project {
 
@@ -63,6 +65,12 @@ public interface Project {
      * @return Contracts.
      */
     Contracts contracts();
+
+    /**
+     * This project's Contributors.
+     * @return Contributors.
+     */
+    Contributors contributors();
 
     /**
      * Deactivate this project, tell  Self to stop
