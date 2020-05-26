@@ -97,7 +97,7 @@ public final class InMemoryProjectsTestCase {
     }
 
     /**
-     * Check if no project is returned when id is not found.
+     * Check if no project is returned when id is not found..
      */
     @Test
     public void getProjectByNotFoundId() {
