@@ -32,7 +32,8 @@ package com.selfxdsd.api;
  * @version $Id$
  * @since 0.0.1
  * @todo #97:30min In the "contributors" package of self-core-impl create
- *  class ProjectContributors and test it.
+ *  ProjectContributors and test it. This class will be used to implement
+ *  Contributors.ofProject(id).
  */
 public interface Project {
 
