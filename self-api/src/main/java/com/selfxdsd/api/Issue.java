@@ -36,6 +36,18 @@ import javax.json.JsonObject;
 public interface Issue {
 
     /**
+     * Issue ID.
+     * @return String.
+     */
+    String issueId();
+
+    /**
+     * Role necessary to solve this Issue.
+     * @return String.
+     */
+    String role();
+
+    /**
      * The Issue in JSON format as returned by the provider's API.
      * @return JsonObject.
      */

@@ -22,6 +22,7 @@
  */
 package com.selfxdsd.core.issues;
 
+import com.selfxdsd.api.Contract;
 import com.selfxdsd.api.Issue;
 import com.selfxdsd.api.storage.Storage;
 
@@ -33,8 +34,9 @@ import java.net.URI;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
- * @todo #97:30min Write unit tests for this class
- *  and for GithubRepo.issues.
+ * @todo #128:30min Initially, all the Issues will have the DEV or REV role.
+ *  In a future version, we will set an Issue's role based on labels set
+ *  by the user.
  */
 public final class GithubIssue implements Issue {
 
@@ -67,6 +69,22 @@ public final class GithubIssue implements Issue {
         this.issueUri = issueUri;
         this.json = json;
         this.storage = storage;
+    }
+
+    @Override
+    public String issueId() {
+        return String.valueOf(this.json.getInt("number"));
+    }
+
+    @Override
+    public String role() {
+        final String role;
+        if(this.json.getJsonObject("pull_request") == null) {
+            role = Contract.Roles.DEV;
+        } else {
+            role = Contract.Roles.REV;
+        }
+        return role;
     }
 
     @Override
