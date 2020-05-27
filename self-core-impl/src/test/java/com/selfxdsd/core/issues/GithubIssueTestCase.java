@@ -34,7 +34,7 @@ import javax.json.Json;
 import java.net.URI;
 
 /**
- * Unit tests for {@link GithubIssue}
+ * Unit tests for {@link GithubIssue}.
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
