@@ -57,6 +57,10 @@ public final class InMemory implements Storage {
      */
     private Contributors contributors = new InMemoryContributors(this);
 
+    /**
+     * In-memory tasks.
+     */
+    private Tasks tasks = new InMemoryTasks(this);
 
     @Override
     public Users users() {
@@ -81,5 +85,10 @@ public final class InMemory implements Storage {
     @Override
     public Contributors contributors() {
         return this.contributors;
+    }
+
+    @Override
+    public Tasks tasks() {
+        return this.tasks;
     }
 }

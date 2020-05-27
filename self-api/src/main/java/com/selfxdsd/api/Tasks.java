@@ -27,8 +27,18 @@ package com.selfxdsd.api;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
- * @todo #116:30min Start implementing Tasks.getById and InMemoryTasks.
- *  Don't forget the unit tests.
+ * @todo #123:30min Add method register(projectId, Issue), to register
+ *  a new Issue as a Task in the given Project. Don't forget about unit
+ *  tests.
  */
 public interface Tasks extends Iterable<Task> {
+
+    /**
+     * Get a Task by its ID.
+     * @param issueId Issue ID from Github, Gitlab etc.
+     * @param provider Provider name.
+     * @return Task or null if not found.
+     */
+    Task getById(final String issueId, final String provider);
+
 }

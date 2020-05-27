@@ -61,4 +61,10 @@ public interface Storage {
      * @return Contributors.
      */
     Contributors contributors();
+
+    /**
+     * Get the tasks Storage API.
+     * @return Tasks.
+     */
+    Tasks tasks();
 }
