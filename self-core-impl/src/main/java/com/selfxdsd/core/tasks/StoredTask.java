@@ -32,9 +32,6 @@ import java.time.LocalDateTime;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
- * @todo #116:30min Once we have method Project.contributors() implemented,
- *  use it here to fetch the assigned Contributor (it will be faster than
- *  fetching him/her from all the contributors in the system).
  */
 public final class StoredTask implements Task {
 
@@ -148,7 +145,7 @@ public final class StoredTask implements Task {
         if(this.contributorUsername == null) {
             assignee = null;
         } else {
-            assignee = this.storage.contributors().getById(
+            assignee = this.project.contributors().getById(
                 this.contributorUsername,
                 this.provider
             );
