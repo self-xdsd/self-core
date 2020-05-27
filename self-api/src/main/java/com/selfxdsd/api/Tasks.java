@@ -27,6 +27,8 @@ package com.selfxdsd.api;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
+ * @todo #116:30min Start implementing Tasks.getById and InMemoryTasks.
+ *  Don't forget the unit tests.
  */
-public interface Tasks {
+public interface Tasks extends Iterable<Task> {
 }
