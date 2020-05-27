@@ -82,6 +82,11 @@ public final class InMemoryContributors implements Contributors {
     }
 
     @Override
+    public Contributors ofProject(final int projectId) {
+        throw new UnsupportedOperationException("Not implemented yet");
+    }
+
+    @Override
     public Iterator<Contributor> iterator() {
         return this.table.values().iterator();
     }

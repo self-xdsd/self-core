@@ -45,6 +45,14 @@ public final class InMemoryContributorsTestCase {
     }
 
     /**
+     * Get contributors of project.
+     */
+    @Test(expected = UnsupportedOperationException.class)
+    public void contributorsOfProject(){
+        new InMemory().contributors().ofProject(1);
+    }
+
+    /**
      * Get contributor by an unknown id should return null.
      */
     @Test

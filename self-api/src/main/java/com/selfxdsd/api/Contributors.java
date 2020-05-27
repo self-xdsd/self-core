@@ -46,4 +46,11 @@ public interface Contributors extends Iterable<Contributor> {
      */
     Contributor getById(final String username, final String provider);
 
+    /**
+     * Get the Contributors of a given Project.
+     * @param projectId Project ID.
+     * @return Contributors.
+     */
+    Contributors ofProject(final int projectId);
+
 }

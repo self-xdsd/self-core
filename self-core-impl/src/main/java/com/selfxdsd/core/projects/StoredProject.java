@@ -100,6 +100,11 @@ public final class StoredProject implements Project {
     }
 
     @Override
+    public Contributors contributors() {
+        return this.storage.contributors().ofProject(this.projectId);
+    }
+
+    @Override
     public Repo deactivate() {
         return null;
     }
