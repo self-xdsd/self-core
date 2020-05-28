@@ -55,6 +55,19 @@ public final class GithubIssueTestCase {
     }
 
     /**
+     * Github Issue can return its provider.
+     */
+    @Test
+    public void returnsProvider() {
+        final Issue issue = new GithubIssue(
+            URI.create("http://localhost/issues/1"),
+            Json.createObjectBuilder().add("number", 1).build(),
+            Mockito.mock(Storage.class)
+        );
+        MatcherAssert.assertThat(issue.provider(), Matchers.equalTo("github"));
+    }
+
+    /**
      * Github Issue can return the DEV role when it is not a PR.
      */
     @Test

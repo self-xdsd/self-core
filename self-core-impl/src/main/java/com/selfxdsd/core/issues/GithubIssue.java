@@ -77,6 +77,11 @@ public final class GithubIssue implements Issue {
     }
 
     @Override
+    public String provider() {
+        return "github";
+    }
+
+    @Override
     public String role() {
         final String role;
         if(this.json.getJsonObject("pull_request") == null) {

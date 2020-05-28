@@ -42,6 +42,12 @@ public interface Issue {
     String issueId();
 
     /**
+     * Issue provider.
+     * @return Provider name.
+     */
+    String provider();
+
+    /**
      * Role necessary to solve this Issue.
      * @return String.
      */
