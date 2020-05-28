@@ -49,7 +49,8 @@ public final class InMemoryContributorsTestCase {
      */
     @Test(expected = UnsupportedOperationException.class)
     public void contributorsOfProject(){
-        new InMemory().contributors().ofProject(1);
+        new InMemory().contributors()
+            .ofProject("john/test", "github");
     }
 
     /**

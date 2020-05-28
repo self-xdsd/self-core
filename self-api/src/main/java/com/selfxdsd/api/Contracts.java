@@ -37,10 +37,14 @@ public interface Contracts extends Iterable<Contract> {
 
     /**
      * Get the Contracts belonging to a given Project.
-     * @param projectId Project ID.
+     * @param repoFullName Full name of the Repo that the Project represents.
+     * @param repoProvider Provider of the Repo that the Project represents.
      * @return Contracts.
      */
-    Contracts ofProject(final int projectId);
+    Contracts ofProject(
+        final String repoFullName,
+        final String repoProvider
+    );
 
     /**
      * Get the Contracts belonging to a Contributor.
@@ -53,18 +57,20 @@ public interface Contracts extends Iterable<Contract> {
      * Adds a contract based on valid projectId and contributorId.
      * If either one of ids is invalid, an exception will be thrown.
      *
-     * @param projectId Valid project id
+     * @param repoFullName Full name of the Repo the Project represents.
      * @param contributorUsername Contributor's username.
-     * @param contributorProvider Contributor's provider.
+     * @param provider Contributor/Project's provider.
      * @param hourlyRate Contract's hourly rate
      * @param role Contract's role
      * @return Contract
      */
-    Contract addContract(final int projectId,
-                         final String contributorUsername,
-                         final String contributorProvider,
-                         final BigDecimal hourlyRate,
-                         final String role);
+    Contract addContract(
+        final String repoFullName,
+        final String contributorUsername,
+        final String provider,
+        final BigDecimal hourlyRate,
+        final String role
+    );
 
     /**
      * Empty Contracts. Return an instance of this when you cannot
@@ -75,7 +81,10 @@ public interface Contracts extends Iterable<Contract> {
      */
     final class Empty implements Contracts {
         @Override
-        public Contracts ofProject(final int projectId) {
+        public Contracts ofProject(
+            final String repoFullName,
+            final String repoProvider
+        ) {
             return new Empty();
         }
 
@@ -85,13 +94,16 @@ public interface Contracts extends Iterable<Contract> {
         }
 
         @Override
-        public Contract addContract(final int projectId,
-                                    final String contributorUsername,
-                                    final String contributorProvider,
-                                    final BigDecimal hourlyRate,
-                                    final String role) {
+        public Contract addContract(
+            final String repoFullName,
+            final String contributorUsername,
+            final String provider,
+            final BigDecimal hourlyRate,
+            final String role
+        ) {
             throw new UnsupportedOperationException(
-                "Adding contract not supported");
+                "These are Empty Contracts, you cannot add one here."
+            );
         }
 
         @Override

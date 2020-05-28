@@ -62,21 +62,21 @@ public final class InMemoryContracts implements Contracts {
 
     @Override
     public Contract addContract(
-        final int projectId,
+        final String repoFullName,
         final String contributorUsername,
-        final String contributorProvider,
+        final String provider,
         final BigDecimal hourlyRate,
         final String role
     ) {
         final ContractKey key = new ContractKey(
-            projectId, contributorUsername, contributorProvider, role
+            repoFullName, contributorUsername, provider, role
         );
         Contract contract = this.contracts.get(key);
         if(contract == null) {
             final Project project = storage.projects()
-                    .getProjectById(projectId);
+                .getProjectById(repoFullName, provider);
             final Contributor contributor = this.storage.contributors()
-                .getById(contributorUsername, contributorProvider);
+                .getById(contributorUsername, provider);
             if (project != null && contributor != null) {
                 contract = new StoredContract(
                     project,
@@ -109,13 +109,23 @@ public final class InMemoryContracts implements Contracts {
     }
 
     @Override
-    public Contracts ofProject(final int projectId) {
+    public Contracts ofProject(
+        final String repoFullName,
+        final String repoProvider
+    ) {
         final List<Contract> ofProject = this.contracts.keySet()
             .stream()
-            .filter(key -> key.projectId == projectId)
+            .filter(
+                key -> {
+                    return key.repoFullName.equals(repoFullName)
+                        && key.provider.equals(repoProvider);
+                }
+            )
             .map(key -> this.contracts.get(key))
             .collect(Collectors.toList());
-        return new ProjectContracts(projectId, ofProject, this.storage);
+        return new ProjectContracts(
+            repoFullName, repoProvider, ofProject, this.storage
+        );
     }
 
     @Override
@@ -126,7 +136,7 @@ public final class InMemoryContracts implements Contracts {
                 //@checkstyle LineLength (5 lines)
                 key -> {
                     return key.contributorUsername.equals(contributor.username())
-                        && key.contributorProvider.equals(contributor.provider());
+                        && key.provider.equals(contributor.provider());
                 }
             )
             .map(key -> this.contracts.get(key))
@@ -147,18 +157,18 @@ public final class InMemoryContracts implements Contracts {
     private static class ContractKey {
 
         /**
-         * Project.
+         * Full name of the Repo represented by the Project.
          */
-        private final int projectId;
+        private final String repoFullName;
         /**
          * Contributor's username.
          */
         private final String contributorUsername;
 
         /**
-         * Contributor's provider.
+         * Contributor/Project's provider.
          */
-        private final String contributorProvider;
+        private final String provider;
 
         /**
          * Contributor's role.
@@ -168,20 +178,20 @@ public final class InMemoryContracts implements Contracts {
         /**
          * Constructor.
          *
-         * @param projectId Project ID.
+         * @param repoFullName Fullname of the Repo represented by the project.
          * @param contributorUsername Contributor's username.
-         * @param contributorProvider Contributor's provider.
+         * @param provider Contributor/Project's provider.
          * @param role Contributor's role.
          */
         ContractKey(
-            final int projectId,
+            final String repoFullName,
             final String contributorUsername,
-            final String contributorProvider,
+            final String provider,
             final String role
         ) {
-            this.projectId = projectId;
+            this.repoFullName = repoFullName;
             this.contributorUsername = contributorUsername;
-            this.contributorProvider = contributorProvider;
+            this.provider = provider;
             this.role = role;
         }
 
@@ -193,21 +203,20 @@ public final class InMemoryContracts implements Contracts {
             if (object == null || getClass() != object.getClass()) {
                 return false;
             }
-            final InMemoryContracts.ContractKey contractKey =
-                (InMemoryContracts.ContractKey) object;
+            final ContractKey key = (ContractKey) object;
             //@checkstyle LineLength (5 lines)
-            return this.projectId == contractKey.projectId
-                && this.contributorUsername.equals(contractKey.contributorUsername)
-                && this.contributorProvider.equals(contractKey.contributorProvider)
-                && this.role.equals(contractKey.role);
+            return this.repoFullName.equals(key.repoFullName)
+                && this.contributorUsername.equals(key.contributorUsername)
+                && this.provider.equals(key.provider)
+                && this.role.equals(key.role);
         }
 
         @Override
         public int hashCode() {
             return Objects.hash(
-                this.projectId,
+                this.repoFullName,
                 this.contributorUsername,
-                this.contributorProvider,
+                this.provider,
                 this.role
             );
         }

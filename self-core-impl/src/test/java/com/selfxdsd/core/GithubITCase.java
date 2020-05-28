@@ -82,11 +82,12 @@ public final class GithubITCase {
     }
 
     /**
-     * A repo can be assigned to a ProjectManager. The InMemory storage
-     * comes with a pre-registered ProjectManager who has the id 1.
+     * A repo can be activated and assigned to a ProjectManager.
+     * The InMemory storage comes with a pre-registered
+     * ProjectManager who has the id 1.
      */
     @Test
-    public void assignsRepoToManager() {
+    public void activatesRepo() {
         final Provider provider = Mockito.mock(Provider.class);
         Mockito.when(provider.name()).thenReturn("github");
         final User user = Mockito.mock(User.class);

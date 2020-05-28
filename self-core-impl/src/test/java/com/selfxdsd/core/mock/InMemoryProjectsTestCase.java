@@ -2,13 +2,12 @@ package com.selfxdsd.core.mock;
 
 import com.selfxdsd.api.*;
 import com.selfxdsd.api.storage.Storage;
-import com.selfxdsd.core.projects.UserProjects;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
+import org.mockito.Mockito;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Iterator;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -30,55 +29,78 @@ public final class InMemoryProjectsTestCase {
     public void projectRegister() {
         final Storage storage = new InMemory();
         ProjectManager projectManager = storage
-                .projectManagers().pick("github");
+            .projectManagers().pick("github");
         final Project registered = storage.projects().register(
-                mock(Repo.class), projectManager);
+            this.mockRepo("mihai/test", "github"), projectManager
+        );
 
-        assertThat(registered.projectManager(),
-                is(projectManager));
-        assertThat(registered.projectId(),
-                equalTo(0));
+        assertThat(
+            registered.projectManager(),
+            is(projectManager)
+        );
+        assertThat(
+            registered.repoFullName(),
+            equalTo("mihai/test")
+        );
+        assertThat(
+            registered.provider(),
+            equalTo("github")
+        );
         assertThat(storage.projects(), contains(registered));
     }
+
     /**
-     * Register two projects, making sure id is incremented.
+     * Register two projects.
      */
     @Test
     public void projectRegisterForTwoProjects() {
         final Storage storage = new InMemory();
-        ProjectManager projectManager = storage
-                .projectManagers().pick("github");
-        InMemoryProjects projects = (InMemoryProjects)
-                storage.projects();
-        Project first = projects.register(
-                mock(Repo.class), projectManager);
-        Project second = projects.register(mock(
-                Repo.class), projectManager);
+        final ProjectManager projectManager = storage
+            .projectManagers().pick("github");
+        final Projects projects = storage.projects();
+        final Project first = projects.register(
+            mockRepo("amihaiemil/test", "github"),
+            projectManager
+        );
+        final Project second = projects.register(
+            mockRepo("amihaiemil/test2", "github"),
+            projectManager
+        );
 
-        assertThat(first.projectId(),
-                equalTo(0));
-        assertThat(second.projectId(), equalTo(1));
+        final Projects all = storage.projects();
+        assertThat(all, iterableWithSize(2));
+        final Iterator<Project> iterator = all.iterator();
+        assertThat(
+            iterator.next().repoFullName(),
+            equalTo(first.repoFullName())
+        );
+        assertThat(
+            iterator.next().repoFullName(),
+            equalTo(second.repoFullName())
+        );
     }
+
     /**
-     * Check if project is owned by.
+     * InMemoryProjects can return the Projects owned by
+     * a User.
      */
     @Test
-    public void projectOwnedBy() {
+    public void returnsOwnedBy() {
         final Storage storage = new InMemory();
-        InMemoryProjects projects = (InMemoryProjects) storage.projects();
-        ProjectManager projectManager = storage
-                .projectManagers().pick("github");
-        Project project = projects.register(mock(Repo.class), projectManager);
-        List<Project> ProjectList = new ArrayList<>();
-        ProjectList.add(project);
-        final Projects userprojects = new UserProjects(
-                this.mockUser("mihai", "github"),
-                ProjectList
-        );
+        final Projects projects = storage.projects();
+        final ProjectManager projectManager = storage
+            .projectManagers().pick("github");
+        final User owner = this.mockUser("amihaiemil", "github");
+        final Repo repo = this.mockRepo("amihaiemil/test", "github");
+        Mockito.when(repo.owner()).thenReturn(owner);
+
+        final Project project = projects.register(repo, projectManager);
+        final Projects owned = projects.ownedBy(owner);
+        MatcherAssert.assertThat(owned, Matchers.iterableWithSize(1));
         MatcherAssert.assertThat(
-                userprojects.ownedBy(this.mockUser(
-                        "mihai", "github")),
-                Matchers.iterableWithSize(1));
+            owned.iterator().next(),
+            Matchers.is(project)
+        );
     }
 
     /**
@@ -87,13 +109,21 @@ public final class InMemoryProjectsTestCase {
     @Test
     public void getProjectById() {
         final Storage storage = new InMemory();
-        ProjectManager projectManager = storage
-                .projectManagers().pick("github");
-        Projects all = storage.projects();
-        all.register(mock(Repo.class), projectManager);
-        all.register(mock(Repo.class), projectManager);
-        Project project = all.getProjectById(1);
-        assertThat(project.projectId(), equalTo(1));
+        final ProjectManager projectManager = storage
+            .projectManagers().pick("github");
+        final Projects all = storage.projects();
+        final Project first = all.register(
+            this.mockRepo("mihai/test", "github"),
+            projectManager
+        );
+        all.register(
+            this.mockRepo("mihai/test2", "github"),
+            projectManager
+        );
+        final Project found = all.getProjectById(
+            "mihai/test", "github"
+        );
+        assertThat(first, is(found));
     }
 
     /**
@@ -103,7 +133,7 @@ public final class InMemoryProjectsTestCase {
     public void getProjectByNotFoundId() {
         final Storage storage = new InMemory();
         Projects all = storage.projects();
-        Project project = all.getProjectById(-1);
+        Project project = all.getProjectById("octo/missing", "github");
         assertThat(project, nullValue());
     }
 
@@ -123,6 +153,22 @@ public final class InMemoryProjectsTestCase {
         when(user.provider()).thenReturn(provider);
 
         return user;
+    }
+
+    /**
+     * Mock a Repo for test.
+     * @param fullName Full name.
+     * @param provider Provider.
+     * @return Repo.
+     */
+    private Repo mockRepo(
+        final String fullName,
+        final String provider
+    ) {
+        final Repo repo = Mockito.mock(Repo.class);
+        Mockito.when(repo.fullName()).thenReturn(fullName);
+        Mockito.when(repo.provider()).thenReturn(provider);
+        return repo;
     }
 
 }

@@ -22,9 +22,7 @@
  */
 package com.selfxdsd.core.contracts;
 
-import com.selfxdsd.api.Contract;
-import com.selfxdsd.api.Contracts;
-import com.selfxdsd.api.Contributor;
+import com.selfxdsd.api.*;
 import com.selfxdsd.api.storage.Storage;
 
 import java.math.BigDecimal;
@@ -77,12 +75,23 @@ public final class ContributorContracts implements Contracts {
     }
 
     @Override
-    public Contracts ofProject(final int projectId) {
+    public Contracts ofProject(
+        final String repoFullName,
+        final String repoProvider
+    ) {
         final List<Contract> ofProject = this.contracts
             .stream()
-            .filter(contract -> contract.project().projectId() == projectId)
+            .filter(
+                contract -> {
+                    final Project project = contract.project();
+                    return project.repoFullName().equals(repoFullName)
+                        && project.provider().equals(repoProvider);
+                }
+            )
             .collect(Collectors.toList());
-        return new ProjectContracts(projectId, ofProject, this.storage);
+        return new ProjectContracts(
+            repoFullName, repoProvider, ofProject, this.storage
+        );
     }
 
     @Override
@@ -101,14 +110,14 @@ public final class ContributorContracts implements Contracts {
 
     @Override
     public Contract addContract(
-        final int projectId,
+        final String repoFullName,
         final String contributorUsername,
-        final String contributorProvider,
+        final String provider,
         final BigDecimal hourlyRate,
         final String role
     ) {
         if(!this.contributor.username().equals(contributorUsername)
-            || !this.contributor.provider().equals(contributorProvider)) {
+            || !this.contributor.provider().equals(provider)) {
             throw new IllegalArgumentException(
                 "These are the Contracts of Contributor "
               + this.contributor.username() + ", working at "
@@ -117,7 +126,7 @@ public final class ContributorContracts implements Contracts {
             );
         } else {
             final Contract registered = this.storage.contracts().addContract(
-                projectId,
+                repoFullName,
                 this.contributor.username(),
                 this.contributor.provider(),
                 hourlyRate,

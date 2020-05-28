@@ -38,15 +38,37 @@ import org.mockito.Mockito;
 public final class StoredProjectTestCase {
 
     /**
-     * StoredProject can return its ID.
+     * StoredProject can return the full name of its Repo.
      */
     @Test
-    public void returnsId() {
+    public void returnsRepoFullName() {
+        final Repo repo = Mockito.mock(Repo.class);
+        Mockito.when(repo.fullName()).thenReturn("john/test");
         final Project project = new StoredProject(
-            1, Mockito.mock(Repo.class), Mockito.mock(ProjectManager.class),
+            repo, Mockito.mock(ProjectManager.class),
             Mockito.mock(Storage.class)
         );
-        MatcherAssert.assertThat(project.projectId(), Matchers.is(1));
+        MatcherAssert.assertThat(
+            project.repoFullName(),
+            Matchers.equalTo("john/test")
+        );
+    }
+
+    /**
+     * StoredProject can return its provider.
+     */
+    @Test
+    public void returnsProvider() {
+        final Repo repo = Mockito.mock(Repo.class);
+        Mockito.when(repo.provider()).thenReturn("github");
+        final Project project = new StoredProject(
+            repo, Mockito.mock(ProjectManager.class),
+            Mockito.mock(Storage.class)
+        );
+        MatcherAssert.assertThat(
+            project.provider(),
+            Matchers.equalTo("github")
+        );
     }
 
     /**
@@ -56,7 +78,7 @@ public final class StoredProjectTestCase {
     public void returnsRepo() {
         final Repo repo = Mockito.mock(Repo.class);
         final Project project = new StoredProject(
-            1, repo, Mockito.mock(ProjectManager.class),
+            repo, Mockito.mock(ProjectManager.class),
             Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(project.repo(), Matchers.is(repo));
@@ -69,7 +91,7 @@ public final class StoredProjectTestCase {
     public void returnsProjectManager() {
         final ProjectManager manager = Mockito.mock(ProjectManager.class);
         final Project project = new StoredProject(
-            1, Mockito.mock(Repo.class), manager,
+            Mockito.mock(Repo.class), manager,
             Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(
@@ -85,13 +107,16 @@ public final class StoredProjectTestCase {
     public void returnsContracts() {
         final Contracts all = Mockito.mock(Contracts.class);
         final Contracts ofProject = Mockito.mock(Contracts.class);
-        Mockito.when(all.ofProject(1)).thenReturn(ofProject);
+        Mockito.when(
+            all.ofProject("john/test", "github")
+        ).thenReturn(ofProject);
 
         final Storage storage = Mockito.mock(Storage.class);
         Mockito.when(storage.contracts()).thenReturn(all);
 
         final Project project = new StoredProject(
-            1, Mockito.mock(Repo.class), Mockito.mock(ProjectManager.class),
+            this.mockRepo("john/test", "github"),
+            Mockito.mock(ProjectManager.class),
             storage
         );
         MatcherAssert.assertThat(project.contracts(), Matchers.is(ofProject));
@@ -104,16 +129,34 @@ public final class StoredProjectTestCase {
     public void returnsContributors(){
         final Contributors all = Mockito.mock(Contributors.class);
         final Contributors ofProject = Mockito.mock(Contributors.class);
-        Mockito.when(all.ofProject(1)).thenReturn(ofProject);
+        Mockito.when(
+            all.ofProject("john/test", "github")
+        ).thenReturn(ofProject);
 
         final Storage storage = Mockito.mock(Storage.class);
         Mockito.when(storage.contributors()).thenReturn(all);
 
         final Project project = new StoredProject(
-            1, Mockito.mock(Repo.class), Mockito.mock(ProjectManager.class),
+            this.mockRepo("john/test", "github"),
+            Mockito.mock(ProjectManager.class),
             storage
         );
-        MatcherAssert.assertThat(project.contributors(),
-            Matchers.is(ofProject));
+        MatcherAssert.assertThat(
+            project.contributors(),
+            Matchers.is(ofProject)
+        );
+    }
+
+    /**
+     * Mock a Repo for test.
+     * @param fullName Full name.
+     * @param provider Provider.
+     * @return Repo.
+     */
+    private Repo mockRepo(final String fullName, final String provider) {
+        final Repo repo = Mockito.mock(Repo.class);
+        Mockito.when(repo.fullName()).thenReturn(fullName);
+        Mockito.when(repo.provider()).thenReturn(provider);
+        return repo;
     }
 }

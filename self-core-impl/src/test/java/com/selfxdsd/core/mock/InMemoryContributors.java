@@ -37,8 +37,7 @@ import java.util.Objects;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
- **/
-
+ */
 public final class InMemoryContributors implements Contributors {
 
     /**
@@ -82,8 +81,11 @@ public final class InMemoryContributors implements Contributors {
     }
 
     @Override
-    public Contributors ofProject(final int projectId) {
-        throw new UnsupportedOperationException("Not implemented yet");
+    public Contributors ofProject(
+        final String repoFullName,
+        final String repoProvider
+    ) {
+        throw new UnsupportedOperationException("Not implemented yet.");
     }
 
     @Override

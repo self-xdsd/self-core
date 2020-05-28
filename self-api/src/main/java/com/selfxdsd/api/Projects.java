@@ -53,9 +53,15 @@ public interface Projects extends Iterable<Project> {
     Projects ownedBy(final User user);
 
     /**
-     * Get the Project with the corresponding projectId.
-     * @param projectId Id of the Project.
+     * Get the Project with the corresponding ID.
+     * The ID of a Project in Self is the fullname and the provider
+     * of the Repo that it represents.
+     * @param repoFullName Repo full name.
+     * @param repoProvider Repo provider.
      * @return Project, or null if no Project with this id is found.
      */
-    Project getProjectById(final int projectId);
+    Project getProjectById(
+        final String repoFullName,
+        final String repoProvider
+    );
 }

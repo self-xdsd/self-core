@@ -49,14 +49,14 @@ public final class ProjectContractsTestCase {
     @Test
     public void returnsContractsOfContributor() {
         final List<Contract> list = new ArrayList<>();
-        list.add(this.mockContract(1, "mihai", "github"));
-        list.add(this.mockContract(1, "vlad", "github"));
-        list.add(this.mockContract(1, "mihai", "github"));
-        list.add(this.mockContract(1, "george", "gitlab"));
-        list.add(this.mockContract(1, "alin", "bitbucket"));
-        list.add(this.mockContract(1, "mihai", "github"));
+        list.add(this.mockContract("john/test", "mihai", "github"));
+        list.add(this.mockContract("john/test", "vlad", "github"));
+        list.add(this.mockContract("john/test", "mihai", "github"));
+        list.add(this.mockContract("john/test", "george", "gitlab"));
+        list.add(this.mockContract("john/test", "alin", "bitbucket"));
+        list.add(this.mockContract("john/test", "mihai", "github"));
         final Contracts contracts = new ProjectContracts(
-            1, list, Mockito.mock(Storage.class)
+            "john/test", "github", list, Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(
             contracts.ofContributor(
@@ -84,7 +84,8 @@ public final class ProjectContractsTestCase {
         );
         MatcherAssert.assertThat(
             new ProjectContracts(
-                1, new ArrayList<>(), Mockito.mock(Storage.class)
+                "john/test", "gitlab",
+                new ArrayList<>(), Mockito.mock(Storage.class)
             ).ofContributor(
                 new StoredContributor(
                     "cristi", "github", Mockito.mock(Storage.class)
@@ -94,7 +95,8 @@ public final class ProjectContractsTestCase {
         );
         MatcherAssert.assertThat(
             new ProjectContracts(
-                1, new ArrayList<>(), Mockito.mock(Storage.class)
+                "john/test", "gitlab",
+                new ArrayList<>(), Mockito.mock(Storage.class)
             ).ofContributor(
                 new StoredContributor(
                     "cristi", "github", Mockito.mock(Storage.class)
@@ -111,10 +113,11 @@ public final class ProjectContractsTestCase {
     @Test
     public void ofProjectReturnsItself() {
         final Contracts contracts = new ProjectContracts(
-            1, new ArrayList<>(), Mockito.mock(Storage.class)
+            "john/test", "github",
+            new ArrayList<>(), Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(
-            contracts.ofProject(1),
+            contracts.ofProject("john/test", "github"),
             Matchers.is(contracts)
         );
     }
@@ -126,9 +129,10 @@ public final class ProjectContractsTestCase {
     @Test (expected = IllegalStateException.class)
     public void ofProjectComplainsWhenDifferentId() {
         final Contracts contracts = new ProjectContracts(
-            1, new ArrayList<>(), Mockito.mock(Storage.class)
+            "john/test", "github",
+            new ArrayList<>(), Mockito.mock(Storage.class)
         );
-        contracts.ofProject(2);
+        contracts.ofProject("john/test", "gitlab");
     }
 
     /**
@@ -140,7 +144,7 @@ public final class ProjectContractsTestCase {
         final Contracts all = Mockito.mock(Contracts.class);
         Mockito.when(
             all.addContract(
-                1,
+                "john/test",
                 "mihai",
                 "github",
                 BigDecimal.valueOf(10000),
@@ -150,11 +154,14 @@ public final class ProjectContractsTestCase {
         final Storage storage = Mockito.mock(Storage.class);
         Mockito.when(storage.contracts()).thenReturn(all);
 
-        final Contracts ofOne = new ProjectContracts(1, List.of(), storage);
+        final Contracts ofOne = new ProjectContracts(
+            "john/test", "github",
+            List.of(), storage
+        );
         MatcherAssert.assertThat(ofOne, Matchers.iterableWithSize(0));
         MatcherAssert.assertThat(
             ofOne.addContract(
-                1,
+                "john/test",
                 "mihai",
                 "github",
                 BigDecimal.valueOf(10000),
@@ -172,9 +179,10 @@ public final class ProjectContractsTestCase {
     @Test (expected = IllegalArgumentException.class)
     public void doesNotAddContractForDifferentProject() {
         new ProjectContracts(
-            1, new ArrayList<>(), Mockito.mock(Storage.class)
+            "john/test1", "github",
+            new ArrayList<>(), Mockito.mock(Storage.class)
         ).addContract(
-            2,
+            "john/test",
             "mihai",
             "github",
             BigDecimal.valueOf(10000),
@@ -193,13 +201,17 @@ public final class ProjectContractsTestCase {
         list.add(Mockito.mock(Contract.class));
 
         MatcherAssert.assertThat(
-            new ProjectContracts(1, list, Mockito.mock(Storage.class)),
+            new ProjectContracts(
+                "john/test", "github",
+                list, Mockito.mock(Storage.class)
+            ),
             Matchers.iterableWithSize(3)
         );
 
         MatcherAssert.assertThat(
             new ProjectContracts(
-                1, new ArrayList<>(), Mockito.mock(Storage.class)
+                "john/test", "github",
+                new ArrayList<>(), Mockito.mock(Storage.class)
             ),
             Matchers.emptyIterable()
         );
@@ -207,22 +219,23 @@ public final class ProjectContractsTestCase {
 
     /**
      * Mock a Contract for test.
-     * @param projectId Project's ID.
+     * @param repoFullName Repo's full name.
      * @param contributorUsername Contributor's username.
-     * @param contributorProvider Contributor's provider.
+     * @param provider Contributor/Project's provider.
      * @return Contract.
      */
     private Contract mockContract(
-        final int projectId,
+        final String repoFullName,
         final String contributorUsername,
-        final String contributorProvider
+        final String provider
     ) {
         final Project project = Mockito.mock(Project.class);
-        Mockito.when(project.projectId()).thenReturn(projectId);
+        Mockito.when(project.repoFullName()).thenReturn(repoFullName);
+        Mockito.when(project.provider()).thenReturn(provider);
 
         final Contributor contributor = new StoredContributor(
             contributorUsername,
-            contributorProvider,
+            provider,
             Mockito.mock(Storage.class)
         );
 

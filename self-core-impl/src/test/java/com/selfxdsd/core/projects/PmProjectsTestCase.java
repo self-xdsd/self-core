@@ -128,12 +128,22 @@ public final class PmProjectsTestCase {
      */
     @Test
     public void projectByIdFound() {
-        final Projects projects = new PmProjects(1, List.of(
-            mockProject(1), mockProject(2)
-        ));
-        MatcherAssert.assertThat(1,
-            Matchers.equalTo(projects.getProjectById(1)
-                .projectId()));
+        final Projects projects = new PmProjects(
+            1,
+            List.of(
+                mockProject("john/test", "github"),
+                mockProject("john/test2", "github")
+            )
+        );
+        final Project found = projects.getProjectById("john/test", "github");
+        MatcherAssert.assertThat(
+            found.repoFullName(),
+            Matchers.equalTo("john/test")
+        );
+        MatcherAssert.assertThat(
+            found.provider(),
+            Matchers.equalTo("github")
+        );
     }
 
     /**
@@ -142,8 +152,10 @@ public final class PmProjectsTestCase {
     @Test
     public void projectByIdNotFound() {
         final Projects projects = new PmProjects(1, List.of());
-        MatcherAssert.assertThat(projects.getProjectById(1),
-            Matchers.nullValue());
+        MatcherAssert.assertThat(
+            projects.getProjectById("mihai/missing", "github"),
+            Matchers.nullValue()
+        );
     }
 
     /**
@@ -167,12 +179,17 @@ public final class PmProjectsTestCase {
     /**
      * Mocks a bare minimum project.
      *
-     * @param id Provided id
+     * @param repoFullName Repo full name.
+     * @param repoProvider Provider.
      * @return Mocked Project
      */
-    private Project mockProject(final int id) {
+    private Project mockProject(
+        final String repoFullName,
+        final String repoProvider
+    ) {
         final Project project = Mockito.mock(Project.class);
-        Mockito.when(project.projectId()).thenReturn(id);
+        Mockito.when(project.repoFullName()).thenReturn(repoFullName);
+        Mockito.when(project.provider()).thenReturn(repoProvider);
         return project;
     }
 }

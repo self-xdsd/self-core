@@ -98,10 +98,17 @@ public final class UserProjects implements Projects {
     }
 
     @Override
-    public Project getProjectById(final int projectId) {
+    public Project getProjectById(
+        final String repoFullName, final String repoProvider
+    ) {
         return projects
             .stream()
-            .filter(p -> p.projectId() == projectId)
+            .filter(
+                p -> {
+                    return p.repoFullName().equals(repoFullName)
+                        && p.provider().equals(repoProvider);
+                }
+            )
             .findFirst()
             .orElse(null);
     }

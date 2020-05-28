@@ -37,11 +37,6 @@ import com.selfxdsd.api.storage.Storage;
 public final class StoredProject implements Project {
 
     /**
-     * Project ID.
-     */
-    private final int projectId;
-
-    /**
      * Repo of this Project.
      */
     private final Repo repo;
@@ -58,25 +53,28 @@ public final class StoredProject implements Project {
 
     /**
      * Constructor.
-     * @param projectId This project's ID.
      * @param repo Repo of this project.
      * @param projectManager Manager in charge.
      * @param storage Storage of Self.
      * @checkstyle ParameterNumber (10 lines)
      */
     public StoredProject(
-        final int projectId, final Repo repo,
-        final ProjectManager projectManager, final Storage storage
+        final Repo repo, final ProjectManager projectManager,
+        final Storage storage
     ) {
-        this.projectId = projectId;
         this.repo = repo;
         this.projectManager = projectManager;
         this.storage = storage;
     }
 
     @Override
-    public int projectId() {
-        return this.projectId;
+    public String repoFullName() {
+        return this.repo.fullName();
+    }
+
+    @Override
+    public String provider() {
+        return this.repo.provider();
     }
 
     @Override
@@ -96,12 +94,15 @@ public final class StoredProject implements Project {
 
     @Override
     public Contracts contracts() {
-        return this.storage.contracts().ofProject(this.projectId);
+        return this.storage.contracts()
+            .ofProject(this.repoFullName(), this.provider());
     }
 
     @Override
     public Contributors contributors() {
-        return this.storage.contributors().ofProject(this.projectId);
+        return this.storage.contributors().ofProject(
+            this.repoFullName(), this.provider()
+        );
     }
 
     @Override

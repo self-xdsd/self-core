@@ -44,9 +44,9 @@ public final class InMemoryProjects implements Projects {
     private final Storage storage;
 
     /**
-     * PMs's "table".
+     * Projects' "table".
      */
-    private final Map<Integer, Project> projects;
+    private final Map<ProjectKey, Project> projects = new HashMap<>();
 
     /**
      * Projects' id counter.
@@ -59,7 +59,6 @@ public final class InMemoryProjects implements Projects {
      */
     public InMemoryProjects(final Storage storage) {
         this.storage = storage;
-        this.projects = new HashMap<>();
     }
 
     @Override
@@ -70,11 +69,16 @@ public final class InMemoryProjects implements Projects {
                 "PM is missing or not registered!"
             );
         } else {
-            final int projectId = this.idCounter++;
-            final Project project = new StoredProject(
-                projectId, repo, manager, this.storage
+            final ProjectKey key = new ProjectKey(
+                repo.fullName(), repo.provider()
             );
-            this.projects.put(projectId, project);
+            if(this.projects.get(key) != null) {
+                throw new IllegalArgumentException("Project already exists.");
+            }
+            final Project project = new StoredProject(
+                repo, manager, this.storage
+            );
+            this.projects.put(key, project);
             return project;
         }
     }
@@ -105,17 +109,66 @@ public final class InMemoryProjects implements Projects {
     }
 
     @Override
-    public Project getProjectById(final int projectId) {
-        return projects
-            .values()
-            .stream()
-            .filter(p -> p.projectId() == projectId)
-            .findFirst()
-            .orElse(null);
+    public Project getProjectById(
+        final String repoFullName, final String repoProvider
+    ) {
+        return this.projects.get(new ProjectKey(repoFullName, repoProvider));
     }
 
     @Override
     public Iterator<Project> iterator() {
         return this.projects.values().iterator();
     }
+
+    /**
+     * Project PK.
+     */
+    public static final class ProjectKey {
+        /**
+         * Repos's full name (e.g. amihaiemil/docker-java-api).
+         */
+        private final String repoFullName;
+
+        /**
+         * Repo's provider (github, gitlab etc).
+         */
+        private final String repoProvider;
+
+        /**
+         * Constructor.
+         *
+         * @param repoFullName Contributor's username.
+         * @param repoProvider Repo's provider.
+         * */
+        ProjectKey(
+            final String repoFullName,
+            final String repoProvider
+        ) {
+            this.repoFullName = repoFullName;
+            this.repoProvider = repoProvider;
+        }
+
+        @Override
+        public boolean equals(final Object object) {
+            if (this == object) {
+                return true;
+            }
+            if (object == null || getClass() != object.getClass()) {
+                return false;
+            }
+            final ProjectKey key = (ProjectKey) object;
+            //@checkstyle LineLength (5 lines)
+            return this.repoFullName.equals(key.repoFullName)
+                && this.repoProvider.equals(key.repoProvider);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(
+                this.repoFullName,
+                this.repoProvider
+            );
+        }
+    }
+
 }

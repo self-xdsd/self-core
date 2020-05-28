@@ -3,6 +3,8 @@ package com.selfxdsd.core.mock;
 import com.selfxdsd.api.*;
 import com.selfxdsd.api.storage.Storage;
 import org.junit.Test;
+import org.mockito.Mockito;
+
 import java.math.BigDecimal;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -26,21 +28,24 @@ public final class InMemoryContractsTestCase {
         final ProjectManager projectManager = storage.projectManagers()
                 .pick("github");
         final Project project = storage.projects()
-            .register(mock(Repo.class), projectManager);
+            .register(
+                this.mockRepo("john/test", "github"),
+                projectManager
+            );
         final Contributor contributor = storage.contributors()
             .register("mihai", "github");
         final Contracts contracts = storage.contracts();
 
         final Contract contract = contracts.addContract(
-            project.projectId(),
+            project.repoFullName(),
             contributor.username(),
             contributor.provider(),
             BigDecimal.ONE,
             Contract.Roles.DEV
         );
 
-        assertThat(contract.project().projectId(),
-            equalTo(project.projectId()));
+        assertThat(contract.project().repoFullName(),
+            equalTo(project.repoFullName()));
         assertThat(contract.project().contracts(),
             contains(contract));
 
@@ -61,20 +66,23 @@ public final class InMemoryContractsTestCase {
         final ProjectManager projectManager = storage.projectManagers()
                 .pick("github");
         final Project project = storage.projects()
-            .register(mock(Repo.class), projectManager);
+            .register(
+                this.mockRepo("john/test", "github"),
+                projectManager
+            );
         final Contributor mihai = storage.contributors()
             .register("mihai", "github");
         final Contracts contracts = storage.contracts();
 
         contracts.addContract(
-            project.projectId(),
+            project.repoFullName(),
             mihai.username(),
             mihai.provider(),
             BigDecimal.ONE,
             Contract.Roles.DEV
         );
         contracts.addContract(
-            project.projectId(),
+            project.repoFullName(),
             mihai.username(),
             mihai.provider(),
             BigDecimal.ONE,
@@ -92,13 +100,16 @@ public final class InMemoryContractsTestCase {
         final ProjectManager projectManager = storage.projectManagers()
             .pick("github");
         final Project project = storage.projects()
-            .register(mock(Repo.class), projectManager);
+            .register(
+                this.mockRepo("john/test", "github"),
+                projectManager
+            );
         final Contributor mihai = storage.contributors()
             .register("mihai", "github");
         final Contracts contracts = storage.contracts();
 
         contracts.addContract(
-            project.projectId(),
+            project.repoFullName(),
             mihai.username(),
             mihai.provider(),
             BigDecimal.ONE,
@@ -106,7 +117,7 @@ public final class InMemoryContractsTestCase {
 
         );
         contracts.addContract(
-            project.projectId(),
+            project.repoFullName(),
             mihai.username(),
             mihai.provider(),
             BigDecimal.ONE,
@@ -114,7 +125,7 @@ public final class InMemoryContractsTestCase {
         );
 
         assertThat(
-            contracts.ofProject(project.projectId()),
+            contracts.ofProject(project.repoFullName(), project.provider()),
             iterableWithSize(2)
         );
         assertThat(
@@ -134,7 +145,7 @@ public final class InMemoryContractsTestCase {
         final Contributor contributor = storage.contributors()
             .register("mihai", "github");
         storage.contracts().addContract(
-            100,
+            "john/test",
             contributor.username(),
             contributor.provider(),
             BigDecimal.ONE,
@@ -155,7 +166,7 @@ public final class InMemoryContractsTestCase {
                 storage.projectManagers().pick("github")
             );
         storage.contracts().addContract(
-            project.projectId(),
+            "john/test",
             "jhon_doe",
             "github",
             BigDecimal.ONE,
@@ -163,5 +174,16 @@ public final class InMemoryContractsTestCase {
         );
     }
 
-
+    /**
+     * Mock a Repo for test.
+     * @param fullName Full name.
+     * @param provider Provider.
+     * @return Repo.
+     */
+    private Repo mockRepo(final String fullName, final String provider) {
+        final Repo repo = Mockito.mock(Repo.class);
+        Mockito.when(repo.fullName()).thenReturn(fullName);
+        Mockito.when(repo.provider()).thenReturn(provider);
+        return repo;
+    }
 }

@@ -92,10 +92,17 @@ public final class PmProjects implements Projects {
     }
 
     @Override
-    public Project getProjectById(final int projectId) {
+    public Project getProjectById(
+        final String repoFullName, final String repoProvider
+    ) {
         return StreamSupport
-            .stream(projects.spliterator(), false)
-            .filter(p -> p.projectId() == projectId)
+            .stream(this.projects.spliterator(), false)
+            .filter(
+                p -> {
+                    return p.repoFullName().equals(repoFullName)
+                        && p.provider().equals(repoProvider);
+                }
+            )
             .findFirst()
             .orElse(null);
     }

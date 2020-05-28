@@ -108,12 +108,21 @@ public final class UserProjectsTestCase {
     @Test
     public void projectByIdFound() {
         final Projects projects = new UserProjects(
-            this.mockUser("mihai", "github"), List.of(
-            mockProject(1), mockProject(2)
-        ));
-        MatcherAssert.assertThat(1,
-            Matchers.equalTo(projects.getProjectById(1)
-                .projectId()));
+            this.mockUser("mihai", "github"),
+            List.of(
+                mockProject("mihai/test", "github"),
+                mockProject("mihai/test2", "github")
+            )
+        );
+        final Project found = projects.getProjectById("mihai/test", "github");
+        MatcherAssert.assertThat(
+            found.repoFullName(),
+            Matchers.equalTo("mihai/test")
+        );
+        MatcherAssert.assertThat(
+            found.provider(),
+            Matchers.equalTo("github")
+        );
     }
 
     /**
@@ -124,8 +133,10 @@ public final class UserProjectsTestCase {
         final Projects projects = new UserProjects(
             this.mockUser("mihai", "github"), List.of()
         );
-        MatcherAssert.assertThat(projects.getProjectById(1),
-            Matchers.nullValue());
+        MatcherAssert.assertThat(
+            projects.getProjectById("mihai/test", "github"),
+            Matchers.nullValue()
+        );
     }
 
     /**
@@ -182,12 +193,14 @@ public final class UserProjectsTestCase {
     /**
      * Mocks a bare minimum project.
      *
-     * @param id Provided id
+     * @param fullName Full name.
+     * @param provider Provider.
      * @return Mocked Project
      */
-    private Project mockProject(final int id) {
+    private Project mockProject(final String fullName, final String provider) {
         final Project project = Mockito.mock(Project.class);
-        Mockito.when(project.projectId()).thenReturn(id);
+        Mockito.when(project.repoFullName()).thenReturn(fullName);
+        Mockito.when(project.provider()).thenReturn(provider);
         return project;
     }
 }

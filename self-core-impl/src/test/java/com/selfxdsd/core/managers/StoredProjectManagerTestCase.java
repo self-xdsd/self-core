@@ -119,7 +119,7 @@ public final class StoredProjectManagerTestCase {
             1, "github", "123token", storage
         );
         Mockito.when(projects.register(repo, manager))
-               .thenReturn(new StoredProject(1, repo, manager, storage));
+               .thenReturn(new StoredProject(repo, manager, storage));
 
         final Project assigned = manager.assign(repo);
 

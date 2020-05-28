@@ -38,10 +38,16 @@ package com.selfxdsd.api;
 public interface Project {
 
     /**
-     * The project's ID.
-     * @return Integer.
+     * Full name of the Repo represented by this Project.
+     * @return String.
      */
-    int projectId();
+    String repoFullName();
+
+    /**
+     * Provider (github, gitlab etc).
+     * @return String.
+     */
+    String provider();
 
     /**
      * Who owns this project?

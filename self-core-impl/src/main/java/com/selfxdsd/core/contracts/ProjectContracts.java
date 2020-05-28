@@ -45,9 +45,14 @@ import java.util.stream.Collectors;
 public final class ProjectContracts implements Contracts {
 
     /**
-     * ID of the Project.
+     * Full name of the Repo represented by the Project.
      */
-    private final int projectId;
+    private final String repoFullName;
+
+    /**
+     * Provider of the Repo represented by the Project.
+     */
+    private final String provider;
 
     /**
      * The project's contracts.
@@ -61,28 +66,37 @@ public final class ProjectContracts implements Contracts {
 
     /**
      * Constructor.
-     * @param projectId Project ID.
+     * @param repoFullName Full name of the Repo represented by the Project.
+     * @param provider Provider of the Repo represented by the Project.
      * @param contracts Project's contracts.
      * @param storage Self's storage, to save new contracts.
      */
     public ProjectContracts(
-        final int projectId,
+        final String repoFullName,
+        final String provider,
         final List<Contract> contracts,
         final Storage storage
     ) {
-        this.projectId = projectId;
+        this.repoFullName = repoFullName;
+        this.provider = provider;
         this.contracts = new ArrayList<>();
         this.contracts.addAll(contracts);
         this.storage = storage;
     }
 
     @Override
-    public Contracts ofProject(final int projId) {
-        if(this.projectId == projId) {
+    public Contracts ofProject(
+        final String repoFullName,
+        final String repoProvider
+    ) {
+        if(this.repoFullName.equals(repoFullName)
+            && this.provider.equals(repoProvider)
+        ) {
             return this;
         }
         throw new IllegalStateException(
-            "Already seeing the contracts of Project " + this.projectId + "."
+            "Already seeing the contracts of Project " + this.repoFullName
+           +", operating at " + this.provider
         );
     }
 
@@ -110,22 +124,25 @@ public final class ProjectContracts implements Contracts {
 
     @Override
     public Contract addContract(
-        final int projectId,
+        final String repoFullName,
         final String contributorUsername,
-        final String contributorProvider,
+        final String provider,
         final BigDecimal hourlyRate,
         final String role
     ) {
-        if(projectId != this.projectId) {
+        if(!this.repoFullName.equals(repoFullName)
+            || !this.provider.equals(provider)
+        ) {
             throw new IllegalArgumentException(
-                "These are the Contracts of Project " + this.projectId + ". "
+                "These are the Contracts of Project " + this.repoFullName
+              + " from " + this.provider + ". "
               + "You cannot register another Project's contracts here."
             );
         } else {
             final Contract registered = this.storage.contracts().addContract(
-                this.projectId,
+                this.repoFullName,
                 contributorUsername,
-                contributorProvider,
+                this.provider,
                 hourlyRate,
                 role
             );
