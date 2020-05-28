@@ -58,6 +58,11 @@ final class GitlabRepo extends BaseRepo {
     }
 
     @Override
+    public String fullName() {
+        throw new UnsupportedOperationException("Not yet implemented.");
+    }
+
+    @Override
     public Issues issues() {
         throw new UnsupportedOperationException("Not yet implemented.");
     }

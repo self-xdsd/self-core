@@ -59,6 +59,11 @@ final class GithubRepo extends BaseRepo {
     }
 
     @Override
+    public String fullName() {
+        return this.json().getString("full_name");
+    }
+
+    @Override
     public Issues issues() {
         return new GithubIssues(
             URI.create(this.repoUri().toString() + "/issues"),

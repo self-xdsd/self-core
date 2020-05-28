@@ -53,6 +53,12 @@ public interface Repo {
     Project activate();
 
     /**
+     * This Repo's full name (e.g. amihaiemil/docker-java-api).
+     * @return String.
+     */
+    String fullName();
+
+    /**
      * Provider name of this repository.
      * @return Provider.
      */
