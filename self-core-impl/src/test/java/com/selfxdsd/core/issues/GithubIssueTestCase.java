@@ -89,4 +89,26 @@ public final class GithubIssueTestCase {
         );
     }
 
+    /**
+     * GithubIssue can return the fullName of the Repo it belongs to.
+     */
+    @Test
+    public void returnsRepoFullName() {
+        final Issue issue = new GithubIssue(
+            URI.create("http://localhost/issues/1"),
+            Json.createObjectBuilder()
+                .add("number", 1)
+                .add(
+                    "repository_url",
+                    "https://api.github.com/repos/amihaiemil/docker-java-api"
+                )
+                .build(),
+            Mockito.mock(Storage.class)
+        );
+        MatcherAssert.assertThat(
+            issue.repoFullName(),
+            Matchers.equalTo("amihaiemil/docker-java-api")
+        );
+    }
+
 }

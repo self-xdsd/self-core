@@ -88,6 +88,13 @@ public final class GithubIssue implements Issue {
     }
 
     @Override
+    public String repoFullName() {
+        return this.json.getString("repository_url").substring(
+            "https://api.github.com/repos/".length()
+        );
+    }
+
+    @Override
     public JsonObject json() {
         return this.json;
     }

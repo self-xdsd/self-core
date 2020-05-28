@@ -48,6 +48,12 @@ public interface Issue {
     String role();
 
     /**
+     * Repo full name.
+     * @return Repo full name.
+     */
+    String repoFullName();
+
+    /**
      * The Issue in JSON format as returned by the provider's API.
      * @return JsonObject.
      */
