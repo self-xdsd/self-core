@@ -22,9 +22,12 @@
  */
 package com.selfxdsd.core.mock;
 
+import com.selfxdsd.api.Issue;
+import com.selfxdsd.api.Project;
 import com.selfxdsd.api.Task;
 import com.selfxdsd.api.Tasks;
 import com.selfxdsd.api.storage.Storage;
+import com.selfxdsd.core.tasks.StoredTask;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -65,6 +68,30 @@ public final class InMemoryTasks implements Tasks {
     @Override
     public Task getById(final String issueId, final String provider) {
         return this.tasks.get(new TaskKey(issueId, provider));
+    }
+
+    @Override
+    public Task register(final Issue issue) {
+        final Project project = this.storage.projects().getProjectById(
+            issue.repoFullName(), issue.provider()
+        );
+        if(project == null) {
+            throw new IllegalStateException(
+                "Project not found, can't register Issue"
+            );
+        } else {
+            final Task newTask = new StoredTask(
+                project, issue, issue.role(), issue.provider(), this.storage
+            );
+            this.tasks.put(
+                new TaskKey(
+                    issue.issueId(),
+                    issue.provider()
+                ),
+                newTask
+            );
+            return newTask;
+        }
     }
 
     /**
