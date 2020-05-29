@@ -88,6 +88,29 @@ public final class InMemoryTasksTestCase {
     }
 
     /**
+     * Should return tasks of project by repo full name and provider.
+     */
+    @Test
+    public void getTasksOfProject(){
+        final Storage storage = new InMemory();
+        ProjectManager projectManager = storage
+            .projectManagers().pick("github");
+        final Project project = storage.projects().register(
+            this.mockRepo("mihai/test", "github"), projectManager
+        );
+        final Issue issue = this.mockIssue(
+            "123",
+            project.repoFullName(),
+            project.provider(),
+            Contract.Roles.DEV
+        );
+        final Task registered = storage.tasks().register(issue);
+        final Tasks tasks = storage.tasks()
+            .ofProject("mihai/test", "github");
+        MatcherAssert.assertThat(tasks, Matchers.contains(registered));
+    }
+
+    /**
      * Mock a Repo for test.
      * @param fullName Full name.
      * @param provider Provider.

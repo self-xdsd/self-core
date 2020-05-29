@@ -27,21 +27,18 @@ import com.selfxdsd.api.Project;
 import com.selfxdsd.api.Task;
 import com.selfxdsd.api.Tasks;
 import com.selfxdsd.api.storage.Storage;
+import com.selfxdsd.core.tasks.ProjectTasks;
 import com.selfxdsd.core.tasks.StoredTask;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * In-memory Tasks for test purposes.
+ *
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
- * @todo #133:30min Implement and unit test method
- *  ofProject(...) which should return the specified
- *  Project tasks using class {@link com.selfxdsd.core.tasks.ProjectTasks}.
  */
 public final class InMemoryTasks implements Tasks {
 
@@ -57,6 +54,7 @@ public final class InMemoryTasks implements Tasks {
 
     /**
      * Ctor.
+     *
      * @param storage Parent storage.
      */
     public InMemoryTasks(final Storage storage) {
@@ -82,7 +80,7 @@ public final class InMemoryTasks implements Tasks {
         final Project project = this.storage.projects().getProjectById(
             issue.repoFullName(), issue.provider()
         );
-        if(project == null) {
+        if (project == null) {
             throw new IllegalStateException(
                 "Project not found, can't register Issue."
             );
@@ -103,11 +101,14 @@ public final class InMemoryTasks implements Tasks {
     }
 
     @Override
-    public Tasks ofProject(
-        final String repoFullName,
-        final String repoProvider
-    ) {
-        return null;
+    public Tasks ofProject(final String repoFullName,
+                           final String repoProvider) {
+        final List<Task> tasksOf = tasks.values()
+            .stream()
+            .filter(t -> t.issue().repoFullName().equals(repoFullName)
+                && t.issue().provider().equals(repoProvider))
+            .collect(Collectors.toList());
+        return new ProjectTasks(repoFullName, repoProvider, tasksOf, storage);
     }
 
     /**
@@ -132,6 +133,7 @@ public final class InMemoryTasks implements Tasks {
 
         /**
          * Constructor.
+         *
          * @param issueId Given Issue ID.
          * @param repoFullName Repo full name.
          * @param provider Given provider.
