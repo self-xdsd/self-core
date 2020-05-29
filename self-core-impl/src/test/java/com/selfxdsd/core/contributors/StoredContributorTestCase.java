@@ -24,6 +24,7 @@ package com.selfxdsd.core.contributors;
 
 import com.selfxdsd.api.Contracts;
 import com.selfxdsd.api.Contributor;
+import com.selfxdsd.api.Tasks;
 import com.selfxdsd.api.storage.Storage;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -79,6 +80,29 @@ public final class StoredContributorTestCase {
         MatcherAssert.assertThat(
             mihai.contracts(),
             Matchers.is(contracts)
+        );
+    }
+
+    /**
+     * StoredContributor can return his tasks.
+     */
+    @Test
+    public void returnsTasks() {
+        final Storage storage = Mockito.mock(Storage.class);
+        final Contributor mihai = new StoredContributor(
+            "mihai", "github", storage
+        );
+
+        final Tasks all = Mockito.mock(Tasks.class);
+        final Tasks tasks = Mockito.mock(Tasks.class);
+        Mockito.when(all.ofContributor(mihai.username(), mihai.provider()))
+            .thenReturn(tasks);
+
+        Mockito.when(storage.tasks()).thenReturn(all);
+
+        MatcherAssert.assertThat(
+            mihai.tasks(),
+            Matchers.is(tasks)
         );
     }
 

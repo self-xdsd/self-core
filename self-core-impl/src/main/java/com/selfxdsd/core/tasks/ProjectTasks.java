@@ -128,6 +128,11 @@ public final class ProjectTasks implements Tasks {
     }
 
     @Override
+    public Tasks ofContributor(final String username, final String provider) {
+        return storage.tasks().ofContributor(username, provider);
+    }
+
+    @Override
     public Iterator<Task> iterator() {
         return this.tasks.iterator();
     }

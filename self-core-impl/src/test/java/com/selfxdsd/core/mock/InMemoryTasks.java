@@ -22,10 +22,7 @@
  */
 package com.selfxdsd.core.mock;
 
-import com.selfxdsd.api.Issue;
-import com.selfxdsd.api.Project;
-import com.selfxdsd.api.Task;
-import com.selfxdsd.api.Tasks;
+import com.selfxdsd.api.*;
 import com.selfxdsd.api.storage.Storage;
 import com.selfxdsd.core.tasks.StoredTask;
 
@@ -108,6 +105,11 @@ public final class InMemoryTasks implements Tasks {
         final String repoProvider
     ) {
         return null;
+    }
+
+    @Override
+    public Tasks ofContributor(final String username, final String provider) {
+        throw new UnsupportedOperationException("Not implemented yet");
     }
 
     /**
