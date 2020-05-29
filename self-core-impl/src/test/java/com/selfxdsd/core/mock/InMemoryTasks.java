@@ -39,6 +39,9 @@ import java.util.Objects;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
+ * @todo #133:30min Implement and unit test method
+ *  ofProject(...) which should return the specified
+ *  Project tasks using class {@link com.selfxdsd.core.tasks.ProjectTasks}.
  */
 public final class InMemoryTasks implements Tasks {
 
@@ -77,7 +80,7 @@ public final class InMemoryTasks implements Tasks {
         );
         if(project == null) {
             throw new IllegalStateException(
-                "Project not found, can't register Issue"
+                "Project not found, can't register Issue."
             );
         } else {
             final Task newTask = new StoredTask(
@@ -92,6 +95,14 @@ public final class InMemoryTasks implements Tasks {
             );
             return newTask;
         }
+    }
+
+    @Override
+    public Tasks ofProject(
+        final String repoFullName,
+        final String repoProvider
+    ) {
+        return null;
     }
 
     /**

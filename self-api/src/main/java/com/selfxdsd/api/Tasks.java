@@ -27,9 +27,8 @@ package com.selfxdsd.api;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
- * @todo #125:30min Implement and unit test Project.tasks() and
- *  Contributor.tasks(). They each should return their own implementation
- *  of interface Tasks.
+ * @todo #133:30min Implement and unit test Contributor.tasks().
+ *  It should return its own implementation of Tasks.
  */
 public interface Tasks extends Iterable<Task> {
 
@@ -47,5 +46,17 @@ public interface Tasks extends Iterable<Task> {
      * @return Task.
      */
     Task register(final Issue issue);
+
+
+    /**
+     * Get the tasks of a given Project.
+     * @param repoFullName Full name of the Repo that the Project represents.
+     * @param repoProvider Provider of the Repo that the Project represents.
+     * @return Tasks.
+     */
+    Tasks ofProject(
+        final String repoFullName,
+        final String repoProvider
+    );
 
 }

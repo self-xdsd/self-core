@@ -148,6 +148,31 @@ public final class StoredProjectTestCase {
     }
 
     /**
+     * StoredProject can return its Tasks.
+     */
+    @Test
+    public void returnsTasks() {
+        final Tasks all = Mockito.mock(Tasks.class);
+        final Tasks ofProject = Mockito.mock(Tasks.class);
+        Mockito.when(
+            all.ofProject("john/test", "github")
+        ).thenReturn(ofProject);
+
+        final Storage storage = Mockito.mock(Storage.class);
+        Mockito.when(storage.tasks()).thenReturn(all);
+
+        final Project project = new StoredProject(
+            this.mockRepo("john/test", "github"),
+            Mockito.mock(ProjectManager.class),
+            storage
+        );
+        MatcherAssert.assertThat(
+            project.tasks(),
+            Matchers.is(ofProject)
+        );
+    }
+
+    /**
      * Mock a Repo for test.
      * @param fullName Full name.
      * @param provider Provider.

@@ -80,6 +80,12 @@ public interface Project {
     Contributors contributors();
 
     /**
+     * Active tasks in this project.
+     * @return Tasks.
+     */
+    Tasks tasks();
+
+    /**
      * Deactivate this project, tell  Self to stop
      * managing it.
      * @return This project's repository.

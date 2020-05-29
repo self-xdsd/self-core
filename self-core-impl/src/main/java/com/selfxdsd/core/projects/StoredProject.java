@@ -106,6 +106,14 @@ public final class StoredProject implements Project {
     }
 
     @Override
+    public Tasks tasks() {
+        return this.storage.tasks().ofProject(
+            this.repoFullName(),
+            this.provider()
+        );
+    }
+
+    @Override
     public Repo deactivate() {
         return null;
     }
