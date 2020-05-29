@@ -47,7 +47,7 @@ public final class ContributorTasks implements Tasks {
      * @param username Contributor's user name.
      * @param provider Contributor's provider.
      * @param tasks Contributor's tasks.
-     * @param storage Self's storage, to save new contracts.
+     * @param storage Self's storage, to save new tasks.
      */
     public ContributorTasks(final String username,
                             final String provider,

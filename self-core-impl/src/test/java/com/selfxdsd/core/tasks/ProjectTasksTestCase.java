@@ -201,6 +201,31 @@ public final class ProjectTasksTestCase {
     }
 
     /**
+     * Should return tasks for contributor (name and provider).
+     */
+    @Test
+    public void returnTasksForContributor(){
+        final Storage storage = Mockito.mock(Storage.class);
+        final Tasks tasks = new ProjectTasks(
+            "john/test", "github",
+            List.of(),
+            storage
+        );
+        final Tasks all = Mockito.mock(Tasks.class);
+        final Tasks ofContributor = Mockito.mock(Tasks.class);
+        Mockito.when(all.ofContributor(
+            Mockito.anyString(),
+            Mockito.anyString()
+        )).thenReturn(ofContributor);
+        Mockito.when(storage.tasks()).thenReturn(all);
+
+        MatcherAssert.assertThat(
+            tasks.ofContributor("mihai", "github"),
+            Matchers.equalTo(ofContributor)
+        );
+    }
+
+    /**
      * Mock an Issue for test.
      * @param issueId ID.
      * @param repoFullName Repo fullname.

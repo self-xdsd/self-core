@@ -63,7 +63,8 @@ public final class ContributorTasksTestCase {
     }
 
     /**
-     * Should throw when register a new task associated with an issue.
+     * Should throw when register a new task associated with an issue
+     * with different provider.
      */
     @Test(expected = IllegalArgumentException.class)
     public void throwWhenIssueWithDifferentProvider() {
@@ -81,7 +82,7 @@ public final class ContributorTasksTestCase {
     }
 
     /**
-     * Should return new ContributorTask when searching for different
+     * Should return new ContributorTask when searching for same
      * contributor + provider key.
      */
     @Test
@@ -126,6 +127,32 @@ public final class ContributorTasksTestCase {
         MatcherAssert.assertThat(
             tasksOfMihai,
             Matchers.iterableWithSize(1)
+        );
+    }
+
+
+    /**
+     * Should return tasks of a project.
+     */
+    @Test
+    public void tasksOfProject(){
+        final Storage storage = Mockito.mock(Storage.class);
+        final Tasks tasks = new ContributorTasks(
+            "mihai", "github",
+            List.of(),
+            storage
+        );
+        final Tasks all = Mockito.mock(Tasks.class);
+        final Tasks ofProject = Mockito.mock(Tasks.class);
+        Mockito.when(all.ofProject(
+            Mockito.anyString(),
+            Mockito.anyString()
+        )).thenReturn(ofProject);
+        Mockito.when(storage.tasks()).thenReturn(all);
+
+        MatcherAssert.assertThat(
+            tasks.ofProject("mihai", "github"),
+            Matchers.equalTo(ofProject)
         );
     }
 
