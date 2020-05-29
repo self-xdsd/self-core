@@ -81,11 +81,16 @@ public final class ProjectTasks implements Tasks {
     }
 
     @Override
-    public Task getById(final String issueId, final String provider) {
+    public Task getById(
+        final String issueId,
+        final String repoFullName,
+        final String provider
+    ) {
         return this.tasks.stream().filter(
             task -> {
                 final Issue issue = task.issue();
                 return issue.issueId().equals(issueId)
+                    && issue.repoFullName().equals(repoFullName)
                     && issue.provider().equals(provider);
             }
         ).findFirst().orElse(null);

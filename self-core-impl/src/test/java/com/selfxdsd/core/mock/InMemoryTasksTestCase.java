@@ -44,7 +44,7 @@ public final class InMemoryTasksTestCase {
     public void getsByIdNotFound() {
         final Tasks tasks = new InMemoryTasks(Mockito.mock(Storage.class));
         MatcherAssert.assertThat(
-            tasks.getById("missing", "github"),
+            tasks.getById("missing", "john/test", "github"),
             Matchers.nullValue()
         );
     }
@@ -80,7 +80,9 @@ public final class InMemoryTasksTestCase {
             Matchers.iterableWithSize(1)
         );
         MatcherAssert.assertThat(
-            storage.tasks().getById(issue.issueId(), issue.provider()),
+            storage.tasks().getById(
+                issue.issueId(), issue.repoFullName(), issue.provider()
+            ),
             Matchers.is(registered)
         );
     }

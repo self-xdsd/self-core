@@ -35,10 +35,15 @@ public interface Tasks extends Iterable<Task> {
     /**
      * Get a Task by its ID.
      * @param issueId Issue ID from Github, Gitlab etc.
+     * @param repoFullName Repo full name.
      * @param provider Provider name.
      * @return Task or null if not found.
      */
-    Task getById(final String issueId, final String provider);
+    Task getById(
+        final String issueId,
+        final String repoFullName,
+        final String provider
+    );
 
     /**
      * Register a new task.

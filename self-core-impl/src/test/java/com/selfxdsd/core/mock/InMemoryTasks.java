@@ -69,8 +69,12 @@ public final class InMemoryTasks implements Tasks {
     }
 
     @Override
-    public Task getById(final String issueId, final String provider) {
-        return this.tasks.get(new TaskKey(issueId, provider));
+    public Task getById(
+        final String issueId,
+        final String repoFullName,
+        final String provider
+    ) {
+        return this.tasks.get(new TaskKey(issueId, repoFullName, provider));
     }
 
     @Override
@@ -89,6 +93,7 @@ public final class InMemoryTasks implements Tasks {
             this.tasks.put(
                 new TaskKey(
                     issue.issueId(),
+                    issue.repoFullName(),
                     issue.provider()
                 ),
                 newTask
@@ -116,6 +121,11 @@ public final class InMemoryTasks implements Tasks {
         private final String issueId;
 
         /**
+         * Repo full name.
+         */
+        private final String repoFullName;
+
+        /**
          * Provider.
          */
         private final String provider;
@@ -123,10 +133,16 @@ public final class InMemoryTasks implements Tasks {
         /**
          * Constructor.
          * @param issueId Given Issue ID.
+         * @param repoFullName Repo full name.
          * @param provider Given provider.
          */
-        TaskKey(final String issueId, final String provider) {
+        TaskKey(
+            final String issueId,
+            final String repoFullName,
+            final String provider
+        ) {
             this.issueId = issueId;
+            this.repoFullName = repoFullName;
             this.provider = provider;
         }
 
@@ -140,12 +156,17 @@ public final class InMemoryTasks implements Tasks {
             }
             final TaskKey taskKey = (TaskKey) object;
             return this.issueId.equals(taskKey.issueId)
-                && this.provider.equals(taskKey.provider);
+                && this.provider.equals(taskKey.provider)
+                && this.repoFullName.equals(taskKey.repoFullName);
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(this.issueId, this.provider);
+            return Objects.hash(
+                this.issueId,
+                this.provider,
+                this.repoFullName
+            );
         }
     }
 }

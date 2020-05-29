@@ -70,7 +70,7 @@ public final class ProjectTasksTestCase {
             Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(
-            tasks.getById("123", "github"),
+            tasks.getById("123", "john/test", "github"),
             Matchers.nullValue()
         );
     }
@@ -90,9 +90,9 @@ public final class ProjectTasksTestCase {
         Mockito.when(first.issue()).thenReturn(issueOne);
         final Task second = Mockito.mock(Task.class);
         final Issue issueTwo = this.mockIssue(
-            "124",
+            "123",
             "john/test",
-            "github",
+            "gitlab",
             Contract.Roles.DEV
         );
         Mockito.when(second.issue()).thenReturn(issueTwo);
@@ -102,7 +102,7 @@ public final class ProjectTasksTestCase {
             Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(
-            tasks.getById("123", "github"),
+            tasks.getById("123", "john/test", "github"),
             Matchers.is(first)
         );
     }
@@ -176,7 +176,7 @@ public final class ProjectTasksTestCase {
         MatcherAssert.assertThat(tasks, Matchers.emptyIterable());
         final Task created = tasks.register(issue);
         MatcherAssert.assertThat(tasks, Matchers.iterableWithSize(1));
-        final Task found = tasks.getById("123", "github");
+        final Task found = tasks.getById("123", "john/test", "github");
         MatcherAssert.assertThat(created, Matchers.is(found));
     }
 
