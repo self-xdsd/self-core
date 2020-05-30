@@ -36,10 +36,6 @@ import java.util.Objects;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
- * @todo #134:30min Implement and unit test method
- *  ofContributor(...) which should return the specified
- *  Contributor tasks using class
- *  {@link com.selfxdsd.core.tasks.ContributorTasks}.
  */
 public final class InMemoryTasks implements Tasks {
 
