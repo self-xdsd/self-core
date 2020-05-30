@@ -24,6 +24,7 @@ package com.selfxdsd.core.contributors;
 
 import com.selfxdsd.api.Contracts;
 import com.selfxdsd.api.Contributor;
+import com.selfxdsd.api.Tasks;
 import com.selfxdsd.api.storage.Storage;
 
 /**
@@ -78,5 +79,10 @@ public final class StoredContributor implements Contributor {
     @Override
     public Contracts contracts() {
         return this.storage.contracts().ofContributor(this);
+    }
+
+    @Override
+    public Tasks tasks() {
+        return this.storage.tasks().ofContributor(this.username, this.provider);
     }
 }

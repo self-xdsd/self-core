@@ -27,8 +27,6 @@ package com.selfxdsd.api;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
- * @todo #133:30min Implement and unit test Contributor.tasks().
- *  It should return its own implementation of Tasks.
  */
 public interface Tasks extends Iterable<Task> {
 
@@ -63,5 +61,14 @@ public interface Tasks extends Iterable<Task> {
         final String repoFullName,
         final String repoProvider
     );
+
+    /**
+     * Get the tasks of a given Contributor.
+     * @param username Contributor's user name
+     * @param provider Contributor's Provider
+     * @return Tasks.
+     */
+    Tasks ofContributor(final String username,
+                        final String provider);
 
 }

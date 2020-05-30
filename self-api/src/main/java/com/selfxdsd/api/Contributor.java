@@ -48,4 +48,10 @@ public interface Contributor {
      */
     Contracts contracts();
 
+    /**
+     * This contributor's tasks.
+     * @return Tasks
+     */
+    Tasks tasks();
+
 }
