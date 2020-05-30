@@ -24,6 +24,7 @@ package com.selfxdsd.core.mock;
 
 import com.selfxdsd.api.*;
 import com.selfxdsd.api.storage.Storage;
+import com.selfxdsd.core.tasks.ContributorTasks;
 import com.selfxdsd.core.tasks.ProjectTasks;
 import com.selfxdsd.core.tasks.StoredTask;
 
@@ -110,7 +111,12 @@ public final class InMemoryTasks implements Tasks {
 
     @Override
     public Tasks ofContributor(final String username, final String provider) {
-        throw new UnsupportedOperationException("Not implemented yet");
+        final List<Task> tasksOf = tasks.values()
+            .stream()
+            .filter(t -> t.assignee().username().equals(username)
+                && t.assignee().provider().equals(provider))
+            .collect(Collectors.toList());
+        return new ContributorTasks(username, provider, tasksOf, storage);
     }
 
     /**

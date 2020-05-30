@@ -34,6 +34,9 @@ import org.mockito.Mockito;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
+ * @todo #135:30min Finish 'getTasksOfContributor()' test case
+ *  when API permits that; as in when a Task can be assigned to a
+ *  Contributor.
  */
 public final class InMemoryTasksTestCase {
 
@@ -108,6 +111,28 @@ public final class InMemoryTasksTestCase {
         final Tasks tasks = storage.tasks()
             .ofProject("mihai/test", "github");
         MatcherAssert.assertThat(tasks, Matchers.contains(registered));
+    }
+
+    /**
+     * Should return contributor's tasks by user name and provider.
+     */
+    @Test
+    public void getTasksOfContributor(){
+        final Storage storage = new InMemory();
+        ProjectManager projectManager = storage
+            .projectManagers().pick("github");
+        final Project project = storage.projects().register(
+            this.mockRepo("mihai/test", "github"), projectManager
+        );
+        final Issue issue = this.mockIssue(
+            "123",
+            project.repoFullName(),
+            project.provider(),
+            Contract.Roles.DEV
+        );
+        storage.tasks().register(issue);
+        storage.tasks().ofContributor("mihai", "github");
+        //incomplete see to-do #134 requirements
     }
 
     /**
