@@ -44,4 +44,24 @@ public interface Provider {
      * @return Repo.
      */
     Repo repo(final String name);
+
+    /**
+     * Names of possible providers.
+     */
+    final class Names {
+        /**
+         * Hidden ctor.
+         */
+        private Names(){ }
+
+        /**
+         * Github provider.
+         */
+        public static final String GITHUB = "github";
+
+        /**
+         * Gitlab provider.
+         */
+        public static final String GITLAB = "gitlab";
+    }
 }

@@ -1,7 +1,6 @@
 package com.selfxdsd.core;
 
 import com.selfxdsd.api.Login;
-import com.selfxdsd.api.Projects;
 import com.selfxdsd.api.Provider;
 import com.selfxdsd.api.User;
 import com.selfxdsd.api.storage.Storage;
@@ -44,28 +43,12 @@ public final class GithubLogin implements Login {
 
     @Override
     public User user(final Storage storage) {
-        return new User() {
-            private final String token = githubToken;
-
-            @Override
-            public String username() {
-                return username;
-            }
-
-            @Override
-            public String email() {
-                return email;
-            }
-
-            @Override
-            public Provider provider() {
-                return new Github(this, storage);
-            }
-
-            @Override
-            public Projects projects() {
-                return storage.projects().ownedBy(this);
-            }
-        };
+        return new StoredUser(
+            this.username,
+            this.email,
+            Provider.Names.GITHUB,
+            this.githubToken,
+            storage
+        );
     }
 }
