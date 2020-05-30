@@ -131,7 +131,7 @@ public final class InMemoryTasksTestCase {
             Contract.Roles.DEV
         );
         storage.tasks().register(issue);
-        storage.tasks().ofContributor("mihai", "github");
+        //storage.tasks().ofContributor("mihai", "github");
         //incomplete see to-do #134 requirements
     }
 
