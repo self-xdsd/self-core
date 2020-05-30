@@ -21,7 +21,6 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 package com.selfxdsd.api;
-import java.net.URL;
 
 /**
  * User.
@@ -42,12 +41,6 @@ public interface User {
      * @return String.
      */
     String email();
-
-    /**
-     * User's avatar URL.
-     * @return URL.
-     */
-    URL avatar();
 
     /**
      * Provider. Github, Bitbucket, Gitlab etc.
