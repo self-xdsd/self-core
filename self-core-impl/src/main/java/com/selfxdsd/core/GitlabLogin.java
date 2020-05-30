@@ -6,8 +6,6 @@ import com.selfxdsd.api.Provider;
 import com.selfxdsd.api.User;
 import com.selfxdsd.api.storage.Storage;
 
-import java.net.URL;
-
 /**
  * Login implementation for Gitlab.
  * @author criske
@@ -24,10 +22,7 @@ public final class GitlabLogin implements Login {
      * Email from Gitlab.
      */
     private final String email;
-    /**
-     * Avatar URL from Gitlab.
-     */
-    private final URL avatar;
+
     /**
      * Gitlab Access token.
      */
@@ -37,18 +32,17 @@ public final class GitlabLogin implements Login {
      * Constructor.
      * @param username Username from Gitlab.
      * @param email Email from Gitlab.
-     * @param avatar Avatar URL from Gitlab.
      * @param gitlabToken Gitlab Access token.
      * @checkstyle ParameterNumber (10 lines)
      */
-    public GitlabLogin(final String username, final String email,
-                       final URL avatar, final String gitlabToken) {
+    public GitlabLogin(
+        final String username, final String email, final String gitlabToken
+    ) {
         this.username = username;
         this.email = email;
-        this.avatar = avatar;
         this.gitlabToken = gitlabToken;
     }
-    
+
     @Override
     public User user(final Storage storage) {
         return new User() {
@@ -63,11 +57,6 @@ public final class GitlabLogin implements Login {
             @Override
             public String email() {
                 return email;
-            }
-
-            @Override
-            public URL avatar() {
-                return avatar;
             }
 
             @Override

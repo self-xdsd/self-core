@@ -7,8 +7,6 @@ import com.selfxdsd.api.storage.Storage;
 import com.selfxdsd.core.mock.InMemory;
 import org.junit.Test;
 
-import java.net.URL;
-
 import static org.hamcrest.MatcherAssert.*;
 import static org.hamcrest.Matchers.*;
 
@@ -29,15 +27,12 @@ public final class GitlabLoginTestCase {
         final Storage storage = new InMemory();
         final Self self = new SelfCore(storage);
         final Login gitlabLogin = new GitlabLogin(
-            "amihaiemil", "amihaiemil@gmail.com",
-            new URL("https://gravatar.com/amihaiemil"), "gl123token"
+            "amihaiemil", "amihaiemil@gmail.com", "gl123token"
         );
 
         final User amihaiemil = self.login(gitlabLogin);
         assertThat(amihaiemil.username(), equalTo("amihaiemil"));
         assertThat(amihaiemil.email(), equalTo("amihaiemil@gmail.com"));
-        assertThat(amihaiemil.avatar(),
-            equalTo(new URL("https://gravatar.com/amihaiemil")));
         assertThat(amihaiemil.provider(), instanceOf(Gitlab.class));
         assertThat(amihaiemil.provider().name(), equalTo("gitlab"));
 
