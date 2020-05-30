@@ -68,15 +68,7 @@ public final class ContributorTasks implements Tasks {
 
     @Override
     public Task register(final Issue issue) {
-        if (!this.provider.equals(issue.provider())) {
-            throw new IllegalArgumentException(
-                "The given Issue does not belong to the Provider "
-                    + this.provider + "."
-            );
-        }
-        Task task = this.storage.tasks().register(issue);
-        tasks.add(task);
-        return task;
+        throw new UnsupportedOperationException("Not implemented yet");
     }
 
     @Override
