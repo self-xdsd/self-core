@@ -93,6 +93,53 @@
             </build>
         </profile>
         <profile>
+            <id>genDocs</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <version>3.0.0</version>
+                        <executions>
+                            <execution>
+                                <id>attach-sources</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <version>2.10.3</version>
+                        <executions>
+                            <execution>
+                                <id>attach-javadocs</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <source>8</source>
+                            <javadocExecutable>${JAVA_HOME}/bin/javadoc</javadocExecutable>
+                            <tags>
+                                <tag>
+                                    <name>todo</name>
+                                    <placement>X</placement>
+                                </tag>
+                                <tag>
+                                    <name>checkstyle</name>
+                                    <placement>X</placement>
+                                </tag>
+                            </tags>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
             <id>signArtifactsGpg</id>
             <build>
                 <plugins>

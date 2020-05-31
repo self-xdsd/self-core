@@ -11,7 +11,7 @@ merge:
     mvn clean install -Pcheckstyle,itcases
 deploy:
   script: |-
-    mvn clean deploy -PsignArtifactsGpg,deployToGithubPackages --settings /home/r/settings.xml
+    mvn clean deploy -PgenDocs,signArtifactsGpg,deployToGithubPackages --settings /home/r/settings.xml
 release:
   script: |-
     chmod +x ./release.sh
