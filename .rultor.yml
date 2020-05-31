@@ -14,5 +14,5 @@ deploy:
     mvn clean deploy -PsignArtifactsGpg,deployToGithubPackages --settings /home/r/settings.xml
 release:
   script: |-
-    echo 'Nothing to release yet'
-    exit -1
+    chmod +x ./release.sh
+    ./release.sh
