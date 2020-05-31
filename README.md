@@ -8,7 +8,7 @@
 [![We recommend IntelliJ IDEA](http://amihaiemil.github.io/images/intellij-idea-recommend.svg)](https://www.jetbrains.com/idea/)
 
 
-Self's Core, version `0.0.1`.
+Self's Core, version `<not_released_yet>`.
 
 This repo contains the main Java SE 11 Implementation, clean of any framework.
 
