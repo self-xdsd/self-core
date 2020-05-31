@@ -32,10 +32,6 @@ import com.selfxdsd.api.storage.Storage;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
- * @todo #142:30min At the moment the User's accessToken is never
- *  used. This token should be passed on to the Provider implementation,
- *  which in turn will use it to make API Requests which require
- *  user authentication.
  */
 public final class StoredUser implements User {
 
@@ -100,9 +96,9 @@ public final class StoredUser implements User {
     public Provider provider() {
         final Provider provider;
         if(this.provider.equals(Provider.Names.GITHUB)) {
-            provider = new Github(this, storage);
+            provider = new Github(this, storage, accessToken);
         } else {
-            provider = new Gitlab(this, storage);
+            provider = new Gitlab(this, storage, accessToken);
         }
         return provider;
     }

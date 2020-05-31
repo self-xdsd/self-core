@@ -55,12 +55,19 @@ final class Github implements Provider {
     private final Storage storage;
 
     /**
+     *Token used for making API Requests which require
+     *user authentication.
+     */
+    private final String accessToken;
+
+    /**
      * Constructor.
      * @param user Authenticated user.
      * @param storage Storage where we might save some stuff.
+     * @param accessToken Access token for authenticated API requests.
      */
-    Github(final User user, final Storage storage) {
-        this(user, storage, URI.create("https://api.github.com"));
+    Github(final User user, final Storage storage, final String accessToken) {
+        this(user, storage, URI.create("https://api.github.com"), accessToken);
     }
 
     /**
@@ -68,11 +75,14 @@ final class Github implements Provider {
      * @param user Authenticated user.
      * @param storage Storage where we might save some stuff.
      * @param uri Base URI of Github's API.
+     * @param accessToken Access token for authenticated API requests.
      */
-    Github(final User user, final Storage storage, final URI uri) {
+    Github(final User user, final Storage storage, final URI uri,
+           final String accessToken) {
         this.user = user;
         this.uri = uri;
         this.storage = storage;
+        this.accessToken = accessToken;
     }
 
     @Override

@@ -54,12 +54,20 @@ final class Gitlab implements Provider {
     private final Storage storage;
 
     /**
+     *Token used for making API Requests which require
+     *user authentication.
+     */
+    private final String accessToken;
+
+    /**
      * Constructor.
      * @param user Authenticated user.
      * @param storage Storage where we might save some stuff.
+     * @param accessToken Access token for authenticated API requests.
      */
-    Gitlab(final User user, final Storage storage) {
-        this(user, storage, URI.create("https://gitlab.com/api/v4"));
+    Gitlab(final User user, final Storage storage, final String accessToken) {
+        this(user, storage, URI.create("https://gitlab.com/api/v4"),
+            accessToken);
     }
 
     /**
@@ -67,11 +75,14 @@ final class Gitlab implements Provider {
      * @param user Authenticated user.
      * @param storage Storage where we might save some stuff.
      * @param uri Base URI of Gitlab's API.
+     * @param accessToken Access token for authenticated API requests.
      */
-    Gitlab(final User user, final Storage storage, final URI uri) {
+    Gitlab(final User user, final Storage storage, final URI uri,
+           final String accessToken) {
         this.user = user;
         this.uri = uri;
         this.storage = storage;
+        this.accessToken = accessToken;
     }
 
     @Override
