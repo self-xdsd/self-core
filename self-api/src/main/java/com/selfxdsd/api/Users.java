@@ -31,10 +31,18 @@ package com.selfxdsd.api;
 public interface Users extends Iterable<User> {
     /**
      * Sign up.
-     * @param user User to sign up.
+     * @param username Username.
+     * @param provider Provider's name (github, gitlab etc).
+     * @param email User's e-mail address.
+     * @param accessToken User's access token.
      * @return The registered User.
      */
-    User signUp(final User user);
+    User signUp(
+        final String username,
+        final String provider,
+        final String email,
+        final String accessToken
+    );
 
     /**
      * Get a User.

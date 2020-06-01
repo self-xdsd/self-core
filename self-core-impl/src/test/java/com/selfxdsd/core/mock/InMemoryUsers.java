@@ -24,6 +24,8 @@ package com.selfxdsd.core.mock;
 
 import com.selfxdsd.api.User;
 import com.selfxdsd.api.Users;
+import com.selfxdsd.api.storage.Storage;
+import com.selfxdsd.core.StoredUser;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -41,18 +43,42 @@ public final class InMemoryUsers implements Users {
     /**
      * User's "table".
      */
-    private final Map<UserKey, User> users = new HashMap<>();
+    private final Map<UserKey, User> users;
+
+    /**
+     * Parent storage.
+     */
+    private final Storage storage;
+
+    /**
+     * Ctor.
+     * @param storage Parent storage.
+     */
+    public InMemoryUsers(final Storage storage) {
+        this.users = new HashMap<>();
+        this.storage = storage;
+    }
 
     @Override
-    public User signUp(final User user) {
+    public User signUp(
+        final String username,
+        final String provider,
+        final String email,
+        final String accessToken
+    ) {
         final UserKey key = new UserKey(
-            user.username(), user.provider().name()
+            username, provider
         );
-        final User signedUp = this.users.get(key);
+        User signedUp = this.users.get(key);
         if(signedUp == null) {
-            this.users.put(key, user);
+            signedUp = new StoredUser(
+                username, email, provider, accessToken, this.storage
+            );
+            this.users.put(
+                key, signedUp
+            );
         }
-        return user;
+        return signedUp;
     }
 
     @Override

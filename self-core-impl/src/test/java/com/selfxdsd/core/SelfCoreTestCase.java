@@ -22,9 +22,7 @@
  */
 package com.selfxdsd.core;
 
-import com.selfxdsd.api.Login;
-import com.selfxdsd.api.Self;
-import com.selfxdsd.api.User;
+import com.selfxdsd.api.*;
 import com.selfxdsd.api.storage.Storage;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -44,16 +42,30 @@ public final class SelfCoreTestCase {
      */
     @Test
     public void platformLoginWorks(){
-        final Storage storage = Mockito.mock(Storage.class);
-        final Self self = new SelfCore(storage);
-        final Login plafLogin  = Mockito.mock(Login.class);
         final User authUser = Mockito.mock(User.class);
+        final Storage storage = Mockito.mock(Storage.class);
+        final Users all = Mockito.mock(Users.class);
+        Mockito.when(
+            all.signUp(
+                "amihaiemil",
+                Provider.Names.GITHUB,
+                "amihaiemil@gmail.com",
+                "123t"
+            )
+        ).thenReturn(authUser);
+        Mockito.when(storage.users()).thenReturn(all);
+        
+        final Self self = new SelfCore(storage);
+        final Login auth = new GithubLogin(
+            "amihaiemil",
+            "amihaiemil@gmail.com",
+            "123t"
+        );
 
-        Mockito.when(authUser.username()).thenReturn("amihaiemil");
-        Mockito.when(plafLogin.signUp(storage)).thenReturn(authUser);
-
-        MatcherAssert.assertThat(self.login(plafLogin),
-            Matchers.equalTo(authUser));
+        MatcherAssert.assertThat(
+            self.login(auth),
+            Matchers.is(authUser)
+        );
     }
 
 

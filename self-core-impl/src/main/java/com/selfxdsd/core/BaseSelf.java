@@ -58,7 +58,12 @@ abstract class BaseSelf implements Self {
 
     @Override
     public User login(final Login login) {
-        return login.signUp(this.storage());
+        return this.storage.users().signUp(
+            login.username(),
+            login.provider(),
+            login.email(),
+            login.accessToken()
+        );
     }
 
 }

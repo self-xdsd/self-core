@@ -24,11 +24,17 @@ public final class InMemoryTestCase {
     @Test
     public void userSignUp() {
         final Storage storage = new InMemory();
-        final User user = mockUser("amihaiemil", "GitHub");
 
-        storage.users().signUp(user);
+        storage.users().signUp(
+            "amihaiemil",
+            Provider.Names.GITHUB,
+            "amihaiemil@gmail.com",
+            "123t"
+        );
 
-        final User signedUser = storage.users().user("amihaiemil", "GitHub");
+        final User signedUser = storage.users().user(
+            "amihaiemil", Provider.Names.GITHUB
+        );
         assertThat(signedUser.username(), equalTo("amihaiemil"));
     }
 
@@ -38,12 +44,19 @@ public final class InMemoryTestCase {
     @Test
     public void userSignUpTwiceWithSameProvider() {
         final Storage storage = new InMemory();
-        final User userGithub = mockUser("amihaiemil", "GitHub");
-        final User userGithubAgain = mockUser("amihaiemil", "GitHub");
 
-        storage.users().signUp(userGithub);
-        storage.users().signUp(userGithubAgain);
-
+        storage.users().signUp(
+            "amihaiemil",
+            Provider.Names.GITHUB,
+            "amihaiemil@gmail.com",
+            "123t"
+        );
+        storage.users().signUp(
+            "amihaiemil",
+            Provider.Names.GITHUB,
+            "amihaiemil@gmail.com",
+            "123t"
+        );
         assertThat(storage.users(), iterableWithSize(1));
     }
 
@@ -53,11 +66,19 @@ public final class InMemoryTestCase {
     @Test
     public void sameUserNameSignedWithDiffProviders() {
         final Storage storage = new InMemory();
-        final User userGithub = mockUser("amihaiemil", "GitHub");
-        final User userBitbucket = mockUser("amihaiemil", "Bitbucket");
 
-        storage.users().signUp(userGithub);
-        storage.users().signUp(userBitbucket);
+        storage.users().signUp(
+            "amihaiemil",
+            Provider.Names.GITHUB,
+            "amihaiemil@gmail.com",
+            "123t"
+        );
+        storage.users().signUp(
+            "amihaiemil",
+            Provider.Names.GITLAB,
+            "amihaiemil@gmail.com",
+            "123t"
+        );
 
         assertThat(storage.users(), iterableWithSize(2));
     }
@@ -72,9 +93,16 @@ public final class InMemoryTestCase {
         final Storage storage = new InMemory();
         final User user = mockUser("amihaiemil", "GitHub");
 
-        storage.users().signUp(user);
-
-        final User signedUser = storage.users().user("amihaiemil", "Bitbucket");
+        storage.users().signUp(
+            "amihaiemil",
+            Provider.Names.GITHUB,
+            "amihaiemil@gmail.com",
+            "123t"
+        );
+        final User signedUser = storage.users().user(
+            "amihaiemil",
+            Provider.Names.GITLAB
+        );
         assertThat(signedUser, is(nullValue()));
     }
 

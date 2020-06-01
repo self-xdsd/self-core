@@ -2,8 +2,6 @@ package com.selfxdsd.core;
 
 import com.selfxdsd.api.Login;
 import com.selfxdsd.api.Provider;
-import com.selfxdsd.api.User;
-import com.selfxdsd.api.storage.Storage;
 
 /**
  * Login implementation for Gitlab.
@@ -43,13 +41,22 @@ public final class GitlabLogin implements Login {
     }
 
     @Override
-    public User user(final Storage storage) {
-        return new StoredUser(
-            this.username,
-            this.email,
-            Provider.Names.GITLAB,
-            this.gitlabToken,
-            storage
-        );
+    public String username() {
+        return this.username;
+    }
+
+    @Override
+    public String email() {
+        return this.email;
+    }
+
+    @Override
+    public String accessToken() {
+        return this.gitlabToken;
+    }
+
+    @Override
+    public String provider() {
+        return Provider.Names.GITLAB;
     }
 }

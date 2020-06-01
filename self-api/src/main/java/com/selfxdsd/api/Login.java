@@ -1,7 +1,5 @@
 package com.selfxdsd.api;
 
-import com.selfxdsd.api.storage.Storage;
-
 /**
  * Strategy interface used by {@link Self} to login into different platforms
  * (Github, Gitlab etc...).
@@ -12,28 +10,27 @@ import com.selfxdsd.api.storage.Storage;
 public interface Login {
 
     /**
-     * Signs up a user created by the implementations of {@link Login}
-     * <br>.
-     * The Authentication process is delegated to a storage.
-     * @param storage Storage used to sign up.
-     * @return An authenticated User.
+     * User's name.
+     * @return String.
      */
-    default User signUp(final Storage storage) {
-        User user = user(storage);
-        User authenticated = storage.users().user(
-            user.username(), user.provider().name()
-        );
-        if (authenticated == null) {
-            authenticated = storage.users().signUp(user);
-        }
-        return authenticated;
-    }
+    String username();
 
     /**
-     * User created by implementations of {@link Login}.
-     * @param storage Storage that might be used to create the user.
-     * @return User
+     * User's email address.
+     * @return String.
      */
-    User user(final Storage storage);
+    String email();
+
+    /**
+     * User's access token.
+     * @return String.
+     */
+    String accessToken();
+
+    /**
+     * Provider's name.
+     * @return String.
+     */
+    String provider();
 
 }

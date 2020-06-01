@@ -36,7 +36,7 @@ public final class InMemory implements Storage {
     /**
      * In-memory users.
      */
-    private Users users = new InMemoryUsers();
+    private Users users = new InMemoryUsers(this);
     /**
      * In-memory project-managers.
      */
