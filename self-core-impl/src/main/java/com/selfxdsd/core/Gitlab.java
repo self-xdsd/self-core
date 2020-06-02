@@ -36,7 +36,7 @@ import java.net.URI;
  * @since 0.0.1
  * @todo #27:30min Continue adding integration tests for Gitlab provider.
  */
-final class Gitlab implements Provider {
+public final class Gitlab implements Provider {
 
     /**
      * User.
@@ -63,11 +63,9 @@ final class Gitlab implements Provider {
      * Constructor.
      * @param user Authenticated user.
      * @param storage Storage where we might save some stuff.
-     * @param accessToken Access token for authenticated API requests.
      */
-    Gitlab(final User user, final Storage storage, final String accessToken) {
-        this(user, storage, URI.create("https://gitlab.com/api/v4"),
-            accessToken);
+    public Gitlab(final User user, final Storage storage) {
+        this(user, storage, URI.create("https://gitlab.com/api/v4"));
     }
 
     /**
@@ -75,10 +73,23 @@ final class Gitlab implements Provider {
      * @param user Authenticated user.
      * @param storage Storage where we might save some stuff.
      * @param uri Base URI of Gitlab's API.
-     * @param accessToken Access token for authenticated API requests.
      */
-    Gitlab(final User user, final Storage storage, final URI uri,
-           final String accessToken) {
+    public Gitlab(final User user, final Storage storage, final URI uri) {
+        this(user, storage, uri, "");
+    }
+
+    /**
+     * Private constructor. It can only be used by the withToken(...) method
+     * to return an instance which has a token.
+     * @param user Authenticated user.
+     * @param storage Storage where we might save some stuff.
+     * @param uri Base URI of Gitlab's API.
+     * @param accessToken Access token.
+     */
+    private Gitlab(
+        final User user, final Storage storage,
+        final URI uri, final String accessToken
+    ) {
         this.user = user;
         this.uri = uri;
         this.storage = storage;
@@ -94,5 +105,10 @@ final class Gitlab implements Provider {
     public Repo repo(final String name) {
         final URI repo = URI.create(this.uri.toString() + "/projects/" + name);
         return new GitlabRepo(this.user, repo, this.storage);
+    }
+
+    @Override
+    public Provider withToken(final String accessToken) {
+        return new Gitlab(this.user, this.storage, this.uri, accessToken);
     }
 }

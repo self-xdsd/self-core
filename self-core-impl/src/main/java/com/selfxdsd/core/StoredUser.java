@@ -88,9 +88,9 @@ public final class StoredUser implements User {
     public Provider provider() {
         final Provider provider;
         if(this.provider.equals(Provider.Names.GITHUB)) {
-            provider = new Github(this, storage, "accessToken");
+            provider = new Github(this, this.storage);
         } else {
-            provider = new Gitlab(this, storage, "accessToken");
+            provider = new Gitlab(this, this.storage);
         }
         return provider;
     }

@@ -37,7 +37,7 @@ import java.net.URI;
  *  so we can mock the Github server and write unit tests for the methods
  *  that perform HTTP Requests.
  */
-final class Github implements Provider {
+public final class Github implements Provider {
 
     /**
      * User.
@@ -64,10 +64,9 @@ final class Github implements Provider {
      * Constructor.
      * @param user Authenticated user.
      * @param storage Storage where we might save some stuff.
-     * @param accessToken Access token for authenticated API requests.
      */
-    Github(final User user, final Storage storage, final String accessToken) {
-        this(user, storage, URI.create("https://api.github.com"), accessToken);
+    public Github(final User user, final Storage storage) {
+        this(user, storage, URI.create("https://api.github.com"));
     }
 
     /**
@@ -75,13 +74,26 @@ final class Github implements Provider {
      * @param user Authenticated user.
      * @param storage Storage where we might save some stuff.
      * @param uri Base URI of Github's API.
-     * @param accessToken Access token for authenticated API requests.
      */
-    Github(final User user, final Storage storage, final URI uri,
-           final String accessToken) {
+    public Github(final User user, final Storage storage, final URI uri) {
+        this(user, storage, uri, "");
+    }
+
+    /**
+     * Private ctor, it can only be used by the withToken(...) method
+     * to return an instance which has a token.
+     * @param user User.
+     * @param storage Self Storage
+     * @param uri Base URI of the provider's API (e.g. api.github.com)
+     * @param accessToken Access token.
+     */
+    private Github(
+        final User user, final Storage storage,
+        final URI uri, final String accessToken
+    ) {
         this.user = user;
-        this.uri = uri;
         this.storage = storage;
+        this.uri = uri;
         this.accessToken = accessToken;
     }
 
@@ -96,5 +108,10 @@ final class Github implements Provider {
             this.uri.toString() + "/repos/" + this.user.username() + "/" + name
         );
         return new GithubRepo(this.user, repo, this.storage);
+    }
+
+    @Override
+    public Provider withToken(final String accessToken) {
+        return new Github(this.user, this.storage, this.uri, accessToken);
     }
 }

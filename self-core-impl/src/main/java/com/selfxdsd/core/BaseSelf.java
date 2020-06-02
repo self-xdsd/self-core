@@ -56,16 +56,15 @@ abstract class BaseSelf implements Self {
 
     @Override
     public User login(final Login login) {
-        final User signedUp = this.storage.users().signUp(
+        User signedUp = this.storage.users().signUp(
             login.username(),
             login.provider(),
             login.email()
         );
         if(login.accessToken() != null && !login.accessToken().isBlank()) {
-            return new Authenticated(signedUp, login.accessToken());
-        } else {
-            return signedUp;
+            signedUp = new Authenticated(signedUp, login.accessToken());
         }
+        return signedUp;
     }
 
     /**
@@ -105,7 +104,7 @@ abstract class BaseSelf implements Self {
 
         @Override
         public Provider provider() {
-            return this.user.provider();
+            return this.user.provider().withToken(this.accessToken);
         }
 
         @Override

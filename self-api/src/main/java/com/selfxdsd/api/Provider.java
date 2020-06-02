@@ -46,6 +46,13 @@ public interface Provider {
     Repo repo(final String name);
 
     /**
+     * Return a Provider which has an access token.
+     * @param accessToken Access token to make authorized requests with.
+     * @return Provider.
+     */
+    Provider withToken(final String accessToken);
+
+    /**
      * Names of possible providers.
      */
     final class Names {

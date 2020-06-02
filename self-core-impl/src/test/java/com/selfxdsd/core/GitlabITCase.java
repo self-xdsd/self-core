@@ -51,7 +51,7 @@ public final class GitlabITCase {
         when(user.username()).thenReturn(username);
         when(user.provider()).then(invocation -> new Gitlab(
             (User) invocation.getMock(),
-            null, "accessToken"));
+            null));
         return (Gitlab) user.provider();
     }
 
