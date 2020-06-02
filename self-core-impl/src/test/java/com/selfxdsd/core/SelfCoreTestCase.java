@@ -49,12 +49,11 @@ public final class SelfCoreTestCase {
             all.signUp(
                 "amihaiemil",
                 Provider.Names.GITHUB,
-                "amihaiemil@gmail.com",
-                "123t"
+                "amihaiemil@gmail.com"
             )
         ).thenReturn(authUser);
         Mockito.when(storage.users()).thenReturn(all);
-        
+
         final Self self = new SelfCore(storage);
         final Login auth = new GithubLogin(
             "amihaiemil",
@@ -64,7 +63,7 @@ public final class SelfCoreTestCase {
 
         MatcherAssert.assertThat(
             self.login(auth),
-            Matchers.is(authUser)
+            Matchers.instanceOf(BaseSelf.Authenticated.class)
         );
     }
 

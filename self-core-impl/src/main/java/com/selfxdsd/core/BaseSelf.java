@@ -22,9 +22,7 @@
  */
 package com.selfxdsd.core;
 
-import com.selfxdsd.api.Login;
-import com.selfxdsd.api.Self;
-import com.selfxdsd.api.User;
+import com.selfxdsd.api.*;
 import com.selfxdsd.api.storage.Storage;
 
 /**
@@ -58,12 +56,62 @@ abstract class BaseSelf implements Self {
 
     @Override
     public User login(final Login login) {
-        return this.storage.users().signUp(
+        final User signedUp = this.storage.users().signUp(
             login.username(),
             login.provider(),
-            login.email(),
-            login.accessToken()
+            login.email()
         );
+        if(login.accessToken() != null && !login.accessToken().isBlank()) {
+            return new Authenticated(signedUp, login.accessToken());
+        } else {
+            return signedUp;
+        }
+    }
+
+    /**
+     * User authenticated with an access token from the provider.
+     */
+    static class Authenticated implements User {
+
+        /**
+         * Authenticated user.
+         */
+        private final User user;
+
+        /**
+         * Access token.
+         */
+        private final String accessToken;
+
+        /**
+         * Ctor.
+         * @param user User.
+         * @param accessToken Access token.
+         */
+        Authenticated(final User user, final String accessToken) {
+            this.user = user;
+            this.accessToken = accessToken;
+        }
+
+        @Override
+        public String username() {
+            return this.user.username();
+        }
+
+        @Override
+        public String email() {
+            return this.user.email();
+        }
+
+        @Override
+        public Provider provider() {
+            return this.user.provider();
+        }
+
+        @Override
+        public Projects projects() {
+            return this.user.projects();
+        }
     }
 
 }

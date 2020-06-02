@@ -63,8 +63,7 @@ public final class InMemoryUsers implements Users {
     public User signUp(
         final String username,
         final String provider,
-        final String email,
-        final String accessToken
+        final String email
     ) {
         final UserKey key = new UserKey(
             username, provider
@@ -72,7 +71,7 @@ public final class InMemoryUsers implements Users {
         User signedUp = this.users.get(key);
         if(signedUp == null) {
             signedUp = new StoredUser(
-                username, email, provider, accessToken, this.storage
+                username, email, provider, this.storage
             );
             this.users.put(
                 key, signedUp

@@ -51,11 +51,6 @@ public final class StoredUser implements User {
     private final String provider;
 
     /**
-     * Access Token.
-     */
-    private final String accessToken;
-
-    /**
      * Self's Storage.
      */
     private final Storage storage;
@@ -65,20 +60,17 @@ public final class StoredUser implements User {
      * @param username Username.
      * @param email E-Mail.
      * @param provider Provider's name (github, gitlab etc).
-     * @param accessToken Access Token.
      * @param storage Self's Storage.
      */
     public StoredUser(
         final String username,
         final String email,
         final String provider,
-        final String accessToken,
         final Storage storage
     ) {
         this.username = username;
         this.email = email;
         this.provider = provider;
-        this.accessToken = accessToken;
         this.storage = storage;
     }
 
@@ -96,9 +88,9 @@ public final class StoredUser implements User {
     public Provider provider() {
         final Provider provider;
         if(this.provider.equals(Provider.Names.GITHUB)) {
-            provider = new Github(this, storage, accessToken);
+            provider = new Github(this, storage, "accessToken");
         } else {
-            provider = new Gitlab(this, storage, accessToken);
+            provider = new Gitlab(this, storage, "accessToken");
         }
         return provider;
     }

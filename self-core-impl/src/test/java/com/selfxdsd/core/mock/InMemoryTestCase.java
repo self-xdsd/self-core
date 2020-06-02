@@ -28,8 +28,7 @@ public final class InMemoryTestCase {
         storage.users().signUp(
             "amihaiemil",
             Provider.Names.GITHUB,
-            "amihaiemil@gmail.com",
-            "123t"
+            "amihaiemil@gmail.com"
         );
 
         final User signedUser = storage.users().user(
@@ -48,14 +47,12 @@ public final class InMemoryTestCase {
         storage.users().signUp(
             "amihaiemil",
             Provider.Names.GITHUB,
-            "amihaiemil@gmail.com",
-            "123t"
+            "amihaiemil@gmail.com"
         );
         storage.users().signUp(
             "amihaiemil",
             Provider.Names.GITHUB,
-            "amihaiemil@gmail.com",
-            "123t"
+            "amihaiemil@gmail.com"
         );
         assertThat(storage.users(), iterableWithSize(1));
     }
@@ -70,14 +67,12 @@ public final class InMemoryTestCase {
         storage.users().signUp(
             "amihaiemil",
             Provider.Names.GITHUB,
-            "amihaiemil@gmail.com",
-            "123t"
+            "amihaiemil@gmail.com"
         );
         storage.users().signUp(
             "amihaiemil",
             Provider.Names.GITLAB,
-            "amihaiemil@gmail.com",
-            "123t"
+            "amihaiemil@gmail.com"
         );
 
         assertThat(storage.users(), iterableWithSize(2));
@@ -96,8 +91,7 @@ public final class InMemoryTestCase {
         storage.users().signUp(
             "amihaiemil",
             Provider.Names.GITHUB,
-            "amihaiemil@gmail.com",
-            "123t"
+            "amihaiemil@gmail.com"
         );
         final User signedUser = storage.users().user(
             "amihaiemil",

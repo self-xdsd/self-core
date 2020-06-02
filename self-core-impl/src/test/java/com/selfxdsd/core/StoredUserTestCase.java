@@ -48,7 +48,6 @@ public final class StoredUserTestCase {
             "amihaiemil",
             "amihaiemil@gmail.com",
             Provider.Names.GITHUB,
-            "gh123token",
             Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(
@@ -66,7 +65,6 @@ public final class StoredUserTestCase {
             "amihaiemil",
             "amihaiemil@gmail.com",
             Provider.Names.GITHUB,
-            "gh123token",
             Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(
@@ -84,7 +82,6 @@ public final class StoredUserTestCase {
             "amihaiemil",
             "amihaiemil@gmail.com",
             Provider.Names.GITHUB,
-            "gh123token",
             Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(
@@ -96,7 +93,6 @@ public final class StoredUserTestCase {
             "amihaiemil",
             "amihaiemil@gmail.com",
             Provider.Names.GITLAB,
-            "gl123token",
             Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(
@@ -115,7 +111,6 @@ public final class StoredUserTestCase {
             "amihaiemil",
             "amihaiemil@gmail.com",
             Provider.Names.GITHUB,
-            "gh123token",
             storage
         );
 
