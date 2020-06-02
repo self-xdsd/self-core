@@ -6,6 +6,8 @@ decrypt:
   settings.xml: "repo/rcfg/settings.xml.asc"
   pubring.gpg: "repo/rcfg/pubring.gpg.asc"
   secring.gpg: "repo/rcfg/secring.gpg.asc"
+env:
+  JAVA_HOME: /usr/lib/jvm/java-11-openjdk
 merge:
   script: |-
     mvn clean install -Pcheckstyle,itcases
