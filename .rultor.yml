@@ -13,7 +13,8 @@ merge:
     mvn clean install -Pcheckstyle,itcases
 deploy:
   script: |-
-    mvn clean deploy -PgenDocs,signArtifactsGpg,deployToGithubPackages --settings /home/r/settings.xml
+    echo 'Nothing to deploy'
+    exit -1
 release:
   script: |-
     chmod +x ./release.sh
