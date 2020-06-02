@@ -144,21 +144,23 @@ public final class StoredTaskTestCase {
         final Contributors all = Mockito.mock(Contributors.class);
         final Contributors ofProject = Mockito.mock(Contributors.class);
         Mockito.when(
-            all.ofProject("some/test", "github")
+            all.ofProject("john/test", Provider.Names.GITHUB)
         ).thenReturn(ofProject);
         Mockito.when(
-            ofProject.getById("mihai", "github")
+            ofProject.getById("mihai", Provider.Names.GITHUB)
         ).thenReturn(mihai);
 
         final Storage storage = Mockito.mock(Storage.class);
         Mockito.when(storage.contributors()).thenReturn(all);
 
-        final Repo repo = Mockito.mock(Repo.class);
-        Mockito.when(repo.fullName()).thenReturn("some/test");
-        Mockito.when(repo.provider()).thenReturn("github");
+        final Provider prov = Mockito.mock(Provider.class);
+        Mockito.when(prov.name()).thenReturn(Provider.Names.GITHUB);
+        final User owner = Mockito.mock(User.class);
+        Mockito.when(owner.provider()).thenReturn(prov);
 
         final Project project = new StoredProject(
-            repo,
+            owner,
+            "john/test",
             Mockito.mock(ProjectManager.class),
             storage
         );

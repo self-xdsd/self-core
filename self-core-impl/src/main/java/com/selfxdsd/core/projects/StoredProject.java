@@ -37,9 +37,14 @@ import com.selfxdsd.api.storage.Storage;
 public final class StoredProject implements Project {
 
     /**
-     * Repo of this Project.
+     * Owner of this Project.
      */
-    private final Repo repo;
+    private final User owner;
+
+    /**
+     * Repo full name.
+     */
+    private final String repoFullName;
 
     /**
      * Manager in charge of this Project.
@@ -53,33 +58,37 @@ public final class StoredProject implements Project {
 
     /**
      * Constructor.
-     * @param repo Repo of this project.
+     * @param owner Owner of the project/repo.
+     * @param repoFullName Repo full name.
      * @param projectManager Manager in charge.
      * @param storage Storage of Self.
      * @checkstyle ParameterNumber (10 lines)
      */
     public StoredProject(
-        final Repo repo, final ProjectManager projectManager,
+        final User owner,
+        final String repoFullName,
+        final ProjectManager projectManager,
         final Storage storage
     ) {
-        this.repo = repo;
+        this.owner = owner;
+        this.repoFullName = repoFullName;
         this.projectManager = projectManager;
         this.storage = storage;
     }
 
     @Override
     public String repoFullName() {
-        return this.repo.fullName();
+        return this.repoFullName;
     }
 
     @Override
     public String provider() {
-        return this.repo.provider();
+        return this.owner.provider().name();
     }
 
     @Override
     public User owner() {
-        return this.repo.owner();
+        return this.owner;
     }
 
     @Override
@@ -89,7 +98,9 @@ public final class StoredProject implements Project {
 
     @Override
     public Repo repo() {
-        return this.repo;
+        return this.owner.provider().repo(
+            this.repoFullName.substring(this.repoFullName.indexOf("/") + 1)
+        );
     }
 
     @Override

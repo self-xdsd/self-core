@@ -184,6 +184,13 @@ public final class InMemoryContractsTestCase {
         final Repo repo = Mockito.mock(Repo.class);
         Mockito.when(repo.fullName()).thenReturn(fullName);
         Mockito.when(repo.provider()).thenReturn(provider);
+
+        final Provider prov = Mockito.mock(Provider.class);
+        Mockito.when(prov.name()).thenReturn(provider);
+        final User owner = Mockito.mock(User.class);
+        Mockito.when(owner.provider()).thenReturn(prov);
+
+        Mockito.when(repo.owner()).thenReturn(owner);
         return repo;
     }
 }

@@ -97,9 +97,9 @@ public final class InMemoryTasksTestCase {
     public void getTasksOfProject(){
         final Storage storage = new InMemory();
         ProjectManager projectManager = storage
-            .projectManagers().pick("github");
+            .projectManagers().pick(Provider.Names.GITHUB);
         final Project project = storage.projects().register(
-            this.mockRepo("mihai/test", "github"), projectManager
+            this.mockRepo("mihai/test", Provider.Names.GITHUB), projectManager
         );
         final Issue issue = this.mockIssue(
             "123",
@@ -109,7 +109,7 @@ public final class InMemoryTasksTestCase {
         );
         final Task registered = storage.tasks().register(issue);
         final Tasks tasks = storage.tasks()
-            .ofProject("mihai/test", "github");
+            .ofProject("mihai/test", Provider.Names.GITHUB);
         MatcherAssert.assertThat(tasks, Matchers.contains(registered));
     }
 
@@ -148,6 +148,13 @@ public final class InMemoryTasksTestCase {
         final Repo repo = Mockito.mock(Repo.class);
         Mockito.when(repo.fullName()).thenReturn(fullName);
         Mockito.when(repo.provider()).thenReturn(provider);
+
+        final Provider prov = Mockito.mock(Provider.class);
+        Mockito.when(prov.name()).thenReturn(provider);
+        final User owner = Mockito.mock(User.class);
+        Mockito.when(owner.provider()).thenReturn(prov);
+
+        Mockito.when(repo.owner()).thenReturn(owner);
         return repo;
     }
 

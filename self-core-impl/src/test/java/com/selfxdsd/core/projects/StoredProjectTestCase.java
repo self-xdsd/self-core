@@ -45,7 +45,9 @@ public final class StoredProjectTestCase {
         final Repo repo = Mockito.mock(Repo.class);
         Mockito.when(repo.fullName()).thenReturn("john/test");
         final Project project = new StoredProject(
-            repo, Mockito.mock(ProjectManager.class),
+            Mockito.mock(User.class),
+            repo.fullName(),
+            Mockito.mock(ProjectManager.class),
             Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(
@@ -59,15 +61,19 @@ public final class StoredProjectTestCase {
      */
     @Test
     public void returnsProvider() {
-        final Repo repo = Mockito.mock(Repo.class);
-        Mockito.when(repo.provider()).thenReturn("github");
+        final Provider prov = Mockito.mock(Provider.class);
+        Mockito.when(prov.name()).thenReturn(Provider.Names.GITHUB);
+        final User owner = Mockito.mock(User.class);
+        Mockito.when(owner.provider()).thenReturn(prov);
         final Project project = new StoredProject(
-            repo, Mockito.mock(ProjectManager.class),
+            owner,
+            "john/test",
+            Mockito.mock(ProjectManager.class),
             Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(
             project.provider(),
-            Matchers.equalTo("github")
+            Matchers.equalTo(Provider.Names.GITHUB)
         );
     }
 
@@ -77,8 +83,16 @@ public final class StoredProjectTestCase {
     @Test
     public void returnsRepo() {
         final Repo repo = Mockito.mock(Repo.class);
+        final Provider prov = Mockito.mock(Provider.class);
+        Mockito.when(prov.name()).thenReturn(Provider.Names.GITHUB);
+        Mockito.when(prov.repo("test")).thenReturn(repo);
+        final User owner = Mockito.mock(User.class);
+        Mockito.when(owner.provider()).thenReturn(prov);
+
         final Project project = new StoredProject(
-            repo, Mockito.mock(ProjectManager.class),
+            owner,
+            "jogn/test",
+            Mockito.mock(ProjectManager.class),
             Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(project.repo(), Matchers.is(repo));
@@ -91,7 +105,9 @@ public final class StoredProjectTestCase {
     public void returnsProjectManager() {
         final ProjectManager manager = Mockito.mock(ProjectManager.class);
         final Project project = new StoredProject(
-            Mockito.mock(Repo.class), manager,
+            Mockito.mock(User.class),
+            "john/test",
+            manager,
             Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(
@@ -114,8 +130,13 @@ public final class StoredProjectTestCase {
         final Storage storage = Mockito.mock(Storage.class);
         Mockito.when(storage.contracts()).thenReturn(all);
 
+        final Provider prov = Mockito.mock(Provider.class);
+        Mockito.when(prov.name()).thenReturn(Provider.Names.GITHUB);
+        final User owner = Mockito.mock(User.class);
+        Mockito.when(owner.provider()).thenReturn(prov);
+
         final Project project = new StoredProject(
-            this.mockRepo("john/test", "github"),
+            owner, "john/test",
             Mockito.mock(ProjectManager.class),
             storage
         );
@@ -136,8 +157,13 @@ public final class StoredProjectTestCase {
         final Storage storage = Mockito.mock(Storage.class);
         Mockito.when(storage.contributors()).thenReturn(all);
 
+        final Provider prov = Mockito.mock(Provider.class);
+        Mockito.when(prov.name()).thenReturn(Provider.Names.GITHUB);
+        final User owner = Mockito.mock(User.class);
+        Mockito.when(owner.provider()).thenReturn(prov);
+
         final Project project = new StoredProject(
-            this.mockRepo("john/test", "github"),
+            owner, "john/test",
             Mockito.mock(ProjectManager.class),
             storage
         );
@@ -161,8 +187,13 @@ public final class StoredProjectTestCase {
         final Storage storage = Mockito.mock(Storage.class);
         Mockito.when(storage.tasks()).thenReturn(all);
 
+        final Provider prov = Mockito.mock(Provider.class);
+        Mockito.when(prov.name()).thenReturn(Provider.Names.GITHUB);
+        final User owner = Mockito.mock(User.class);
+        Mockito.when(owner.provider()).thenReturn(prov);
+
         final Project project = new StoredProject(
-            this.mockRepo("john/test", "github"),
+            owner, "john/test",
             Mockito.mock(ProjectManager.class),
             storage
         );

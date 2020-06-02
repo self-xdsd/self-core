@@ -76,7 +76,7 @@ public final class InMemoryProjects implements Projects {
                 throw new IllegalArgumentException("Project already exists.");
             }
             final Project project = new StoredProject(
-                repo, manager, this.storage
+                repo.owner(), repo.fullName(), manager, this.storage
             );
             this.projects.put(key, project);
             return project;
