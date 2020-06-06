@@ -22,10 +22,7 @@
  */
 package com.selfxdsd.core.contracts;
 
-import com.selfxdsd.api.Contract;
-import com.selfxdsd.api.Contracts;
-import com.selfxdsd.api.Contributor;
-import com.selfxdsd.api.Project;
+import com.selfxdsd.api.*;
 import com.selfxdsd.api.storage.Storage;
 import com.selfxdsd.core.contributors.StoredContributor;
 import org.hamcrest.MatcherAssert;
@@ -239,6 +236,36 @@ public final class ContributorContractsTestCase {
             BigDecimal.valueOf(10000),
             Contract.Roles.DEV
         );
+    }
+
+    /**
+     * Finds a contract by id.
+     */
+    @Test
+    public void findsContractById(){
+        final Storage storage = Mockito.mock(Storage.class);
+        final Contract contract = Mockito.mock(Contract.class);
+        final Project project = Mockito.mock(Project.class);
+        final Contributor contributor = Mockito.mock(Contributor.class);
+        final Contracts contracts = new ContributorContracts(
+            contributor,
+            List.of(contract),
+            storage
+        );
+
+        Mockito.when(project.repoFullName()).thenReturn("john/test");
+        Mockito.when(project.provider()).thenReturn(Provider.Names.GITHUB);
+        Mockito.when(contributor.username()).thenReturn("john");
+        Mockito.when(contract.role()).thenReturn(Contract.Roles.DEV);
+        Mockito.when(contract.project()).thenReturn(project);
+        Mockito.when(contract.contributor()).thenReturn(contributor);
+
+        final Contract found = contracts
+            .findById(new Contract.Id("john/test", "john",
+                Provider.Names.GITHUB, Contract.Roles.DEV));
+
+        MatcherAssert.assertThat(found, Matchers.is(contract));
+
     }
 
     /**

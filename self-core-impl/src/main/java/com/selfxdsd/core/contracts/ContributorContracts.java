@@ -139,7 +139,12 @@ public final class ContributorContracts implements Contracts {
 
     @Override
     public Contract findById(final Contract.Id id) {
-        return this.storage.contracts().findById(id);
+        return this.contracts.stream()
+            .filter(c -> new Contract.Id(c.project().repoFullName(),
+                    c.contributor().username(),
+                    c.project().provider(),
+                    c.role()).equals(id)).findFirst()
+            .orElse(null);
     }
 
     @Override

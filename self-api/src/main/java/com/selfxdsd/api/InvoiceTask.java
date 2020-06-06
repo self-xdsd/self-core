@@ -13,7 +13,7 @@ public interface InvoiceTask {
     /**
      * Time spent to complete a task, usually hours.
      * It will be used to calculate invoice's total amount.
-     * @return TimeUnit.
+     * @return Duration.
      */
     Duration timeSpent();
 

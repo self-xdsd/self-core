@@ -33,7 +33,7 @@ public interface Invoice {
 
     /**
      * Total amount of the invoice. Calculated based on contract hourlyRate
-     * and time spent to finish a task).
+     * and time spent to finish a task.
      * @return BigDecimal.
      */
     BigDecimal totalAmount();

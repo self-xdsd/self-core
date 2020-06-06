@@ -2,6 +2,7 @@ package com.selfxdsd.core.contracts;
 
 import com.selfxdsd.api.Contract;
 import com.selfxdsd.api.Contributor;
+import com.selfxdsd.api.Invoices;
 import com.selfxdsd.api.Project;
 import com.selfxdsd.api.storage.Storage;
 import org.hamcrest.MatcherAssert;
@@ -79,5 +80,29 @@ public final class StoredContractTestCase {
             BigDecimal.ONE, "DEV",
             Mockito.mock(Storage.class));
         MatcherAssert.assertThat(contract.role(), Matchers.equalTo("DEV"));
+    }
+
+    /**
+     * Returns contracts invoices.
+     */
+    @Test
+    public void returnsInvoices(){
+        final Storage storage = Mockito.mock(Storage.class);
+        final Contract contract = new StoredContract(
+            Mockito.mock(Project.class),
+            Mockito.mock(Contributor.class),
+            BigDecimal.ONE, "DEV",
+            storage);
+        final Invoices all = Mockito.mock(Invoices.class);
+        final Invoices invoices = Mockito.mock(Invoices.class);
+
+        Mockito.when(all.ofContract(Mockito.any(Contract.Id.class)))
+            .thenReturn(invoices);
+        Mockito.when(storage.invoices()).thenReturn(all);
+
+        MatcherAssert.assertThat(
+            contract.invoices(),
+            Matchers.is(invoices)
+        );
     }
 }

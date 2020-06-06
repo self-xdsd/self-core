@@ -218,6 +218,37 @@ public final class ProjectContractsTestCase {
     }
 
     /**
+     * Finds a contract by id.
+     */
+    @Test
+    public void findsContractById(){
+        final Storage storage = Mockito.mock(Storage.class);
+        final Contract contract = Mockito.mock(Contract.class);
+        final Project project = Mockito.mock(Project.class);
+        final Contributor contributor = Mockito.mock(Contributor.class);
+        final Contracts contracts = new ProjectContracts(
+            "john/test",
+            Provider.Names.GITHUB,
+            List.of(contract),
+            storage
+        );
+
+        Mockito.when(project.repoFullName()).thenReturn("john/test");
+        Mockito.when(project.provider()).thenReturn(Provider.Names.GITHUB);
+        Mockito.when(contributor.username()).thenReturn("john");
+        Mockito.when(contract.role()).thenReturn(Contract.Roles.DEV);
+        Mockito.when(contract.project()).thenReturn(project);
+        Mockito.when(contract.contributor()).thenReturn(contributor);
+
+        final Contract found = contracts
+            .findById(new Contract.Id("john/test", "john",
+                Provider.Names.GITHUB, Contract.Roles.DEV));
+
+        MatcherAssert.assertThat(found, Matchers.is(contract));
+
+    }
+
+    /**
      * Mock a Contract for test.
      * @param repoFullName Repo's full name.
      * @param contributorUsername Contributor's username.
