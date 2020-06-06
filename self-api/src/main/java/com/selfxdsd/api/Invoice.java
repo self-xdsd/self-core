@@ -29,7 +29,7 @@ public interface Invoice {
      * An invoice is active until payment is done.
      * @return Boolean
      */
-    boolean isActive();
+    boolean isPaid();
 
     /**
      * Total amount of the invoice. Calculated based on contract hourlyRate

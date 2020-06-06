@@ -118,21 +118,20 @@ public interface Contract {
 
         /**
          * Full name of the Repo represented by the Project.
-         * @checkstyle VisibilityModifier (25 lines)
          */
-        public final String repoFullName;
+        private final String repoFullName;
         /**
          * Contributor's username.
          */
-        public final String contributorUsername;
+        private final String contributorUsername;
         /**
          * Contributor/Project's provider.
          */
-        public final String provider;
+        private final String provider;
         /**
          * Contributor's role.
          */
-        public final String role;
+        private final String role;
 
         /**
          * Constructor.
@@ -152,6 +151,38 @@ public interface Contract {
             this.contributorUsername = contributorUsername;
             this.provider = provider;
             this.role = role;
+        }
+
+        /**
+         * Full name of the Repo represented by the Project.
+         * @return String
+         */
+        public String getRepoFullName() {
+            return repoFullName;
+        }
+
+        /**
+         * Contributor's username.
+         * @return String
+         */
+        public String getContributorUsername() {
+            return contributorUsername;
+        }
+
+        /**
+         * Contributor/Project's provider.
+         * @return String
+         */
+        public String getProvider() {
+            return provider;
+        }
+
+        /**
+         * Contributor's role.
+         * @return String
+         */
+        public String getRole() {
+            return role;
         }
 
         @Override
@@ -179,5 +210,6 @@ public interface Contract {
                 this.role
             );
         }
+
     }
 }

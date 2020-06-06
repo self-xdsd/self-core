@@ -56,22 +56,23 @@ public final class StoredInvoice implements Invoice {
     }
 
     @Override
-    public boolean isActive() {
+    public boolean isPaid() {
         return this.storage.invoices().ofContract(this.contractId)
-            .isActive(this.id);
+            .isPaid(this.id);
     }
 
     @Override
     public BigDecimal totalAmount() {
-        final Contract contract = this.storage.contracts().findById(contractId);
+        final Contract contract = this.storage.contracts()
+            .findById(this.contractId);
         BigDecimal totalAmount = BigDecimal.ZERO;
         if(contract != null){
             final BigDecimal rate = contract.hourlyRate();
-            totalAmount = this.tasks().stream()
-                .reduce(BigDecimal.ZERO,
-                    (acc, curr)-> acc.add(rate.multiply(BigDecimal
-                        .valueOf(curr.timeSpent().toHours()))),
-                    (acc, curr)-> acc);
+            final List<InvoiceTask> tasks = this.tasks();
+            for(final InvoiceTask task : tasks){
+                totalAmount = totalAmount.add(rate.multiply(BigDecimal
+                    .valueOf(task.timeSpent().toHours())));
+            }
         }
         return totalAmount;
     }

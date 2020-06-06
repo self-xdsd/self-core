@@ -9,7 +9,7 @@ import java.util.List;
  * @version $Id$
  * @since 0.0.3
  * @todo #163:30min Implement and test InMemoryInvoices.
- *  Also test StoredInvoice and StoredContract#invoices().
+ *  Also implement Storage#invoices().
  */
 public interface Invoices extends Iterable<Invoice> {
 
@@ -43,15 +43,7 @@ public interface Invoices extends Iterable<Invoice> {
      * @param id Invoice id.
      * @return Boolean.
      */
-    boolean isActive(int id);
-
-    /**
-     * Proceed to pay the contract's contributor.
-     * After payment confirmed, invoice will became inactive.
-     * @param id Invoice id.
-     * @return Inactive Invoice.
-     */
-    Invoice deactivate(int id);
+    boolean isPaid(int id);
 
     /**
      * Tasks of an invoice. Since there are few tasks associated to an invoice,
