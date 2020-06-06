@@ -32,18 +32,21 @@ import java.time.LocalDateTime;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
+ * @todo #165:30min Implement method issue(). It should read the Issue
+ *  from the Project's repository. We need a change in interface Issues:
+ *  method getById should expect String, rather than Integer.
  */
 public final class StoredTask implements Task {
-
-    /**
-     * Issue representing this task on Github, Gitlab etc.
-     */
-    private final Issue issue;
 
     /**
      * Project where this task belongs.
      */
     private final Project project;
+
+    /**
+     * ID of the Issue that this task represents.
+     */
+    private final String issueId;
 
     /**
      * Role necessary to solve this task.
@@ -78,25 +81,25 @@ public final class StoredTask implements Task {
     /**
      * Constructor for an unassigned task.
      * @param project Project.
-     * @param issue Issue.
+     * @param issueId Id of the Issue that this task represents.
      * @param role Role.
      * @param provider Provider.
      * @param storage Storage.
      */
     public StoredTask(
         final Project project,
-        final Issue issue,
+        final String issueId,
         final String role,
         final String provider,
         final Storage storage
     ) {
-        this(project, issue, role, provider, storage, null, null, null);
+        this(project, issueId, role, provider, storage, null, null, null);
     }
 
     /**
      * Constructor for an assigned task.
      * @param project Project.
-     * @param issue Issue.
+     * @param issueId Id of the Issue that this task represents.
      * @param role Role.
      * @param provider Provider.
      * @param storage Storage.
@@ -106,7 +109,7 @@ public final class StoredTask implements Task {
      */
     public StoredTask(
         final Project project,
-        final Issue issue,
+        final String issueId,
         final String role,
         final String provider,
         final Storage storage,
@@ -115,7 +118,7 @@ public final class StoredTask implements Task {
         final LocalDateTime deadline
     ) {
         this.project = project;
-        this.issue = issue;
+        this.issueId = issueId;
         this.role = role;
         this.provider = provider;
         this.storage = storage;
@@ -126,7 +129,7 @@ public final class StoredTask implements Task {
 
     @Override
     public Issue issue() {
-        return this.issue;
+        throw new UnsupportedOperationException("Not yet implemented.");
     }
 
     @Override

@@ -41,22 +41,6 @@ import java.time.LocalDateTime;
 public final class StoredTaskTestCase {
 
     /**
-     * StoredTask can return its Issue.
-     */
-    @Test
-    public void returnsIssue() {
-        final Issue issue = Mockito.mock(Issue.class);
-        final Task task = new StoredTask(
-            Mockito.mock(Project.class),
-            issue,
-            Contract.Roles.DEV,
-            "github",
-            Mockito.mock(Storage.class)
-        );
-        MatcherAssert.assertThat(task.issue(), Matchers.is(issue));
-    }
-
-    /**
      * StoredTask can return its Project.
      */
     @Test
@@ -64,7 +48,7 @@ public final class StoredTaskTestCase {
         final Project project = Mockito.mock(Project.class);
         final Task task = new StoredTask(
             project,
-            Mockito.mock(Issue.class),
+            "issueId123",
             Contract.Roles.DEV,
             "github",
             Mockito.mock(Storage.class)
@@ -79,7 +63,7 @@ public final class StoredTaskTestCase {
     public void returnsRole() {
         final Task task = new StoredTask(
             Mockito.mock(Project.class),
-            Mockito.mock(Issue.class),
+            "issueId123",
             Contract.Roles.DEV,
             "github",
             Mockito.mock(Storage.class)
@@ -98,7 +82,7 @@ public final class StoredTaskTestCase {
         final LocalDateTime assignment = LocalDateTime.now();
         final Task task = new StoredTask(
             Mockito.mock(Project.class),
-            Mockito.mock(Issue.class),
+            "issueId123",
             Contract.Roles.DEV,
             "github",
             Mockito.mock(Storage.class),
@@ -120,7 +104,7 @@ public final class StoredTaskTestCase {
         final LocalDateTime assignment = LocalDateTime.now();
         final Task task = new StoredTask(
             Mockito.mock(Project.class),
-            Mockito.mock(Issue.class),
+            "issueId123",
             Contract.Roles.DEV,
             "github",
             Mockito.mock(Storage.class),
@@ -167,7 +151,7 @@ public final class StoredTaskTestCase {
 
         final Task task = new StoredTask(
             project,
-            Mockito.mock(Issue.class),
+            "issueId123",
             Contract.Roles.DEV,
             "github",
             Mockito.mock(Storage.class),

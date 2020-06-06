@@ -84,7 +84,9 @@ public final class InMemoryTasks implements Tasks {
             );
         } else {
             final Task newTask = new StoredTask(
-                project, issue, issue.role(), issue.provider(), this.storage
+                project,
+                issue.issueId(), issue.role(), issue.provider(),
+                this.storage
             );
             this.tasks.put(
                 new TaskKey(
@@ -103,8 +105,8 @@ public final class InMemoryTasks implements Tasks {
                            final String repoProvider) {
         final List<Task> tasksOf = tasks.values()
             .stream()
-            .filter(t -> t.issue().repoFullName().equals(repoFullName)
-                && t.issue().provider().equals(repoProvider))
+            .filter(t -> t.project().repoFullName().equals(repoFullName)
+                && t.project().provider().equals(repoProvider))
             .collect(Collectors.toList());
         return new ProjectTasks(repoFullName, repoProvider, tasksOf, storage);
     }

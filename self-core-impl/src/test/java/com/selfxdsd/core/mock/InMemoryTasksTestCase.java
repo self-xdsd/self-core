@@ -73,7 +73,6 @@ public final class InMemoryTasksTestCase {
 
         final Task registered = storage.tasks().register(issue);
 
-        MatcherAssert.assertThat(registered.issue(), Matchers.is(issue));
         MatcherAssert.assertThat(registered.project(), Matchers.is(project));
         MatcherAssert.assertThat(registered.role(), Matchers.is(issue.role()));
         MatcherAssert.assertThat(registered.assignee(), Matchers.nullValue());
