@@ -43,6 +43,30 @@ public final class StoredInvoiceTestCase {
     }
 
     /**
+     * Invoice has the correct id.
+     */
+    @Test
+    public void hasCorrectId(){
+        Contract.Id contractId = new Contract.Id("repo", "john",
+            Provider.Names.GITHUB, Contract.Roles.DEV);
+        final Invoice invoice = new StoredInvoice(1, mock(Storage.class),
+            contractId);
+        assertThat(invoice.invoiceId(), is(1));
+    }
+
+    /**
+     * Invoice has the correct contract id.
+     */
+    @Test
+    public void hasCorrectContractId(){
+        Contract.Id contractId = new Contract.Id("repo", "john",
+            Provider.Names.GITHUB, Contract.Roles.DEV);
+        final Invoice invoice = new StoredInvoice(1, mock(Storage.class),
+            contractId);
+        assertThat(invoice.contractId(), is(contractId));
+    }
+
+    /**
      * Calculates total amount.
      */
     @Test
