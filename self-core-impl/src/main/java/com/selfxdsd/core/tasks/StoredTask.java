@@ -32,9 +32,6 @@ import java.time.LocalDateTime;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
- * @todo #165:30min Implement method issue(). It should read the Issue
- *  from the Project's repository. We need a change in interface Issues:
- *  method getById should expect String, rather than Integer.
  */
 public final class StoredTask implements Task {
 
