@@ -129,7 +129,7 @@ public final class StoredTask implements Task {
 
     @Override
     public Issue issue() {
-        throw new UnsupportedOperationException("Not yet implemented.");
+        return this.project.repo().issues().getById(this.issueId);
     }
 
     @Override

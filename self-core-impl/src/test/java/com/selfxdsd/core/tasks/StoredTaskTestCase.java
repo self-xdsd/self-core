@@ -57,6 +57,29 @@ public final class StoredTaskTestCase {
     }
 
     /**
+     * StoredTask can return its Issue.
+     */
+    @Test
+    public void returnsIssue() {
+        final Issue issue = Mockito.mock(Issue.class);
+        final Issues all = Mockito.mock(Issues.class);
+        Mockito.when(all.getById("123")).thenReturn(issue);
+        final Repo repo = Mockito.mock(Repo.class);
+        Mockito.when(repo.issues()).thenReturn(all);
+        final Project project = Mockito.mock(Project.class);
+        Mockito.when(project.repo()).thenReturn(repo);
+
+        final Task task = new StoredTask(
+            project,
+            "123",
+            Contract.Roles.DEV,
+            "github",
+            Mockito.mock(Storage.class)
+        );
+        MatcherAssert.assertThat(task.issue(), Matchers.is(issue));
+    }
+
+    /**
      * StoredTask can return the role.
      */
     @Test
