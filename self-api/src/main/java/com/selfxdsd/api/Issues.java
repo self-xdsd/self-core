@@ -35,6 +35,6 @@ public interface Issues extends Iterable<Issue> {
      * @param issueId Issue's ID.
      * @return Issue or null if it's not found.
      */
-    Issue getById(final int issueId);
+    Issue getById(final String issueId);
 
 }

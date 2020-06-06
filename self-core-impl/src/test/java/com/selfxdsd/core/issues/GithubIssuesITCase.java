@@ -29,7 +29,7 @@ public final class GithubIssuesITCase {
         final URI uri = URI.create(
             "https://api.github.com/repos/amihaiemil/docker-java-api/issues");
         final Issues issues = new GithubIssues(uri, mock(Storage.class));
-        final JsonObject jsonIssue = issues.getById(346).json();
+        final JsonObject jsonIssue = issues.getById("346").json();
         assertThat("Add Json Suppliers",
             equalTo(jsonIssue.getString("title")));
         assertThat(346,
@@ -44,7 +44,7 @@ public final class GithubIssuesITCase {
         final URI uri = URI.create(
             "https://api.github.com/repos/amihaiemil/docker-java-api/issues");
         final Issues issues = new GithubIssues(uri, mock(Storage.class));
-        final Issue issue = issues.getById(100000);
+        final Issue issue = issues.getById("100000");
         assertThat(issue, nullValue());
     }
 

@@ -68,7 +68,7 @@ public final class GithubIssues implements Issues {
     }
 
     @Override
-    public Issue getById(final int issueId) {
+    public Issue getById(final String issueId) {
         final URI issueUri = URI.create(issuesUri.toString() + "/" + issueId);
         JsonObject jsonObject = fromUri(issueUri, issueId);
         Issue issue = null;
@@ -93,7 +93,7 @@ public final class GithubIssues implements Issues {
      * @return JsonObject or null if result status is 400 or 204
      * @throws IllegalStateException when something went wrong.
      */
-    private JsonObject fromUri(final URI uri, final int issueId) {
+    private JsonObject fromUri(final URI uri, final String issueId) {
         JsonObject jsonObject;
         try {
             final HttpResponse<String> response = HttpClient.newHttpClient()
