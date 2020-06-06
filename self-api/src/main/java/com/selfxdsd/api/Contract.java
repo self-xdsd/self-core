@@ -23,6 +23,7 @@
 package com.selfxdsd.api;
 
 import java.math.BigDecimal;
+import java.util.Objects;
 
 /**
  * A collaboration Contract between a Project and a Contributor.
@@ -55,6 +56,14 @@ public interface Contract {
      * @return String.
      */
     String role();
+
+    /**
+     * Invoices for this contract, active or inactive.
+     * <br>
+     * Note that a contract must have at most one active Invoice.
+     * @return Iterable of Invoice.
+     */
+    Invoices invoices();
 
     /**
      * Possible roles in a Contract.
@@ -100,5 +109,75 @@ public interface Contract {
          * Constant for the Project Owner role.
          */
         public static final String PO = "PO";
+    }
+
+    /**
+     * Contract's compose id.
+     */
+    class Id {
+
+        /**
+         * Full name of the Repo represented by the Project.
+         * @checkstyle VisibilityModifier (25 lines)
+         */
+        public final String repoFullName;
+        /**
+         * Contributor's username.
+         */
+        public final String contributorUsername;
+        /**
+         * Contributor/Project's provider.
+         */
+        public final String provider;
+        /**
+         * Contributor's role.
+         */
+        public final String role;
+
+        /**
+         * Constructor.
+         *
+         * @param repoFullName Fullname of the Repo represented by the project.
+         * @param contributorUsername Contributor's username.
+         * @param provider Contributor/Project's provider.
+         * @param role Contributor's role.
+         */
+        public Id(
+            final String repoFullName,
+            final String contributorUsername,
+            final String provider,
+            final String role
+        ) {
+            this.repoFullName = repoFullName;
+            this.contributorUsername = contributorUsername;
+            this.provider = provider;
+            this.role = role;
+        }
+
+        @Override
+        public boolean equals(final Object object) {
+            if (this == object) {
+                return true;
+            }
+            if (object == null || getClass() != object.getClass()) {
+                return false;
+            }
+            final Id id = (Id) object;
+            //@checkstyle LineLength (5 lines)
+            return this.repoFullName.equals(id.repoFullName)
+                && this.contributorUsername.equals(id.contributorUsername)
+                && this.provider.equals(id.provider)
+                && this.role.equals(id.role);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(
+                this.repoFullName,
+                this.contributorUsername,
+                this.provider,
+                this.role
+            );
+        }
     }
 }

@@ -57,6 +57,12 @@ public interface Storage {
     Contracts contracts();
 
     /**
+     * Get the invoices Storage API.
+     * @return Invoices.
+     */
+    Invoices invoices();
+
+    /**
      * Get the contributors Storage API.
      * @return Contributors.
      */

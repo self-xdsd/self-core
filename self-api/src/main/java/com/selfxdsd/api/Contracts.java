@@ -73,6 +73,13 @@ public interface Contracts extends Iterable<Contract> {
     );
 
     /**
+     * Finds a contract by id.
+     * @param id Contract's id.
+     * @return Contract or null if not found.
+     */
+    Contract findById(Contract.Id id);
+
+    /**
      * Empty Contracts. Return an instance of this when you cannot
      * find the Contracts you are looking for.
      * @author Mihai Andronache (amihaiemil@gmail.com)
@@ -104,6 +111,11 @@ public interface Contracts extends Iterable<Contract> {
             throw new UnsupportedOperationException(
                 "These are Empty Contracts, you cannot add one here."
             );
+        }
+
+        @Override
+        public Contract findById(final Contract.Id id) {
+            return null;
         }
 
         @Override

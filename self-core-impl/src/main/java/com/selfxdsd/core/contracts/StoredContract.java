@@ -24,6 +24,7 @@ package com.selfxdsd.core.contracts;
 
 import com.selfxdsd.api.Contract;
 import com.selfxdsd.api.Contributor;
+import com.selfxdsd.api.Invoices;
 import com.selfxdsd.api.Project;
 import com.selfxdsd.api.storage.Storage;
 
@@ -122,5 +123,22 @@ public final class StoredContract implements Contract {
     @Override
     public String role() {
         return this.role;
+    }
+
+    /**
+     * Invoices for this contract, active or inactive.
+     * <br>
+     * Note that a contract must have at most one active Invoice.
+     * @return Iterable of Invoice.
+     */
+    @Override
+    public Invoices invoices() {
+        return storage.invoices().ofContract(
+            new Contract.Id(
+                this.project.repoFullName(),
+                this.contributor.username(),
+                this.contributor.provider(),
+                this.role)
+        );
     }
 }

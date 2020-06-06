@@ -83,6 +83,11 @@ public final class InMemory implements Storage {
     }
 
     @Override
+    public Invoices invoices() {
+        throw new UnsupportedOperationException("Not implemented yet");
+    }
+
+    @Override
     public Contributors contributors() {
         return this.contributors;
     }

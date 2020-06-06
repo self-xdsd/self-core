@@ -109,6 +109,17 @@ public final class InMemoryContracts implements Contracts {
     }
 
     @Override
+    public Contract findById(final Contract.Id id) {
+        final ContractKey key = new ContractKey(
+            id.repoFullName,
+            id.contributorUsername,
+            id.provider,
+            id.role
+        );
+        return contracts.get(key);
+    }
+
+    @Override
     public Contracts ofProject(
         final String repoFullName,
         final String repoProvider

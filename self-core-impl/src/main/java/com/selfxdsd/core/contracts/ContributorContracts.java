@@ -138,6 +138,11 @@ public final class ContributorContracts implements Contracts {
     }
 
     @Override
+    public Contract findById(final Contract.Id id) {
+        return this.storage.contracts().findById(id);
+    }
+
+    @Override
     public Iterator<Contract> iterator() {
         return this.contracts.iterator();
     }
