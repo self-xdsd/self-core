@@ -20,25 +20,26 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package com.selfxdsd.core.tasks;
+package com.selfxdsd.core.contributors;
 
-import com.selfxdsd.api.Issue;
-import com.selfxdsd.api.Task;
-import com.selfxdsd.api.Tasks;
+import com.selfxdsd.api.Contract;
+import com.selfxdsd.api.Contributor;
+import com.selfxdsd.api.Contributors;
 import com.selfxdsd.api.storage.Storage;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 /**
- * Active tasks in a Project. This class <b>just represents</b>
- * the tasks. The actual filtering has to be done in an upper layer.
+ * Contributors of a Project. This class <b>just represents</b>
+ * the contributors. The actual filtering has to be done in an upper layer.
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
- * @since 0.0.1
+ * @since 0.0.4
  */
-public final class ProjectTasks implements Tasks {
+public final class ProjectContributors implements Contributors {
 
     /**
      * Full name of the Repo represented by the Project.
@@ -51,12 +52,12 @@ public final class ProjectTasks implements Tasks {
     private final String provider;
 
     /**
-     * The project's tasks.
+     * The project's contributors.
      */
-    private final List<Task> tasks;
+    private final List<Contributor> contributors;
 
     /**
-     * Self storage, to save new tasks.
+     * Self storage, to save new contributors.
      */
     private final Storage storage;
 
@@ -64,56 +65,70 @@ public final class ProjectTasks implements Tasks {
      * Constructor.
      * @param repoFullName Full name of the Repo represented by the Project.
      * @param provider Provider of the Repo represented by the Project.
-     * @param tasks Project's tasks.
+     * @param contributors Project's contributors.
      * @param storage Self's storage, to save new contracts.
      */
-    public ProjectTasks(
+    public ProjectContributors(
         final String repoFullName,
         final String provider,
-        final List<Task> tasks,
+        final List<Contributor> contributors,
         final Storage storage
     ) {
         this.repoFullName = repoFullName;
         this.provider = provider;
-        this.tasks = new ArrayList<>();
-        this.tasks.addAll(tasks);
+        this.contributors = new ArrayList<>();
+        this.contributors.addAll(contributors);
         this.storage = storage;
     }
 
+    /**
+     * Register a new Contributor to this Project.
+     * By default, a DEV Contract with hourly rate 0 will be
+     * created.
+     * @param username Username.
+     * @param provider Password.
+     * @return Contributor.
+     */
     @Override
-    public Task getById(
-        final String issueId,
-        final String repoFullName,
+    public Contributor register(
+        final String username,
         final String provider
     ) {
-        return this.tasks.stream().filter(
-            task -> {
-                final Issue issue = task.issue();
-                return issue.issueId().equals(issueId)
-                    && issue.repoFullName().equals(repoFullName)
-                    && issue.provider().equals(provider);
+        if(!provider.equals(this.provider)) {
+            throw new IllegalArgumentException(
+                "You can only register contributors working at "
+              + this.provider + " here."
+            );
+        }
+        Contributor found = this.getById(
+            username, provider
+        );
+        if(found == null) {
+            found = this.storage.contributors().register(username, provider);
+            this.storage.contracts().addContract(
+                this.repoFullName, username, this.provider,
+                BigDecimal.valueOf(0), Contract.Roles.DEV
+            );
+            this.contributors.add(found);
+        }
+        return found;
+    }
+
+    @Override
+    public Contributor getById(
+        final String username,
+        final String provider
+    ) {
+        return this.contributors.stream().filter(
+            c -> {
+                return c.username().equals(username)
+                    && c.provider().equals(provider);
             }
         ).findFirst().orElse(null);
     }
 
     @Override
-    public Task register(final Issue issue) {
-        if(!this.repoFullName.equals(issue.repoFullName())
-            || !this.provider.equals(issue.provider())) {
-            throw new IllegalArgumentException(
-                "The given Issue does not belong to the Repo"
-              + " represented by Project " + this.repoFullName
-              + " at " + this.provider + "."
-            );
-        } else {
-            final Task registered = this.storage.tasks().register(issue);
-            this.tasks.add(registered);
-            return registered;
-        }
-    }
-
-    @Override
-    public Tasks ofProject(
+    public Contributors ofProject(
         final String repoFullName,
         final String repoProvider
     ) {
@@ -122,18 +137,13 @@ public final class ProjectTasks implements Tasks {
             return this;
         }
         throw new IllegalStateException(
-            "Already seeing the tasks of Project " + this.repoFullName
+            "Already seeing the contributors of Project " + this.repoFullName
           + ", operating at " + this.provider + "."
         );
     }
 
     @Override
-    public Tasks ofContributor(final String username, final String provider) {
-        return storage.tasks().ofContributor(username, provider);
-    }
-
-    @Override
-    public Iterator<Task> iterator() {
-        return this.tasks.iterator();
+    public Iterator<Contributor> iterator() {
+        return this.contributors.iterator();
     }
 }
