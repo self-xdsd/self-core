@@ -91,8 +91,8 @@ public final class StoredInvoiceTestCase {
             .thenReturn(ofContract);
         when(ofContract.tasks(1)).thenReturn(
             List.of(
-                mockInvoiceTask(Duration.ofHours(1)),
-                mockInvoiceTask(Duration.ofMinutes(60 + 60))
+                mockInvoiceTask(1, Duration.ofHours(1)),
+                mockInvoiceTask(1, Duration.ofMinutes(60 + 60))
             )
         );
 
@@ -103,11 +103,18 @@ public final class StoredInvoiceTestCase {
     /**
      * Mocks an {@link InvoiceTask}.
      *
+     * @param invoiceId Invoice id.
      * @param duration Duration of task.
      * @return Mocked {@link InvoiceTask}
      */
-    private InvoiceTask mockInvoiceTask(final Duration duration) {
+    private InvoiceTask mockInvoiceTask(
+        final int invoiceId,
+        final Duration duration) {
         return new InvoiceTask() {
+            @Override
+            public int invoiceId() {
+                return invoiceId;
+            }
             @Override
             public Duration timeSpent() {
                 return duration;

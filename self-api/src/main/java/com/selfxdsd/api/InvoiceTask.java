@@ -11,6 +11,12 @@ import java.time.Duration;
 public interface InvoiceTask {
 
     /**
+     * Invoice id of this task.
+     * @return Integer
+     */
+    int invoiceId();
+
+    /**
      * Time spent to complete a task, usually hours.
      * It will be used to calculate invoice's total amount.
      * @return Duration.
