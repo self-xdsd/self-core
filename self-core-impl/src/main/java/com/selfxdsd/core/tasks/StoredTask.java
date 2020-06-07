@@ -25,6 +25,7 @@ package com.selfxdsd.core.tasks;
 import com.selfxdsd.api.*;
 import com.selfxdsd.api.storage.Storage;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 /**
@@ -36,24 +37,14 @@ import java.time.LocalDateTime;
 public final class StoredTask implements Task {
 
     /**
-     * Project where this task belongs.
+     * Contract to which this task belongs.
      */
-    private final Project project;
+    private final Contract contract;
 
     /**
      * ID of the Issue that this task represents.
      */
     private final String issueId;
-
-    /**
-     * Role necessary to solve this task.
-     */
-    private final String role;
-
-    /**
-     * Contributor's username (the assignee).
-     */
-    private final String contributorUsername;
 
     /**
      * Assignment date.
@@ -83,64 +74,59 @@ public final class StoredTask implements Task {
         final String role,
         final Storage storage
     ) {
-        this(project, issueId, role, storage, null, null, null);
+        this(
+            new Unassigned(project, role),
+            issueId,
+            storage,
+            null,
+            null
+        );
     }
 
     /**
      * Constructor for an assigned task.
-     * @param project Project.
+     * @param contract Contract to which this task is assigned.
      * @param issueId Id of the Issue that this task represents.
-     * @param role Role.
      * @param storage Storage.
-     * @param contributorUsername Contributor's username.
      * @param assignmentDate Timestamp when this task has been assigned.
      * @param deadline Deadline by when this task should be finished.
      */
     public StoredTask(
-        final Project project,
+        final Contract contract,
         final String issueId,
-        final String role,
         final Storage storage,
-        final String contributorUsername,
         final LocalDateTime assignmentDate,
         final LocalDateTime deadline
     ) {
-        this.project = project;
+        this.contract = contract;
         this.issueId = issueId;
-        this.role = role;
         this.storage = storage;
-        this.contributorUsername = contributorUsername;
         this.assignmentDate = assignmentDate;
         this.deadline = deadline;
     }
 
     @Override
     public Issue issue() {
-        return this.project.repo().issues().getById(this.issueId);
+        return this.contract
+            .project()
+            .repo()
+            .issues()
+            .getById(this.issueId);
     }
 
     @Override
     public String role() {
-        return this.role;
+        return this.contract.role();
     }
 
     @Override
     public Project project() {
-        return this.project;
+        return this.contract.project();
     }
 
     @Override
     public Contributor assignee() {
-        final Contributor assignee;
-        if(this.contributorUsername == null) {
-            assignee = null;
-        } else {
-            assignee = this.project.contributors().getById(
-                this.contributorUsername,
-                this.project.provider()
-            );
-        }
-        return assignee;
+        return this.contract.contributor();
     }
 
     @Override
@@ -151,5 +137,60 @@ public final class StoredTask implements Task {
     @Override
     public LocalDateTime deadline() {
         return this.deadline;
+    }
+
+    /**
+     * Unassigned contract used when creating a StoredTask which
+     * is not assigned to anyone.
+     * @author Mihai Andronache (amihaiemil@gmail.com)
+     * @version $Id$
+     * @since 0.0.4
+     */
+    private static final class Unassigned implements Contract {
+
+        /**
+         * Project.
+         */
+        private final Project project;
+
+        /**
+         * Role (DEV, REV  etc).
+         */
+        private final String role;
+
+        /**
+         * Constructor.
+         * @param project Project.
+         * @param role Role.
+         */
+        Unassigned(final Project project, final String role) {
+            this.project = project;
+            this.role = role;
+        }
+
+        @Override
+        public Project project() {
+            return this.project;
+        }
+
+        @Override
+        public Contributor contributor() {
+            return null;
+        }
+
+        @Override
+        public BigDecimal hourlyRate() {
+            return BigDecimal.valueOf(0);
+        }
+
+        @Override
+        public String role() {
+            return this.role;
+        }
+
+        @Override
+        public Invoices invoices() {
+            return null;
+        }
     }
 }

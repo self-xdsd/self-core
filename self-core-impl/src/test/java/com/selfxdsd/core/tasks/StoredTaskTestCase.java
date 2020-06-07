@@ -24,7 +24,6 @@ package com.selfxdsd.core.tasks;
 
 import com.selfxdsd.api.*;
 import com.selfxdsd.api.storage.Storage;
-import com.selfxdsd.core.projects.StoredProject;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -95,17 +94,31 @@ public final class StoredTaskTestCase {
     }
 
     /**
+     * Returns null when the Task is not assigned.
+     */
+    @Test
+    public void returnsNullAssignee() {
+        final Task task = new StoredTask(
+            Mockito.mock(Project.class),
+            "issueId123",
+            Contract.Roles.DEV,
+            Mockito.mock(Storage.class)
+        );
+        MatcherAssert.assertThat(
+            task.assignee(), Matchers.nullValue()
+        );
+    }
+
+    /**
      * StoredTask can return its assignment date.
      */
     @Test
     public void returnsAssignmentDate() {
         final LocalDateTime assignment = LocalDateTime.now();
         final Task task = new StoredTask(
-            Mockito.mock(Project.class),
+            Mockito.mock(Contract.class),
             "issueId123",
-            Contract.Roles.DEV,
             Mockito.mock(Storage.class),
-            "mihai",
             assignment,
             assignment.plusDays(10)
         );
@@ -122,11 +135,9 @@ public final class StoredTaskTestCase {
     public void returnsDeadline() {
         final LocalDateTime assignment = LocalDateTime.now();
         final Task task = new StoredTask(
-            Mockito.mock(Project.class),
+            Mockito.mock(Contract.class),
             "issueId123",
-            Contract.Roles.DEV,
             Mockito.mock(Storage.class),
-            "mihai",
             assignment,
             assignment.plusDays(10)
         );
@@ -142,37 +153,13 @@ public final class StoredTaskTestCase {
     @Test
     public void returnsAssignee() {
         final Contributor mihai = Mockito.mock(Contributor.class);
-
-        final Contributors all = Mockito.mock(Contributors.class);
-        final Contributors ofProject = Mockito.mock(Contributors.class);
-        Mockito.when(
-            all.ofProject("john/test", Provider.Names.GITHUB)
-        ).thenReturn(ofProject);
-        Mockito.when(
-            ofProject.getById("mihai", Provider.Names.GITHUB)
-        ).thenReturn(mihai);
-
-        final Storage storage = Mockito.mock(Storage.class);
-        Mockito.when(storage.contributors()).thenReturn(all);
-
-        final Provider prov = Mockito.mock(Provider.class);
-        Mockito.when(prov.name()).thenReturn(Provider.Names.GITHUB);
-        final User owner = Mockito.mock(User.class);
-        Mockito.when(owner.provider()).thenReturn(prov);
-
-        final Project project = new StoredProject(
-            owner,
-            "john/test",
-            Mockito.mock(ProjectManager.class),
-            storage
-        );
+        final Contract contract = Mockito.mock(Contract.class);
+        Mockito.when(contract.contributor()).thenReturn(mihai);
 
         final Task task = new StoredTask(
-            project,
+            contract,
             "issueId123",
-            Contract.Roles.DEV,
             Mockito.mock(Storage.class),
-            "mihai",
             LocalDateTime.now(),
             LocalDateTime.now().plusDays(10)
         );
