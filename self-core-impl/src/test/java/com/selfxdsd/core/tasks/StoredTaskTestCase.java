@@ -50,7 +50,6 @@ public final class StoredTaskTestCase {
             project,
             "issueId123",
             Contract.Roles.DEV,
-            "github",
             Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(task.project(), Matchers.is(project));
@@ -73,7 +72,6 @@ public final class StoredTaskTestCase {
             project,
             "123",
             Contract.Roles.DEV,
-            "github",
             Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(task.issue(), Matchers.is(issue));
@@ -88,7 +86,6 @@ public final class StoredTaskTestCase {
             Mockito.mock(Project.class),
             "issueId123",
             Contract.Roles.DEV,
-            "github",
             Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(

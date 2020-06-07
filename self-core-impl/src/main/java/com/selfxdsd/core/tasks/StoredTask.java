@@ -80,17 +80,15 @@ public final class StoredTask implements Task {
      * @param project Project.
      * @param issueId Id of the Issue that this task represents.
      * @param role Role.
-     * @param provider Provider.
      * @param storage Storage.
      */
     public StoredTask(
         final Project project,
         final String issueId,
         final String role,
-        final String provider,
         final Storage storage
     ) {
-        this(project, issueId, role, provider, storage, null, null, null);
+        this(project, issueId, role, "", storage, null, null, null);
     }
 
     /**

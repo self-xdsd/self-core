@@ -85,7 +85,8 @@ public final class InMemoryTasks implements Tasks {
         } else {
             final Task newTask = new StoredTask(
                 project,
-                issue.issueId(), issue.role(), issue.provider(),
+                issue.issueId(),
+                issue.role(),
                 this.storage
             );
             this.tasks.put(
