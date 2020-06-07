@@ -22,21 +22,23 @@
  */
 package com.selfxdsd.core.mock;
 
+import com.selfxdsd.api.Contract;
 import com.selfxdsd.api.Contributor;
 import com.selfxdsd.api.Contributors;
+import com.selfxdsd.api.Project;
 import com.selfxdsd.api.storage.Storage;
+import com.selfxdsd.core.contributors.ProjectContributors;
 import com.selfxdsd.core.contributors.StoredContributor;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * In-memory contributors for test purposes.
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
+ * @checkstyle ReturnCount (400 lines)
  */
 public final class InMemoryContributors implements Contributors {
 
@@ -85,7 +87,21 @@ public final class InMemoryContributors implements Contributors {
         final String repoFullName,
         final String repoProvider
     ) {
-        throw new UnsupportedOperationException("Not implemented yet.");
+        final List<Contributor> found = this.table.values().stream().filter(
+            contributor -> {
+                for(final Contract ctc : contributor.contracts()) {
+                    final Project prj = ctc.project();
+                    if(prj.repoFullName().equals(repoFullName)
+                        && prj.provider().equals(repoProvider)) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+        ).collect(Collectors.toList());
+        return new ProjectContributors(
+            repoFullName, repoProvider, found, this.storage
+        );
     }
 
     @Override
