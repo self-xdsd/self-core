@@ -51,11 +51,6 @@ public final class StoredTask implements Task {
     private final String role;
 
     /**
-     * Provider.
-     */
-    private final String provider;
-
-    /**
      * Contributor's username (the assignee).
      */
     private final String contributorUsername;
@@ -88,7 +83,7 @@ public final class StoredTask implements Task {
         final String role,
         final Storage storage
     ) {
-        this(project, issueId, role, "", storage, null, null, null);
+        this(project, issueId, role, storage, null, null, null);
     }
 
     /**
@@ -96,7 +91,6 @@ public final class StoredTask implements Task {
      * @param project Project.
      * @param issueId Id of the Issue that this task represents.
      * @param role Role.
-     * @param provider Provider.
      * @param storage Storage.
      * @param contributorUsername Contributor's username.
      * @param assignmentDate Timestamp when this task has been assigned.
@@ -106,7 +100,6 @@ public final class StoredTask implements Task {
         final Project project,
         final String issueId,
         final String role,
-        final String provider,
         final Storage storage,
         final String contributorUsername,
         final LocalDateTime assignmentDate,
@@ -115,7 +108,6 @@ public final class StoredTask implements Task {
         this.project = project;
         this.issueId = issueId;
         this.role = role;
-        this.provider = provider;
         this.storage = storage;
         this.contributorUsername = contributorUsername;
         this.assignmentDate = assignmentDate;
@@ -145,7 +137,7 @@ public final class StoredTask implements Task {
         } else {
             assignee = this.project.contributors().getById(
                 this.contributorUsername,
-                this.provider
+                this.project.provider()
             );
         }
         return assignee;
