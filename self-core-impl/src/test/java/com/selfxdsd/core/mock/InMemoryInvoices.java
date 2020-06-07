@@ -6,8 +6,7 @@ import com.selfxdsd.core.contracts.invoices.StoredInvoice;
 
 import java.time.Duration;
 import java.util.*;
-import java.util.function.Supplier;
-import java.util.stream.Stream;
+import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 /**
@@ -170,7 +169,7 @@ public final class InMemoryInvoices implements Invoices {
     }
 
     /**
-     * Contract Invoices delegate. Manages invoices for a contract.
+     * Invoices of a contract.
      */
     private static final class ContractInvoices implements Invoices {
         /**
@@ -185,13 +184,8 @@ public final class InMemoryInvoices implements Invoices {
 
         /**
          * Stored invoices for this contract.
-         * We use a stream because we don't want to load in
-         * memory all the contract invoices.
-         * <br>
-         * In order to "reuse" them, since streams are one time use only,
-         * we wrap the stream in a supplier, .
          */
-        private final Supplier<Stream<Invoice>> contractInvoices;
+        private final List<Invoice> contractInvoices;
 
         /**
          * Current active invoice.
@@ -208,9 +202,10 @@ public final class InMemoryInvoices implements Invoices {
                                  final Storage storage) {
             this.contractId = contractId;
             this.storage = storage;
-            this.contractInvoices = () ->StreamSupport
+            this.contractInvoices = new ArrayList<>(StreamSupport
                 .stream(storage.invoices().spliterator(), false)
-                .filter(i -> i.contractId().equals(contractId));
+                .filter(i -> i.contractId().equals(contractId))
+                .collect(Collectors.toUnmodifiableList()));
         }
 
         @Override
@@ -257,7 +252,7 @@ public final class InMemoryInvoices implements Invoices {
         @Override
         public List<InvoiceTask> tasks(final int id) {
             final Invoice invoice = contractInvoices
-                .get()
+                .stream()
                 .filter(i -> i.invoiceId() == id
                     && this.contractId.equals(i.contractId()))
                 .findFirst()
@@ -271,7 +266,7 @@ public final class InMemoryInvoices implements Invoices {
 
         @Override
         public Iterator<Invoice> iterator() {
-            return contractInvoices.get().iterator();
+            return contractInvoices.iterator();
         }
     }
 }
