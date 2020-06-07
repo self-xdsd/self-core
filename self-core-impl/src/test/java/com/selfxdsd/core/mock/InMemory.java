@@ -1,13 +1,13 @@
 /**
  * Copyright (c) 2020, Self XDSD Contributors
  * All rights reserved.
- *
+ * <p>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"),
  * to read the Software only. Permission is hereby NOT GRANTED to use, copy,
  * modify, merge, publish, distribute, sublicense, and/or sell copies of
  * the Software.
- *
+ * <p>
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -62,6 +62,11 @@ public final class InMemory implements Storage {
      */
     private Tasks tasks = new InMemoryTasks(this);
 
+    /**
+     * In-memory invoices.
+     */
+    private Invoices invoices = new InMemoryInvoices(this);
+
     @Override
     public Users users() {
         return this.users;
@@ -84,7 +89,7 @@ public final class InMemory implements Storage {
 
     @Override
     public Invoices invoices() {
-        throw new UnsupportedOperationException("Not implemented yet");
+        return this.invoices;
     }
 
     @Override

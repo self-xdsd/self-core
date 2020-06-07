@@ -8,8 +8,6 @@ import java.util.List;
  * @author criske
  * @version $Id$
  * @since 0.0.3
- * @todo #163:30min Implement and test InMemoryInvoices.
- *  Also implement Storage#invoices().
  */
 public interface Invoices extends Iterable<Invoice> {
 
