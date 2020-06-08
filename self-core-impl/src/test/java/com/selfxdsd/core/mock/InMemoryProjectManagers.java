@@ -88,7 +88,7 @@ public final class InMemoryProjectManagers implements ProjectManagers {
                                    final String accessToken) {
         final int id = ++idCounter;
         final StoredProjectManager projectManager = new StoredProjectManager(
-            id, provider, accessToken, storage);
+            id, "", provider, accessToken, storage);
         pms.put(id, projectManager);
         return projectManager;
     }

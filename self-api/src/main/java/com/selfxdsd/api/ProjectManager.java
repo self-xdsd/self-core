@@ -38,6 +38,12 @@ public interface ProjectManager {
     int id();
 
     /**
+     * The PM's username.
+     * @return String.
+     */
+    String username();
+
+    /**
      * The provider's name (Github, Gitlab etc).
      * @return String.
      */

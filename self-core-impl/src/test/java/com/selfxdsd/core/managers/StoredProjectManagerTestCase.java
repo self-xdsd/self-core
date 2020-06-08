@@ -44,7 +44,11 @@ public final class StoredProjectManagerTestCase {
     @Test
     public void returnsId() {
         final ProjectManager manager = new StoredProjectManager(
-            1, "github", "123token", Mockito.mock(Storage.class)
+            1,
+            "zoeself",
+            Provider.Names.GITHUB,
+            "1s23token",
+            Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(
             manager.id(),
@@ -58,7 +62,11 @@ public final class StoredProjectManagerTestCase {
     @Test
     public void returnsProvider() {
         final ProjectManager manager = new StoredProjectManager(
-            1, "github", "123token", Mockito.mock(Storage.class)
+            1,
+            "zoeself",
+            Provider.Names.GITHUB,
+            "123token",
+            Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(
             manager.provider(),
@@ -72,7 +80,11 @@ public final class StoredProjectManagerTestCase {
     @Test
     public void returnsAccessToken() {
         final ProjectManager manager = new StoredProjectManager(
-            1, "github", "123token", Mockito.mock(Storage.class)
+            1,
+            "zoeself",
+            Provider.Names.GITHUB,
+            "123token",
+            Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(
             manager.accessToken(),
@@ -93,7 +105,11 @@ public final class StoredProjectManagerTestCase {
         Mockito.when(storage.projects()).thenReturn(all);
 
         final ProjectManager manager = new StoredProjectManager(
-            1, "github", "123token", storage
+            1,
+            "zoeself",
+            Provider.Names.GITHUB,
+            "123token",
+            storage
         );
         MatcherAssert.assertThat(
             manager.projects(),
@@ -113,7 +129,11 @@ public final class StoredProjectManagerTestCase {
         final Projects projects = Mockito.mock(Projects.class);
         Mockito.when(storage.projects()).thenReturn(projects);
         final ProjectManager manager = new StoredProjectManager(
-            1, "github", "123token", storage
+            1,
+            "zoeself",
+            Provider.Names.GITHUB,
+            "123token",
+            storage
         );
         Mockito.when(projects.register(repo, manager))
             .thenReturn(

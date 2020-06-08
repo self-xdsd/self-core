@@ -44,6 +44,11 @@ public final class StoredProjectManager implements ProjectManager {
     private final int id;
 
     /**
+     * This PM's username.
+     */
+    private String username;
+
+    /**
      * Provider's name.
      */
     private final String provider;
@@ -61,6 +66,7 @@ public final class StoredProjectManager implements ProjectManager {
     /**
      * Constructor.
      * @param id PM's id.
+     * @param username PM's username.
      * @param provider The provider's name (Gitlab, Github etc).
      * @param accessToken API Access token.
      * @param storage Self's storage.
@@ -68,11 +74,13 @@ public final class StoredProjectManager implements ProjectManager {
      */
     public StoredProjectManager(
         final int id,
+        final String username,
         final String provider,
         final String accessToken,
         final Storage storage
     ) {
         this.id = id;
+        this.username = username;
         this.provider = provider;
         this.accessToken = accessToken;
         this.storage = storage;
@@ -81,6 +89,11 @@ public final class StoredProjectManager implements ProjectManager {
     @Override
     public int id() {
         return this.id;
+    }
+
+    @Override
+    public String username() {
+        return this.username;
     }
 
     @Override
