@@ -126,6 +126,7 @@ public final class StoredProjectManagerTestCase {
                 new StoredProject(
                     Mockito.mock(User.class),
                     "john/test",
+                    "wh123token",
                     manager,
                     storage
                 )

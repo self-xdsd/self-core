@@ -47,6 +47,11 @@ public final class StoredProject implements Project {
     private final String repoFullName;
 
     /**
+     * WebHook token.
+     */
+    private String webHookToken;
+
+    /**
      * Manager in charge of this Project.
      */
     private final ProjectManager projectManager;
@@ -60,6 +65,7 @@ public final class StoredProject implements Project {
      * Constructor.
      * @param owner Owner of the project/repo.
      * @param repoFullName Repo full name.
+     * @param webHookToken Webhook token.
      * @param projectManager Manager in charge.
      * @param storage Storage of Self.
      * @checkstyle ParameterNumber (10 lines)
@@ -67,11 +73,13 @@ public final class StoredProject implements Project {
     public StoredProject(
         final User owner,
         final String repoFullName,
+        final String webHookToken,
         final ProjectManager projectManager,
         final Storage storage
     ) {
         this.owner = owner;
         this.repoFullName = repoFullName;
+        this.webHookToken = webHookToken;
         this.projectManager = projectManager;
         this.storage = storage;
     }
@@ -79,6 +87,11 @@ public final class StoredProject implements Project {
     @Override
     public String repoFullName() {
         return this.repoFullName;
+    }
+
+    @Override
+    public String webHookToken() {
+        return this.webHookToken;
     }
 
     @Override

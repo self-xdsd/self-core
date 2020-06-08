@@ -41,6 +41,13 @@ public interface Project {
     String repoFullName();
 
     /**
+     * A token used to secure the WebHook calls
+     * sent by a Provider to this project.
+     * @return String token.
+     */
+    String webHookToken();
+
+    /**
      * Provider (github, gitlab etc).
      * @return String.
      */

@@ -47,12 +47,31 @@ public final class StoredProjectTestCase {
         final Project project = new StoredProject(
             Mockito.mock(User.class),
             repo.fullName(),
+            "wh123token",
             Mockito.mock(ProjectManager.class),
             Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(
             project.repoFullName(),
             Matchers.equalTo("john/test")
+        );
+    }
+
+    /**
+     * StoredProject can return its webhook token.
+     */
+    @Test
+    public void returnsWebHookToken() {
+        final Project project = new StoredProject(
+            Mockito.mock(User.class),
+            "john/test",
+            "wh123token",
+            Mockito.mock(ProjectManager.class),
+            Mockito.mock(Storage.class)
+        );
+        MatcherAssert.assertThat(
+            project.webHookToken(),
+            Matchers.equalTo("wh123token")
         );
     }
 
@@ -68,6 +87,7 @@ public final class StoredProjectTestCase {
         final Project project = new StoredProject(
             owner,
             "john/test",
+            "wh123token",
             Mockito.mock(ProjectManager.class),
             Mockito.mock(Storage.class)
         );
@@ -92,6 +112,7 @@ public final class StoredProjectTestCase {
         final Project project = new StoredProject(
             owner,
             "jogn/test",
+            "wh123token",
             Mockito.mock(ProjectManager.class),
             Mockito.mock(Storage.class)
         );
@@ -107,6 +128,7 @@ public final class StoredProjectTestCase {
         final Project project = new StoredProject(
             Mockito.mock(User.class),
             "john/test",
+            "wh123token",
             manager,
             Mockito.mock(Storage.class)
         );
@@ -137,6 +159,7 @@ public final class StoredProjectTestCase {
 
         final Project project = new StoredProject(
             owner, "john/test",
+            "wh123token",
             Mockito.mock(ProjectManager.class),
             storage
         );
@@ -163,7 +186,7 @@ public final class StoredProjectTestCase {
         Mockito.when(owner.provider()).thenReturn(prov);
 
         final Project project = new StoredProject(
-            owner, "john/test",
+            owner, "john/test", "wh123token",
             Mockito.mock(ProjectManager.class),
             storage
         );
@@ -193,7 +216,7 @@ public final class StoredProjectTestCase {
         Mockito.when(owner.provider()).thenReturn(prov);
 
         final Project project = new StoredProject(
-            owner, "john/test",
+            owner, "john/test", "wh123token",
             Mockito.mock(ProjectManager.class),
             storage
         );
