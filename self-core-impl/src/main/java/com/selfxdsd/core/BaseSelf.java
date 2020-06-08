@@ -67,6 +67,11 @@ abstract class BaseSelf implements Self {
         return signedUp;
     }
 
+    @Override
+    public ProjectManagers projectManagers() {
+        return this.storage.projectManagers();
+    }
+
     /**
      * User authenticated with an access token from the provider.
      */

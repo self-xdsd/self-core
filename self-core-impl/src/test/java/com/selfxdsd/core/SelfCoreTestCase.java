@@ -67,5 +67,18 @@ public final class SelfCoreTestCase {
         );
     }
 
+    /**
+     * SelfCore can give us its ProjectManagers.
+     */
+    @Test
+    public void returnsProjectManagers() {
+        final ProjectManagers all = Mockito.mock(ProjectManagers.class);
+        final Storage storage = Mockito.mock(Storage.class);
+        Mockito.when(storage.projectManagers()).thenReturn(all);
+
+        final Self self = new SelfCore(storage);
+        MatcherAssert.assertThat(self.projectManagers(), Matchers.is(all));
+    }
+
 
 }

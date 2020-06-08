@@ -39,4 +39,9 @@ public interface Self {
      */
     User login(final Login login);
 
+    /**
+     * Project managers working for Self.
+     * @return ProjectManagers.
+     */
+    ProjectManagers projectManagers();
 }
