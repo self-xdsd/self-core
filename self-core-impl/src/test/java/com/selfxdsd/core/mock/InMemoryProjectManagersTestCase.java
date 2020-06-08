@@ -71,7 +71,7 @@ public final class InMemoryProjectManagersTestCase {
     public void registerProjectManager() {
         final ProjectManagers projectManagers = new InMemoryProjectManagers(
             mock(Storage.class));
-        projectManagers.register("foo-provider", "122token");
+        projectManagers.register("userpm", "foo-provider", "122token");
         assertThat(
             "Should have pms for: github, gitlab, foo-provider",
             projectManagers, iterableWithSize(3));
@@ -85,7 +85,7 @@ public final class InMemoryProjectManagersTestCase {
         final ProjectManagers projectManagers = new InMemoryProjectManagers(
             mock(Storage.class));
         final ProjectManager projectManager = projectManagers
-            .register("foo-provider", "122token");
+            .register("userpm", "foo-provider", "122token");
         assertThat(projectManagers.getById(3), equalTo(projectManager));
     }
 
@@ -97,7 +97,7 @@ public final class InMemoryProjectManagersTestCase {
         final ProjectManagers projectManagers = new InMemoryProjectManagers(
             mock(Storage.class));
         final ProjectManager projectManager = projectManagers
-            .register("foo-provider", "122token");
+            .register("userpm", "foo-provider", "122token");
         assertThat(projectManagers.pick("foo-provider"),
             equalTo(projectManager));
     }

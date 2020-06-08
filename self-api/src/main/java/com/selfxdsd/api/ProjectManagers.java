@@ -46,9 +46,14 @@ public interface ProjectManagers extends Iterable<ProjectManager> {
 
     /**
      * Register a project manager.
+     * @param username User name.
      * @param provider Provider name.
      * @param accessToken Access token.
      * @return The registered ProjectManager.
      */
-    ProjectManager register(final String provider, final String accessToken);
+    ProjectManager register(
+        final String username,
+        final String provider,
+        final String accessToken
+    );
 }
