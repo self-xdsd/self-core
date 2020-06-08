@@ -44,10 +44,10 @@ public interface ProjectManager {
     String username();
 
     /**
-     * The provider's name (Github, Gitlab etc).
-     * @return String.
+     * The provider (Github, Gitlab etc).
+     * @return Provider.
      */
-    String provider();
+    Provider provider();
 
     /**
      * This PM's access token for the Provider's API.

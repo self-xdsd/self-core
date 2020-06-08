@@ -88,18 +88,4 @@ public final class InMemoryProjectManagersTestCase {
             .register("userpm", "foo-provider", "122token");
         assertThat(projectManagers.getById(3), equalTo(projectManager));
     }
-
-    /**
-     * Get the registered project manager by provider name.
-     */
-    @Test
-    public void findRegisteredProjectManagerByProvider() {
-        final ProjectManagers projectManagers = new InMemoryProjectManagers(
-            mock(Storage.class));
-        final ProjectManager projectManager = projectManagers
-            .register("userpm", "foo-provider", "122token");
-        assertThat(projectManagers.pick("foo-provider"),
-            equalTo(projectManager));
-    }
-
 }

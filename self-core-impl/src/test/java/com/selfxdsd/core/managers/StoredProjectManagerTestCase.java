@@ -24,6 +24,7 @@ package com.selfxdsd.core.managers;
 
 import com.selfxdsd.api.*;
 import com.selfxdsd.api.storage.Storage;
+import com.selfxdsd.core.Github;
 import com.selfxdsd.core.projects.StoredProject;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -70,7 +71,10 @@ public final class StoredProjectManagerTestCase {
         );
         MatcherAssert.assertThat(
             manager.provider(),
-            Matchers.equalTo("github")
+            Matchers.allOf(
+                Matchers.notNullValue(),
+                Matchers.instanceOf(Github.class)
+            )
         );
     }
 

@@ -22,11 +22,10 @@
  */
 package com.selfxdsd.core.managers;
 
-import com.selfxdsd.api.Project;
-import com.selfxdsd.api.ProjectManager;
-import com.selfxdsd.api.Projects;
-import com.selfxdsd.api.Repo;
+import com.selfxdsd.api.*;
 import com.selfxdsd.api.storage.Storage;
+import com.selfxdsd.core.Github;
+import com.selfxdsd.core.Gitlab;
 
 /**
  * A Project Manager stored in Self. Use this class when implementing
@@ -97,8 +96,14 @@ public final class StoredProjectManager implements ProjectManager {
     }
 
     @Override
-    public String provider() {
-        return this.provider;
+    public Provider provider() {
+        final Provider provider;
+        if(this.provider.equals(Provider.Names.GITHUB)) {
+            provider = new Github(new PmUser(this), this.storage);
+        } else {
+            provider = new Gitlab(new PmUser(this), this.storage);
+        }
+        return provider;
     }
 
     @Override
@@ -114,5 +119,47 @@ public final class StoredProjectManager implements ProjectManager {
     @Override
     public Projects projects() {
         return this.storage.projects().assignedTo(this.id);
+    }
+
+    /**
+     * PM as a User.
+     * @author Mihai Andronache (amihaiemil@gmail.com)
+     * @version $Id$
+     * @since 0.0.1
+     */
+    private final class PmUser implements User {
+
+        /**
+         * The PM.
+         */
+        private final ProjectManager manager;
+
+        /**
+         * Constructor.
+         * @param manager PM acting as a user.
+         */
+        PmUser(final ProjectManager manager) {
+            this.manager = manager;
+        }
+
+        @Override
+        public String username() {
+            return this.manager.username();
+        }
+
+        @Override
+        public String email() {
+            return null;
+        }
+
+        @Override
+        public Provider provider() {
+            return StoredProjectManager.this.provider();
+        }
+
+        @Override
+        public Projects projects() {
+            return this.manager.projects();
+        }
     }
 }

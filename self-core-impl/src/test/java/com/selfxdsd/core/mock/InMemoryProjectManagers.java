@@ -78,7 +78,7 @@ public final class InMemoryProjectManagers implements ProjectManagers {
     @Override
     public ProjectManager pick(final String provider) {
         return pms.values().stream()
-            .filter(pm -> pm.provider().equals(provider))
+            .filter(pm -> pm.provider().name().equals(provider))
             .findFirst()
             .orElse(null);
     }
