@@ -27,7 +27,7 @@ Make sure the maven build:
 ``$mvn clean install -Pcheckstyle,itcases``
 
 passes before making a PR. [Checkstyle](http://checkstyle.sourceforge.net/) will make sure
-you're following our code style and guidlines.
+you're following our code style and guidelines.
 
 It's better to make changes on a separate branch (derived from ``master``), so you won't have to cherry pick commits in case your PR is rejected.
 
