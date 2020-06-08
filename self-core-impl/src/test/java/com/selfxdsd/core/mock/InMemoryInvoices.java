@@ -16,11 +16,8 @@ import java.util.stream.StreamSupport;
  * @author criske
  * @version $Id$
  * @since 0.0.3
- * @todo #165:30min Refactor and test ContractInvoices to be part
- *  of self-impl API .
- *  Also InvoiceTask should have its own concrete implementation in self-impl.
- *  Use that in InMemoryInvoices.
- *  Continue testing InMemoryInvoices.
+ * @todo #181:30min Refactor and test ContractInvoices to be part
+ *  of self-impl API.
  */
 public final class InMemoryInvoices implements Invoices {
 
@@ -194,11 +191,6 @@ public final class InMemoryInvoices implements Invoices {
         private final Supplier<Stream<Invoice>> contractInvoices;
 
         /**
-         * Current active invoice.
-         */
-        private Integer activeId;
-
-        /**
          * Ctor.
          *
          * @param contractId Contract id
@@ -244,18 +236,33 @@ public final class InMemoryInvoices implements Invoices {
                 throw new IllegalStateException("Task is not part of"
                    + " the contract.");
             }
-            InvoiceTask invoiceTask = storage.invoices().add(task, timeSpent);
-            activeId = invoiceTask.invoiceId();
-            return invoiceTask;
+            return storage.invoices().add(task, timeSpent);
         }
 
         @Override
         public boolean isPaid(final int id) {
-            return activeId != id;
+            checkInvoiceOfContract(id);
+            return storage.invoices().isPaid(id);
         }
 
         @Override
         public List<InvoiceTask> tasks(final int id) {
+            checkInvoiceOfContract(id);
+            return storage.invoices().tasks(id);
+        }
+
+        @Override
+        public Iterator<Invoice> iterator() {
+            return contractInvoices.get().iterator();
+        }
+
+        /**
+         * Checks if the invoice is part of the current contract.
+         * @param id Invoice id.
+         * @throws IllegalStateException when invoice is not part
+         * of the contract.
+         */
+        private void checkInvoiceOfContract(final int id) {
             final Invoice invoice = contractInvoices
                 .get()
                 .filter(i -> i.invoiceId() == id
@@ -266,12 +273,6 @@ public final class InMemoryInvoices implements Invoices {
                 throw new IllegalStateException("Invoice with id"
                     + id + " is not part of the contract.");
             }
-            return storage.invoices().tasks(id);
-        }
-
-        @Override
-        public Iterator<Invoice> iterator() {
-            return contractInvoices.get().iterator();
         }
     }
 }
