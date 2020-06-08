@@ -25,7 +25,7 @@ package com.selfxdsd.core.managers;
 import com.selfxdsd.api.*;
 import com.selfxdsd.api.storage.Storage;
 import com.selfxdsd.core.Github;
-import com.selfxdsd.core.projects.StoredProject;
+import com.selfxdsd.core.mock.InMemory;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -111,31 +111,28 @@ public final class StoredProjectManagerTestCase {
     public void assignsRepo() {
         final Repo repo = Mockito.mock(Repo.class);
         Mockito.when(repo.fullName()).thenReturn("john/test");
-        final Storage storage = Mockito.mock(Storage.class);
-        final Projects projects = Mockito.mock(Projects.class);
-        Mockito.when(storage.projects()).thenReturn(projects);
         final ProjectManager manager = new StoredProjectManager(
             1,
             "zoeself",
             Provider.Names.GITHUB,
             "123token",
-            storage
+            new InMemory()
         );
-        Mockito.when(projects.register(repo, manager))
-            .thenReturn(
-                new StoredProject(
-                    Mockito.mock(User.class),
-                    "john/test",
-                    "wh123token",
-                    manager,
-                    storage
-                )
-            );
         final Project assigned = manager.assign(repo);
 
         MatcherAssert.assertThat(
             assigned.projectManager(),
             Matchers.is(manager)
+        );
+        MatcherAssert.assertThat(
+            assigned.repoFullName(),
+            Matchers.equalTo("john/test")
+        );
+        MatcherAssert.assertThat(
+            assigned.webHookToken(),
+            Matchers.not(
+                Matchers.isEmptyOrNullString()
+            )
         );
     }
 }

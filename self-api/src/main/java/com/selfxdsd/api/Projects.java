@@ -34,9 +34,14 @@ public interface Projects extends Iterable<Project> {
      * Register a new Project with Self.
      * @param repo Repo to register.
      * @param manager PM who will take charge of the new Project.
+     * @param webHookToken Token to secure WebHook calls from the Provider.
      * @return The registered Project.
      */
-    Project register(final Repo repo, final ProjectManager manager);
+    Project register(
+        final Repo repo,
+        final ProjectManager manager,
+        final String webHookToken
+    );
 
     /**
      * Get the Projects assigned to a PM.

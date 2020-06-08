@@ -61,7 +61,9 @@ public final class InMemoryTasksTestCase {
         ProjectManager projectManager = storage
             .projectManagers().pick("github");
         final Project project = storage.projects().register(
-            this.mockRepo("mihai/test", "github"), projectManager
+            this.mockRepo("mihai/test", "github"),
+            projectManager,
+            "whtoken123"
         );
         final Issue issue = this.mockIssue(
             "123",
@@ -98,7 +100,9 @@ public final class InMemoryTasksTestCase {
         ProjectManager projectManager = storage
             .projectManagers().pick(Provider.Names.GITHUB);
         final Project project = storage.projects().register(
-            this.mockRepo("mihai/test", Provider.Names.GITHUB), projectManager
+            this.mockRepo("mihai/test", Provider.Names.GITHUB),
+            projectManager,
+            "whtoken123"
         );
         final Issue issue = this.mockIssue(
             "123",
@@ -121,7 +125,9 @@ public final class InMemoryTasksTestCase {
         ProjectManager projectManager = storage
             .projectManagers().pick("github");
         final Project project = storage.projects().register(
-            this.mockRepo("mihai/test", "github"), projectManager
+            this.mockRepo("mihai/test", "github"),
+            projectManager,
+            "whtoken123"
         );
         final Issue issue = this.mockIssue(
             "123",

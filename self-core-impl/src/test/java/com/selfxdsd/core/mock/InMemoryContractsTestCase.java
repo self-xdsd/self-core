@@ -30,7 +30,8 @@ public final class InMemoryContractsTestCase {
         final Project project = storage.projects()
             .register(
                 this.mockRepo("john/test", "github"),
-                projectManager
+                projectManager,
+                "whtoken123"
             );
         final Contributor contributor = storage.contributors()
             .register("mihai", "github");
@@ -68,7 +69,8 @@ public final class InMemoryContractsTestCase {
         final Project project = storage.projects()
             .register(
                 this.mockRepo("john/test", "github"),
-                projectManager
+                projectManager,
+                "whtoken123"
             );
         final Contributor mihai = storage.contributors()
             .register("mihai", "github");
@@ -102,7 +104,8 @@ public final class InMemoryContractsTestCase {
         final Project project = storage.projects()
             .register(
                 this.mockRepo("john/test", "github"),
-                projectManager
+                projectManager,
+                "whtoken123"
             );
         final Contributor mihai = storage.contributors()
             .register("mihai", "github");
@@ -163,7 +166,8 @@ public final class InMemoryContractsTestCase {
         final Project project = storage.projects()
             .register(
                 mock(Repo.class),
-                storage.projectManagers().pick("github")
+                storage.projectManagers().pick("github"),
+                "whtoken123"
             );
         storage.contracts().addContract(
             "john/test",

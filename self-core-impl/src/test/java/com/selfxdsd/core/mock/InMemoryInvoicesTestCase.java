@@ -33,7 +33,8 @@ public final class InMemoryInvoicesTestCase {
             .projects()
             .register(
                 this.mockRepo("john/test", Provider.Names.GITHUB),
-                projectManager
+                projectManager,
+                "whtoken123"
             );
         final Contributor contributor = storage
             .contributors()
@@ -78,7 +79,8 @@ public final class InMemoryInvoicesTestCase {
             .projects()
             .register(
                 this.mockRepo("john/test", Provider.Names.GITHUB),
-                projectManager
+                projectManager,
+                "whtoken123"
             );
         final Contributor contributor = storage
             .contributors()
@@ -129,7 +131,8 @@ public final class InMemoryInvoicesTestCase {
             .projects()
             .register(
                 this.mockRepo("john/test", Provider.Names.GITHUB),
-                projectManager
+                projectManager,
+                "whtoken123"
             );
         final Contributor contributor = storage
             .contributors()

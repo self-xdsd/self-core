@@ -27,6 +27,8 @@ import com.selfxdsd.api.storage.Storage;
 import com.selfxdsd.core.Github;
 import com.selfxdsd.core.Gitlab;
 
+import java.util.UUID;
+
 /**
  * A Project Manager stored in Self. Use this class when implementing
  * the Storage.<br><br>
@@ -108,7 +110,13 @@ public final class StoredProjectManager implements ProjectManager {
 
     @Override
     public Project assign(final Repo repo) {
-        return this.storage.projects().register(repo, this);
+        return this.storage.projects().register(
+            repo,
+            this,
+            UUID.randomUUID()
+                .toString()
+                .replaceAll("-", "")
+        );
     }
 
     @Override

@@ -55,7 +55,10 @@ final class GithubRepo extends BaseRepo {
 
     @Override
     public Project activate() {
-        return this.storage().projectManagers().pick(provider()).assign(this);
+        return this.storage()
+            .projectManagers()
+            .pick(this.provider())
+            .assign(this);
     }
 
     @Override

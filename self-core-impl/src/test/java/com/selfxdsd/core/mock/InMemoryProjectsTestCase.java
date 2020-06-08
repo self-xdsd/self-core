@@ -31,7 +31,9 @@ public final class InMemoryProjectsTestCase {
         ProjectManager projectManager = storage
             .projectManagers().pick("github");
         final Project registered = storage.projects().register(
-            this.mockRepo("mihai/test", "github"), projectManager
+            this.mockRepo("mihai/test", "github"),
+            projectManager,
+            "whtoken123"
         );
 
         assertThat(
@@ -60,11 +62,13 @@ public final class InMemoryProjectsTestCase {
         final Projects projects = storage.projects();
         final Project first = projects.register(
             mockRepo("amihaiemil/test", "github"),
-            projectManager
+            projectManager,
+            "whtoken123"
         );
         final Project second = projects.register(
             mockRepo("amihaiemil/test2", "github"),
-            projectManager
+            projectManager,
+            "whtoken124"
         );
 
         final Projects all = storage.projects();
@@ -94,7 +98,9 @@ public final class InMemoryProjectsTestCase {
         final Repo repo = this.mockRepo("amihaiemil/test", "github");
         Mockito.when(repo.owner()).thenReturn(owner);
 
-        final Project project = projects.register(repo, projectManager);
+        final Project project = projects.register(
+            repo, projectManager, "whtoken123"
+        );
         final Projects owned = projects.ownedBy(owner);
         MatcherAssert.assertThat(owned, Matchers.iterableWithSize(1));
         MatcherAssert.assertThat(
@@ -114,11 +120,13 @@ public final class InMemoryProjectsTestCase {
         final Projects all = storage.projects();
         final Project first = all.register(
             this.mockRepo("mihai/test", "github"),
-            projectManager
+            projectManager,
+            "whtoken123"
         );
         all.register(
             this.mockRepo("mihai/test2", "github"),
-            projectManager
+            projectManager,
+            "whtoken124"
         );
         final Project found = all.getProjectById(
             "mihai/test", "github"

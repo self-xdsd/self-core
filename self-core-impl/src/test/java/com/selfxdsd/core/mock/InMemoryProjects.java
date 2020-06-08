@@ -62,7 +62,11 @@ public final class InMemoryProjects implements Projects {
     }
 
     @Override
-    public Project register(final Repo repo, final ProjectManager manager){
+    public Project register(
+        final Repo repo,
+        final ProjectManager manager,
+        final String webHookToken
+    ){
         if(manager == null
             || this.storage.projectManagers().getById(manager.id()) == null) {
             throw new IllegalArgumentException(
@@ -76,7 +80,8 @@ public final class InMemoryProjects implements Projects {
                 throw new IllegalArgumentException("Project already exists.");
             }
             final Project project = new StoredProject(
-                repo.owner(), repo.fullName(), "", manager, this.storage
+                repo.owner(), repo.fullName(), webHookToken,
+                manager, this.storage
             );
             this.projects.put(key, project);
             return project;

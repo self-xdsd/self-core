@@ -55,7 +55,8 @@ public final class InMemoryContributorsTestCase {
         final Storage storage = new InMemory();
         final Project project = storage.projects().register(
             this.mockRepo("john/test", "github"),
-            storage.projectManagers().pick("github")
+            storage.projectManagers().pick("github"),
+            "whtoken123"
         );
         final Contributor mihai = storage.contributors()
             .register("mihai", "github");

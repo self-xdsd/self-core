@@ -48,7 +48,9 @@ public final class PmProjectsTestCase {
     public void registerIsForbidden() {
         final Projects projects = new PmProjects(1, new ArrayList<>());
         projects.register(
-            Mockito.mock(Repo.class), Mockito.mock(ProjectManager.class)
+            Mockito.mock(Repo.class),
+            Mockito.mock(ProjectManager.class),
+            "wh123token"
         );
     }
 

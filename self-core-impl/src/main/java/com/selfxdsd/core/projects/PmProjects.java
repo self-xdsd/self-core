@@ -61,7 +61,11 @@ public final class PmProjects implements Projects {
     }
 
     @Override
-    public Project register(final Repo repo, final ProjectManager manager) {
+    public Project register(
+        final Repo repo,
+        final ProjectManager manager,
+        final String webHookToken
+    ) {
         throw new IllegalStateException(
             "Projects of a PM are immutable, "
           + "can't register a new one here."
