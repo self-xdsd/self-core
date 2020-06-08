@@ -103,12 +103,7 @@ public final class StoredProjectManager implements ProjectManager {
         } else {
             provider = new Gitlab(new PmUser(this), this.storage);
         }
-        return provider;
-    }
-
-    @Override
-    public String accessToken() {
-        return this.accessToken;
+        return provider.withToken(this.accessToken);
     }
 
     @Override

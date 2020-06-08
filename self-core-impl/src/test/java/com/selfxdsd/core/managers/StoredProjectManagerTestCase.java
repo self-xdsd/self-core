@@ -79,24 +79,6 @@ public final class StoredProjectManagerTestCase {
     }
 
     /**
-     * StoredProjectManager returns its access token.
-     */
-    @Test
-    public void returnsAccessToken() {
-        final ProjectManager manager = new StoredProjectManager(
-            1,
-            "zoeself",
-            Provider.Names.GITHUB,
-            "123token",
-            Mockito.mock(Storage.class)
-        );
-        MatcherAssert.assertThat(
-            manager.accessToken(),
-            Matchers.equalTo("123token")
-        );
-    }
-
-    /**
      * StoredProjectManager returns its assigned projects.
      */
     @Test

@@ -50,12 +50,6 @@ public interface ProjectManager {
     Provider provider();
 
     /**
-     * This PM's access token for the Provider's API.
-     * @return String.
-     */
-    String accessToken();
-
-    /**
      * Assign a repo to this ProjectManager.
      * @param repo Repo to be assigned.
      * @return Project.
