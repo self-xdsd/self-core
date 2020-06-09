@@ -102,8 +102,9 @@ public final class ContributorTasks implements Tasks {
 
     @Override
     public Tasks unassigned() {
-        throw new UnsupportedOperationException("Contributors can't have "
-            + " unassigned tasks");
+        throw new UnsupportedOperationException("These are the tasks "
+            + "of contributor " + username + " from provider" + provider
+            + ", no unassigned tasks here.");
     }
 
     @Override

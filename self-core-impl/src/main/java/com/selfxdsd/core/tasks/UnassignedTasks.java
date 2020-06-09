@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
  * @author criske
  * @version $Id$
  * @since 0.0.5
- * @todo #190: Implement and test unassigned() for ProjectTasks
+ * @todo #190:30min Implement and test unassigned() for ProjectTasks
  *  and InMemoryTasks, using UnassignedTasks.
  */
 public final class UnassignedTasks implements Tasks {

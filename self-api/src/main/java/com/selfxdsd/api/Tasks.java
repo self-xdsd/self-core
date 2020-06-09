@@ -73,7 +73,7 @@ public interface Tasks extends Iterable<Task> {
 
     /**
      * Get the unassigned tasks.
-     * @return Tasks
+     * @return Tasks.
      */
     Tasks unassigned();
 
