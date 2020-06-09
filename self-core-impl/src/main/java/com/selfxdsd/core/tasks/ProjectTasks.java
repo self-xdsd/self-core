@@ -30,6 +30,7 @@ import com.selfxdsd.api.storage.Storage;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Active tasks in a Project. This class <b>just represents</b>
@@ -129,7 +130,13 @@ public final class ProjectTasks implements Tasks {
 
     @Override
     public Tasks ofContributor(final String username, final String provider) {
-        return storage.tasks().ofContributor(username, provider);
+        final List<Task> ofContributor = tasks
+            .stream()
+            .filter(t -> t.assignee() != null
+                && t.assignee().username().equals(username)
+                && t.assignee().provider().equals(provider))
+            .collect(Collectors.toList());
+        return new ContributorTasks(username, provider, ofContributor, storage);
     }
 
     @Override

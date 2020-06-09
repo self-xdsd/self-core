@@ -74,7 +74,11 @@ public final class ContributorTasks implements Tasks {
     @Override
     public Tasks ofProject(final String repoFullName,
                            final String repoProvider) {
-        return this.storage.tasks().ofProject(repoFullName, repoProvider);
+        final List<Task> ofProject = tasks.stream()
+            .filter(t -> t.project().repoFullName().equals(repoFullName)
+                && t.project().provider().equals(provider))
+            .collect(Collectors.toList());
+        return new ProjectTasks(repoFullName, provider, ofProject, storage);
     }
 
     @Override

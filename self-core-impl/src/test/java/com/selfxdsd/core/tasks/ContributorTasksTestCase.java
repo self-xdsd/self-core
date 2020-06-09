@@ -111,22 +111,31 @@ public final class ContributorTasksTestCase {
     @Test
     public void tasksOfProject(){
         final Storage storage = Mockito.mock(Storage.class);
+
+        final Project projectOne = Mockito.mock(Project.class);
+        Mockito.when(projectOne.repoFullName()).thenReturn("mihai");
+        Mockito.when(projectOne.provider()).thenReturn(Provider.Names.GITHUB);
+        final Task taskOne = Mockito.mock(Task.class);
+        Mockito.when(taskOne.project()).thenReturn(projectOne);
+
+        final Project projectTwo = Mockito.mock(Project.class);
+        Mockito.when(projectTwo.repoFullName()).thenReturn("mihai/other");
+        Mockito.when(projectTwo.provider()).thenReturn(Provider.Names.GITLAB);
+        final Task taskTwo = Mockito.mock(Task.class);
+        Mockito.when(taskTwo.project()).thenReturn(projectTwo);
+
         final Tasks tasks = new ContributorTasks(
-            "mihai", "github",
-            List.of(),
+            "mihai", Provider.Names.GITHUB,
+            List.of(
+                taskOne,
+                taskTwo
+            ),
             storage
         );
-        final Tasks all = Mockito.mock(Tasks.class);
-        final Tasks ofProject = Mockito.mock(Tasks.class);
-        Mockito.when(all.ofProject(
-            Mockito.anyString(),
-            Mockito.anyString()
-        )).thenReturn(ofProject);
-        Mockito.when(storage.tasks()).thenReturn(all);
 
         MatcherAssert.assertThat(
-            tasks.ofProject("mihai", "github"),
-            Matchers.equalTo(ofProject)
+            tasks.ofProject("mihai", Provider.Names.GITHUB),
+            Matchers.iterableWithSize(1)
         );
     }
 

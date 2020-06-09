@@ -22,10 +22,7 @@
  */
 package com.selfxdsd.core.tasks;
 
-import com.selfxdsd.api.Contract;
-import com.selfxdsd.api.Issue;
-import com.selfxdsd.api.Task;
-import com.selfxdsd.api.Tasks;
+import com.selfxdsd.api.*;
 import com.selfxdsd.api.storage.Storage;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -206,22 +203,29 @@ public final class ProjectTasksTestCase {
     @Test
     public void returnTasksForContributor(){
         final Storage storage = Mockito.mock(Storage.class);
+
+        final Contributor mihai = Mockito.mock(Contributor.class);
+        Mockito.when(mihai.username()).thenReturn("mihai");
+        Mockito.when(mihai.provider()).thenReturn(Provider.Names.GITHUB);
+        final Task mihaiTaskOne = Mockito.mock(Task.class);
+        Mockito.when(mihaiTaskOne.assignee()).thenReturn(mihai);
+        final Task mihaiTaskTwo = Mockito.mock(Task.class);
+        Mockito.when(mihaiTaskTwo.assignee()).thenReturn(mihai);
+
         final Tasks tasks = new ProjectTasks(
             "john/test", "github",
-            List.of(),
+            List.of(
+                Mockito.mock(Task.class),
+                Mockito.mock(Task.class),
+                Mockito.mock(Task.class),
+                mihaiTaskOne,
+                mihaiTaskTwo
+            ),
             storage
         );
-        final Tasks all = Mockito.mock(Tasks.class);
-        final Tasks ofContributor = Mockito.mock(Tasks.class);
-        Mockito.when(all.ofContributor(
-            Mockito.anyString(),
-            Mockito.anyString()
-        )).thenReturn(ofContributor);
-        Mockito.when(storage.tasks()).thenReturn(all);
-
         MatcherAssert.assertThat(
-            tasks.ofContributor("mihai", "github"),
-            Matchers.equalTo(ofContributor)
+            tasks.ofContributor("mihai", Provider.Names.GITHUB),
+            Matchers.iterableWithSize(2)
         );
     }
 
