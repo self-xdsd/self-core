@@ -57,4 +57,11 @@ public interface Contributors extends Iterable<Contributor> {
         final String repoProvider
     );
 
+    /**
+     * Elect a Contributor based on the required role.
+     * @param role Required Role.
+     * @return Contributor or null if none is found.
+     */
+    Contributor elect(final String role);
+
 }

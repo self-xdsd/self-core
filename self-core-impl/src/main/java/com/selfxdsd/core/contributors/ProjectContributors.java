@@ -23,12 +23,14 @@
 package com.selfxdsd.core.contributors;
 
 import com.selfxdsd.api.Contract;
+import com.selfxdsd.api.Contracts;
 import com.selfxdsd.api.Contributor;
 import com.selfxdsd.api.Contributors;
 import com.selfxdsd.api.storage.Storage;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
@@ -140,6 +142,36 @@ public final class ProjectContributors implements Contributors {
             "Already seeing the contributors of Project " + this.repoFullName
           + ", operating at " + this.provider + "."
         );
+    }
+
+    /**
+     * Elect a contributor based on the required Role.
+     * At the moment we will elect the Contributor which has
+     * the least number of Tasks assigned to them.
+     *
+     * In the future, we might take more factors into account.
+     * @param role Required Role.
+     * @return Contributor or null if nobody is found.
+     */
+    @Override
+    public Contributor elect(final String role) {
+        this.contributors.stream().filter(
+            c -> {
+                final Contracts ctcs = c.contracts();
+                for(final Contract ctc : ctcs) {
+                    if(ctc.role().equals(role)) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+        ).sorted(new Comparator<Contributor>() {
+            @Override
+            public int compare(Contributor o1, Contributor o2) {
+                return 0;
+            }
+        }
+        return null;
     }
 
     @Override
