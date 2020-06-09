@@ -153,6 +153,19 @@ public final class UnassignedTaskTestCase {
     }
 
     /**
+     * Returns "itself" when call unassigned().
+     */
+    @Test
+    public void returnsItSelf(){
+        final Tasks tasks = new UnassignedTasks(
+            List.of(),
+            Mockito.mock(Storage.class)
+        );
+        MatcherAssert.assertThat(tasks.unassigned(),
+            Matchers.is(tasks));
+    }
+
+    /**
      * Mock an Issue for test.
      * @param issueId ID.
      * @param repoFullName Repo fullname.

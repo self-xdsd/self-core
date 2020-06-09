@@ -230,6 +230,18 @@ public final class ProjectTasksTestCase {
     }
 
     /**
+     * Returns unassigned tasks of the project.
+     */
+    @Test(expected = UnsupportedOperationException.class)
+    public void returnsUnassignedTasks(){
+        new ProjectTasks(
+            "john/test", "github",
+            List.of(),
+            Mockito.mock(Storage.class)
+        ).unassigned();
+    }
+
+    /**
      * Mock an Issue for test.
      * @param issueId ID.
      * @param repoFullName Repo fullname.
