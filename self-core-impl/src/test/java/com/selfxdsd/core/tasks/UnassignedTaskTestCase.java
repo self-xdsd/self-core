@@ -81,7 +81,7 @@ public final class UnassignedTaskTestCase {
     }
 
     /**
-     * Method register works if the Issue belongs to the Project.
+     * Registers a new issue.
      */
     @Test
     public void registersNewIssue(){
@@ -120,7 +120,7 @@ public final class UnassignedTaskTestCase {
     }
 
     /**
-     * Gets unassigned tasks of a project.
+     * Returns unassigned tasks of a project.
      */
     @Test
     public void tasksOfProject(){
