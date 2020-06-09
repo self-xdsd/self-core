@@ -122,6 +122,11 @@ public final class InMemoryTasks implements Tasks {
         return new ContributorTasks(username, provider, tasksOf, storage);
     }
 
+    @Override
+    public Tasks unassigned() {
+        throw new UnsupportedOperationException("Not implemented yet");
+    }
+
     /**
      * A Task's primary key.
      */

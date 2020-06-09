@@ -139,7 +139,17 @@ public final class ContributorTasksTestCase {
         );
     }
 
-
+    /**
+     * Throws UnsupportedOperationException.
+     * Contributor should not have unassigned tasks.
+     */
+    @Test(expected = UnsupportedOperationException.class)
+    public void throwsWhenReturnsUnassignedTasks(){
+        new ContributorTasks(
+            "mihai", Provider.Names.GITHUB,
+            List.of(), Mockito.mock(Storage.class))
+            .unassigned();
+    }
 
 
     /**

@@ -71,4 +71,10 @@ public interface Tasks extends Iterable<Task> {
     Tasks ofContributor(final String username,
                         final String provider);
 
+    /**
+     * Get the unassigned Tasks.
+     * @return Task
+     */
+    Tasks unassigned();
+
 }

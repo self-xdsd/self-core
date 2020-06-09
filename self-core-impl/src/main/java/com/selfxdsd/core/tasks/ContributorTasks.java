@@ -101,6 +101,12 @@ public final class ContributorTasks implements Tasks {
     }
 
     @Override
+    public Tasks unassigned() {
+        throw new UnsupportedOperationException("Contributors can't have "
+            + " unassigned tasks");
+    }
+
+    @Override
     public Iterator<Task> iterator() {
         return this.tasks.iterator();
     }
