@@ -141,7 +141,12 @@ public final class ProjectTasks implements Tasks {
 
     @Override
     public Tasks unassigned() {
-        throw new UnsupportedOperationException("Not implemented yet");
+        final List<Task> unassigned = tasks.stream()
+            .filter(t -> t.assignee() == null
+                && t.project().repoFullName().equals(repoFullName)
+                && t.project().provider().equals(provider))
+            .collect(Collectors.toList());
+        return new UnassignedTasks(unassigned, storage);
     }
 
     @Override
