@@ -101,4 +101,10 @@ public final class InMemory implements Storage {
     public Tasks tasks() {
         return this.tasks;
     }
+
+    /**
+     * Nothing to close, this is an in-memory storage.
+     */
+    @Override
+    public void close() { }
 }
