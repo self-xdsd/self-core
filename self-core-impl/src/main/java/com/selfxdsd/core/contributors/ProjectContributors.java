@@ -23,14 +23,12 @@
 package com.selfxdsd.core.contributors;
 
 import com.selfxdsd.api.Contract;
-import com.selfxdsd.api.Contracts;
 import com.selfxdsd.api.Contributor;
 import com.selfxdsd.api.Contributors;
 import com.selfxdsd.api.storage.Storage;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
@@ -155,22 +153,6 @@ public final class ProjectContributors implements Contributors {
      */
     @Override
     public Contributor elect(final String role) {
-        this.contributors.stream().filter(
-            c -> {
-                final Contracts ctcs = c.contracts();
-                for(final Contract ctc : ctcs) {
-                    if(ctc.role().equals(role)) {
-                        return true;
-                    }
-                }
-                return false;
-            }
-        ).sorted(new Comparator<Contributor>() {
-            @Override
-            public int compare(Contributor o1, Contributor o2) {
-                return 0;
-            }
-        }
         return null;
     }
 
