@@ -232,13 +232,28 @@ public final class ProjectTasksTestCase {
     /**
      * Returns unassigned tasks of the project.
      */
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void returnsUnassignedTasks(){
-        new ProjectTasks(
-            "john/test", "github",
-            List.of(),
+        final Project project = Mockito.mock(Project.class);
+        Mockito.when(project.provider()).thenReturn(Provider.Names.GITHUB);
+        Mockito.when(project.repoFullName()).thenReturn("john/test");
+
+        final Task assigned = Mockito.mock(Task.class);
+        Mockito.when(assigned.assignee())
+            .thenReturn(Mockito.mock(Contributor.class));
+        Mockito.when(assigned.project()).thenReturn(project);
+
+        final Task unassigned = Mockito.mock(Task.class);
+        Mockito.when(unassigned.project()).thenReturn(project);
+
+        final Tasks tasks = new ProjectTasks(
+            "john/test", Provider.Names.GITHUB,
+            List.of(assigned, unassigned),
             Mockito.mock(Storage.class)
-        ).unassigned();
+        );
+
+        MatcherAssert.assertThat(tasks.unassigned(),
+            Matchers.iterableWithSize(1));
     }
 
     /**

@@ -30,7 +30,7 @@ import com.selfxdsd.api.*;
  * @version $Id$
  * @since 0.0.1
  */
-public interface Storage {
+public interface Storage extends AutoCloseable {
 
     /**
      * Get the users Storage API.
