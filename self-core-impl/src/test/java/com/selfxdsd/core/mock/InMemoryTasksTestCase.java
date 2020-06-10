@@ -141,6 +141,32 @@ public final class InMemoryTasksTestCase {
     }
 
     /**
+     * Should return unassigned tasks.
+     */
+    @Test
+    public void getTasksUnassigned(){
+        final Storage storage = new InMemory();
+        ProjectManager projectManager = storage
+            .projectManagers().pick(Provider.Names.GITHUB);
+        final Project project = storage.projects().register(
+            this.mockRepo("mihai/test", Provider.Names.GITHUB),
+            projectManager,
+            "whtoken123"
+        );
+        final Issue issue = this.mockIssue(
+            "123",
+            project.repoFullName(),
+            project.provider(),
+            Contract.Roles.DEV
+        );
+
+        storage.tasks().register(issue);
+
+        MatcherAssert.assertThat(storage.tasks().unassigned(),
+            Matchers.iterableWithSize(1));
+    }
+
+    /**
      * Mock a Repo for test.
      * @param fullName Full name.
      * @param provider Provider.

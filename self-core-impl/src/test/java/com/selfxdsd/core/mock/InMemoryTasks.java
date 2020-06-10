@@ -27,6 +27,7 @@ import com.selfxdsd.api.storage.Storage;
 import com.selfxdsd.core.tasks.ContributorTasks;
 import com.selfxdsd.core.tasks.ProjectTasks;
 import com.selfxdsd.core.tasks.StoredTask;
+import com.selfxdsd.core.tasks.UnassignedTasks;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -124,7 +125,11 @@ public final class InMemoryTasks implements Tasks {
 
     @Override
     public Tasks unassigned() {
-        throw new UnsupportedOperationException("Not implemented yet");
+        final List<Task> unassigned = tasks.values()
+            .stream()
+            .filter(t -> t.assignee() == null)
+            .collect(Collectors.toList());
+        return new UnassignedTasks(unassigned, storage);
     }
 
     /**

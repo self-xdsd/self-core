@@ -110,7 +110,6 @@ public final class InMemoryTestCase {
         assertThat(signedUser, is(nullValue()));
     }
 
-
     /**
      * Helper method for mocking a {@link User}.
      * @param userName User name
