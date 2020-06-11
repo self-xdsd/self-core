@@ -151,6 +151,19 @@ public final class ContributorTasksTestCase {
             .unassigned();
     }
 
+    /**
+     * Should return tasks of a contract.
+     */
+    @Test(expected = UnsupportedOperationException.class)
+    public void tasksOfContract(){
+        new ContributorTasks("mihai",
+            Provider.Names.GITHUB,
+            List.of(),
+            Mockito.mock(Storage.class))
+            .ofContract(new Contract.Id("foo", "mihai",
+                "github", "dev"));
+    }
+
 
     /**
      * Mock an Issue for test.

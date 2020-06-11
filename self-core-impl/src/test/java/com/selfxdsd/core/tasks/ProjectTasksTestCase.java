@@ -257,6 +257,19 @@ public final class ProjectTasksTestCase {
     }
 
     /**
+     * Returns tasks of a contract.
+     */
+    @Test(expected = UnsupportedOperationException.class)
+    public void returnsTasksOfContract(){
+        new ProjectTasks(
+            "john/test", Provider.Names.GITHUB,
+            List.of(),
+            Mockito.mock(Storage.class)
+        ).ofContract(new Contract.Id("foo", "mihai",
+            "github", "dev"));
+    }
+
+    /**
      * Mock an Issue for test.
      * @param issueId ID.
      * @param repoFullName Repo fullname.
