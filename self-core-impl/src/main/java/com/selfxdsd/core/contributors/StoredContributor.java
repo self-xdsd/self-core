@@ -32,6 +32,11 @@ import com.selfxdsd.api.storage.Storage;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
+ * @todo #192:30min Method tasks() here should return the tasks with
+ *  respect ot the encapsulated Contracts. If the Contracts exist (!= null),
+ *  then the method should only return the Tasks from these contracts.
+ *  Otherwise, it should return all the Tasks of the contributor, as it
+ *  does now.
  */
 public final class StoredContributor implements Contributor {
 
@@ -44,6 +49,12 @@ public final class StoredContributor implements Contributor {
      * Provider.
      */
     private final String provider;
+
+    /**
+     * This contributor's Contracts. If they are missing,
+     * they will be read from the storage.
+     */
+    private final Contracts contracts;
 
     /**
      * Self's Storage.
@@ -61,8 +72,26 @@ public final class StoredContributor implements Contributor {
         final String provider,
         final Storage storage
     ) {
+        this(username, provider, null, storage);
+    }
+
+    /**
+     * Constructor. Use this when you want to load
+     * the Contributor's Contracts eagerly.
+     * @param username Username.
+     * @param provider Provider.
+     * @param contracts Contributor's Contracts.
+     * @param storage Storage.
+     */
+    public StoredContributor(
+        final String username,
+        final String provider,
+        final Contracts contracts,
+        final Storage storage
+    ) {
         this.username = username;
         this.provider = provider;
+        this.contracts = contracts;
         this.storage = storage;
     }
 
@@ -78,7 +107,13 @@ public final class StoredContributor implements Contributor {
 
     @Override
     public Contracts contracts() {
-        return this.storage.contracts().ofContributor(this);
+        final Contracts assigned;
+        if(this.contracts == null) {
+            assigned = this.storage.contracts().ofContributor(this);
+        } else {
+            assigned = this.contracts;
+        }
+        return assigned;
     }
 
     @Override

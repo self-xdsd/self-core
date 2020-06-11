@@ -24,6 +24,7 @@ package com.selfxdsd.core.contributors;
 
 import com.selfxdsd.api.Contracts;
 import com.selfxdsd.api.Contributor;
+import com.selfxdsd.api.Provider;
 import com.selfxdsd.api.Tasks;
 import com.selfxdsd.api.storage.Storage;
 import org.hamcrest.MatcherAssert;
@@ -62,10 +63,11 @@ public final class StoredContributorTestCase {
     }
 
     /**
-     * StoredContributor can return his contracts.
+     * StoredContributor can return his contracts from the Storage
+     * if they are not given as ctor argument.
      */
     @Test
-    public void returnsContracts() {
+    public void returnsContractsFromStorage() {
         final Storage storage = Mockito.mock(Storage.class);
         final Contributor mihai = new StoredContributor(
             "mihai", "github", storage
@@ -77,6 +79,23 @@ public final class StoredContributorTestCase {
 
         Mockito.when(storage.contracts()).thenReturn(all);
 
+        MatcherAssert.assertThat(
+            mihai.contracts(),
+            Matchers.is(contracts)
+        );
+    }
+
+    /**
+     * StoredContributor can return his Contracts (doesn't call Storage),
+     * if they've been given as constructor argument.
+     */
+    @Test
+    public void returnsEagerContracts() {
+        final Contracts contracts = Mockito.mock(Contracts.class);
+        final Contributor mihai = new StoredContributor(
+            "mihai", Provider.Names.GITHUB,
+            contracts, Mockito.mock(Storage.class)
+        );
         MatcherAssert.assertThat(
             mihai.contracts(),
             Matchers.is(contracts)
