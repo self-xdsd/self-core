@@ -67,9 +67,7 @@ public final class ContractTasksTestCase {
             "github", "dev");
 
         final Tasks all = Mockito.mock(Tasks.class);
-        final Tasks otherTasks = Mockito.mock(Tasks.class);
         Mockito.when(storage.tasks()).thenReturn(all);
-        Mockito.when(all.ofContract(otherContractId)).thenReturn(otherTasks);
 
         final Task registered = Mockito.mock(Task.class);
         final Contributor contributor = Mockito.mock(Contributor.class);
@@ -82,7 +80,7 @@ public final class ContractTasksTestCase {
         Mockito.when(registered.assignee()).thenReturn(contributor);
         Mockito.when(registered.project()).thenReturn(project);
         Mockito.when(registered.role()).thenReturn("dev");
-        Mockito.when(otherTasks.spliterator())
+        Mockito.when(all.spliterator())
             .thenReturn(List.of(registered).spliterator());
 
         final Tasks contractTasks = new ContractTasks(

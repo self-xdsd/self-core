@@ -82,8 +82,12 @@ public final class ContractTasks implements Tasks {
         }else{
             //@checkstyle BooleanExpressionComplexity (10 lines)
             final List<Task> ofContract = StreamSupport
-                .stream(this.storage.tasks()
-                    .ofContract(id).spliterator(), false)
+                .stream(this.storage.tasks().spliterator(), false)
+                .filter(t -> t.assignee() != null && t.assignee()
+                    .username().equals(id.getContributorUsername())
+                    && t.project().repoFullName().equals(id.getRepoFullName())
+                    && t.project().provider().equals(id.getProvider())
+                    && t.role().equals(id.getRole()))
                 .collect(Collectors.toList());
             tasks = new ContractTasks(id, ofContract, this.storage);
         }
