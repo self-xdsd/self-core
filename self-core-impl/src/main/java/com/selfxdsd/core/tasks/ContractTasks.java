@@ -9,6 +9,7 @@ import com.selfxdsd.api.storage.Storage;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 /**
  * Active tasks of a Contract. This class <b>just represents</b>
@@ -80,12 +81,9 @@ public final class ContractTasks implements Tasks {
             tasks = this;
         }else{
             //@checkstyle BooleanExpressionComplexity (10 lines)
-            final List<Task> ofContract = this.tasks.stream()
-                .filter(t -> t.assignee() != null && t.assignee()
-                    .username().equals(id.getContributorUsername())
-                    && t.project().repoFullName().equals(id.getRepoFullName())
-                    && t.project().provider().equals(id.getProvider())
-                    && t.role().equals(id.getRole()))
+            final List<Task> ofContract = StreamSupport
+                .stream(this.storage.tasks()
+                    .ofContract(id).spliterator(), false)
                 .collect(Collectors.toList());
             tasks = new ContractTasks(id, ofContract, this.storage);
         }

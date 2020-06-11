@@ -82,7 +82,7 @@ public final class ContractTasksTestCase {
         Mockito.when(registered.assignee()).thenReturn(contributor);
         Mockito.when(registered.project()).thenReturn(project);
         Mockito.when(registered.role()).thenReturn("dev");
-        Mockito.when(all.spliterator())
+        Mockito.when(otherTasks.spliterator())
             .thenReturn(List.of(registered).spliterator());
 
         final Tasks contractTasks = new ContractTasks(
