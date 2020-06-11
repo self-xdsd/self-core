@@ -8,8 +8,6 @@ import com.selfxdsd.api.storage.Storage;
 
 import java.util.Iterator;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 /**
  * Active tasks of a Contract. This class <b>just represents</b>
@@ -76,22 +74,13 @@ public final class ContractTasks implements Tasks {
 
     @Override
     public Tasks ofContract(final Contract.Id id) {
-        Tasks tasks;
-        if(this.contractId.equals(id)){
-            tasks = this;
-        }else{
-            //@checkstyle BooleanExpressionComplexity (10 lines)
-            final List<Task> ofContract = StreamSupport
-                .stream(this.storage.tasks().spliterator(), false)
-                .filter(t -> t.assignee() != null && t.assignee()
-                    .username().equals(id.getContributorUsername())
-                    && t.project().repoFullName().equals(id.getRepoFullName())
-                    && t.project().provider().equals(id.getProvider())
-                    && t.role().equals(id.getRole()))
-                .collect(Collectors.toList());
-            tasks = new ContractTasks(id, ofContract, this.storage);
+        if (this.contractId.equals(id)) {
+            return this;
+        } else {
+            throw new IllegalStateException("These are the tasks of Contract: "
+                + this.contractId + ". You cannot see other "
+                + "Contract's tasks here.");
         }
-        return tasks;
     }
 
     @Override

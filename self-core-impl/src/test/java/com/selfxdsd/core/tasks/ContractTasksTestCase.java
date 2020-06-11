@@ -53,48 +53,18 @@ public final class ContractTasksTestCase {
     }
 
     /**
-     * Returns the other tasks different contract id.
-     * @checkstyle ExecutableStatementCount (2 lines)
+     * Throws IllegalStateException when getting tasks for other contract.
      */
-    @Test
-    public void returnsOtherTasksOfOtherContract(){
-        final Storage storage = Mockito.mock(Storage.class);
-
-        final Contract.Id contractId = new Contract.Id("foo", "mihai",
-            "github", "dev");
-        final Contract.Id otherContractId =
-            new Contract.Id("other", "mihai2",
-            "github", "dev");
-
-        final Tasks all = Mockito.mock(Tasks.class);
-        Mockito.when(storage.tasks()).thenReturn(all);
-
-        final Task registered = Mockito.mock(Task.class);
-        final Contributor contributor = Mockito.mock(Contributor.class);
-        Mockito.when(contributor.username()).thenReturn("mihai2");
-
-        final Project project = Mockito.mock(Project.class);
-        Mockito.when(project.repoFullName()).thenReturn("other");
-        Mockito.when(project.provider()).thenReturn("github");
-
-        Mockito.when(registered.assignee()).thenReturn(contributor);
-        Mockito.when(registered.project()).thenReturn(project);
-        Mockito.when(registered.role()).thenReturn("dev");
-        Mockito.when(all.spliterator())
-            .thenReturn(List.of(registered).spliterator());
-
+    @Test(expected = IllegalStateException.class)
+    public void throwsWhenGettingTasksForOtherContract() {
         final Tasks contractTasks = new ContractTasks(
-            contractId,
-            List.of(registered),
-            storage
+            new Contract.Id("foo", "mihai",
+                "github", "dev"),
+            List.of(),
+            Mockito.mock(Storage.class)
         );
-        final Tasks otherContractTasks  = contractTasks
-            .ofContract(otherContractId);
-
-        MatcherAssert.assertThat(otherContractTasks,
-            Matchers.not(contractTasks));
-        MatcherAssert.assertThat(otherContractTasks,
-            Matchers.iterableWithSize(1));
+        contractTasks.ofContract(new Contract.Id("other", "mihai2",
+            "github", "dev"));
     }
 
     /**
