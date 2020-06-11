@@ -72,6 +72,13 @@ public interface Tasks extends Iterable<Task> {
                         final String provider);
 
     /**
+     * Get the tasks of a given Contract.
+     * @param id Contract's id.
+     * @return Tasks.
+     */
+    Tasks ofContract(final Contract.Id id);
+
+    /**
      * Get the unassigned tasks.
      * @return Tasks.
      */

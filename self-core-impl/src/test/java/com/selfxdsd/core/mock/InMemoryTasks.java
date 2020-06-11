@@ -124,6 +124,11 @@ public final class InMemoryTasks implements Tasks {
     }
 
     @Override
+    public Tasks ofContract(final Contract.Id id) {
+        throw new UnsupportedOperationException("Not implemented yet");
+    }
+
+    @Override
     public Tasks unassigned() {
         final List<Task> unassigned = tasks.values()
             .stream()

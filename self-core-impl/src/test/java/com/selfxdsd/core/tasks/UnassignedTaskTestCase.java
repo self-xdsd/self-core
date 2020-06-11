@@ -166,6 +166,17 @@ public final class UnassignedTaskTestCase {
     }
 
     /**
+     * Throws {@link UnsupportedOperationException} when calling ofContract.
+     * Contracts should not have unassigned tasks.
+     */
+    @Test(expected = UnsupportedOperationException.class)
+    public void throwsWhenGetTasksOfContract(){
+        new UnassignedTasks(List.of(), Mockito.mock(Storage.class))
+            .ofContract(new Contract.Id("john/repo", "mihai",
+                Provider.Names.GITHUB, Contract.Roles.DEV));
+    }
+
+    /**
      * Mock an Issue for test.
      * @param issueId ID.
      * @param repoFullName Repo fullname.

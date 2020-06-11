@@ -1,9 +1,6 @@
 package com.selfxdsd.core.contracts;
 
-import com.selfxdsd.api.Contract;
-import com.selfxdsd.api.Contributor;
-import com.selfxdsd.api.Invoices;
-import com.selfxdsd.api.Project;
+import com.selfxdsd.api.*;
 import com.selfxdsd.api.storage.Storage;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -103,6 +100,35 @@ public final class StoredContractTestCase {
         MatcherAssert.assertThat(
             contract.invoices(),
             Matchers.is(invoices)
+        );
+    }
+
+    /**
+     * Returns contracts tasks.
+     */
+    @Test
+    public void returnsTasks(){
+        final Storage storage = Mockito.mock(Storage.class);
+        final Project project = Mockito.mock(Project.class);
+        final Contributor contributor = Mockito.mock(Contributor.class);
+        final Contract contract = new StoredContract(
+            project,
+            contributor,
+            BigDecimal.ONE, "DEV",
+            storage);
+        final Tasks all = Mockito.mock(Tasks.class);
+        final Tasks tasks = Mockito.mock(Tasks.class);
+
+        Mockito.when(project.repoFullName()).thenReturn("john/repo");
+        Mockito.when(contributor.username()).thenReturn("mihai");
+        Mockito.when(contributor.provider()).thenReturn(Provider.Names.GITHUB);
+        Mockito.when(storage.tasks()).thenReturn(all);
+        Mockito.when(all.ofContract(Mockito.any(Contract.Id.class)))
+            .thenReturn(tasks);
+
+        MatcherAssert.assertThat(
+            contract.tasks(),
+            Matchers.is(tasks)
         );
     }
 }

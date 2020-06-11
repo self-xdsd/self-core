@@ -1,5 +1,6 @@
 package com.selfxdsd.core.tasks;
 
+import com.selfxdsd.api.Contract;
 import com.selfxdsd.api.Issue;
 import com.selfxdsd.api.Task;
 import com.selfxdsd.api.Tasks;
@@ -76,6 +77,12 @@ public final class UnassignedTasks implements Tasks {
     public Tasks ofContributor(final String username,
                                final String provider) {
         throw new UnsupportedOperationException("Contributors can't have "
+            + " unassigned tasks");
+    }
+
+    @Override
+    public Tasks ofContract(final Contract.Id id) {
+        throw new UnsupportedOperationException("Contracts can't have "
             + " unassigned tasks");
     }
 

@@ -22,6 +22,7 @@
  */
 package com.selfxdsd.core.tasks;
 
+import com.selfxdsd.api.Contract;
 import com.selfxdsd.api.Issue;
 import com.selfxdsd.api.Task;
 import com.selfxdsd.api.Tasks;
@@ -137,6 +138,11 @@ public final class ProjectTasks implements Tasks {
                 && t.assignee().provider().equals(provider))
             .collect(Collectors.toList());
         return new ContributorTasks(username, provider, ofContributor, storage);
+    }
+
+    @Override
+    public Tasks ofContract(final Contract.Id id) {
+        throw new UnsupportedOperationException("Not implemented yet");
     }
 
     @Override

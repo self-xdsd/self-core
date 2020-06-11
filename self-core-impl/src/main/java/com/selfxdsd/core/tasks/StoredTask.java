@@ -192,5 +192,10 @@ public final class StoredTask implements Task {
         public Invoices invoices() {
             return null;
         }
+
+        @Override
+        public Tasks tasks() {
+            return null;
+        }
     }
 }

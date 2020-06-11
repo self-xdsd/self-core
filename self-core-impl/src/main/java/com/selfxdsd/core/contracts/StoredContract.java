@@ -26,6 +26,7 @@ import com.selfxdsd.api.Contract;
 import com.selfxdsd.api.Contributor;
 import com.selfxdsd.api.Invoices;
 import com.selfxdsd.api.Project;
+import com.selfxdsd.api.Tasks;
 import com.selfxdsd.api.storage.Storage;
 
 import java.math.BigDecimal;
@@ -134,6 +135,21 @@ public final class StoredContract implements Contract {
     @Override
     public Invoices invoices() {
         return storage.invoices().ofContract(
+            new Contract.Id(
+                this.project.repoFullName(),
+                this.contributor.username(),
+                this.contributor.provider(),
+                this.role)
+        );
+    }
+
+    /**
+     * The tasks assigned to the Contract.
+     * @return Tasks.
+     */
+    @Override
+    public Tasks tasks() {
+        return storage.tasks().ofContract(
             new Contract.Id(
                 this.project.repoFullName(),
                 this.contributor.username(),
