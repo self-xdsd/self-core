@@ -8,6 +8,7 @@ import com.selfxdsd.api.storage.Storage;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Active tasks of a Contract. This class <b>just represents</b>
@@ -16,6 +17,8 @@ import java.util.List;
  * @author criske
  * @version $Id$
  * @since 0.0.6
+ * @todo: #205:30min Implement and test ofContract() in
+ *  ProjectTasks, ContributorTasks and InMemoryTasks using ContractTasks.
  */
 public final class ContractTasks implements Tasks {
     /**
@@ -51,7 +54,12 @@ public final class ContractTasks implements Tasks {
     public Task getById(final String issueId,
                         final String repoFullName,
                         final String provider) {
-        throw new UnsupportedOperationException("Not implemented yet");
+        return this.tasks.stream()
+            .filter(t -> t.issue().issueId().equals(issueId)
+                && t.project().repoFullName().equals(repoFullName)
+                && t.project().provider().equals(provider))
+            .findFirst()
+            .orElse(null);
     }
 
     @Override
@@ -63,13 +71,24 @@ public final class ContractTasks implements Tasks {
     @Override
     public Tasks ofProject(final String repoFullName,
                            final String repoProvider) {
-        throw new UnsupportedOperationException("Not implemented yet");
+        final List<Task> ofProject = this.tasks.stream()
+            .filter(t -> t.project().repoFullName().equals(repoFullName)
+                && t.project().provider().equals(repoProvider))
+            .collect(Collectors.toList());
+        return new ProjectTasks(repoFullName, repoProvider, ofProject,
+            this.storage);
     }
 
     @Override
     public Tasks ofContributor(final String username,
                                final String provider) {
-        throw new UnsupportedOperationException("Not implemented yet");
+        final List<Task> ofContributor = this.tasks.stream()
+            .filter(t -> t.assignee() != null
+                && t.assignee().username().equals(username)
+                && t.assignee().provider().equals(provider))
+            .collect(Collectors.toList());
+        return new ContributorTasks(username, provider, ofContributor,
+            this.storage);
     }
 
     @Override

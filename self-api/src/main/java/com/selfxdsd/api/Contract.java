@@ -30,9 +30,6 @@ import java.util.Objects;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
- * @todo #204:30min Finish implementing and testing ContractTasks,
- *  that will be used later to implement tasks() in ProjectTasks,
- *  ContributorTasks and InMemoryTasks.
  */
 public interface Contract {
 

@@ -98,41 +98,87 @@ public final class ContractTasksTestCase {
     /**
      * Should return tasks of a project.
      */
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void returnsTasksOfProject(){
-        new ContractTasks(
+        final Task task = Mockito.mock(Task.class);
+        final Project project = Mockito.mock(Project.class);
+        final Tasks tasks = new ContractTasks(
             new Contract.Id("foo", "mihai",
                 "github", "dev"),
-            List.of(),
+            List.of(task),
             Mockito.mock(Storage.class)
-        ).ofProject("foo", "github");
+        );
+
+        Mockito.when(project.provider()).thenReturn("github");
+        Mockito.when(project.repoFullName()).thenReturn("foo");
+        Mockito.when(task.project()).thenReturn(project);
+
+        MatcherAssert.assertThat(tasks.ofProject("foo", "github"),
+            Matchers.iterableWithSize(1));
     }
 
     /**
      * Should return tasks of a contributor.
      */
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void returnsTasksOfContributor(){
-        new ContractTasks(
+        final Task task = Mockito.mock(Task.class);
+        final Contributor assignee = Mockito.mock(Contributor.class);
+        final Tasks tasks = new ContractTasks(
             new Contract.Id("foo", "mihai",
                 "github", "dev"),
-            List.of(),
+            List.of(task),
             Mockito.mock(Storage.class)
-        ).ofContributor("mihai", "github");
+        );
+
+        Mockito.when(assignee.username()).thenReturn("mihai");
+        Mockito.when(assignee.provider()).thenReturn("github");
+        Mockito.when(task.assignee()).thenReturn(assignee);
+
+        MatcherAssert.assertThat(tasks.ofContributor("mihai", "github"),
+            Matchers.iterableWithSize(1));
     }
 
 
     /**
      * Should return a task by id.
      */
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void returnsTaskById(){
-        new ContractTasks(
+        final Task task = Mockito.mock(Task.class);
+        final Project project = Mockito.mock(Project.class);
+        final Issue issue = Mockito.mock(Issue.class);
+        final ContractTasks tasks = new ContractTasks(
+            new Contract.Id("foo", "mihai",
+                "github", "dev"),
+            List.of(task),
+            Mockito.mock(Storage.class)
+        );
+
+        Mockito.when(issue.issueId()).thenReturn("123");
+        Mockito.when(task.issue()).thenReturn(issue);
+        Mockito.when(project.provider()).thenReturn("github");
+        Mockito.when(project.repoFullName()).thenReturn("john/repo");
+        Mockito.when(task.project()).thenReturn(project);
+
+        MatcherAssert.assertThat(tasks
+                .getById("123", "john/repo", "github"),
+            Matchers.is(task));
+    }
+
+    /**
+     * Should return null when task by id is not found.
+     */
+    @Test
+    public void returnsNullWhenTaskByIdNotFound(){
+        final Task task = new ContractTasks(
             new Contract.Id("foo", "mihai",
                 "github", "dev"),
             List.of(),
             Mockito.mock(Storage.class)
         ).getById("123", "john/repo", "github");
+
+        MatcherAssert.assertThat(task, Matchers.nullValue());
     }
 
 
