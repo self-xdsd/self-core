@@ -40,6 +40,11 @@ import java.math.BigDecimal;
 public final class StoredContract implements Contract {
 
     /**
+     * Contract id.
+     */
+    private final Contract.Id id;
+
+    /**
      * Project of this Contract.
      */
     private final Project project;
@@ -55,14 +60,28 @@ public final class StoredContract implements Contract {
     private final BigDecimal hourlyRate;
 
     /**
-     * The role.
-     */
-    private final String role;
-
-    /**
      * Self's storage.
      */
     private final Storage storage;
+
+    /**
+     * Constructor.
+     * @param id The contract's ID.
+     * @param hourlyRate The hourly rate.
+     * @param storage The self's storage
+     */
+    public StoredContract(
+        final Contract.Id id,
+        final BigDecimal hourlyRate,
+        final Storage storage
+    ) {
+        this.id = id;
+        this.hourlyRate = hourlyRate;
+        this.storage = storage;
+        this.project = null;
+        this.contributor = null;
+    }
+
 
     /**
      * Constructor.
@@ -82,8 +101,13 @@ public final class StoredContract implements Contract {
         this.project = project;
         this.contributor = contributor;
         this.hourlyRate = hourlyRate;
-        this.role = role;
         this.storage = storage;
+        this.id = new Contract.Id(
+            project.repoFullName(),
+            contributor.username(),
+            project.provider(),
+            role
+        );
     }
 
     /**
@@ -93,7 +117,15 @@ public final class StoredContract implements Contract {
      */
     @Override
     public Project project() {
-        return this.project;
+        final Project proj;
+        if(this.project == null) {
+            proj = this.storage.projects().getProjectById(
+                this.id.getRepoFullName(), this.id.getProvider()
+            );
+        } else {
+            proj = this.project;
+        }
+        return proj;
     }
 
     /**
@@ -103,7 +135,15 @@ public final class StoredContract implements Contract {
      */
     @Override
     public Contributor contributor() {
-        return this.contributor;
+        final Contributor cont;
+        if(this.contributor == null) {
+            cont = this.storage.contributors().getById(
+                this.id.getContributorUsername(), this.id.getProvider()
+            );
+        } else {
+            cont = this.contributor;
+        }
+        return cont;
     }
 
     /**
@@ -123,7 +163,7 @@ public final class StoredContract implements Contract {
      */
     @Override
     public String role() {
-        return this.role;
+        return this.id.getRole();
     }
 
     /**
@@ -134,13 +174,7 @@ public final class StoredContract implements Contract {
      */
     @Override
     public Invoices invoices() {
-        return storage.invoices().ofContract(
-            new Contract.Id(
-                this.project.repoFullName(),
-                this.contributor.username(),
-                this.contributor.provider(),
-                this.role)
-        );
+        return storage.invoices().ofContract(this.id);
     }
 
     /**
@@ -149,12 +183,6 @@ public final class StoredContract implements Contract {
      */
     @Override
     public Tasks tasks() {
-        return storage.tasks().ofContract(
-            new Contract.Id(
-                this.project.repoFullName(),
-                this.contributor.username(),
-                this.contributor.provider(),
-                this.role)
-        );
+        return storage.tasks().ofContract(this.id);
     }
 }

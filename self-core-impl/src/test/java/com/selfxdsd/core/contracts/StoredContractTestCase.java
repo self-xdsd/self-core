@@ -51,6 +51,60 @@ public final class StoredContractTestCase {
     }
 
     /**
+     * The Project is read from the Storage if not given as ctor parameter.
+     */
+    @Test
+    public void lazyLoadsProject() {
+        final Project project = Mockito.mock(Project.class);
+        final Projects all = Mockito.mock(Projects.class);
+        Mockito.when(
+            all.getProjectById("john/test", Provider.Names.GITHUB)
+        ).thenReturn(project);
+        final Storage storage = Mockito.mock(Storage.class);
+        Mockito.when(storage.projects()).thenReturn(all);
+
+        final Contract contract = new StoredContract(
+            new Contract.Id(
+                "john/test",
+                "mihai",
+                Provider.Names.GITHUB,
+                Contract.Roles.DEV
+            ),
+            BigDecimal.valueOf(10000),
+            storage
+        );
+
+        MatcherAssert.assertThat(contract.project(), Matchers.is(project));
+    }
+
+    /**
+     * The Contributor is read from the Storage if not given as ctor parameter.
+     */
+    @Test
+    public void lazyLoadsContributor() {
+        final Contributor mihai = Mockito.mock(Contributor.class);
+        final Contributors all = Mockito.mock(Contributors.class);
+        Mockito.when(
+            all.getById("mihai", Provider.Names.GITHUB)
+        ).thenReturn(mihai);
+        final Storage storage = Mockito.mock(Storage.class);
+        Mockito.when(storage.contributors()).thenReturn(all);
+
+        final Contract contract = new StoredContract(
+            new Contract.Id(
+                "john/test",
+                "mihai",
+                Provider.Names.GITHUB,
+                Contract.Roles.DEV
+            ),
+            BigDecimal.valueOf(10000),
+            storage
+        );
+
+        MatcherAssert.assertThat(contract.contributor(), Matchers.is(mihai));
+    }
+
+    /**
      * StoredContract returns its hourly rate.
      */
     @Test
