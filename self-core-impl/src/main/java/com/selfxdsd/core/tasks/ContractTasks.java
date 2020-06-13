@@ -16,7 +16,7 @@ import java.util.List;
  * @author criske
  * @version $Id$
  * @since 0.0.6
- * @todo: #203:30min Implement and test ofContract() in
+ * @todo #203:30min Implement and test ofContract() in
  *  ProjectTasks, ContributorTasks and in InMemoryTasks,
  *  using ContractTasks.
  */
