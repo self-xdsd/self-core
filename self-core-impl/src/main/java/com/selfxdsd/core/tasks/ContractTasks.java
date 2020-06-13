@@ -8,7 +8,6 @@ import com.selfxdsd.api.storage.Storage;
 
 import java.util.Iterator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Active tasks of a Contract. This class <b>just represents</b>
@@ -71,24 +70,27 @@ public final class ContractTasks implements Tasks {
     @Override
     public Tasks ofProject(final String repoFullName,
                            final String repoProvider) {
-        final List<Task> ofProject = this.tasks.stream()
-            .filter(t -> t.project().repoFullName().equals(repoFullName)
-                && t.project().provider().equals(repoProvider))
-            .collect(Collectors.toList());
-        return new ProjectTasks(repoFullName, repoProvider, ofProject,
-            this.storage);
+        if (this.contractId.getRepoFullName().equals(repoFullName)
+            && this.contractId.getProvider().equals(repoProvider)) {
+            return this;
+        } else {
+            throw new IllegalStateException("Already seeing the Tasks of "
+                + "Contributor " + this.contractId.getContributorUsername()
+                + ", can't find other Tasks here");
+        }
     }
 
     @Override
     public Tasks ofContributor(final String username,
                                final String provider) {
-        final List<Task> ofContributor = this.tasks.stream()
-            .filter(t -> t.assignee() != null
-                && t.assignee().username().equals(username)
-                && t.assignee().provider().equals(provider))
-            .collect(Collectors.toList());
-        return new ContributorTasks(username, provider, ofContributor,
-            this.storage);
+        if (this.contractId.getContributorUsername().equals(username)
+            && this.contractId.getProvider().equals(provider)) {
+            return this;
+        } else {
+            throw new IllegalStateException("Already seeing the Tasks of "
+                + "Contributor " + this.contractId.getContributorUsername()
+                + ", can't find other Tasks here");
+        }
     }
 
     @Override

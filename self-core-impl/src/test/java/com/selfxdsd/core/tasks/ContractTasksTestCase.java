@@ -118,6 +118,19 @@ public final class ContractTasksTestCase {
     }
 
     /**
+     * Throws when already seeing the Project Tasks of Contract's Contributor.
+     */
+    @Test(expected = IllegalStateException.class)
+    public void throwsWhenProjectTasksAlreadySeen() {
+        new ContractTasks(
+            new Contract.Id("foo", "mihai",
+                "github", "dev"),
+            List.of(),
+            Mockito.mock(Storage.class)
+        ).ofProject("other-foo", "github");
+    }
+
+    /**
      * Should return tasks of a contributor.
      */
     @Test
@@ -137,6 +150,19 @@ public final class ContractTasksTestCase {
 
         MatcherAssert.assertThat(tasks.ofContributor("mihai", "github"),
             Matchers.iterableWithSize(1));
+    }
+
+    /**
+     * Throws when already seeing the Project Tasks of Contract's Contributor.
+     */
+    @Test(expected = IllegalStateException.class)
+    public void throwsWhenContributorTasksAlreadySeen() {
+        new ContractTasks(
+            new Contract.Id("foo", "mihai",
+                "github", "dev"),
+            List.of(),
+            Mockito.mock(Storage.class)
+        ).ofContributor("john", "github");
     }
 
 
