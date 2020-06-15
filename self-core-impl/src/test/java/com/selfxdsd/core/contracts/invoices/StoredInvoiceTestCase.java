@@ -22,27 +22,6 @@ import static org.mockito.Mockito.*;
 public final class StoredInvoiceTestCase {
 
     /**
-     * Checks if invoice is active.
-     */
-    @Test
-    public void checksIfIsPaid() {
-        final Storage storage = mock(Storage.class);
-        Contract.Id contractId = new Contract.Id("repo", "john",
-            Provider.Names.GITHUB, Contract.Roles.DEV);
-        final Invoice invoice = new StoredInvoice(1, storage,
-            contractId);
-        final Invoices all = mock(Invoices.class);
-        final Invoices ofContract = mock(Invoices.class);
-
-        when(storage.invoices()).thenReturn(all);
-        when(storage.invoices().ofContract(contractId))
-            .thenReturn(ofContract);
-        when(ofContract.isPaid(anyInt())).thenReturn(true);
-
-        assertThat(invoice.isPaid(), is(true));
-    }
-
-    /**
      * Invoice has the correct id.
      */
     @Test

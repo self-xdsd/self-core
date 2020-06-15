@@ -37,11 +37,11 @@ public interface Invoices extends Iterable<Invoice> {
     InvoiceTask add(Task task, Duration timeSpent);
 
     /**
-     * Checks if invoice is active.
-     * @param id Invoice id.
-     * @return Boolean.
+     * Get an Invoice by its ID.
+     * @param id Invoice's ID.
+     * @return Invoice or null if it's not found.
      */
-    boolean isPaid(int id);
+    Invoice getById(final int id);
 
     /**
      * Tasks of an invoice. Since there are few tasks associated to an invoice,

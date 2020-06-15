@@ -119,11 +119,15 @@ public final class InMemoryInvoices implements Invoices {
     }
 
     @Override
-    public boolean isPaid(final int id) {
-        return payedIds
-            .values()
-            .stream()
-            .anyMatch(v -> v.contains(id));
+    public Invoice getById(final int id) {
+        Invoice found = null;
+        for(final Invoice invoice : this) {
+            if(invoice.invoiceId() == id) {
+                found = invoice;
+                break;
+            }
+        }
+        return found;
     }
 
     @Override
@@ -240,9 +244,15 @@ public final class InMemoryInvoices implements Invoices {
         }
 
         @Override
-        public boolean isPaid(final int id) {
-            checkInvoiceOfContract(id);
-            return storage.invoices().isPaid(id);
+        public Invoice getById(final int id) {
+            Invoice found = null;
+            for(final Invoice invoice : this) {
+                if(invoice.invoiceId() == id) {
+                    found = invoice;
+                    break;
+                }
+            }
+            return found;
         }
 
         @Override

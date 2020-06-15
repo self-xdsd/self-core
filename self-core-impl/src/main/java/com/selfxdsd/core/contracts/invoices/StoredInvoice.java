@@ -6,6 +6,7 @@ import com.selfxdsd.api.InvoiceTask;
 import com.selfxdsd.api.storage.Storage;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -31,6 +32,16 @@ public final class StoredInvoice implements Invoice {
     private final Contract.Id contractId;
 
     /**
+     * Time when this Invoice has been paid.
+     */
+    private final LocalDateTime paymentTime;
+
+    /**
+     * The payment's transaction ID.
+     */
+    private final String transactionId;
+
+    /**
      * Ctor.
      * @param id Invoice id.
      * @param storage Self storage context.
@@ -39,10 +50,31 @@ public final class StoredInvoice implements Invoice {
     public StoredInvoice(
         final int id,
         final Storage storage,
-        final Contract.Id contractId) {
+        final Contract.Id contractId
+    ) {
+        this(id, storage, contractId, null, null);
+    }
+
+    /**
+     * Ctor.
+     * @param id Invoice id.
+     * @param storage Self storage context.
+     * @param contractId Contract's id of this invoice
+     * @param paymentTime Time when this Invoice has been paid.
+     * @param transactionId The payment's transaction ID.
+     */
+    public StoredInvoice(
+        final int id,
+        final Storage storage,
+        final Contract.Id contractId,
+        final LocalDateTime paymentTime,
+        final String transactionId
+    ) {
         this.id = id;
         this.storage = storage;
         this.contractId = contractId;
+        this.paymentTime = paymentTime;
+        this.transactionId = transactionId;
     }
 
     @Override
@@ -57,8 +89,7 @@ public final class StoredInvoice implements Invoice {
 
     @Override
     public boolean isPaid() {
-        return this.storage.invoices().ofContract(this.contractId)
-            .isPaid(this.id);
+        return this.paymentTime != null && this.transactionId != null;
     }
 
     @Override

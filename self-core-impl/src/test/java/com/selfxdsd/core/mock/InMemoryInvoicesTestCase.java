@@ -77,104 +77,49 @@ public final class InMemoryInvoicesTestCase {
      * Adds invoice to a contract.
      */
     @Test
-    public void addsInvoiceToAContract(){
+    public void addsInvoiceToAContract() {
         final Storage storage = new InMemory();
         final ProjectManager projectManager = storage.projectManagers()
-            .pick(Provider.Names.GITHUB);
+                .pick(Provider.Names.GITHUB);
         final Project project = storage
-            .projects()
-            .register(
-                this.mockRepo("john/test", Provider.Names.GITHUB),
-                projectManager,
-                "whtoken123"
-            );
+                .projects()
+                .register(
+                        this.mockRepo("john/test", Provider.Names.GITHUB),
+                        projectManager,
+                        "whtoken123"
+                );
         final Contributor contributor = storage
-            .contributors()
-            .register("mihai", Provider.Names.GITHUB);
+                .contributors()
+                .register("mihai", Provider.Names.GITHUB);
 
         final Contract contract = storage.contracts().addContract(
-            project.repoFullName(),
-            contributor.username(),
-            contributor.provider(),
-            BigDecimal.ONE,
-            Contract.Roles.DEV
+                project.repoFullName(),
+                contributor.username(),
+                contributor.provider(),
+                BigDecimal.ONE,
+                Contract.Roles.DEV
         );
         final Contract.Id contractId = new Contract.Id(
-            project.repoFullName(),
-            contributor.username(),
-            contributor.provider(),
-            Contract.Roles.DEV
+                project.repoFullName(),
+                contributor.username(),
+                contributor.provider(),
+                Contract.Roles.DEV
         );
 
         storage.invoices().ofContract(contractId).add(this.mockAssignedTask(
-            "123", storage, project, contributor, Contract.Roles.DEV),
-            Duration.ofHours(1));
+                "123", storage, project, contributor, Contract.Roles.DEV),
+                Duration.ofHours(1));
 
         MatcherAssert.assertThat(
-            "It should be one active invoice",
-            contract.invoices().ofContract(contractId),
-            Matchers.iterableWithSize(1));
+                "It should be one active invoice",
+                contract.invoices().ofContract(contractId),
+                Matchers.iterableWithSize(1));
 
         MatcherAssert.assertThat(contract.invoices()
-            .ofContract(contractId).tasks(1),
-            Matchers.iterableWithSize(1));
+                        .ofContract(contractId).tasks(1),
+                Matchers.iterableWithSize(1));
         MatcherAssert.assertThat(contract.invoices().tasks(1),
-            Matchers.iterableWithSize(1));
-
-    }
-
-    /**
-     * Adds task to invoice and proceed to pay.
-     */
-    @Test
-    public void paysInvoice(){
-        final Storage storage = new InMemory();
-        final ProjectManager projectManager = storage.projectManagers()
-            .pick(Provider.Names.GITHUB);
-        final Project project = storage
-            .projects()
-            .register(
-                this.mockRepo("john/test", Provider.Names.GITHUB),
-                projectManager,
-                "whtoken123"
-            );
-        final Contributor contributor = storage
-            .contributors()
-            .register("mihai", Provider.Names.GITHUB);
-        final Contract contract = storage.contracts().addContract(
-            project.repoFullName(),
-            contributor.username(),
-            contributor.provider(),
-            BigDecimal.ONE,
-            Contract.Roles.DEV
-        );
-        final Contract.Id contractId = new Contract.Id(
-            project.repoFullName(),
-            contributor.username(),
-            contributor.provider(),
-            Contract.Roles.DEV
-        );
-        final Invoices invoicesOfContract = contract.invoices()
-            .ofContract(contractId);
-
-        storage.invoices().add(this.mockAssignedTask(
-            "123", storage, project, contributor, Contract.Roles.DEV),
-            Duration.ofHours(1));
-        ((InMemoryInvoices) storage.invoices()).pay(1);
-        storage.invoices().add(this.mockAssignedTask(
-            "124", storage, project, contributor, Contract.Roles.DEV),
-            Duration.ofHours(2));
-
-        MatcherAssert.assertThat("Invoice should be paid",
-            storage.invoices().isPaid(1),
-            Matchers.is(true));
-        MatcherAssert.assertThat("Invoice of contract should be paid",
-            invoicesOfContract.isPaid(1),
-            Matchers.is(true));
-        MatcherAssert.assertThat(
-            "It should be two invoices one paid and one active",
-            contract.invoices(),
-            Matchers.iterableWithSize(2));
+                Matchers.iterableWithSize(1));
 
     }
 
@@ -185,61 +130,6 @@ public final class InMemoryInvoicesTestCase {
     public void throwsIfTaskNotAssigned(){
         final Storage storage = new InMemory();
         storage.invoices().add(Mockito.mock(Task.class), Duration.ZERO);
-    }
-
-    /**
-     * Throws IllegalStateException if paid invoice is not part of contract.
-     */
-    @Test(expected = IllegalStateException.class)
-    public void throwsIfPaidInvoiceIsNotPartOfContract(){
-        final Storage storage = new InMemory();
-        final ProjectManager projectManager = storage.projectManagers()
-            .pick(Provider.Names.GITHUB);
-        final Project project = storage
-            .projects()
-            .register(
-                this.mockRepo("john/test", Provider.Names.GITHUB),
-                projectManager,
-                "whtoken123"
-            );
-        final Contributor contributor = storage
-            .contributors()
-            .register("mihai", Provider.Names.GITHUB);
-        //adding two contracts
-        storage.contracts().addContract(
-            project.repoFullName(),
-            contributor.username(),
-            contributor.provider(),
-            BigDecimal.ONE,
-            Contract.Roles.DEV
-        );
-        storage.contracts().addContract(
-            project.repoFullName(),
-            contributor.username(),
-            contributor.provider(),
-            BigDecimal.ONE,
-            Contract.Roles.ARCH
-        );
-        final Contract.Id contractIdOne = new Contract.Id(
-            project.repoFullName(),
-            contributor.username(),
-            contributor.provider(),
-            Contract.Roles.DEV
-        );
-        final Contract.Id contractIdTwo = new Contract.Id(
-            project.repoFullName(),
-            contributor.username(),
-            contributor.provider(),
-            Contract.Roles.ARCH
-        );
-        storage.invoices().add(this.mockAssignedTask(
-            "123", storage, project, contributor, Contract.Roles.DEV),
-            Duration.ofHours(1));
-        storage.invoices().add(this.mockAssignedTask(
-            "124", storage, project, contributor, Contract.Roles.ARCH),
-            Duration.ofHours(2));
-
-        storage.invoices().ofContract(contractIdTwo).isPaid(1);
     }
 
     /**
