@@ -127,7 +127,7 @@ public final class StoredProjectManager implements ProjectManager {
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.id);
+        return this.id;
     }
 
     @Override
