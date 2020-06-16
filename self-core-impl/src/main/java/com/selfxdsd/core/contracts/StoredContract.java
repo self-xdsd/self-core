@@ -185,4 +185,27 @@ public final class StoredContract implements Contract {
     public Tasks tasks() {
         return storage.tasks().ofContract(this.id);
     }
+
+    @Override
+    public int hashCode() {
+        return id.hashCode();
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (!(obj instanceof Contract)) {
+            return false;
+        }
+        final Contract other = (Contract) obj;
+        final Contract.Id otherId = new Contract.Id(
+            other.project().repoFullName(),
+            other.contributor().username(),
+            other.project().provider(),
+            other.role()
+        );
+        return this.id.equals(otherId);
+    }
 }

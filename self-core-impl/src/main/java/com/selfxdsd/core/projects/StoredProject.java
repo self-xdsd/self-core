@@ -25,6 +25,8 @@ package com.selfxdsd.core.projects;
 import com.selfxdsd.api.*;
 import com.selfxdsd.api.storage.Storage;
 
+import java.util.Objects;
+
 /**
  * A Project stored in Self. Use this class whe implementing the storage.
  * @author Mihai Andronache (amihaiemil@gmail.com)
@@ -140,5 +142,23 @@ public final class StoredProject implements Project {
     @Override
     public Repo deactivate() {
         return null;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.repoFullName, this.provider());
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (!(obj instanceof Project)) {
+            return false;
+        }
+        final Project other = (Project) obj;
+        return this.repoFullName.equals(other.repoFullName())
+            && this.provider().equals(other.provider());
     }
 }

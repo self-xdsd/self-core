@@ -27,6 +27,7 @@ import com.selfxdsd.api.storage.Storage;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 /**
  * A Task stored and managed by Self.
@@ -137,6 +138,28 @@ public final class StoredTask implements Task {
     @Override
     public LocalDateTime deadline() {
         return this.deadline;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.issueId,
+            this.contract.project().repoFullName(),
+            this.contract.project().provider());
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (!(obj instanceof Task)) {
+            return false;
+        }
+        final Task other = (Task) obj;
+        final Project otherProject = other.project();
+        return this.issueId.equals(other.issue().issueId())
+            && this.project().repoFullName().equals(otherProject.repoFullName())
+            && this.project().provider().equals(otherProject.provider());
     }
 
     /**

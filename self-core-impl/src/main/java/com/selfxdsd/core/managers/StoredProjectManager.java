@@ -27,6 +27,7 @@ import com.selfxdsd.api.storage.Storage;
 import com.selfxdsd.core.Github;
 import com.selfxdsd.core.Gitlab;
 
+import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -122,6 +123,17 @@ public final class StoredProjectManager implements ProjectManager {
     @Override
     public Projects projects() {
         return this.storage.projects().assignedTo(this.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.id);
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        return this == obj || (obj instanceof ProjectManager
+            && this.id == ((ProjectManager) obj).id());
     }
 
     /**

@@ -27,6 +27,8 @@ import com.selfxdsd.api.Provider;
 import com.selfxdsd.api.User;
 import com.selfxdsd.api.storage.Storage;
 
+import java.util.Objects;
+
 /**
  * User stored in Self.
  * @author Mihai Andronache (amihaiemil@gmail.com)
@@ -98,5 +100,23 @@ public final class StoredUser implements User {
     @Override
     public Projects projects() {
         return this.storage.projects().ownedBy(this);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.username, this.provider);
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (!(obj instanceof User)) {
+            return false;
+        }
+        final User other = (User) obj;
+        return this.username.equals(other.username())
+            && this.provider.equals(other.provider().name());
     }
 }

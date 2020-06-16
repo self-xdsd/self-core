@@ -8,6 +8,7 @@ import com.selfxdsd.api.storage.Storage;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * A Invoice stored in self.
@@ -112,5 +113,16 @@ public final class StoredInvoice implements Invoice {
     public List<InvoiceTask> tasks() {
         return this.storage.invoices().ofContract(this.contractId)
             .tasks(this.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.id);
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        return this == obj || (obj instanceof Invoice
+            && this.id == ((Invoice) obj).invoiceId());
     }
 }

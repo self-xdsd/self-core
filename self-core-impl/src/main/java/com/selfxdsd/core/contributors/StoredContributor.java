@@ -27,6 +27,8 @@ import com.selfxdsd.api.Contributor;
 import com.selfxdsd.api.Tasks;
 import com.selfxdsd.api.storage.Storage;
 
+import java.util.Objects;
+
 /**
  * A Contributor stored in Self.
  * @author Mihai Andronache (amihaiemil@gmail.com)
@@ -119,5 +121,23 @@ public final class StoredContributor implements Contributor {
     @Override
     public Tasks tasks() {
         return this.storage.tasks().ofContributor(this.username, this.provider);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.username, this.provider);
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (!(obj instanceof Contributor)) {
+            return false;
+        }
+        final Contributor other = (Contributor) obj;
+        return this.username.equals(other.username())
+            && this.provider.equals(other.provider());
     }
 }
