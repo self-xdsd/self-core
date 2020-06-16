@@ -8,7 +8,6 @@ import com.selfxdsd.api.storage.Storage;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * A Invoice stored in self.
