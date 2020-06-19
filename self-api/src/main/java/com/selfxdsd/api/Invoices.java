@@ -16,6 +16,21 @@ public interface Invoices extends Iterable<Invoice> {
     Invoice getById(final int id);
 
     /**
+     * Create a new Invoice for a Contract.
+     * @param contractId Contract Id.
+     * @return Invoice.
+     */
+    Invoice createNewInvoice(final Contract.Id contractId);
+
+    /**
+     * Get the active Invoice (the one that is not yet paid).
+     * If no active invoice exists (all have been paid), create
+     * a new one and return it.
+     * @return Invoice.
+     */
+    Invoice active();
+
+    /**
      * Find all invoices of a contract.
      * @param id Contract's id
      * @return Iterable of invoices.

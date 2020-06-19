@@ -54,6 +54,19 @@ public final class InMemoryInvoices implements Invoices {
     }
 
     @Override
+    public Invoice createNewInvoice(final Contract.Id contractId) {
+        return null;
+    }
+
+    @Override
+    public Invoice active() {
+        throw new UnsupportedOperationException(
+            "It's not possible to get an active Invoice here. "
+          + "Call Invoices.ofContract(...) first."
+        );
+    }
+
+    @Override
     public Iterator<Invoice> iterator() {
         throw new UnsupportedOperationException(
             "It's not possible to see all the invoices in Self. "
@@ -121,6 +134,16 @@ public final class InMemoryInvoices implements Invoices {
                 }
             }
             return found;
+        }
+
+        @Override
+        public Invoice createNewInvoice(final Contract.Id contractId) {
+            return null;
+        }
+
+        @Override
+        public Invoice active() {
+            return null;
         }
 
         @Override
