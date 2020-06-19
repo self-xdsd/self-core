@@ -19,15 +19,16 @@ public final class StoredInvoice implements Invoice {
      * Invoice id.
      */
     private final int id;
-    /**
-     * Self storage context.
-     */
-    private final Storage storage;
 
     /**
      * Contract's id of this invoice.
      */
     private final Contract.Id contractId;
+
+    /**
+     * Creation time.
+     */
+    private final LocalDateTime createdAt;
 
     /**
      * Time when this Invoice has been paid.
@@ -40,39 +41,49 @@ public final class StoredInvoice implements Invoice {
     private final String transactionId;
 
     /**
+     * Self storage context.
+     */
+    private final Storage storage;
+
+    /**
      * Ctor.
      * @param id Invoice id.
+     * @param contractId Contract's id of this invoice.
+     * @param createdAt Invoice creation time.
      * @param storage Self storage context.
-     * @param contractId Contract's id of this invoice
      */
     public StoredInvoice(
         final int id,
-        final Storage storage,
-        final Contract.Id contractId
+        final Contract.Id contractId,
+        final LocalDateTime createdAt,
+        final Storage storage
     ) {
-        this(id, storage, contractId, null, null);
+        this(id, contractId, createdAt, null, null, storage);
     }
 
     /**
      * Ctor.
      * @param id Invoice id.
-     * @param storage Self storage context.
      * @param contractId Contract's id of this invoice
+     * @param createdAt Invoice creation time.
      * @param paymentTime Time when this Invoice has been paid.
      * @param transactionId The payment's transaction ID.
+     * @param storage Self storage context.
      */
     public StoredInvoice(
         final int id,
-        final Storage storage,
         final Contract.Id contractId,
+        final LocalDateTime createdAt,
         final LocalDateTime paymentTime,
-        final String transactionId
+        final String transactionId,
+        final Storage storage
     ) {
         this.id = id;
-        this.storage = storage;
         this.contractId = contractId;
+        this.createdAt = createdAt;
         this.paymentTime = paymentTime;
         this.transactionId = transactionId;
+        this.storage = storage;
     }
 
     @Override
@@ -83,6 +94,11 @@ public final class StoredInvoice implements Invoice {
     @Override
     public Contract.Id contractId() {
         return this.contractId;
+    }
+
+    @Override
+    public LocalDateTime createdAt() {
+        return this.createdAt;
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.selfxdsd.api;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 /**
  * Represents all the completed tasks by a contributor in a contract.
@@ -23,6 +24,12 @@ public interface Invoice {
      * @return Contract.Id
      */
     Contract.Id contractId();
+
+    /**
+     * Returns the Invoice's creation time.
+     * @return LocalDateTime, never null.
+     */
+    LocalDateTime createdAt();
 
     /**
      * Total amount of the invoice. Calculated based on contract hourlyRate
