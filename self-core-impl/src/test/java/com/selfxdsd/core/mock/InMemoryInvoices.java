@@ -20,30 +20,14 @@ import java.util.stream.StreamSupport;
 public final class InMemoryInvoices implements Invoices {
 
     /**
-     * All contract invoices.
-     */
-    private final Map<Contract.Id, List<Invoice>> invoices = new HashMap<>();
-
-    /**
-     * Invoice Tasks. Key is the invoice id;
-     */
-    private final Map<Integer, List<InvoiceTask>> invoiceTasks =
-        new HashMap<>();
-
-    /**
-     * Active contract invoice id.
-     */
-    private final Map<Contract.Id, Integer> activeIds = new HashMap<>();
-
-    /**
-     * Payed contract invoices ids.
-     */
-    private final Map<Contract.Id, List<Integer>> payedIds = new HashMap<>();
-
-    /**
      * Invoice id generator.
      */
     private int idGenerator;
+
+    /**
+     * All contract invoices.
+     */
+    private final Map<Integer, Invoice> invoices = new HashMap<>();
 
     /**
      * Storage context.
@@ -61,29 +45,20 @@ public final class InMemoryInvoices implements Invoices {
 
     @Override
     public Invoices ofContract(final Contract.Id id) {
-        return new ContractInvoices(id, storage);
+        return new ContractInvoices(id, this.storage);
     }
 
     @Override
     public Invoice getById(final int id) {
-        Invoice found = null;
-        for(final Invoice invoice : this) {
-            if(invoice.invoiceId() == id) {
-                found = invoice;
-                break;
-            }
-        }
-        return found;
+        return this.invoices.get(id);
     }
 
     @Override
     public Iterator<Invoice> iterator() {
-        //invoices across all contracts
-        return invoices
-            .values()
-            .stream()
-            .flatMap(Collection::stream)
-            .iterator();
+        throw new UnsupportedOperationException(
+            "It's not possible to see all the invoices in Self. "
+          + "Add a filter first (e.g. Invoices.ofContract(...)."
+        );
     }
 
     /**
@@ -151,25 +126,6 @@ public final class InMemoryInvoices implements Invoices {
         @Override
         public Iterator<Invoice> iterator() {
             return contractInvoices.get().iterator();
-        }
-
-        /**
-         * Checks if the invoice is part of the current contract.
-         * @param id Invoice id.
-         * @throws IllegalStateException when invoice is not part
-         * of the contract.
-         */
-        private void checkInvoiceOfContract(final int id) {
-            final Invoice invoice = contractInvoices
-                .get()
-                .filter(i -> i.invoiceId() == id
-                    && this.contractId.equals(i.contractId()))
-                .findFirst()
-                .orElse(null);
-            if (invoice == null) {
-                throw new IllegalStateException("Invoice with id"
-                    + id + " is not part of the contract.");
-            }
         }
     }
 }

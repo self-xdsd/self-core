@@ -9,17 +9,17 @@ package com.selfxdsd.api;
 public interface Invoices extends Iterable<Invoice> {
 
     /**
-     * Find all invoices of a contract.
-     * @param id Contract's id
-     * @return Iterable of invoices.
-     */
-    Invoices ofContract(final Contract.Id id);
-
-    /**
      * Get an Invoice by its ID.
      * @param id Invoice's ID.
      * @return Invoice or null if it's not found.
      */
     Invoice getById(final int id);
+
+    /**
+     * Find all invoices of a contract.
+     * @param id Contract's id
+     * @return Iterable of invoices.
+     */
+    Invoices ofContract(final Contract.Id id);
 
 }

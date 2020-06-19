@@ -1,7 +1,6 @@
 package com.selfxdsd.api;
 
 import java.math.BigDecimal;
-import java.util.List;
 
 /**
  * Represents all the completed tasks by a contributor in a contract.

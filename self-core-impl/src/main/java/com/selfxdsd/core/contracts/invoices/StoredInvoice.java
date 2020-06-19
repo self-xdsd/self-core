@@ -2,12 +2,10 @@ package com.selfxdsd.core.contracts.invoices;
 
 import com.selfxdsd.api.Contract;
 import com.selfxdsd.api.Invoice;
-import com.selfxdsd.api.InvoiceTask;
 import com.selfxdsd.api.storage.Storage;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.List;
 
 /**
  * A Invoice stored in self.
