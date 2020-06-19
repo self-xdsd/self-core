@@ -26,12 +26,6 @@ public interface Invoice {
     Contract.Id contractId();
 
     /**
-     * An invoice is active until payment is done.
-     * @return Boolean
-     */
-    boolean isPaid();
-
-    /**
      * Total amount of the invoice. Calculated based on contract hourlyRate
      * and time spent to finish a task.
      * @return BigDecimal.
@@ -39,9 +33,8 @@ public interface Invoice {
     BigDecimal totalAmount();
 
     /**
-     * All the finished tasks by a contributor in a contract.
-     * @return List of finished tasks.
+     * An invoice is active until payment is done.
+     * @return Boolean
      */
-    List<InvoiceTask> tasks();
-
+    boolean isPaid();
 }

@@ -94,24 +94,7 @@ public final class StoredInvoice implements Invoice {
 
     @Override
     public BigDecimal totalAmount() {
-        final Contract contract = this.storage.contracts()
-            .findById(this.contractId);
-        BigDecimal totalAmount = BigDecimal.ZERO;
-        if(contract != null){
-            final BigDecimal rate = contract.hourlyRate();
-            final List<InvoiceTask> tasks = this.tasks();
-            for(final InvoiceTask task : tasks){
-                totalAmount = totalAmount.add(rate.multiply(BigDecimal
-                    .valueOf(task.timeSpent().toHours())));
-            }
-        }
-        return totalAmount;
-    }
-
-    @Override
-    public List<InvoiceTask> tasks() {
-        return this.storage.invoices().ofContract(this.contractId)
-            .tasks(this.id);
+        throw new UnsupportedOperationException("Not yet implemented.");
     }
 
     @Override

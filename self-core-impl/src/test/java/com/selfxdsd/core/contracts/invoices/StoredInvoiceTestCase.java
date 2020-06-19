@@ -4,10 +4,7 @@ import com.selfxdsd.api.*;
 import com.selfxdsd.api.storage.Storage;
 import org.junit.Test;
 
-import java.math.BigDecimal;
 import java.time.Duration;
-import java.util.List;
-
 import static org.hamcrest.MatcherAssert.*;
 import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.*;
@@ -43,40 +40,6 @@ public final class StoredInvoiceTestCase {
         final Invoice invoice = new StoredInvoice(1, mock(Storage.class),
             contractId);
         assertThat(invoice.contractId(), is(contractId));
-    }
-
-    /**
-     * Calculates total amount.
-     */
-    @Test
-    public void calculatesTotalAmount() {
-        final Storage storage = mock(Storage.class);
-        Contract.Id contractId = new Contract.Id("repo", "john",
-            Provider.Names.GITHUB, Contract.Roles.DEV);
-        final Invoice invoice = new StoredInvoice(1, storage,
-            contractId);
-        final Invoices all = mock(Invoices.class);
-        final Invoices ofContract = mock(Invoices.class);
-
-        final Contract contract = mock(Contract.class);
-        final Contracts allContracts = mock(Contracts.class);
-
-        when(contract.hourlyRate()).thenReturn(BigDecimal.TEN);
-        when(storage.contracts()).thenReturn(allContracts);
-        when(allContracts.findById(contractId)).thenReturn(contract);
-
-        when(storage.invoices()).thenReturn(all);
-        when(storage.invoices().ofContract(contractId))
-            .thenReturn(ofContract);
-        when(ofContract.tasks(1)).thenReturn(
-            List.of(
-                mockInvoiceTask(1, Duration.ofHours(1)),
-                mockInvoiceTask(1, Duration.ofMinutes(60 + 60))
-            )
-        );
-
-        assertThat(invoice.totalAmount(), is(BigDecimal.valueOf(30)));
-
     }
 
     /**

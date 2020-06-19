@@ -2,9 +2,7 @@ package com.selfxdsd.core.mock;
 
 import com.selfxdsd.api.*;
 import com.selfxdsd.api.storage.Storage;
-import com.selfxdsd.core.contracts.invoices.StoredInvoice;
 
-import java.time.Duration;
 import java.util.*;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
@@ -67,58 +65,6 @@ public final class InMemoryInvoices implements Invoices {
     }
 
     @Override
-    public InvoiceTask add(final Task task, final Duration timeSpent) {
-        if(task.assignee() == null){
-            throw new IllegalStateException("Task has no assignee.");
-        }
-        //construct the contract id from task.
-        final String repoFullName = task.project().repo().fullName();
-        final String username = task.assignee().username();
-        final String provider = task.project().provider();
-        final String role = task.role();
-        final Contract.Id contractId = new Contract.Id(
-            repoFullName,
-            username,
-            provider,
-            role
-        );
-        //get contract invoices.
-        List<Invoice> contractInvoices = invoices
-            .computeIfAbsent(contractId, k -> new ArrayList<>());
-        //get the active invoice id for the contract, if not create
-        //a new invoice.
-        Integer activeInvoiceId = activeIds.get(contractId);
-        if (activeInvoiceId == null) {
-            activeInvoiceId = ++this.idGenerator;
-            contractInvoices.add(new StoredInvoice(activeInvoiceId,
-                this.storage, contractId));
-            activeIds.put(contractId, activeInvoiceId);
-        }
-        //create the invoice task.
-        final int taskInvoiceId = activeInvoiceId;
-        final InvoiceTask invoiceTask = new InvoiceTask() {
-            @Override
-            public int invoiceId() {
-                return taskInvoiceId;
-            }
-            @Override
-            public Duration timeSpent() {
-                return timeSpent;
-            }
-            @Override
-            public Task task() {
-                return task;
-            }
-        };
-        //add the task to invoice.
-        invoiceTasks
-            .computeIfAbsent(activeInvoiceId, k -> new ArrayList<>())
-            .add(invoiceTask);
-
-        return invoiceTask;
-    }
-
-    @Override
     public Invoice getById(final int id) {
         Invoice found = null;
         for(final Invoice invoice : this) {
@@ -131,11 +77,6 @@ public final class InMemoryInvoices implements Invoices {
     }
 
     @Override
-    public List<InvoiceTask> tasks(final int id) {
-        return invoiceTasks.getOrDefault(id, List.of());
-    }
-
-    @Override
     public Iterator<Invoice> iterator() {
         //invoices across all contracts
         return invoices
@@ -143,31 +84,6 @@ public final class InMemoryInvoices implements Invoices {
             .stream()
             .flatMap(Collection::stream)
             .iterator();
-    }
-
-    /**
-     * Simulates "payment" of an invoice.
-     * Used here to aid better representation of
-     * {@link InMemoryInvoices} state (as in "deactivating" the invoice).
-     *
-     * @param id Invoice id.
-     */
-    public void pay(final int id) {
-        final Map.Entry<Contract.Id, Integer> foundActiveEntry = activeIds
-            .entrySet()
-            .stream()
-            .filter(e -> e.getValue() == id)
-            .findFirst()
-            .orElse(null);
-        if (foundActiveEntry == null) {
-            throw new IllegalStateException("There is no active invoice "
-                + " with id " + id);
-        }
-        final Contract.Id contractId = foundActiveEntry.getKey();
-        final Integer invoiceId = foundActiveEntry.getValue();
-        payedIds.computeIfAbsent(contractId, k -> new ArrayList<>())
-            .add(invoiceId);
-        activeIds.remove(contractId);
     }
 
     /**
@@ -221,29 +137,6 @@ public final class InMemoryInvoices implements Invoices {
         }
 
         @Override
-        public InvoiceTask add(final Task task, final Duration timeSpent) {
-            if(task.assignee() == null){
-                throw new IllegalStateException("Task has no assignee.");
-            }
-            //construct the contract id from task.
-            final String repoFullName = task.project().repo().fullName();
-            final String username = task.assignee().username();
-            final String provider = task.project().provider();
-            final String role = task.role();
-            final Contract.Id taskContractId = new Contract.Id(
-                repoFullName,
-                username,
-                provider,
-                role
-            );
-            if(!taskContractId.equals(this.contractId)){
-                throw new IllegalStateException("Task is not part of"
-                   + " the contract.");
-            }
-            return storage.invoices().add(task, timeSpent);
-        }
-
-        @Override
         public Invoice getById(final int id) {
             Invoice found = null;
             for(final Invoice invoice : this) {
@@ -253,12 +146,6 @@ public final class InMemoryInvoices implements Invoices {
                 }
             }
             return found;
-        }
-
-        @Override
-        public List<InvoiceTask> tasks(final int id) {
-            checkInvoiceOfContract(id);
-            return storage.invoices().tasks(id);
         }
 
         @Override
