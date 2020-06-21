@@ -2,7 +2,9 @@ package com.selfxdsd.core.mock;
 
 import com.selfxdsd.api.*;
 import com.selfxdsd.api.storage.Storage;
+import com.selfxdsd.core.contracts.invoices.StoredInvoice;
 
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
@@ -14,6 +16,10 @@ import java.util.stream.StreamSupport;
  * @author criske
  * @version $Id$
  * @since 0.0.3
+ * @todo #214:30min Implement and write tests for InvoicedTasks.
+ *  This interface will represent some finished tasks that have been
+ *  invoiced (attached to the active invoice of a Contract). Interface
+ *  Invoice should have the method InvoicedTasks :: tasks().
  * @todo #181:30min Refactor and test ContractInvoices to be part
  *  of self-impl API.
  */
@@ -55,7 +61,12 @@ public final class InMemoryInvoices implements Invoices {
 
     @Override
     public Invoice createNewInvoice(final Contract.Id contractId) {
-        return null;
+        final Invoice created = new StoredInvoice(
+            this.idGenerator++, contractId,
+            LocalDateTime.now(), this.storage
+        );
+        this.invoices.put(created.invoiceId(), created);
+        return created;
     }
 
     @Override
@@ -148,7 +159,7 @@ public final class InMemoryInvoices implements Invoices {
 
         @Override
         public Iterator<Invoice> iterator() {
-            return contractInvoices.get().iterator();
+            return this.contractInvoices.get().iterator();
         }
     }
 }
