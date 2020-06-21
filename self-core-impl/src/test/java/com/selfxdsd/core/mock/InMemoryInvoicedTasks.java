@@ -25,7 +25,6 @@ package com.selfxdsd.core.mock;
 import com.selfxdsd.api.InvoicedTask;
 import com.selfxdsd.api.InvoicedTasks;
 import com.selfxdsd.api.storage.Storage;
-import com.selfxdsd.core.contracts.invoices.ContractInvoices;
 import com.selfxdsd.core.contracts.invoices.InvoiceTasks;
 
 import java.util.HashMap;
