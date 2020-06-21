@@ -67,6 +67,11 @@ public final class InMemory implements Storage {
      */
     private Invoices invoices = new InMemoryInvoices(this);
 
+    /**
+     * In-memory invoiced tasks.
+     */
+    private InvoicedTasks invoicedTasks = new InMemoryInvoicedTasks(this);
+
     @Override
     public Users users() {
         return this.users;
@@ -90,6 +95,11 @@ public final class InMemory implements Storage {
     @Override
     public Invoices invoices() {
         return this.invoices;
+    }
+
+    @Override
+    public InvoicedTasks invoicedTasks() {
+        return this.invoicedTasks;
     }
 
     @Override

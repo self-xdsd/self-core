@@ -1,13 +1,13 @@
 /**
  * Copyright (c) 2020, Self XDSD Contributors
  * All rights reserved.
- *
+ * <p>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"),
  * to read the Software only. Permission is hereby NOT GRANTED to use, copy,
  * modify, merge, publish, distribute, sublicense, and/or sell copies of
  * the Software.
- *
+ * <p>
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -20,63 +20,39 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package com.selfxdsd.api.storage;
+package com.selfxdsd.api;
 
-import com.selfxdsd.api.*;
+import java.math.BigDecimal;
 
 /**
- * Storage of Self.
+ * A finished Task, attached to an Invoice.
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
- * @since 0.0.1
+ * @since 0.0.7
  */
-public interface Storage extends AutoCloseable {
+public interface InvoicedTask {
 
     /**
-     * Get the users Storage API.
-     * @return Users.
+     * Integer ID.
+     * @return Integer.
      */
-    Users users();
+    int invoicedTaskId();
 
     /**
-     * Get the project managers Storage API.
-     * @return ProjectManagers.
+     * Parent invoice.
+     * @return Invoice.
      */
-    ProjectManagers projectManagers();
+    Invoice invoice();
 
     /**
-     * Get the projects Storage API.
-     * @return Projects.
+     * Corresponding Task.
+     * @return Task.
      */
-    Projects projects();
+    Task task();
 
     /**
-     * Get the contracts Storage API.
-     * @return Contracts.
+     * Value of this invoiced task in USD cents.
+     * @return BigDecimal value.
      */
-    Contracts contracts();
-
-    /**
-     * Get the invoices Storage API.
-     * @return Invoices.
-     */
-    Invoices invoices();
-
-    /**
-     * The the invoiced tasks Storage API.
-     * @return InvoicedTasks.
-     */
-    InvoicedTasks invoicedTasks();
-
-    /**
-     * Get the contributors Storage API.
-     * @return Contributors.
-     */
-    Contributors contributors();
-
-    /**
-     * Get the tasks Storage API.
-     * @return Tasks.
-     */
-    Tasks tasks();
+    BigDecimal value();
 }
