@@ -25,10 +25,13 @@ package com.selfxdsd.core.mock;
 import com.selfxdsd.api.InvoicedTask;
 import com.selfxdsd.api.InvoicedTasks;
 import com.selfxdsd.api.storage.Storage;
+import com.selfxdsd.core.contracts.invoices.ContractInvoices;
+import com.selfxdsd.core.contracts.invoices.InvoiceTasks;
 
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.stream.StreamSupport;
 
 /**
  * InvoicedTasks in memory.
@@ -63,7 +66,13 @@ public final class InMemoryInvoicedTasks implements InvoicedTasks {
 
     @Override
     public InvoicedTasks ofInvoice(final int invoiceId) {
-        return null;
+        return new InvoiceTasks(
+            invoiceId,
+            () -> StreamSupport
+                .stream(this.storage.invoicedTasks().spliterator(), false)
+                .filter(i -> i.invoice().invoiceId() == invoiceId),
+            this.storage
+        );
     }
 
     @Override
