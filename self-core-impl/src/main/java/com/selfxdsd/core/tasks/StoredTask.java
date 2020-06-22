@@ -161,6 +161,11 @@ public final class StoredTask implements Task {
     }
 
     @Override
+    public int estimation() {
+        return this.estimation;
+    }
+
+    @Override
     public int hashCode() {
         return Objects.hash(this.issueId,
             this.contract.project().repoFullName(),

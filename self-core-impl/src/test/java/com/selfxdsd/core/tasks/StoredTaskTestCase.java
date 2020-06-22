@@ -245,4 +245,44 @@ public final class StoredTaskTestCase {
             Matchers.equalTo(BigDecimal.valueOf(0))
         );
     }
+
+    /**
+     * StoredTask returns its estimation when the task is assigned
+     * (has a contract).
+     */
+    @Test
+    public void returnsEstimationAssigned() {
+        final Task task = new StoredTask(
+            Mockito.mock(Contract.class),
+            "issueId123",
+            Mockito.mock(Storage.class),
+            LocalDateTime.now(),
+            LocalDateTime.now().plusDays(10),
+            120
+        );
+
+        MatcherAssert.assertThat(
+            task.estimation(),
+            Matchers.equalTo(120)
+        );
+    }
+    /**
+     * When the StoredTask is not assigned to anyone, the estimation
+     * should be 0.
+     */
+    @Test
+    public void returnsZeroEstimationUnassigned() {
+        final Task task = new StoredTask(
+            Mockito.mock(Project.class),
+            "issueId123",
+            Contract.Roles.DEV,
+            Mockito.mock(Storage.class)
+        );
+
+        MatcherAssert.assertThat(
+            task.estimation(),
+            Matchers.equalTo(0)
+        );
+    }
+
 }

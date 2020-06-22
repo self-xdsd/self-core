@@ -74,4 +74,10 @@ public interface Task {
      * @return BigDecimal.
      */
     BigDecimal value();
+
+    /**
+     * Estimation in minutes.
+     * @return Integer estimation in minutes.
+     */
+    int estimation();
 }
