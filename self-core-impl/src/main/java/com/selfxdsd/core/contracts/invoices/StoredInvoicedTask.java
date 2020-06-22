@@ -49,6 +49,12 @@ public final class StoredInvoicedTask implements InvoicedTask {
 
     /**
      * Value of this invoiced task, in USD cents.
+     *
+     * We store this value in the DB instead of
+     * returning it on-the-fly from the Task because
+     * the Contract's hourly rate can change, yet the
+     * value of a Task which has already been invoiced should
+     * not change.
      */
     private final BigDecimal value;
 

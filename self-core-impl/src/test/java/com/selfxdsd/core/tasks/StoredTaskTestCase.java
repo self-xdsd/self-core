@@ -29,6 +29,7 @@ import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 /**
@@ -120,7 +121,8 @@ public final class StoredTaskTestCase {
             "issueId123",
             Mockito.mock(Storage.class),
             assignment,
-            assignment.plusDays(10)
+            assignment.plusDays(10),
+            0
         );
         MatcherAssert.assertThat(
             task.assignmentDate().isEqual(assignment),
@@ -139,7 +141,8 @@ public final class StoredTaskTestCase {
             "issueId123",
             Mockito.mock(Storage.class),
             assignment,
-            assignment.plusDays(10)
+            assignment.plusDays(10),
+            0
         );
         MatcherAssert.assertThat(
             task.deadline().isEqual(assignment.plusDays(10)),
@@ -161,8 +164,85 @@ public final class StoredTaskTestCase {
             "issueId123",
             Mockito.mock(Storage.class),
             LocalDateTime.now(),
-            LocalDateTime.now().plusDays(10)
+            LocalDateTime.now().plusDays(10),
+            0
         );
         MatcherAssert.assertThat(task.assignee(), Matchers.is(mihai));
+    }
+
+    /**
+     * StoredTask can return its value based on the Contract's hourly rate and
+     * its estimation.
+     */
+    @Test
+    public void returnsValue() {
+        final Contract contract = Mockito.mock(Contract.class);
+        Mockito.when(contract.hourlyRate()).thenReturn(
+            BigDecimal.valueOf(50000)
+        );
+
+        final Task task = new StoredTask(
+            contract,
+            "issueId123",
+            Mockito.mock(Storage.class),
+            LocalDateTime.now(),
+            LocalDateTime.now().plusDays(10),
+            30
+        );
+
+        MatcherAssert.assertThat(
+            task.value(),
+            Matchers.equalTo(BigDecimal.valueOf(25000))
+        );
+    }
+
+    /**
+     * StoredTask can return its value which is rounded half up.
+     */
+    @Test
+    public void returnsValueRoundedUp() {
+        final Contract contract = Mockito.mock(Contract.class);
+        Mockito.when(contract.hourlyRate()).thenReturn(
+            BigDecimal.valueOf(25000)
+        );
+
+        final Task task = new StoredTask(
+            contract,
+            "issueId123",
+            Mockito.mock(Storage.class),
+            LocalDateTime.now(),
+            LocalDateTime.now().plusDays(10),
+            45
+        );
+
+        MatcherAssert.assertThat(
+            task.value(),
+            Matchers.equalTo(BigDecimal.valueOf(18750))
+        );
+    }
+
+    /**
+     * StoredTask's value is zero if the Contract's hourly rate is zero.
+     */
+    @Test
+    public void returnsZeroValue() {
+        final Contract contract = Mockito.mock(Contract.class);
+        Mockito.when(contract.hourlyRate()).thenReturn(
+            BigDecimal.valueOf(0)
+        );
+
+        final Task task = new StoredTask(
+            contract,
+            "issueId123",
+            Mockito.mock(Storage.class),
+            LocalDateTime.now(),
+            LocalDateTime.now().plusDays(10),
+            120
+        );
+
+        MatcherAssert.assertThat(
+            task.value(),
+            Matchers.equalTo(BigDecimal.valueOf(0))
+        );
     }
 }

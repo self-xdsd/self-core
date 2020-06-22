@@ -26,6 +26,7 @@ import com.selfxdsd.api.*;
 import com.selfxdsd.api.storage.Storage;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -58,6 +59,11 @@ public final class StoredTask implements Task {
     private final LocalDateTime deadline;
 
     /**
+     * Estimation in minutes.
+     */
+    private final int estimation;
+
+    /**
      * Self Storage.
      */
     private final Storage storage;
@@ -80,7 +86,8 @@ public final class StoredTask implements Task {
             issueId,
             storage,
             null,
-            null
+            null,
+            0
         );
     }
 
@@ -91,19 +98,22 @@ public final class StoredTask implements Task {
      * @param storage Storage.
      * @param assignmentDate Timestamp when this task has been assigned.
      * @param deadline Deadline by when this task should be finished.
+     * @param estimation Estimation in minutes.
      */
     public StoredTask(
         final Contract contract,
         final String issueId,
         final Storage storage,
         final LocalDateTime assignmentDate,
-        final LocalDateTime deadline
+        final LocalDateTime deadline,
+        final int estimation
     ) {
         this.contract = contract;
         this.issueId = issueId;
         this.storage = storage;
         this.assignmentDate = assignmentDate;
         this.deadline = deadline;
+        this.estimation = estimation;
     }
 
     @Override
@@ -138,6 +148,16 @@ public final class StoredTask implements Task {
     @Override
     public LocalDateTime deadline() {
         return this.deadline;
+    }
+
+    @Override
+    public BigDecimal value() {
+        return this.contract.hourlyRate().multiply(
+            BigDecimal.valueOf(this.estimation)
+        ).divide(
+            BigDecimal.valueOf(60),
+            RoundingMode.HALF_UP
+        );
     }
 
     @Override
