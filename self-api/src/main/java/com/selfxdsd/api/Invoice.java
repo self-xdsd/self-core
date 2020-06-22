@@ -32,6 +32,12 @@ public interface Invoice {
     LocalDateTime createdAt();
 
     /**
+     * Tasked invoiced here.
+     * @return InvoicedTasks.
+     */
+    InvoicedTasks tasks();
+
+    /**
      * Total amount of the invoice. Calculated based on contract hourlyRate
      * and time spent to finish a task.
      * @return BigDecimal.

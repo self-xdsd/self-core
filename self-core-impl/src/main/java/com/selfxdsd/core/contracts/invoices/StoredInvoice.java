@@ -2,6 +2,7 @@ package com.selfxdsd.core.contracts.invoices;
 
 import com.selfxdsd.api.Contract;
 import com.selfxdsd.api.Invoice;
+import com.selfxdsd.api.InvoicedTasks;
 import com.selfxdsd.api.storage.Storage;
 
 import java.math.BigDecimal;
@@ -99,6 +100,11 @@ public final class StoredInvoice implements Invoice {
     @Override
     public LocalDateTime createdAt() {
         return this.createdAt;
+    }
+
+    @Override
+    public InvoicedTasks tasks() {
+        return this.storage.invoicedTasks().ofInvoice(this.id);
     }
 
     @Override
