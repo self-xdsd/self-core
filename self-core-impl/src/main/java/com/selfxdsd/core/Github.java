@@ -37,6 +37,10 @@ import java.net.URI;
  * @todo #26:30min Bring in Gizzly mock HTTP Server (see jcabi-http),
  *  so we can mock the Github server and write unit tests for the methods
  *  that perform HTTP Requests.
+ * @todo #190:30min Abstract all the HTTP calls behind an implementation of
+ *  an interface called JsonResources. JsonResources will have a runtime
+ *  implementation called HttpJsonResources and a mock implementation used
+ *  for unit testing.
  */
 public final class Github implements Provider {
 
@@ -115,7 +119,7 @@ public final class Github implements Provider {
     public Invitations invitations() {
         if(this.accessToken == null || this.accessToken.isEmpty()) {
             throw new IllegalStateException(
-                "Can't fetch invitations without a user's access token"
+                "Can't fetch invitations without a user's access token."
             );
         }
         return new GithubRepoInvitations(

@@ -41,6 +41,9 @@ import java.util.Iterator;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.7
+ * @todo #190:30min Add an implementation of interface Invitation,
+ *  called GithubInvitation, which will take the invitation's JSON
+ *  and work with it.
  */
 final class GithubRepoInvitations implements Invitations {
 
