@@ -22,6 +22,8 @@
  */
 package com.selfxdsd.api;
 
+import javax.json.JsonObject;
+
 /**
  * Invitation.
  * @author Mihai Andronache (amihaiemil@gmail.com)
@@ -29,6 +31,12 @@ package com.selfxdsd.api;
  * @since 0.0.7
  */
 public interface Invitation {
+
+    /**
+     * This invitation as json.
+     * @return JsonObject.
+     */
+    JsonObject json();
 
     /**
      * Accept this invitation.

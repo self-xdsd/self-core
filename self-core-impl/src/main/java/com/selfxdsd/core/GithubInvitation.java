@@ -23,97 +23,78 @@
 package com.selfxdsd.core;
 
 import com.selfxdsd.api.Invitation;
-import com.selfxdsd.api.Invitations;
 
-import javax.json.Json;
-import javax.json.JsonArray;
 import javax.json.JsonObject;
 import java.io.IOException;
-import java.io.StringReader;
-import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.util.Iterator;
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
- * Github Repo invitations.
+ * A Github Repo invitation.
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.7
+ * @todo #225:30min When accepting an invitation, get the response status code
+ *  and if it's different from 204 NO CONTENT, log a warning or something.
  */
-final class GithubRepoInvitations implements Invitations {
+final class GithubInvitation implements Invitation {
 
     /**
-     * API uri for the repo invitations.
+     * Invitation as JSON.
      */
-    private final URI repoInvitationsUri;
+    private final JsonObject json;
 
     /**
-     * User access token.
+     * URI of this invitation.
+     */
+    private final URI uri;
+
+    /**
+     * Access token.
      */
     private final String accessToken;
 
     /**
      * Ctor.
-     * @param repoInvitationsUri API uri.
-     * @param accessToken User access token.
+     * @param json Invitation in JSON format.
+     * @param baseUri Base URI of the Invitations API.
+     * @param accessToken Access Token.
      */
-    GithubRepoInvitations(
-        final URI repoInvitationsUri,
+    GithubInvitation(
+        final JsonObject json,
+        final URI baseUri,
         final String accessToken
     ) {
-        this.repoInvitationsUri = repoInvitationsUri;
+        this.json = json;
+        this.uri = URI.create(
+            baseUri.toString() + "/" + json.getJsonNumber("id")
+        );
         this.accessToken = accessToken;
     }
 
     @Override
-    public Iterator<Invitation> iterator() {
-        final List<Invitation> invitations = this.fetchInvitations().stream()
-            .map(
-                jsonValue -> new GithubInvitation(
-                    (JsonObject) jsonValue,
-                    this.repoInvitationsUri,
-                    this.accessToken
-                )
-            ).collect(Collectors.toList());
-        return invitations.iterator();
+    public JsonObject json() {
+        return this.json;
     }
 
-    /**
-     * Fetch invitations.
-     * @return JsonArray.
-     */
-    private JsonArray fetchInvitations() {
+    @Override
+    public void accept() {
         try {
-            final HttpResponse<String> response = HttpClient.newHttpClient()
+            HttpClient.newHttpClient()
                 .send(
                     HttpRequest.newBuilder()
-                        .uri(this.repoInvitationsUri)
+                        .uri(this.uri)
+                        .method("PATCH", HttpRequest.BodyPublishers.noBody())
                         .header("Content-Type", "application/json")
-                        .headers("Authorization", "token " + this.accessToken)
+                        .header("Authorization", "token " + this.accessToken)
                         .build(),
                     HttpResponse.BodyHandlers.ofString()
                 );
-            final int status = response.statusCode();
-            if(status == HttpURLConnection.HTTP_OK) {
-                return Json.createReader(
-                    new StringReader(response.body())
-                ).readArray();
-            } else {
-                throw new IllegalStateException(
-                    "Unexpected response when fetching ["
-                  + this.repoInvitationsUri +"]. "
-                  + "Expected 200 OK, but got " + status + "."
-                );
-            }
         } catch (final IOException | InterruptedException ex) {
             throw new IllegalStateException(
-                "Couldn't fetch invitations + ["
-              + this.repoInvitationsUri.toString() +"]",
+                "Couldn't accept Invitation + [" + this.uri.toString() + "]",
                 ex
             );
         }
