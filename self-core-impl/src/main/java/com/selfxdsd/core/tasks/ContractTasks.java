@@ -16,9 +16,9 @@ import java.util.List;
  * @author criske
  * @version $Id$
  * @since 0.0.6
- * @todo #203:30min Implement and test ofContract() in
- *  ProjectTasks, ContributorTasks and in InMemoryTasks,
- *  using ContractTasks.
+ * @todo #207:30min Method Tasks.ofContract() has been implemented everywhere.
+ *  However, some unit tests are missing. Write unit tests for all the
+ *  implementations where they are missing.
  */
 public final class ContractTasks implements Tasks {
     /**

@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 /**
  * Active tasks of a Contributor. This class <b>just represents</b>
@@ -83,27 +82,33 @@ public final class ContributorTasks implements Tasks {
     }
 
     @Override
-    public Tasks ofContributor(final String username,
-                               final String provider) {
-        ContributorTasks tasks;
+    public Tasks ofContributor(
+        final String username,
+        final String provider
+    ) {
         if (this.username.equals(username)
             && this.provider.equals(provider)) {
-            tasks = this;
-        } else {
-            List<Task> ofContributor = StreamSupport
-                .stream(storage.tasks().spliterator(), false)
-                .filter(t -> t.assignee().username().equals(username)
-                    && t.assignee().provider().equals(provider))
-                .collect(Collectors.toList());
-            tasks = new ContributorTasks(username, provider, ofContributor,
-                storage);
+            return this;
         }
-        return tasks;
+        throw new IllegalStateException(
+            "Already seeing the tasks of a Contributor. "
+          + "You cannot see the tasks of another Contributor here."
+        );
     }
 
     @Override
     public Tasks ofContract(final Contract.Id id) {
-        throw new UnsupportedOperationException("Not implemented yet");
+        final List<Task> tasksOf = this.tasks
+            .stream()
+            .filter(
+                t -> t.project().repoFullName().equals(id.getRepoFullName())
+            && t.project().provider().equals(id.getProvider())
+            && t.assignee().username().endsWith(id.getContributorUsername())
+            && t.role().equals(id.getRole())
+            )
+            .collect(Collectors.toList());
+        return new ContractTasks(id, tasksOf, this.storage);
+
     }
 
     @Override

@@ -56,52 +56,32 @@ public final class ContributorTasksTestCase {
 
 
     /**
-     * Should return new ContributorTask when searching for same
-     * contributor + provider key.
+     * ContributorTask.ofContributor returns self if the ID
+     * matches.
      */
     @Test
-    public void returnSameTasksForSameUserNameProvider(){
+    public void ofContributorReturnsSelf(){
         final Tasks tasks = new ContributorTasks(
             "foo", "gitlab", List.of(),
             Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(
             tasks.ofContributor("foo", "gitlab"),
-            Matchers.equalTo(tasks)
+            Matchers.is(tasks)
         );
     }
 
     /**
-     * Should return new ContributorTasks when searching for different
-     * contributor + provider key.
+     * ContributorTasks.ofContributor should complain if the
+     * ID of a different contributor is specified.
      */
-    @Test
-    public void returnNewTasksForDiffUserNameProvider(){
-        final Storage storage = Mockito.mock(Storage.class);
-        final Task registered = Mockito.mock(Task.class);
-        final Contributor contributor = Mockito.mock(Contributor.class);
-        Mockito.when(contributor.username()).thenReturn("mihai");
-        Mockito.when(contributor.provider()).thenReturn("github");
-        Mockito.when(registered.assignee()).thenReturn(contributor);
-        final Tasks all = Mockito.mock(Tasks.class);
-        Mockito.when(all.spliterator())
-            .thenReturn(List.of(registered).spliterator());
-        Mockito.when(storage.tasks()).thenReturn(all);
-
+    @Test (expected = IllegalStateException.class)
+    public void ofContributorComplainsOnDifferentId(){
         final Tasks tasks = new ContributorTasks(
             "foo", "gitlab", List.of(),
-            storage
+            Mockito.mock(Storage.class)
         );
-
-        Tasks tasksOfMihai = tasks.ofContributor("mihai", "github");
-        MatcherAssert.assertThat(
-            tasksOfMihai,
-            Matchers.not(Matchers.equalTo(tasks))
-        );
-        MatcherAssert.assertThat(
-            tasksOfMihai,
-            Matchers.iterableWithSize(1)
-        );
+        tasks.ofContributor("bar", "gitlab");
     }
 
 
@@ -150,20 +130,6 @@ public final class ContributorTasksTestCase {
             List.of(), Mockito.mock(Storage.class))
             .unassigned();
     }
-
-    /**
-     * Should return tasks of a contract.
-     */
-    @Test(expected = UnsupportedOperationException.class)
-    public void tasksOfContract(){
-        new ContributorTasks("mihai",
-            Provider.Names.GITHUB,
-            List.of(),
-            Mockito.mock(Storage.class))
-            .ofContract(new Contract.Id("foo", "mihai",
-                "github", "dev"));
-    }
-
 
     /**
      * Mock an Issue for test.

@@ -142,7 +142,16 @@ public final class ProjectTasks implements Tasks {
 
     @Override
     public Tasks ofContract(final Contract.Id id) {
-        throw new UnsupportedOperationException("Not implemented yet");
+        final List<Task> tasksOf = this.tasks
+            .stream()
+            .filter(
+                t -> t.project().repoFullName().equals(id.getRepoFullName())
+            && t.project().provider().equals(id.getProvider())
+            && t.assignee().username().endsWith(id.getContributorUsername())
+            && t.role().equals(id.getRole())
+            )
+            .collect(Collectors.toList());
+        return new ContractTasks(id, tasksOf, this.storage);
     }
 
     @Override
