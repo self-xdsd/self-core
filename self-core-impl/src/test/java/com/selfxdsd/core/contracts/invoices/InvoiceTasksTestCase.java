@@ -97,4 +97,53 @@ public final class InvoiceTasksTestCase {
         );
         tasks.ofInvoice(2);
     }
+
+    /**
+     * InvoiceTasks.register complains if the ID of a different Invoice
+     * is specified.
+     */
+    @Test (expected = IllegalStateException.class)
+    public void registerComplainsOnDifferentId() {
+        final InvoicedTasks tasks = new InvoiceTasks(
+            1,
+            () -> {
+                final List<InvoicedTask> list = new ArrayList<>();
+                list.add(Mockito.mock(InvoicedTask.class));
+                list.add(Mockito.mock(InvoicedTask.class));
+                list.add(Mockito.mock(InvoicedTask.class));
+                return list.stream();
+            },
+            Mockito.mock(Storage.class)
+        );
+        tasks.register(2, Mockito.mock(Task.class));
+    }
+
+    /**
+     * InvoiceTasks.register works if the specified Invoice ID matches.
+     */
+    @Test
+    public void registersFinishedTask() {
+        final InvoicedTask registered = Mockito.mock(InvoicedTask.class);
+        final Task finished = Mockito.mock(Task.class);
+        final InvoicedTasks all = Mockito.mock(InvoicedTasks.class);
+        Mockito.when(all.register(1, finished)).thenReturn(registered);
+        final Storage storage = Mockito.mock(Storage.class);
+        Mockito.when(storage.invoicedTasks()).thenReturn(all);
+
+        final InvoicedTasks tasks = new InvoiceTasks(
+            1,
+            () -> {
+                final List<InvoicedTask> list = new ArrayList<>();
+                list.add(Mockito.mock(InvoicedTask.class));
+                list.add(Mockito.mock(InvoicedTask.class));
+                list.add(Mockito.mock(InvoicedTask.class));
+                return list.stream();
+            },
+            storage
+        );
+        MatcherAssert.assertThat(
+            tasks.register(1, finished),
+            Matchers.is(registered)
+        );
+    }
 }

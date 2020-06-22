@@ -24,6 +24,7 @@ package com.selfxdsd.core.mock;
 
 import com.selfxdsd.api.InvoicedTask;
 import com.selfxdsd.api.InvoicedTasks;
+import com.selfxdsd.api.Task;
 import com.selfxdsd.api.storage.Storage;
 import com.selfxdsd.core.contracts.invoices.InvoiceTasks;
 
@@ -72,6 +73,14 @@ public final class InMemoryInvoicedTasks implements InvoicedTasks {
                 .filter(i -> i.invoice().invoiceId() == invoiceId),
             this.storage
         );
+    }
+
+    @Override
+    public InvoicedTask register(
+        final int invoiceId,
+        final Task finished
+    ) {
+        return null;
     }
 
     @Override

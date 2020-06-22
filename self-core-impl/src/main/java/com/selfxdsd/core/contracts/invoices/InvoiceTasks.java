@@ -24,6 +24,7 @@ package com.selfxdsd.core.contracts.invoices;
 
 import com.selfxdsd.api.InvoicedTask;
 import com.selfxdsd.api.InvoicedTasks;
+import com.selfxdsd.api.Task;
 import com.selfxdsd.api.storage.Storage;
 
 import java.util.Iterator;
@@ -84,6 +85,20 @@ public final class InvoiceTasks implements InvoicedTasks {
         throw new IllegalStateException(
             "Already seeing the tasks invoiced with Invoice #" + this.invoiceId
           + ", you cannot see other InvoicedTasks here."
+        );
+    }
+
+    @Override
+    public InvoicedTask register(
+        final int invoiceId,
+        final Task finished
+    ) {
+        if(this.invoiceId == invoiceId) {
+            return this.storage.invoicedTasks().register(invoiceId, finished);
+        }
+        throw new IllegalStateException(
+            "These are the tasks registered with Invoice #" + this.invoiceId
+          + ". You cannot register a Task in a different Invoice here."
         );
     }
 

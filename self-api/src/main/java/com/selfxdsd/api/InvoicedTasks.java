@@ -37,4 +37,11 @@ public interface InvoicedTasks extends Iterable<InvoicedTask> {
      */
     InvoicedTasks ofInvoice(final int invoiceId);
 
+    /**
+     * Register a finished Task to an Invoice.
+     * @param invoiceId Invoice ID.
+     * @param finished Task to be registered.
+     * @return InvoicedTask.
+     */
+    InvoicedTask register(final int invoiceId, final Task finished);
 }
