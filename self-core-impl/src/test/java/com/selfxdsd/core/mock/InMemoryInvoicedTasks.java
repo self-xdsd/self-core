@@ -27,7 +27,9 @@ import com.selfxdsd.api.InvoicedTasks;
 import com.selfxdsd.api.Task;
 import com.selfxdsd.api.storage.Storage;
 import com.selfxdsd.core.contracts.invoices.InvoiceTasks;
+import com.selfxdsd.core.contracts.invoices.StoredInvoicedTask;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -69,7 +71,7 @@ public final class InMemoryInvoicedTasks implements InvoicedTasks {
         return new InvoiceTasks(
             invoiceId,
             () -> StreamSupport
-                .stream(this.storage.invoicedTasks().spliterator(), false)
+                .stream(this.tasks.values().spliterator(), false)
                 .filter(i -> i.invoice().invoiceId() == invoiceId),
             this.storage
         );
@@ -80,7 +82,15 @@ public final class InMemoryInvoicedTasks implements InvoicedTasks {
         final int invoiceId,
         final Task finished
     ) {
-        return null;
+        final InvoicedTask registered = new StoredInvoicedTask(
+            this.idGenerator++,
+            invoiceId,
+            BigDecimal.valueOf(0),
+            finished,
+            this.storage
+        );
+        this.tasks.put(registered.invoicedTaskId(), registered);
+        return registered;
     }
 
     @Override

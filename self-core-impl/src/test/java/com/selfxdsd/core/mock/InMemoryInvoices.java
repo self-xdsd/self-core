@@ -15,10 +15,6 @@ import java.util.stream.StreamSupport;
  * @author criske
  * @version $Id$
  * @since 0.0.3
- * @todo #214:30min Implement and write tests for InvoicedTasks.
- *  This interface will represent some finished tasks that have been
- *  invoiced (attached to the active invoice of a Contract). Interface
- *  Invoice should have the method InvoicedTasks :: tasks().
  */
 public final class InMemoryInvoices implements Invoices {
 

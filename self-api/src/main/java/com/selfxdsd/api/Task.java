@@ -29,6 +29,9 @@ import java.time.LocalDateTime;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
+ * @todo #216:30min Implement and write unit tests for methods
+ *  int :: estimation() and BigDecimal :: hourlyRate() so we can
+ *  calculate the Task's value when we add it to an Invoice.
  */
 public interface Task {
 
