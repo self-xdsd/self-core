@@ -108,7 +108,7 @@ abstract class BaseRepo implements Repo {
                 }
             } catch (final IOException | InterruptedException ex) {
                 throw new IllegalStateException(
-                    "Couldn't fetching repo + [" + this.uri.toString() +"]",
+                    "Couldn't fetch repo + [" + this.uri.toString() +"]",
                     ex
                 );
             }

@@ -23,58 +23,16 @@
 package com.selfxdsd.api;
 
 /**
- * A Provider is a platform against which the User is authenticated and
- * which holds the User's repos (Github, Gitlab, Bitbucket etc).
+ * Invitation.
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
- * @since 0.0.1
+ * @since 0.0.7
  */
-public interface Provider {
+public interface Invitation {
 
     /**
-     * Name of this provider.
-     * @return String.
+     * Accept this invitation.
      */
-    String name();
+    void accept();
 
-    /**
-     * Get a Repo by its simple name. E.g. "testrepo" is the simple name
-     * of repo "amihaiemil/testrepo".
-     * @param name Simple name of the repo.
-     * @return Repo.
-     */
-    Repo repo(final String name);
-
-    /**
-     * Get the invitations for the authenticated user.
-     * @return Invitations.
-     */
-    Invitations invitations();
-
-    /**
-     * Return a Provider which has an access token.
-     * @param accessToken Access token to make authorized requests with.
-     * @return Provider.
-     */
-    Provider withToken(final String accessToken);
-
-    /**
-     * Names of possible providers.
-     */
-    final class Names {
-        /**
-         * Hidden ctor.
-         */
-        private Names(){ }
-
-        /**
-         * Github provider.
-         */
-        public static final String GITHUB = "github";
-
-        /**
-         * Gitlab provider.
-         */
-        public static final String GITLAB = "gitlab";
-    }
 }

@@ -22,6 +22,7 @@
  */
 package com.selfxdsd.core;
 
+import com.selfxdsd.api.Invitations;
 import com.selfxdsd.api.Provider;
 import com.selfxdsd.api.Repo;
 import com.selfxdsd.api.storage.Storage;
@@ -108,6 +109,21 @@ public final class Github implements Provider {
             this.uri.toString() + "/repos/" + this.user.username() + "/" + name
         );
         return new GithubRepo(this.user, repo, this.storage);
+    }
+
+    @Override
+    public Invitations invitations() {
+        if(this.accessToken == null || this.accessToken.isEmpty()) {
+            throw new IllegalStateException(
+                "Can't fetch invitations without a user's access token"
+            );
+        }
+        return new GithubRepoInvitations(
+            URI.create(
+                this.uri.toString() + "/user/repository_invitations"
+            ),
+            this.accessToken
+        );
     }
 
     @Override
