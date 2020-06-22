@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 /**
- * A Invoice stored in self.
+ * An Invoice stored in self.
  * @author criske
  * @version $Id$
  * @since 0.0.3
