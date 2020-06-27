@@ -72,6 +72,10 @@ abstract class BaseSelf implements Self {
         return this.storage.projectManagers();
     }
 
+    @Override
+    public void close() throws Exception {
+        this.storage.close();
+    }
     /**
      * User authenticated with an access token from the provider.
      */

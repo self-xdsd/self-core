@@ -28,7 +28,7 @@ package com.selfxdsd.api;
  * @version $Id$
  * @since 0.0.1
  */
-public interface Self {
+public interface Self extends AutoCloseable {
 
     /**
      * Get the User authenticated via a {@link Login} strategy.

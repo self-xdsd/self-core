@@ -80,5 +80,19 @@ public final class SelfCoreTestCase {
         MatcherAssert.assertThat(self.projectManagers(), Matchers.is(all));
     }
 
+    /**
+     * SelfCore should close the underlying Storage when close() is called.
+     * @throws Exception If something goes wrong.
+     */
+    @Test
+    public void closesStorageOnClose() throws Exception {
+        final Storage storage = Mockito.mock(Storage.class);
+        Mockito.doNothing().when(storage).close();
+
+        final Self self = new SelfCore(storage);
+        self.close();
+        Mockito.verify(storage, Mockito.times(1)).close();
+    }
+
 
 }
