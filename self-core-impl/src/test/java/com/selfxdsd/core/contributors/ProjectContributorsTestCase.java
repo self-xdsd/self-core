@@ -24,12 +24,14 @@ package com.selfxdsd.core.contributors;
 
 import com.selfxdsd.api.*;
 import com.selfxdsd.api.storage.Storage;
+import com.selfxdsd.core.contracts.ContributorContracts;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.mockito.Mockito;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -209,5 +211,119 @@ public final class ProjectContributorsTestCase {
             Matchers.is(mihai)
         );
         MatcherAssert.assertThat(contributors, Matchers.iterableWithSize(1));
+    }
+
+    /**
+     * Elect(...) returns null if ProjectContributors is empty.
+     */
+    @Test
+    public void electsReturnsNullWhenNoContributors() {
+        final Contributors contributors = new ProjectContributors(
+            "john/test", Provider.Names.GITHUB,
+            List.of(),
+            Mockito.mock(Storage.class)
+        );
+        MatcherAssert.assertThat(
+            contributors.elect(Mockito.mock(Task.class)),
+            Matchers.nullValue()
+        );
+    }
+
+    /**
+     * Elect(...) returns a new Contributor for an already assigned Task.
+     * The elected contributor cannot be the same as the one already
+     * assigned.
+     */
+    @Test
+    public void electsNewContributorForAssignedTask() {
+        final Contributor assignee = this.mockContributor(
+            "mihai", "DEV", "REV", "QA"
+        );
+        final Contributors contributors = new ProjectContributors(
+            "john/test", Provider.Names.GITHUB,
+            List.of(
+                assignee,
+                this.mockContributor("vlad", "DEV"),
+                this.mockContributor("mary", "REV", "QA"),
+                this.mockContributor("george", "DEV", "ARCH"),
+                this.mockContributor("karen", "DEV")
+            ),
+            Mockito.mock(Storage.class)
+        );
+        final Task task = Mockito.mock(Task.class);
+        Mockito.when(task.assignee()).thenReturn(assignee);
+        Mockito.when(task.role()).thenReturn("DEV");
+        final Contributor elected = contributors.elect(task);
+
+        MatcherAssert.assertThat(
+            elected.username(),
+            Matchers.not(Matchers.equalTo("mihai"))
+        );
+        MatcherAssert.assertThat(
+            elected.username(),
+            Matchers.not(Matchers.equalTo("mary"))
+        );
+        MatcherAssert.assertThat(
+            elected.username(),
+            Matchers.isOneOf("vlad", "george", "karen")
+        );
+    }
+
+    /**
+     * Elect(...) returns a new Contributor for an unassigned Task.
+     */
+    @Test
+    public void electsNewContributorForUnassignedTask() {
+        final Contributors contributors = new ProjectContributors(
+            "john/test", Provider.Names.GITHUB,
+            List.of(
+                this.mockContributor("mihai", "DEV", "REV", "QA"),
+                this.mockContributor("vlad", "DEV"),
+                this.mockContributor("mary", "REV", "QA"),
+                this.mockContributor("george", "DEV", "ARCH"),
+                this.mockContributor("karen", "DEV")
+            ),
+            Mockito.mock(Storage.class)
+        );
+        final Task task = Mockito.mock(Task.class);
+        Mockito.when(task.assignee()).thenReturn(null);
+        Mockito.when(task.role()).thenReturn("DEV");
+        final Contributor elected = contributors.elect(task);
+
+        MatcherAssert.assertThat(
+            elected.username(),
+            Matchers.not(Matchers.equalTo("mary"))
+        );
+        MatcherAssert.assertThat(
+            elected.username(),
+            Matchers.isOneOf("mihai", "vlad", "george", "karen")
+        );
+    }
+
+    /**
+     * Mock a Contributor.
+     * @param username Username.
+     * @param roles Roles.
+     * @return Contributor.
+     */
+    public Contributor mockContributor(
+        final String username, final String... roles
+    ) {
+        final Contributor contributor = Mockito.mock(Contributor.class);
+        Mockito.when(contributor.username()).thenReturn(username);
+
+        final List<Contract> contracts = new ArrayList<>();
+        for(final String role : roles) {
+            final Contract mock = Mockito.mock(Contract.class);
+            Mockito.when(mock.role()).thenReturn(role);
+            contracts.add(mock);
+        }
+
+        Mockito.when(contributor.contracts()).thenReturn(
+            new ContributorContracts(
+                contributor, contracts, Mockito.mock(Storage.class)
+            )
+        );
+        return contributor;
     }
 }

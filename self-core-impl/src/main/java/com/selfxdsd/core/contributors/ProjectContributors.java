@@ -25,12 +25,15 @@ package com.selfxdsd.core.contributors;
 import com.selfxdsd.api.Contract;
 import com.selfxdsd.api.Contributor;
 import com.selfxdsd.api.Contributors;
+import com.selfxdsd.api.Task;
 import com.selfxdsd.api.storage.Storage;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Contributors of a Project. This class <b>just represents</b>
@@ -143,16 +146,42 @@ public final class ProjectContributors implements Contributors {
     }
 
     /**
-     * Elect a contributor based on the required Role.
-     * At the moment we will elect the Contributor which has
-     * the least number of Tasks assigned to them.
+     * Elect a contributor for the given Task.
+     * At the moment we will elect a random Contributor out
+     * of those who have the necessary role.
      *
      * In the future, we might take more factors into account.
-     * @param role Required Role.
+     * @param task Task requiring an assignee.
      * @return Contributor or null if nobody is found.
+     * @checkstyle ReturnCount (30 lines)
+     * @checkstyle Indentation (30 lines)
      */
     @Override
-    public Contributor elect(final String role) {
+    public Contributor elect(final Task task) {
+        final List<Contributor> eligible = this.contributors.stream()
+            .filter(
+                contributor -> {
+                    if(task.assignee() != null) {
+                        return !contributor.username().equals(
+                            task.assignee().username()
+                        );
+                    }
+                    return true;
+                }
+            ).filter(
+               contributor -> {
+                   for(final Contract contract : contributor.contracts()) {
+                       if(contract.role().equals(task.role())) {
+                           return true;
+                       }
+                   }
+                   return false;
+               }
+            ).collect(Collectors.toList());
+        if(eligible.size() > 0) {
+            Collections.shuffle(eligible);
+            return eligible.get(0);
+        }
         return null;
     }
 

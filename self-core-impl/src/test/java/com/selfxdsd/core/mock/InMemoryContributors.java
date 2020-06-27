@@ -22,10 +22,7 @@
  */
 package com.selfxdsd.core.mock;
 
-import com.selfxdsd.api.Contract;
-import com.selfxdsd.api.Contributor;
-import com.selfxdsd.api.Contributors;
-import com.selfxdsd.api.Project;
+import com.selfxdsd.api.*;
 import com.selfxdsd.api.storage.Storage;
 import com.selfxdsd.core.contributors.ProjectContributors;
 import com.selfxdsd.core.contributors.StoredContributor;
@@ -105,7 +102,7 @@ public final class InMemoryContributors implements Contributors {
     }
 
     @Override
-    public Contributor elect(final String role) {
+    public Contributor elect(final Task task) {
         throw new UnsupportedOperationException(
             "You can only elect a Contributor out of a Project's contributors."
           + " Call #ofProject(...) first."

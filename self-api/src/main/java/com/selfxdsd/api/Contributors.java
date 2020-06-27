@@ -58,10 +58,10 @@ public interface Contributors extends Iterable<Contributor> {
     );
 
     /**
-     * Elect a Contributor based on the required role.
-     * @param role Required Role.
+     * Elect a Contributor for the given task.
+     * @param task Task that requires a new assignee.
      * @return Contributor or null if none is found.
      */
-    Contributor elect(final String role);
+    Contributor elect(final Task task);
 
 }
