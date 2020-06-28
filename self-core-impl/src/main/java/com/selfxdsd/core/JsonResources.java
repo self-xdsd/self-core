@@ -42,8 +42,7 @@ import java.net.http.HttpResponse;
  *  implementations (Issues, Comments etc). After that is done, we
  *  should add a mock implementation of JsonResources, which we will
  *  use in writing unit tests for the providers.
- * @todo #226:30min Bring in Grizzly in-memory HTTP Server (see project
- *  jcabi-github), so we can write integration tests for class JdkHttp.
+ *  
  */
 interface JsonResources {
 
@@ -66,6 +65,7 @@ interface JsonResources {
                     .send(
                         HttpRequest.newBuilder()
                             .uri(uri)
+                            .method("GET", HttpRequest.BodyPublishers.noBody())
                             .header("Content-Type", "application/json")
                             .build(),
                         HttpResponse.BodyHandlers.ofString()
