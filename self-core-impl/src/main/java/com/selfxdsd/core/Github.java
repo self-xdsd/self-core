@@ -34,13 +34,6 @@ import java.net.URI;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
- * @todo #26:30min Bring in Gizzly mock HTTP Server (see jcabi-http),
- *  so we can mock the Github server and write unit tests for the methods
- *  that perform HTTP Requests.
- * @todo #190:30min Abstract all the HTTP calls behind an implementation of
- *  an interface called JsonResources. JsonResources will have a runtime
- *  implementation called HttpJsonResources and a mock implementation used
- *  for unit testing.
  */
 public final class Github implements Provider {
 
@@ -52,7 +45,12 @@ public final class Github implements Provider {
     /**
      * Github's URI.
      */
-    private final URI uri;
+    private final URI uri = URI.create("https://api.github.com");
+
+    /**
+     * Github's JSON Resources.
+     */
+    private final JsonResources resources;
 
     /**
      * Storge where we might save some stuff.
@@ -71,17 +69,20 @@ public final class Github implements Provider {
      * @param storage Storage where we might save some stuff.
      */
     public Github(final User user, final Storage storage) {
-        this(user, storage, URI.create("https://api.github.com"));
+        this(user, storage, new JsonResources.JdkHttp());
     }
 
     /**
      * Constructor.
      * @param user Authenticated user.
      * @param storage Storage where we might save some stuff.
-     * @param uri Base URI of Github's API.
+     * @param resources Github's JSON resources.
      */
-    public Github(final User user, final Storage storage, final URI uri) {
-        this(user, storage, uri, "");
+    public Github(
+        final User user, final Storage storage,
+        final JsonResources resources
+    ) {
+        this(user, storage, resources, "");
     }
 
     /**
@@ -89,16 +90,18 @@ public final class Github implements Provider {
      * to return an instance which has a token.
      * @param user User.
      * @param storage Self Storage
-     * @param uri Base URI of the provider's API (e.g. api.github.com)
+     * @param resources Github's JSON Resources.
      * @param accessToken Access token.
      */
     private Github(
-        final User user, final Storage storage,
-        final URI uri, final String accessToken
+        final User user,
+        final Storage storage,
+        final JsonResources resources,
+        final String accessToken
     ) {
         this.user = user;
         this.storage = storage;
-        this.uri = uri;
+        this.resources = resources;
         this.accessToken = accessToken;
     }
 
@@ -112,7 +115,9 @@ public final class Github implements Provider {
         final URI repo = URI.create(
             this.uri.toString() + "/repos/" + this.user.username() + "/" + name
         );
-        return new GithubRepo(this.user, repo, this.storage);
+        return new GithubRepo(
+            this.resources, repo, this.user, this.storage
+        );
     }
 
     @Override
@@ -132,6 +137,8 @@ public final class Github implements Provider {
 
     @Override
     public Provider withToken(final String accessToken) {
-        return new Github(this.user, this.storage, this.uri, accessToken);
+        return new Github(
+            this.user, this.storage, this.resources, accessToken
+        );
     }
 }

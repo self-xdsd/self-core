@@ -39,17 +39,19 @@ final class GitlabRepo extends BaseRepo {
 
     /**
      * Constructor.
-     * @param owner Owner of this repo.
+     * @param resources Gitlab's JSON Resources.
      * @param uri URI Pointing to this repo.
+     * @param owner Owner of this repo.
      * @param storage Storage used to save the Project when
      *  this repo is activated.
      */
     GitlabRepo(
-        final User owner,
+        final JsonResources resources,
         final URI uri,
+        final User owner,
         final Storage storage
     ) {
-        super(owner, uri, storage);
+        super(resources, uri, owner, storage);
     }
 
     @Override

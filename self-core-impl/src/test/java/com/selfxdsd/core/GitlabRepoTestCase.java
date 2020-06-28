@@ -25,9 +25,10 @@ public final class GitlabRepoTestCase {
     public void returnsOwner() {
         final User owner = Mockito.mock(User.class);
         final Repo repo = new GitlabRepo(
-                owner,
-                URI.create("http://localhost:8080"),
-                Mockito.mock(Storage.class)
+            Mockito.mock(JsonResources.class),
+            URI.create("http://localhost:8080"),
+            owner,
+            Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(repo.owner(), Matchers.is(owner));
     }

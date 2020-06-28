@@ -22,58 +22,33 @@
  */
 package com.selfxdsd.core;
 
-import com.selfxdsd.api.Issues;
-import com.selfxdsd.api.Project;
-import com.selfxdsd.api.storage.Storage;
-import com.selfxdsd.api.User;
-import com.selfxdsd.core.issues.GithubIssues;
-
-import java.net.URI;
+import javax.json.JsonArray;
+import javax.json.JsonObject;
 
 /**
- * A Github repository.
+ * Resource returned by the Provider.
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
- * @since 0.0.1
+ * @since 0.0.8
  */
-final class GithubRepo extends BaseRepo {
+interface Resource {
 
     /**
-     * Constructor.
-     * @param resources The provider's JSON Resources.
-     * @param uri URI Pointing to this repo.
-     * @param owner Owner of this repo.
-     * @param storage Storage used to save the Project when
-     *  this repo is activated.
+     * Status code.
+     * @return Integer.
      */
-    GithubRepo(
-        final JsonResources resources,
-        final URI uri,
-        final User owner,
-        final Storage storage
-    ) {
-        super(resources, uri, owner, storage);
-    }
+    int statusCode();
 
-    @Override
-    public Project activate() {
-        return this.storage()
-            .projectManagers()
-            .pick(this.provider())
-            .assign(this);
-    }
+    /**
+     * This resource as JsonObject.
+     * @return JsonObject.
+     */
+    JsonObject asJsonObject();
 
-    @Override
-    public String fullName() {
-        return this.json().getString("full_name");
-    }
-
-    @Override
-    public Issues issues() {
-        return new GithubIssues(
-            URI.create(this.repoUri().toString() + "/issues"),
-            this.storage()
-        );
-    }
+    /**
+     * This resource as JsonArray.
+     * @return JsonArray.
+     */
+    JsonArray asJsonArray();
 
 }

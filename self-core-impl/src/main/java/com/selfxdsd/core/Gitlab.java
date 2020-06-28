@@ -45,9 +45,14 @@ public final class Gitlab implements Provider {
     private final User user;
 
     /**
-     * Gitlab's URI.
+     * Github's URI.
      */
-    private final URI uri;
+    private final URI uri = URI.create("https://gitlab.com/api/v4");
+
+    /**
+     * Github's JSON Resources.
+     */
+    private final JsonResources resources;
 
     /**
      * Storage where we might save some stuff.
@@ -66,17 +71,21 @@ public final class Gitlab implements Provider {
      * @param storage Storage where we might save some stuff.
      */
     public Gitlab(final User user, final Storage storage) {
-        this(user, storage, URI.create("https://gitlab.com/api/v4"));
+        this(user, storage, new JsonResources.JdkHttp());
     }
 
     /**
      * Constructor.
      * @param user Authenticated user.
      * @param storage Storage where we might save some stuff.
-     * @param uri Base URI of Gitlab's API.
+     * @param resources Gitlab's JSON Resources.
      */
-    public Gitlab(final User user, final Storage storage, final URI uri) {
-        this(user, storage, uri, "");
+    public Gitlab(
+        final User user,
+        final Storage storage,
+        final JsonResources resources
+    ) {
+        this(user, storage, resources, "");
     }
 
     /**
@@ -84,15 +93,17 @@ public final class Gitlab implements Provider {
      * to return an instance which has a token.
      * @param user Authenticated user.
      * @param storage Storage where we might save some stuff.
-     * @param uri Base URI of Gitlab's API.
+     * @param resources Gitlab's JSON Resources.
      * @param accessToken Access token.
      */
     private Gitlab(
-        final User user, final Storage storage,
-        final URI uri, final String accessToken
+        final User user,
+        final Storage storage,
+        final JsonResources resources,
+        final String accessToken
     ) {
         this.user = user;
-        this.uri = uri;
+        this.resources = resources;
         this.storage = storage;
         this.accessToken = accessToken;
     }
@@ -105,7 +116,12 @@ public final class Gitlab implements Provider {
     @Override
     public Repo repo(final String name) {
         final URI repo = URI.create(this.uri.toString() + "/projects/" + name);
-        return new GitlabRepo(this.user, repo, this.storage);
+        return new GitlabRepo(
+            this.resources,
+            repo,
+            this.user,
+            this.storage
+        );
     }
 
     @Override
@@ -115,6 +131,11 @@ public final class Gitlab implements Provider {
 
     @Override
     public Provider withToken(final String accessToken) {
-        return new Gitlab(this.user, this.storage, this.uri, accessToken);
+        return new Gitlab(
+            this.user,
+            this.storage,
+            this.resources,
+            accessToken
+        );
     }
 }

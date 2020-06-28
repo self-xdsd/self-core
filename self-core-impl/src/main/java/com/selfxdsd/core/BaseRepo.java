@@ -26,16 +26,9 @@ import com.selfxdsd.api.Project;
 import com.selfxdsd.api.Repo;
 import com.selfxdsd.api.storage.Storage;
 import com.selfxdsd.api.User;
-
-import javax.json.Json;
 import javax.json.JsonObject;
-import java.io.IOException;
-import java.io.StringReader;
 import java.net.HttpURLConnection;
 import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 
 /**
  * Base implementation of {@link com.selfxdsd.api.Repo}.
@@ -45,6 +38,15 @@ import java.net.http.HttpResponse;
  * @since 0.0.1
  */
 abstract class BaseRepo implements Repo {
+    /**
+     * URI pointing to this repo.
+     */
+    private final URI uri;
+
+    /**
+     * The Provider's Json resources.
+     */
+    private final JsonResources resources;
 
     /**
      * Owner of this repository.
@@ -57,24 +59,26 @@ abstract class BaseRepo implements Repo {
     private JsonObject json;
 
     /**
-     * URI pointing to this repo.
-     */
-    private final URI uri;
-
-    /**
      * Storage used for activation.
      */
     private final Storage storage;
 
     /**
      * Constructor.
-     * @param owner Owner of this repo.
+     * @param resources The Provider's Json resources.
      * @param repo URI Pointing to this repo.
+     * @param owner Owner of this repo.
      * @param storage Storage used for activation.
      */
-    BaseRepo(final User owner, final URI repo, final Storage storage) {
-        this.owner = owner;
+    BaseRepo(
+        final JsonResources resources,
+        final URI repo,
+        final User owner,
+        final Storage storage
+    ) {
+        this.resources = resources;
         this.uri = repo;
+        this.owner = owner;
         this.storage = storage;
     }
 
@@ -86,30 +90,13 @@ abstract class BaseRepo implements Repo {
     @Override
     public JsonObject json() {
         if(this.json == null) {
-            try {
-                final HttpResponse<String> response = HttpClient.newHttpClient()
-                    .send(
-                        HttpRequest.newBuilder()
-                            .uri(this.uri)
-                            .header("Content-Type", "application/json")
-                            .build(),
-                        HttpResponse.BodyHandlers.ofString()
-                    );
-                final int status = response.statusCode();
-                if(status == HttpURLConnection.HTTP_OK) {
-                    this.json =  Json.createReader(
-                        new StringReader(response.body())
-                    ).readObject();
-                } else {
-                    throw new IllegalStateException(
-                        "Unexpected response when fetching [" + this.uri +"]. "
-                            + "Expected 200 OK, but got " + status + "."
-                    );
-                }
-            } catch (final IOException | InterruptedException ex) {
+            final Resource repo = this.resources.get(this.uri);
+            if(repo.statusCode() == HttpURLConnection.HTTP_OK) {
+                this.json = repo.asJsonObject();
+            } else {
                 throw new IllegalStateException(
-                    "Couldn't fetch repo + [" + this.uri.toString() +"]",
-                    ex
+                    "Unexpected response when fetching [" + this.uri +"]. "
+                  + "Expected 200 OK, but got " + repo.statusCode() + "."
                 );
             }
         }

@@ -46,8 +46,9 @@ public final class GithubRepoTestCase {
     public void returnsOwner() {
         final User owner = Mockito.mock(User.class);
         final Repo repo = new GithubRepo(
-            owner,
+            Mockito.mock(JsonResources.class),
             URI.create("http://localhost:8080"),
+            owner,
             Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(repo.owner(), Matchers.is(owner));
