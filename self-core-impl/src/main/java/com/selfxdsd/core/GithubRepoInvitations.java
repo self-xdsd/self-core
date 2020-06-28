@@ -25,16 +25,10 @@ package com.selfxdsd.core;
 import com.selfxdsd.api.Invitation;
 import com.selfxdsd.api.Invitations;
 
-import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
-import java.io.IOException;
-import java.io.StringReader;
 import java.net.HttpURLConnection;
 import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -48,6 +42,11 @@ import java.util.stream.Collectors;
 final class GithubRepoInvitations implements Invitations {
 
     /**
+     * Github's JSON Resources.
+     */
+    private final JsonResources resources;
+
+    /**
      * API uri for the repo invitations.
      */
     private final URI repoInvitationsUri;
@@ -59,13 +58,16 @@ final class GithubRepoInvitations implements Invitations {
 
     /**
      * Ctor.
+     * @param resources Github's JSON resources.
      * @param repoInvitationsUri API uri.
      * @param accessToken User access token.
      */
     GithubRepoInvitations(
+        final JsonResources resources,
         final URI repoInvitationsUri,
         final String accessToken
     ) {
+        this.resources = resources;
         this.repoInvitationsUri = repoInvitationsUri;
         this.accessToken = accessToken;
     }
@@ -88,33 +90,15 @@ final class GithubRepoInvitations implements Invitations {
      * @return JsonArray.
      */
     private JsonArray fetchInvitations() {
-        try {
-            final HttpResponse<String> response = HttpClient.newHttpClient()
-                .send(
-                    HttpRequest.newBuilder()
-                        .uri(this.repoInvitationsUri)
-                        .header("Content-Type", "application/json")
-                        .headers("Authorization", "token " + this.accessToken)
-                        .build(),
-                    HttpResponse.BodyHandlers.ofString()
-                );
-            final int status = response.statusCode();
-            if(status == HttpURLConnection.HTTP_OK) {
-                return Json.createReader(
-                    new StringReader(response.body())
-                ).readArray();
-            } else {
-                throw new IllegalStateException(
-                    "Unexpected response when fetching ["
-                  + this.repoInvitationsUri +"]. "
-                  + "Expected 200 OK, but got " + status + "."
-                );
-            }
-        } catch (final IOException | InterruptedException ex) {
+        final Resource invitations = this.resources.get(
+            this.repoInvitationsUri, this.accessToken
+        );
+        if(invitations.statusCode() == HttpURLConnection.HTTP_OK) {
+            return invitations.asJsonArray();
+        } else {
             throw new IllegalStateException(
-                "Couldn't fetch invitations + ["
-              + this.repoInvitationsUri.toString() +"]",
-                ex
+                "Unexpected response when fetching [" + this.resources +"]. "
+              + "Expected 200 OK, but got " + invitations.statusCode() + "."
             );
         }
     }
