@@ -37,12 +37,12 @@ import java.net.http.HttpResponse;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.8
- * @todo #226:30min Add other methods such as post, patch etc
+ * @todo #234:30min Add other methods such as post, patch etc
  *  and continue abstracting the HTTP calls away from the Provider's
- *  implementations (Issues, Comments etc). After that is done, we
- *  should add a mock implementation of JsonResources, which we will
- *  use in writing unit tests for the providers.
- *  
+ *  implementations (Issues, Comments etc). Make sure to offer alternatives
+ *  with accessToken as well. After that is done, we should add a mock
+ *  implementation of JsonResources, which we will use in writing unit
+ *  tests for the providers.
  */
 interface JsonResources {
 
@@ -51,7 +51,18 @@ interface JsonResources {
      * @param uri Resource location.
      * @return Resource.
      */
-    Resource get(final URI uri);
+    default Resource get(final URI uri) {
+        return this.get(uri, "");
+    }
+
+    /**
+     * Get the Resource at the specified URI.
+     * @param uri Resource location.
+     * @param accessToken Access token for requests that
+     *  require authentication.
+     * @return Resource.
+     */
+    Resource get(final URI uri, final String accessToken);
 
     /**
      * JSON Resources obtained by making HTTP calls, using
@@ -59,7 +70,7 @@ interface JsonResources {
      */
     final class JdkHttp implements JsonResources {
         @Override
-        public Resource get(final URI uri) {
+        public Resource get(final URI uri, final String accessToken) {
             try {
                 final HttpResponse<String> response = HttpClient.newHttpClient()
                     .send(
@@ -67,6 +78,7 @@ interface JsonResources {
                             .uri(uri)
                             .method("GET", HttpRequest.BodyPublishers.noBody())
                             .header("Content-Type", "application/json")
+                            .header("Authentication", "token " + accessToken)
                             .build(),
                         HttpResponse.BodyHandlers.ofString()
                     );
