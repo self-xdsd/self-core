@@ -20,21 +20,14 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package com.selfxdsd.core.issues;
+package com.selfxdsd.core;
 
 import com.selfxdsd.api.Issue;
 import com.selfxdsd.api.Issues;
 import com.selfxdsd.api.storage.Storage;
-
-import javax.json.Json;
 import javax.json.JsonObject;
-import java.io.IOException;
-import java.io.StringReader;
 import java.net.HttpURLConnection;
 import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 import java.util.Iterator;
 
 /**
@@ -44,33 +37,61 @@ import java.util.Iterator;
  * @version $Id$
  * @since 0.0.1
  */
-public final class GithubIssues implements Issues {
+final class GithubIssues implements Issues {
 
     /**
      * Github repo Issues base uri.
      */
-    private URI issuesUri;
+    private final URI issuesUri;
+
+    /**
+     * Github's JSON Resources.
+     */
+    private final JsonResources resources;
 
     /**
      * Self storage, in case we want to store something.
      */
-    private Storage storage;
+    private final Storage storage;
 
     /**
      * Ctor.
      *
+     * @param resources Github's JSON Resources.
      * @param issuesUri Issues base URI.
      * @param storage Storage.
      */
-    public GithubIssues(final URI issuesUri, final Storage storage) {
+    GithubIssues(
+        final JsonResources resources,
+        final URI issuesUri,
+        final Storage storage
+    ) {
+        this.resources = resources;
         this.issuesUri = issuesUri;
         this.storage = storage;
     }
 
     @Override
     public Issue getById(final String issueId) {
-        final URI issueUri = URI.create(issuesUri.toString() + "/" + issueId);
-        JsonObject jsonObject = fromUri(issueUri, issueId);
+        final URI issueUri = URI.create(
+            this.issuesUri.toString() + "/" + issueId
+        );
+        final Resource resource = this.resources.get(issueUri);
+        JsonObject jsonObject;
+        switch (resource.statusCode()) {
+            case HttpURLConnection.HTTP_OK:
+                jsonObject = resource.asJsonObject();
+                break;
+            case HttpURLConnection.HTTP_NOT_FOUND:
+            case HttpURLConnection.HTTP_NO_CONTENT:
+                jsonObject = null;
+                break;
+            default:
+                throw new IllegalStateException(
+                    "Could not get the issue " + issueId + ". "
+                  + "Received status code: " + resource.statusCode()
+                );
+        }
         Issue issue = null;
         if(jsonObject != null){
             issue = new GithubIssue(issueUri, jsonObject, storage);
@@ -85,45 +106,4 @@ public final class GithubIssues implements Issues {
         );
     }
 
-    /**
-     * Fetches a json object over the network.
-     *
-     * @param uri Provided URI.
-     * @param issueId Issue id.
-     * @return JsonObject or null if result status is 400 or 204
-     * @throws IllegalStateException when something went wrong.
-     */
-    private JsonObject fromUri(final URI uri, final String issueId) {
-        JsonObject jsonObject;
-        try {
-            final HttpResponse<String> response = HttpClient.newHttpClient()
-                .send(
-                    HttpRequest.newBuilder()
-                        .uri(uri)
-                        .header("Content-Type", "application/json")
-                        .build(),
-                    HttpResponse.BodyHandlers.ofString()
-                );
-            final int status = response.statusCode();
-            switch (status) {
-                case HttpURLConnection.HTTP_OK:
-                    jsonObject = Json.createReader(
-                        new StringReader(response.body())
-                    ).readObject();
-                    break;
-                case HttpURLConnection.HTTP_NOT_FOUND:
-                case HttpURLConnection.HTTP_NO_CONTENT:
-                    jsonObject = null;
-                    break;
-                default:
-                    throw new IllegalStateException("Could not get the issue "
-                        + issueId);
-            }
-        } catch (final IOException | InterruptedException exception) {
-            throw new IllegalStateException("Could not get the issue "
-                + issueId);
-        }
-
-        return jsonObject;
-    }
 }

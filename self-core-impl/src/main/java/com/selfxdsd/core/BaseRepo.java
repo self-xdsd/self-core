@@ -112,6 +112,14 @@ abstract class BaseRepo implements Repo {
     }
 
     /**
+     * Get the JsonResources.
+     * @return JsonResources.
+     */
+    JsonResources resources() {
+        return this.resources;
+    }
+
+    /**
      * Get the URI.
      * @return URI.
      */

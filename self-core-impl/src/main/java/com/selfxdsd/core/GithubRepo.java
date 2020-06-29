@@ -26,7 +26,6 @@ import com.selfxdsd.api.Issues;
 import com.selfxdsd.api.Project;
 import com.selfxdsd.api.storage.Storage;
 import com.selfxdsd.api.User;
-import com.selfxdsd.core.issues.GithubIssues;
 
 import java.net.URI;
 
@@ -71,6 +70,7 @@ final class GithubRepo extends BaseRepo {
     @Override
     public Issues issues() {
         return new GithubIssues(
+            this.resources(),
             URI.create(this.repoUri().toString() + "/issues"),
             this.storage()
         );

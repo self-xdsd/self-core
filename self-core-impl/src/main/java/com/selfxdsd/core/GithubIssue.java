@@ -20,7 +20,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package com.selfxdsd.core.issues;
+package com.selfxdsd.core;
 
 import com.selfxdsd.api.Contract;
 import com.selfxdsd.api.Issue;
@@ -38,7 +38,7 @@ import java.net.URI;
  *  In a future version, we will set an Issue's role based on labels set
  *  by the user.
  */
-public final class GithubIssue implements Issue {
+final class GithubIssue implements Issue {
 
     /**
      * Issue base uri.
@@ -61,7 +61,7 @@ public final class GithubIssue implements Issue {
      * @param json Json Issue as returned by Github's API.
      * @param storage Storage.
      */
-    public GithubIssue(
+    GithubIssue(
         final URI issueUri,
         final JsonObject json,
         final Storage storage

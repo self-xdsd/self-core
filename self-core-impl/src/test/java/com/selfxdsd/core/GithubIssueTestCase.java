@@ -20,7 +20,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package com.selfxdsd.core.issues;
+package com.selfxdsd.core;
 
 import com.selfxdsd.api.Contract;
 import com.selfxdsd.api.Issue;
