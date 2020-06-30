@@ -11,7 +11,7 @@ import java.util.Iterator;
  * @author criske
  * @version $Id$
  * @since 0.0.8
- * @todo #244:30min Implement and test the remaining methods
+ * @todo #100:30min Implement and test the remaining methods
  *  in GithubIssueComments.
  */
 public final class GithubIssueComments implements Comments {
