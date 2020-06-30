@@ -49,7 +49,8 @@ public final class GithubIssueTestCase {
         final Issue issue = new GithubIssue(
             URI.create("http://localhost/issues/1"),
             Json.createObjectBuilder().add("number", 1).build(),
-            Mockito.mock(Storage.class)
+            Mockito.mock(Storage.class),
+            Mockito.mock(JsonResources.class)
         );
         MatcherAssert.assertThat(issue.issueId(), Matchers.equalTo("1"));
     }
@@ -62,7 +63,8 @@ public final class GithubIssueTestCase {
         final Issue issue = new GithubIssue(
             URI.create("http://localhost/issues/1"),
             Json.createObjectBuilder().add("number", 1).build(),
-            Mockito.mock(Storage.class)
+            Mockito.mock(Storage.class),
+            Mockito.mock(JsonResources.class)
         );
         MatcherAssert.assertThat(issue.provider(), Matchers.equalTo("github"));
     }
@@ -75,7 +77,8 @@ public final class GithubIssueTestCase {
         final Issue issue = new GithubIssue(
             URI.create("http://localhost/issues/1"),
             Json.createObjectBuilder().add("number", 1).build(),
-            Mockito.mock(Storage.class)
+            Mockito.mock(Storage.class),
+            Mockito.mock(JsonResources.class)
         );
         MatcherAssert.assertThat(
             issue.role(),
@@ -94,7 +97,8 @@ public final class GithubIssueTestCase {
                 .add("number", 1)
                 .add("pull_request", Json.createObjectBuilder())
                 .build(),
-            Mockito.mock(Storage.class)
+            Mockito.mock(Storage.class),
+            Mockito.mock(JsonResources.class)
         );
         MatcherAssert.assertThat(
             issue.role(),
@@ -116,11 +120,30 @@ public final class GithubIssueTestCase {
                     "https://api.github.com/repos/amihaiemil/docker-java-api"
                 )
                 .build(),
-            Mockito.mock(Storage.class)
+            Mockito.mock(Storage.class),
+            Mockito.mock(JsonResources.class)
         );
         MatcherAssert.assertThat(
             issue.repoFullName(),
             Matchers.equalTo("amihaiemil/docker-java-api")
+        );
+    }
+
+
+    /**
+     * Returns Issue's comments.
+     */
+    @Test
+    public void returnsComments(){
+        final Issue issue = new GithubIssue(
+            URI.create("http://localhost/issues/1"),
+            Json.createObjectBuilder().build(),
+            Mockito.mock(Storage.class),
+            Mockito.mock(JsonResources.class)
+        );
+        MatcherAssert.assertThat(
+            issue.comments(),
+            Matchers.instanceOf(GithubIssueComments.class)
         );
     }
 

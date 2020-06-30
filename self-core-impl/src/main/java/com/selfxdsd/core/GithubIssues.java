@@ -94,7 +94,7 @@ final class GithubIssues implements Issues {
         }
         Issue issue = null;
         if(jsonObject != null){
-            issue = new GithubIssue(issueUri, jsonObject, storage);
+            issue = new GithubIssue(issueUri, jsonObject, storage, resources);
         }
         return issue;
     }

@@ -22,6 +22,7 @@
  */
 package com.selfxdsd.core;
 
+import com.selfxdsd.api.Comments;
 import com.selfxdsd.api.Contract;
 import com.selfxdsd.api.Issue;
 import com.selfxdsd.api.storage.Storage;
@@ -56,19 +57,27 @@ final class GithubIssue implements Issue {
     private final Storage storage;
 
     /**
+     * Github's JSON Resources.
+     */
+    private final JsonResources resources;
+
+    /**
      * Ctor.
      * @param issueUri Issues base URI.
      * @param json Json Issue as returned by Github's API.
      * @param storage Storage.
+     * @param resources Github's JSON Resources.
      */
     GithubIssue(
         final URI issueUri,
         final JsonObject json,
-        final Storage storage
+        final Storage storage,
+        final JsonResources resources
     ) {
         this.issueUri = issueUri;
         this.json = json;
         this.storage = storage;
+        this.resources = resources;
     }
 
     @Override
@@ -102,5 +111,10 @@ final class GithubIssue implements Issue {
     @Override
     public JsonObject json() {
         return this.json;
+    }
+
+    @Override
+    public Comments comments() {
+        return new GithubIssueComments(this.issueUri, this.resources);
     }
 }

@@ -65,4 +65,10 @@ public interface Issue {
      */
     JsonObject json();
 
+    /**
+     * Issue comments.
+     * @return Comments.
+     */
+    Comments comments();
+
 }
