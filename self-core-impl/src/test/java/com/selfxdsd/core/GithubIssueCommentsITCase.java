@@ -116,7 +116,7 @@ public final class GithubIssueCommentsITCase {
             });
 
         final Comment comment = issueComments
-            .post("Comment issue #1", "token123");
+            .post("Comment issue #1");
 
         MatcherAssert.assertThat(comment.commentId(),
             Matchers.equalTo("1"));
@@ -149,7 +149,7 @@ public final class GithubIssueCommentsITCase {
             .thenReturn(resource);
 
         issueComments
-            .post("Comment issue #1", "token123");
+            .post("Comment issue #1");
     }
 
     /**
