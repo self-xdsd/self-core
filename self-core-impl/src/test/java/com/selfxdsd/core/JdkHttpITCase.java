@@ -25,6 +25,7 @@ package com.selfxdsd.core;
 import com.jcabi.http.mock.MkAnswer;
 import com.jcabi.http.mock.MkContainer;
 import com.jcabi.http.mock.MkGrizzlyContainer;
+import com.jcabi.http.mock.MkQuery;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Rule;
@@ -82,4 +83,41 @@ public final class JdkHttpITCase {
         }
     }
 
+    /**
+     * JdkHttp can POST a JsonObject to the specified URI.
+     *
+     * We assert the Response status and also take the request (MkQuery)
+     * that the server has received and make assertions on it -- it should
+     * contain the JsonObject we specified, as well the Authentication header.
+     * @throws IOException If something goes wrong.
+     */
+    @Test
+    public void postJsonObjectWithAuth() throws IOException {
+        final JsonObject body = Json.createObjectBuilder()
+            .add("test", "post")
+            .build();
+        try(
+            final MkContainer container = new MkGrizzlyContainer().next(
+                new MkAnswer.Simple(HttpURLConnection.HTTP_CREATED)
+            ).start(this.resource.port())
+        ) {
+            final JsonResources resources = new JsonResources.JdkHttp();
+            final Resource response = resources.post(
+                container.home(), body, "123token456"
+            );
+            MatcherAssert.assertThat(
+                response.statusCode(),
+                Matchers.equalTo(HttpURLConnection.HTTP_CREATED)
+            );
+            final MkQuery request = container.take();
+            MatcherAssert.assertThat(
+                request.body(),
+                Matchers.equalTo(body.toString())
+            );
+            MatcherAssert.assertThat(
+                request.headers().get("Authentication").get(0),
+                Matchers.equalTo("token 123token456")
+            );
+        }
+    }
 }

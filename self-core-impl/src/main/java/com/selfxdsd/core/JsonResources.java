@@ -37,7 +37,7 @@ import java.net.http.HttpResponse;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.8
- * @todo #234:30min Add other methods such as post, patch etc
+ * @todo #237:30min Add other methods such as delete, patch etc
  *  and continue abstracting the HTTP calls away from the Provider's
  *  implementations (Issues, Comments etc). Make sure to offer alternatives
  *  with accessToken as well. After that is done, we should add a mock
@@ -50,6 +50,8 @@ interface JsonResources {
      * Get the Resource at the specified URI.
      * @param uri Resource location.
      * @return Resource.
+     * @throws IllegalStateException If IOException or InterruptedException
+     *  occur while making the HTTP request.
      */
     default Resource get(final URI uri) {
         return this.get(uri, "");
@@ -61,12 +63,32 @@ interface JsonResources {
      * @param accessToken Access token for requests that
      *  require authentication.
      * @return Resource.
+     * @throws IllegalStateException If IOException or InterruptedException
+     *  occur while making the HTTP request.
      */
     Resource get(final URI uri, final String accessToken);
 
     /**
+     * Post a JsonObject to the specified URI.
+     * @param uri URI.
+     * @param body JSON body of the request.
+     * @param accessToken Access token for authentication.
+     * @return Resource.
+     * @throws IllegalStateException If IOException or InterruptedException
+     *  occur while making the HTTP request.
+     */
+    Resource post(
+        final URI uri,
+        final JsonObject body,
+        final String accessToken
+    );
+
+    /**
      * JSON Resources obtained by making HTTP calls, using
      * the JDK.
+     * @author Mihai Andronache (amihaiemil@gmail.com)
+     * @version $Id$
+     * @since 0.0.8
      */
     final class JdkHttp implements JsonResources {
         @Override
@@ -82,32 +104,97 @@ interface JsonResources {
                             .build(),
                         HttpResponse.BodyHandlers.ofString()
                     );
-                return new Resource() {
-                    @Override
-                    public int statusCode() {
-                        return response.statusCode();
-                    }
-
-                    @Override
-                    public JsonObject asJsonObject() {
-                        return Json.createReader(
-                            new StringReader(response.body())
-                        ).readObject();
-                    }
-
-                    @Override
-                    public JsonArray asJsonArray() {
-                        return Json.createReader(
-                            new StringReader(response.body())
-                        ).readArray();
-                    }
-                };
+                return new JsonResponse(
+                    response.statusCode(), response.body()
+                );
             } catch (final IOException | InterruptedException ex) {
                 throw new IllegalStateException(
-                    "Couldn't GET + [" + uri.toString() +"]",
+                    "Couldn't GET [" + uri.toString() +"]",
                     ex
                 );
             }
+        }
+
+        @Override
+        public Resource post(
+            final URI uri,
+            final JsonObject body,
+            final String accessToken
+        ) {
+            try {
+                final HttpResponse<String> response = HttpClient.newHttpClient()
+                    .send(
+                        HttpRequest.newBuilder()
+                            .uri(uri)
+                            .method(
+                                "POST",
+                                HttpRequest.BodyPublishers.ofString(
+                                    body.toString()
+                                )
+                            )
+                            .header("Content-Type", "application/json")
+                            .header("Authentication", "token " + accessToken)
+                            .build(),
+                        HttpResponse.BodyHandlers.ofString()
+                    );
+                return new JsonResponse(
+                    response.statusCode(), response.body()
+                );
+            } catch (final IOException | InterruptedException ex) {
+                throw new IllegalStateException(
+                    "Couldn't POST " + body.toString()
+                  + " to [" + uri.toString() +"]",
+                    ex
+                );
+            }
+        }
+    }
+
+    /**
+     * Response as JSON.
+     * @author Mihai Andronache (amihaiemil@gmail.com)
+     * @version $Id$
+     * @since 0.0.8
+     */
+    final class JsonResponse implements Resource {
+
+        /**
+         * Response status code.
+         */
+        final int statusCode;
+
+        /**
+         * Response body (expected to be a JSON).
+         */
+        final String body;
+
+        /**
+         * Ctor.
+         * @param statusCode Status code.
+         * @param body Response Body.
+         */
+        JsonResponse(final int statusCode, final String body) {
+            this.statusCode = statusCode;
+            this.body = body;
+        }
+
+        @Override
+        public int statusCode() {
+            return this.statusCode;
+        }
+
+        @Override
+        public JsonObject asJsonObject() {
+            return Json.createReader(
+                new StringReader(this.body)
+            ).readObject();
+        }
+
+        @Override
+        public JsonArray asJsonArray() {
+            return Json.createReader(
+                new StringReader(this.body)
+            ).readArray();
         }
     }
 }
