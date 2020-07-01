@@ -26,8 +26,8 @@ public final class GithubIssueCommentsITCase {
      */
     @Test
     public void iteratesIssueComments(){
-        final URI issuesUri = URI.create(
-            "https://api.github.com/repos/octocat/Hello-World/issues/"
+        final URI issueUri = URI.create(
+            "https://api.github.com/repos/octocat/Hello-World/issues/1/"
         );
         final JsonResources resources = Mockito.mock(JsonResources.class);
 
@@ -51,7 +51,7 @@ public final class GithubIssueCommentsITCase {
             });
 
         final Iterable<Comment> iterable  =
-            () -> new GithubIssueComments(issuesUri, resources).iterator();
+            () -> new GithubIssueComments(issueUri, resources).iterator();
 
         MatcherAssert.assertThat(iterable, Matchers.iterableWithSize(2));
 
@@ -62,7 +62,7 @@ public final class GithubIssueCommentsITCase {
         MatcherAssert.assertThat(firstComment.body(),
             Matchers.equalTo("Comment issue #1"));
         MatcherAssert.assertThat(firstComment.json().getString("url"),
-            Matchers.equalTo(issuesUri.resolve("comments/1").toString()));
+            Matchers.equalTo(issueUri.resolve("comments/1").toString()));
     }
 
     /**
@@ -70,8 +70,8 @@ public final class GithubIssueCommentsITCase {
      */
     @Test
     public void iteratesNothingIfIssueCommentsNotFound(){
-        final URI issuesUri = URI.create(
-            "https://api.github.com/repos/octocat/Hello-World/issues/"
+        final URI issueUri = URI.create(
+            "https://api.github.com/repos/octocat/Hello-World/issues/1/"
         );
         final JsonResources resources = Mockito.mock(JsonResources.class);
         final Resource resource = buildResource(404, null, null);
@@ -79,7 +79,7 @@ public final class GithubIssueCommentsITCase {
             .when(resources.get(Mockito.any(URI.class)))
             .thenReturn(resource);
         final Iterable<Comment> iterable  =
-            () -> new GithubIssueComments(issuesUri, resources).iterator();
+            () -> new GithubIssueComments(issueUri, resources).iterator();
 
         MatcherAssert.assertThat(iterable, Matchers.emptyIterable());
     }
@@ -89,12 +89,12 @@ public final class GithubIssueCommentsITCase {
      */
     @Test
     public void postsIssueCommentOk() {
-        final URI issuesUri = URI.create(
-            "https://api.github.com/repos/octocat/Hello-World/issues/"
+        final URI issueUri = URI.create(
+            "https://api.github.com/repos/octocat/Hello-World/issues/1/"
         );
         final JsonResources resources = Mockito.mock(JsonResources.class);
         final Comments issueComments =
-            new GithubIssueComments(issuesUri, resources);
+            new GithubIssueComments(issueUri, resources);
 
         Mockito
             .when(resources.post(
@@ -123,7 +123,7 @@ public final class GithubIssueCommentsITCase {
         MatcherAssert.assertThat(comment.body(),
             Matchers.equalTo("Comment issue #1"));
         MatcherAssert.assertThat(comment.json().getString("url"),
-            Matchers.equalTo(issuesUri.resolve("comments/1").toString()));
+            Matchers.equalTo(issueUri.resolve("comments/1").toString()));
     }
 
     /**
@@ -132,12 +132,12 @@ public final class GithubIssueCommentsITCase {
      */
     @Test(expected = IllegalStateException.class)
     public void throwsIfCommentNotCreated() {
-        final URI issuesUri = URI.create(
-            "https://api.github.com/repos/octocat/Hello-World/issues/"
+        final URI issueUri = URI.create(
+            "https://api.github.com/repos/octocat/Hello-World/issues/1/"
         );
         final JsonResources resources = Mockito.mock(JsonResources.class);
         final Comments issueComments =
-            new GithubIssueComments(issuesUri, resources);
+            new GithubIssueComments(issueUri, resources);
         final Resource resource = buildResource(401, null, null);
 
         Mockito
