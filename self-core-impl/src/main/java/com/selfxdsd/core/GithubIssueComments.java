@@ -53,14 +53,16 @@ public final class GithubIssueComments implements Comments {
     @Override
     public Comment post(final String body) {
         final Resource resource = resources.post(
-                this.commentsUri,
-                Json.createObjectBuilder().add("body", body).build(),
-                "");
+            this.commentsUri,
+            Json.createObjectBuilder().add("body", body).build()
+        );
         if (resource.statusCode() == HttpURLConnection.HTTP_CREATED) {
             return new GithubComment(resource.asJsonObject());
         } else {
-            throw new IllegalStateException("Github Issue Comment "
-                    + "was not created");
+            throw new IllegalStateException(
+                "Github Issue Comment was not created. Status is "
+              + resource.statusCode()
+            );
         }
     }
 

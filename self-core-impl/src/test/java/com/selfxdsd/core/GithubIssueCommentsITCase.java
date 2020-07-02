@@ -99,8 +99,7 @@ public final class GithubIssueCommentsITCase {
         Mockito
             .when(resources.post(
                 Mockito.any(URI.class),
-                Mockito.any(JsonObject.class),
-                Mockito.anyString()
+                Mockito.any(JsonObject.class)
             ))
             .thenAnswer(invocation -> {
                 final URI uri = ((URI) invocation.getArguments()[0])
@@ -143,8 +142,7 @@ public final class GithubIssueCommentsITCase {
         Mockito
             .when(resources.post(
                 Mockito.any(URI.class),
-                Mockito.any(JsonObject.class),
-                Mockito.anyString()
+                Mockito.any(JsonObject.class)
             ))
             .thenReturn(resource);
 

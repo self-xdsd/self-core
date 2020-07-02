@@ -60,34 +60,19 @@ interface JsonResources {
      * @throws IllegalStateException If IOException or InterruptedException
      *  occur while making the HTTP request.
      */
-    default Resource get(final URI uri) {
-        return this.get(uri, "");
-    }
-
-    /**
-     * Get the Resource at the specified URI.
-     * @param uri Resource location.
-     * @param accessToken Access token for requests that
-     *  require authentication.
-     * @return Resource.
-     * @throws IllegalStateException If IOException or InterruptedException
-     *  occur while making the HTTP request.
-     */
-    Resource get(final URI uri, final String accessToken);
+    Resource get(final URI uri);
 
     /**
      * Post a JsonObject to the specified URI.
      * @param uri URI.
      * @param body JSON body of the request.
-     * @param accessToken Access token for authentication.
      * @return Resource.
      * @throws IllegalStateException If IOException or InterruptedException
      *  occur while making the HTTP request.
      */
     Resource post(
         final URI uri,
-        final JsonObject body,
-        final String accessToken
+        final JsonObject body
     );
 
     /**
@@ -125,7 +110,7 @@ interface JsonResources {
         }
 
         @Override
-        public Resource get(final URI uri, final String accessToken) {
+        public Resource get(final URI uri) {
             try {
                 final HttpResponse<String> response = HttpClient.newHttpClient()
                     .send(
@@ -153,8 +138,7 @@ interface JsonResources {
         @Override
         public Resource post(
             final URI uri,
-            final JsonObject body,
-            final String accessToken
+            final JsonObject body
         ) {
             try {
                 final HttpResponse<String> response = HttpClient.newHttpClient()
