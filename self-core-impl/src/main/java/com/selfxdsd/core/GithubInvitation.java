@@ -24,12 +24,9 @@ package com.selfxdsd.core;
 
 import com.selfxdsd.api.Invitation;
 
+import javax.json.Json;
 import javax.json.JsonObject;
-import java.io.IOException;
 import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 
 /**
  * A Github Repo invitation.
@@ -42,9 +39,9 @@ import java.net.http.HttpResponse;
 final class GithubInvitation implements Invitation {
 
     /**
-     * Invitation as JSON.
+     * Github's JSON resources.
      */
-    private final JsonObject json;
+    private final JsonResources resources;
 
     /**
      * URI of this invitation.
@@ -52,26 +49,26 @@ final class GithubInvitation implements Invitation {
     private final URI uri;
 
     /**
-     * Access token.
+     * This invitation as JSON.
      */
-    private final String accessToken;
+    private final JsonObject json;
 
     /**
      * Ctor.
-     * @param json Invitation in JSON format.
+     * @param resources Github's JSON resources.
      * @param baseUri Base URI of the Invitations API.
-     * @param accessToken Access Token.
+     * @param json This invitation in JSON format.
      */
     GithubInvitation(
-        final JsonObject json,
+        final JsonResources resources,
         final URI baseUri,
-        final String accessToken
+        final JsonObject json
     ) {
-        this.json = json;
+        this.resources = resources;
         this.uri = URI.create(
             baseUri.toString() + "/" + json.getJsonNumber("id")
         );
-        this.accessToken = accessToken;
+        this.json = json;
     }
 
     @Override
@@ -81,22 +78,6 @@ final class GithubInvitation implements Invitation {
 
     @Override
     public void accept() {
-        try {
-            HttpClient.newHttpClient()
-                .send(
-                    HttpRequest.newBuilder()
-                        .uri(this.uri)
-                        .method("PATCH", HttpRequest.BodyPublishers.noBody())
-                        .header("Content-Type", "application/json")
-                        .header("Authorization", "token " + this.accessToken)
-                        .build(),
-                    HttpResponse.BodyHandlers.ofString()
-                );
-        } catch (final IOException | InterruptedException ex) {
-            throw new IllegalStateException(
-                "Couldn't accept Invitation + [" + this.uri.toString() + "]",
-                ex
-            );
-        }
+        this.resources.patch(this.uri, Json.createObjectBuilder().build());
     }
 }

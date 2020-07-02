@@ -38,9 +38,6 @@ import java.util.stream.Collectors;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.7
- * @todo #248:30min Pass the JsonResources to the GithubInvitation
- *  as well so we can remove the HTTP calls from there as well.
- *  Don't forget about testing.
  */
 final class GithubRepoInvitations implements Invitations {
 
@@ -72,9 +69,9 @@ final class GithubRepoInvitations implements Invitations {
         final List<Invitation> invitations = this.fetchInvitations().stream()
             .map(
                 jsonValue -> new GithubInvitation(
-                    (JsonObject) jsonValue,
+                    this.resources,
                     this.repoInvitationsUri,
-                    ""
+                    (JsonObject) jsonValue
                 )
             ).collect(Collectors.toList());
         return invitations.iterator();
@@ -92,7 +89,8 @@ final class GithubRepoInvitations implements Invitations {
             return invitations.asJsonArray();
         } else {
             throw new IllegalStateException(
-                "Unexpected response when fetching [" + this.resources +"]. "
+                "Unexpected response when fetching "
+              + "[" + this.repoInvitationsUri + "]. "
               + "Expected 200 OK, but got " + invitations.statusCode() + "."
             );
         }

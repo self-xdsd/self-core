@@ -120,7 +120,7 @@ public final class JdkHttpITCase {
                 Matchers.equalTo(body.toString())
             );
             MatcherAssert.assertThat(
-                request.headers().get("Authentication").get(0),
+                request.headers().get("Authorization").get(0),
                 Matchers.equalTo("token 123token456")
             );
         }
@@ -163,7 +163,7 @@ public final class JdkHttpITCase {
                 Matchers.equalTo(body.toString())
             );
             MatcherAssert.assertThat(
-                request.headers().get("Authentication").get(0),
+                request.headers().get("Authorization").get(0),
                 Matchers.equalTo("token 123token456")
             );
         }

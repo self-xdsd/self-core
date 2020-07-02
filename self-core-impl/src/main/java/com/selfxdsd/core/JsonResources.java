@@ -132,7 +132,7 @@ interface JsonResources {
                             .method("GET", HttpRequest.BodyPublishers.noBody())
                             .header("Content-Type", "application/json")
                             .header(
-                                "Authentication",
+                                "Authorization",
                                 "token " + this.accessToken
                             ).build(),
                         HttpResponse.BodyHandlers.ofString()
@@ -166,7 +166,7 @@ interface JsonResources {
                             )
                             .header("Content-Type", "application/json")
                             .header(
-                                "Authentication",
+                                "Authorization",
                                 "token " + this.accessToken
                             ).build(),
                         HttpResponse.BodyHandlers.ofString()
@@ -201,7 +201,7 @@ interface JsonResources {
                             )
                             .header("Content-Type", "application/json")
                             .header(
-                                "Authentication",
+                                "Authorization",
                                 "token " + this.accessToken
                             ).build(),
                         HttpResponse.BodyHandlers.ofString()
