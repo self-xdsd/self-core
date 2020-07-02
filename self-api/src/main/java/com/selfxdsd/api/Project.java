@@ -90,6 +90,12 @@ public interface Project {
     Tasks tasks();
 
     /**
+     * Language spoken in this Project.
+     * @return Language.
+     */
+    Language language();
+
+    /**
      * Deactivate this project, tell  Self to stop
      * managing it.
      * @return This project's repository.

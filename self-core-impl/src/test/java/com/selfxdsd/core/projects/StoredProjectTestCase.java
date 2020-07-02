@@ -227,6 +227,28 @@ public final class StoredProjectTestCase {
     }
 
     /**
+     * The StoredProject can return its spoken language.
+     * For now, only English is available.
+     */
+    @Test
+    public void returnsLanguage() {
+        final Project project = new StoredProject(
+            Mockito.mock(User.class),
+            "john/test",
+            "123whToken",
+            Mockito.mock(ProjectManager.class),
+            Mockito.mock(Storage.class)
+        );
+        MatcherAssert.assertThat(
+            project.language(),
+            Matchers.allOf(
+                Matchers.notNullValue(),
+                Matchers.instanceOf(English.class)
+            )
+        );
+    }
+
+    /**
      * Mock a Repo for test.
      * @param fullName Full name.
      * @param provider Provider.

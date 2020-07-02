@@ -140,6 +140,11 @@ public final class StoredProject implements Project {
     }
 
     @Override
+    public Language language() {
+        return new English();
+    }
+
+    @Override
     public Repo deactivate() {
         return null;
     }
