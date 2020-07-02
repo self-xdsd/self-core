@@ -37,14 +37,21 @@ import java.net.http.HttpResponse;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.8
- * @todo #237:30min Add other methods such as delete, patch etc
+ * @todo #248:30min Add other methods such as delete, patch etc
  *  and continue abstracting the HTTP calls away from the Provider's
- *  implementations (Issues, Comments etc). Make sure to offer alternatives
- *  with accessToken as well. After that is done, we should add a mock
- *  implementation of JsonResources, which we will use in writing unit
- *  tests for the providers.
+ *  implementations (Issues, Comments etc). After that is done, we should
+ *  add a mock implementation of JsonResources, which we will use
+ *  in writing unit tests for the providers.
  */
 interface JsonResources {
+
+    /**
+     * Return an instance which has an accessToken for
+     * making authenticated requests.
+     * @param accessToken Access token.
+     * @return JsonResources.
+     */
+    JsonResources authenticated(final String accessToken);
 
     /**
      * Get the Resource at the specified URI.
@@ -91,6 +98,32 @@ interface JsonResources {
      * @since 0.0.8
      */
     final class JdkHttp implements JsonResources {
+
+        /**
+         * Access token.
+         */
+        private final String accessToken;
+
+        /**
+         * Ctor.
+         */
+        JdkHttp() {
+            this("");
+        }
+
+        /**
+         * Ctor.
+         * @param accessToken Access token for authenticated requests.
+         */
+        private JdkHttp(final String accessToken) {
+            this.accessToken = accessToken;
+        }
+
+        @Override
+        public JsonResources authenticated(final String accessToken) {
+            return null;
+        }
+
         @Override
         public Resource get(final URI uri, final String accessToken) {
             try {
@@ -100,8 +133,10 @@ interface JsonResources {
                             .uri(uri)
                             .method("GET", HttpRequest.BodyPublishers.noBody())
                             .header("Content-Type", "application/json")
-                            .header("Authentication", "token " + accessToken)
-                            .build(),
+                            .header(
+                                "Authentication",
+                                "token " + this.accessToken
+                            ).build(),
                         HttpResponse.BodyHandlers.ofString()
                     );
                 return new JsonResponse(
@@ -133,8 +168,10 @@ interface JsonResources {
                                 )
                             )
                             .header("Content-Type", "application/json")
-                            .header("Authentication", "token " + accessToken)
-                            .build(),
+                            .header(
+                                "Authentication",
+                                "token " + this.accessToken
+                            ).build(),
                         HttpResponse.BodyHandlers.ofString()
                     );
                 return new JsonResponse(
