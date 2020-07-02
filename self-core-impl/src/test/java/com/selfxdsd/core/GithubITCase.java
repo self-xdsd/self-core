@@ -121,4 +121,12 @@ public final class GithubITCase {
         );
     }
 
+    /**
+     * Provider fetches its organizations.
+     */
+    @Test(expected = UnsupportedOperationException.class)
+    public void fetchesOrganizations(){
+        new Github(Mockito.mock(User.class), null).organizations();
+    }
+
 }
