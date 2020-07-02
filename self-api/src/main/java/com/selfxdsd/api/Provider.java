@@ -52,6 +52,12 @@ public interface Provider {
     Invitations invitations();
 
     /**
+     * Get the organizations of which the authenticated User has admin rights.
+     * @return Organizations.
+     */
+    Organizations organizations();
+
+    /**
      * Return a Provider which has an access token.
      * @param accessToken Access token to make authorized requests with.
      * @return Provider.

@@ -22,10 +22,7 @@
  */
 package com.selfxdsd.core;
 
-import com.selfxdsd.api.Invitations;
-import com.selfxdsd.api.Provider;
-import com.selfxdsd.api.Repo;
-import com.selfxdsd.api.User;
+import com.selfxdsd.api.*;
 import com.selfxdsd.api.storage.Storage;
 
 import java.net.URI;
@@ -126,6 +123,11 @@ public final class Gitlab implements Provider {
 
     @Override
     public Invitations invitations() {
+        throw new UnsupportedOperationException("Not yet implemented.");
+    }
+
+    @Override
+    public Organizations organizations() {
         throw new UnsupportedOperationException("Not yet implemented.");
     }
 
