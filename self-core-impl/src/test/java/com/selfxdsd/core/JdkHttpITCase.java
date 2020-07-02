@@ -112,6 +112,10 @@ public final class JdkHttpITCase {
             );
             final MkQuery request = container.take();
             MatcherAssert.assertThat(
+                request.method(),
+                Matchers.equalTo("POST")
+            );
+            MatcherAssert.assertThat(
                 request.body(),
                 Matchers.equalTo(body.toString())
             );
@@ -150,6 +154,10 @@ public final class JdkHttpITCase {
                 Matchers.equalTo(HttpURLConnection.HTTP_NO_CONTENT)
             );
             final MkQuery request = container.take();
+            MatcherAssert.assertThat(
+                request.method(),
+                Matchers.equalTo("PATCH")
+            );
             MatcherAssert.assertThat(
                 request.body(),
                 Matchers.equalTo(body.toString())
