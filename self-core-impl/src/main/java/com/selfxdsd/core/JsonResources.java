@@ -127,14 +127,11 @@ interface JsonResources {
             try {
                 final HttpResponse<String> response = HttpClient.newHttpClient()
                     .send(
-                        HttpRequest.newBuilder()
-                            .uri(uri)
-                            .method("GET", HttpRequest.BodyPublishers.noBody())
-                            .header("Content-Type", "application/json")
-                            .header(
-                                "Authorization",
-                                "token " + this.accessToken
-                            ).build(),
+                        this.request(
+                            uri,
+                            "GET",
+                            HttpRequest.BodyPublishers.noBody()
+                        ),
                         HttpResponse.BodyHandlers.ofString()
                     );
                 return new JsonResponse(
@@ -156,19 +153,13 @@ interface JsonResources {
             try {
                 final HttpResponse<String> response = HttpClient.newHttpClient()
                     .send(
-                        HttpRequest.newBuilder()
-                            .uri(uri)
-                            .method(
-                                "POST",
-                                HttpRequest.BodyPublishers.ofString(
-                                    body.toString()
-                                )
+                        this.request(
+                            uri,
+                            "POST",
+                            HttpRequest.BodyPublishers.ofString(
+                                body.toString()
                             )
-                            .header("Content-Type", "application/json")
-                            .header(
-                                "Authorization",
-                                "token " + this.accessToken
-                            ).build(),
+                        ),
                         HttpResponse.BodyHandlers.ofString()
                     );
                 return new JsonResponse(
@@ -191,19 +182,13 @@ interface JsonResources {
             try {
                 final HttpResponse<String> response = HttpClient.newHttpClient()
                     .send(
-                        HttpRequest.newBuilder()
-                            .uri(uri)
-                            .method(
-                                "PATCH",
-                                HttpRequest.BodyPublishers.ofString(
-                                    body.toString()
-                                )
+                        this.request(
+                            uri,
+                            "PATCH",
+                            HttpRequest.BodyPublishers.ofString(
+                                body.toString()
                             )
-                            .header("Content-Type", "application/json")
-                            .header(
-                                "Authorization",
-                                "token " + this.accessToken
-                            ).build(),
+                        ),
                         HttpResponse.BodyHandlers.ofString()
                     );
                 return new JsonResponse(
@@ -216,6 +201,38 @@ interface JsonResources {
                     ex
                 );
             }
+        }
+
+        /**
+         * Build and return the HTTP Request.
+         * @param uri URI.
+         * @param method Method.
+         * @param body Body.
+         * @return HttpRequest.
+         */
+        private HttpRequest request(
+            final URI uri,
+            final String method,
+            final HttpRequest.BodyPublisher body
+        ) {
+            final HttpRequest request;
+            if(this.accessToken != null && !this.accessToken.isEmpty()) {
+                request = HttpRequest.newBuilder()
+                    .uri(uri)
+                    .method(method, body)
+                    .header("Content-Type", "application/json")
+                    .header(
+                        "Authorization",
+                        "token " + this.accessToken
+                    ).build();
+            } else {
+                request = HttpRequest.newBuilder()
+                    .uri(uri)
+                    .method(method, body)
+                    .header("Content-Type", "application/json")
+                    .build();
+            }
+            return request;
         }
     }
 
