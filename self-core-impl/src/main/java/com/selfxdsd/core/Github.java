@@ -53,15 +53,9 @@ public final class Github implements Provider {
     private final JsonResources resources;
 
     /**
-     * Storge where we might save some stuff.
+     * Storage where we might save some stuff.
      */
     private final Storage storage;
-
-    /**
-     *Token used for making API Requests which require
-     *user authentication.
-     */
-    private final String accessToken;
 
     /**
      * Constructor.
@@ -101,8 +95,7 @@ public final class Github implements Provider {
     ) {
         this.user = user;
         this.storage = storage;
-        this.resources = resources;
-        this.accessToken = accessToken;
+        this.resources = resources.authenticated(accessToken);
     }
 
     @Override
@@ -122,17 +115,11 @@ public final class Github implements Provider {
 
     @Override
     public Invitations invitations() {
-        if(this.accessToken == null || this.accessToken.isEmpty()) {
-            throw new IllegalStateException(
-                "Can't fetch invitations without a user's access token."
-            );
-        }
         return new GithubRepoInvitations(
             this.resources,
             URI.create(
                 this.uri.toString() + "/user/repository_invitations"
-            ),
-            this.accessToken
+            )
         );
     }
 

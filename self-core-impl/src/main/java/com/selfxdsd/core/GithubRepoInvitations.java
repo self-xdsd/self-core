@@ -38,6 +38,9 @@ import java.util.stream.Collectors;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.7
+ * @todo #248:30min Pass the JsonResources to the GithubInvitation
+ *  as well so we can remove the HTTP calls from there as well.
+ *  Don't forget about testing.
  */
 final class GithubRepoInvitations implements Invitations {
 
@@ -52,24 +55,16 @@ final class GithubRepoInvitations implements Invitations {
     private final URI repoInvitationsUri;
 
     /**
-     * User access token.
-     */
-    private final String accessToken;
-
-    /**
      * Ctor.
      * @param resources Github's JSON resources.
      * @param repoInvitationsUri API uri.
-     * @param accessToken User access token.
      */
     GithubRepoInvitations(
         final JsonResources resources,
-        final URI repoInvitationsUri,
-        final String accessToken
+        final URI repoInvitationsUri
     ) {
         this.resources = resources;
         this.repoInvitationsUri = repoInvitationsUri;
-        this.accessToken = accessToken;
     }
 
     @Override
@@ -79,7 +74,7 @@ final class GithubRepoInvitations implements Invitations {
                 jsonValue -> new GithubInvitation(
                     (JsonObject) jsonValue,
                     this.repoInvitationsUri,
-                    this.accessToken
+                    ""
                 )
             ).collect(Collectors.toList());
         return invitations.iterator();
@@ -91,7 +86,7 @@ final class GithubRepoInvitations implements Invitations {
      */
     private JsonArray fetchInvitations() {
         final Resource invitations = this.resources.get(
-            this.repoInvitationsUri, this.accessToken
+            this.repoInvitationsUri
         );
         if(invitations.statusCode() == HttpURLConnection.HTTP_OK) {
             return invitations.asJsonArray();

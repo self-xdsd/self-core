@@ -121,7 +121,7 @@ interface JsonResources {
 
         @Override
         public JsonResources authenticated(final String accessToken) {
-            return null;
+            return new JsonResources.JdkHttp(accessToken);
         }
 
         @Override

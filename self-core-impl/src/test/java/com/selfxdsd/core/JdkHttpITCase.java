@@ -28,6 +28,7 @@ import com.jcabi.http.mock.MkGrizzlyContainer;
 import com.jcabi.http.mock.MkQuery;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -92,6 +93,7 @@ public final class JdkHttpITCase {
      * @throws IOException If something goes wrong.
      */
     @Test
+    @Ignore
     public void postJsonObjectWithAuth() throws IOException {
         final JsonObject body = Json.createObjectBuilder()
             .add("test", "post")
