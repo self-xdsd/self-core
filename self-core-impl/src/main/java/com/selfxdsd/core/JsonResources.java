@@ -37,8 +37,8 @@ import java.net.http.HttpResponse;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.8
- * @todo #248:30min Add other methods such as delete, patch etc
- *  and continue abstracting the HTTP calls away from the Provider's
+ * @todo #252:30min Add other methods such as delete and
+ *  continue abstracting the HTTP calls away from the Provider's
  *  implementations (Issues, Comments etc). After that is done, we should
  *  add a mock implementation of JsonResources, which we will use
  *  in writing unit tests for the providers.
@@ -71,6 +71,19 @@ interface JsonResources {
      *  occur while making the HTTP request.
      */
     Resource post(
+        final URI uri,
+        final JsonObject body
+    );
+
+    /**
+     * Patch a JsonObject at the specified URI.
+     * @param uri URI.
+     * @param body JSON body of the request.
+     * @return Resource.
+     * @throws IllegalStateException If IOException or InterruptedException
+     *  occur while making the HTTP request.
+     */
+    Resource patch(
         final URI uri,
         final JsonObject body
     );
@@ -165,6 +178,41 @@ interface JsonResources {
                 throw new IllegalStateException(
                     "Couldn't POST " + body.toString()
                   + " to [" + uri.toString() +"]",
+                    ex
+                );
+            }
+        }
+
+        @Override
+        public Resource patch(
+            final URI uri,
+            final JsonObject body
+        ) {
+            try {
+                final HttpResponse<String> response = HttpClient.newHttpClient()
+                    .send(
+                        HttpRequest.newBuilder()
+                            .uri(uri)
+                            .method(
+                                "PATCH",
+                                HttpRequest.BodyPublishers.ofString(
+                                    body.toString()
+                                )
+                            )
+                            .header("Content-Type", "application/json")
+                            .header(
+                                "Authentication",
+                                "token " + this.accessToken
+                            ).build(),
+                        HttpResponse.BodyHandlers.ofString()
+                    );
+                return new JsonResponse(
+                    response.statusCode(), response.body()
+                );
+            } catch (final IOException | InterruptedException ex) {
+                throw new IllegalStateException(
+                    "Couldn't PATCH " + body.toString()
+                  + " at [" + uri.toString() +"]",
                     ex
                 );
             }

@@ -121,4 +121,43 @@ public final class JdkHttpITCase {
             );
         }
     }
+
+    /**
+     * JdkHttp can PATCH a JsonObject at the specified URI.
+     *
+     * We assert the Response status and also take the request (MkQuery)
+     * that the server has received and make assertions on it -- it should
+     * contain the JsonObject we specified, as well the Authentication header.
+     * @throws IOException If something goes wrong.
+     */
+    @Test
+    public void patchJsonObjectWithAuth() throws IOException {
+        final JsonObject body = Json.createObjectBuilder()
+            .add("test", "patch")
+            .build();
+        try(
+            final MkContainer container = new MkGrizzlyContainer().next(
+                new MkAnswer.Simple(HttpURLConnection.HTTP_NO_CONTENT)
+            ).start(this.resource.port())
+        ) {
+            final JsonResources resources = new JsonResources.JdkHttp()
+                .authenticated("123token456");
+            final Resource response = resources.patch(
+                container.home(), body
+            );
+            MatcherAssert.assertThat(
+                response.statusCode(),
+                Matchers.equalTo(HttpURLConnection.HTTP_NO_CONTENT)
+            );
+            final MkQuery request = container.take();
+            MatcherAssert.assertThat(
+                request.body(),
+                Matchers.equalTo(body.toString())
+            );
+            MatcherAssert.assertThat(
+                request.headers().get("Authentication").get(0),
+                Matchers.equalTo("token 123token456")
+            );
+        }
+    }
 }
