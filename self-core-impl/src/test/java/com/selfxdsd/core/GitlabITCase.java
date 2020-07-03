@@ -40,6 +40,14 @@ public final class GitlabITCase {
     }
 
     /**
+     * Provider fetches its organizations.
+     */
+    @Test(expected = UnsupportedOperationException.class)
+    public void fetchesOrganizations(){
+        createGitlab("criske").organizations();
+    }
+
+    /**
      * Creates a Gitlab instance based on a mocked
      * {@link com.selfxdsd.api.User}.
      *

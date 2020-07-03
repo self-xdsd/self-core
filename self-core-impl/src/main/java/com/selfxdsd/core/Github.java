@@ -22,11 +22,9 @@
  */
 package com.selfxdsd.core;
 
-import com.selfxdsd.api.Invitations;
-import com.selfxdsd.api.Provider;
-import com.selfxdsd.api.Repo;
+import com.selfxdsd.api.*;
 import com.selfxdsd.api.storage.Storage;
-import com.selfxdsd.api.User;
+
 import java.net.URI;
 
 /**
@@ -121,6 +119,11 @@ public final class Github implements Provider {
                 this.uri.toString() + "/user/repository_invitations"
             )
         );
+    }
+
+    @Override
+    public Organizations organizations() {
+        throw new UnsupportedOperationException("Not implemented yet");
     }
 
     @Override
