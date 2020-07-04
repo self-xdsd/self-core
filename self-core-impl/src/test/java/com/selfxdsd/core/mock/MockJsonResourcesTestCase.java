@@ -77,7 +77,7 @@ public final class MockJsonResourcesTestCase {
     }
 
     /**
-     * Simulates POST request.
+     * Simulates PATCH request.
      * @checkstyle RegexpSingleline (20 lines)
      */
     @Test
@@ -91,13 +91,13 @@ public final class MockJsonResourcesTestCase {
                 .add("token", r.getAccessToken())
                 .build())
         );
-        final JsonObject patchObject = res.post(uri,
+        final JsonObject patchObject = res.patch(uri,
             Json.createObjectBuilder()
                 .add("message", "Hello")
                 .build()
         ).asJsonObject();
         MatcherAssert.assertThat(patchObject.getString("method"),
-            Matchers.equalTo("POST"));
+            Matchers.equalTo("PATCH"));
         MatcherAssert.assertThat(patchObject.getString("uri"),
             Matchers.equalTo(uri.toString()));
         MatcherAssert.assertThat(patchObject.getString("token"),
