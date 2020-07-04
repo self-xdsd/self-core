@@ -31,7 +31,7 @@ import javax.json.JsonObject;
  * @version $Id$
  * @since 0.0.8
  */
-interface Resource {
+public interface Resource {
 
     /**
      * Status code.
