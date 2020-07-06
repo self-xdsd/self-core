@@ -13,6 +13,58 @@ import java.util.function.Function;
 /**
  * A mock implementation of {@link JsonResources} used to unit test
  * {@link com.selfxdsd.api.Provider} requests.
+ * <br/>
+ * Here is an example of how this class could be used to test a
+ * Github Provider.
+ * <br/>
+ * It handles most of the provider requests (repo and invitations).
+ * <pre>
+ * final JsonResources resources = new MockJsonResources(r -> {
+ *    final MockResource response;
+ *    if (r.getMethod().equals("GET")) {
+ *        String uri = r.getUri().toString();
+ *        if (uri.contains("repos/myname")) {
+ *            if (uri.contains("myrepo")) {
+ *                response = new MockResource(200, Json
+ *                    .createObjectBuilder()
+ *                    .add("id", 1)
+ *                    .add("full-name", "myname/myrepo")
+ *                    .build());
+ *            } else {
+ *                //repo not found
+ *                response = new MockResource(404, JsonValue.NULL);
+ *            }
+ *        } else if (uri.contains("user/repository_invitations")) {
+ *            if (r.getAccessToken().isEmpty()) {
+ *                //not authorized, require authentication
+ *                response = new MockResource(401, JsonValue.NULL);
+ *            } else {
+ *                response = new MockResource(200, Json
+ *                    .createArrayBuilder()
+ *                    .add(Json
+ *                        .createObjectBuilder()
+ *                        .add("id", 1)
+ *                        .add("full-name", "myname/myrepo")
+ *                        .build())
+ *                    .build());
+ *            }
+ *        } else {
+ *            //uri mapping not found
+ *            response = new MockResource(404, JsonValue.NULL);
+ *        }
+ *
+ *    } else {
+ *        //unsupported http method
+ *        response = new MockResource(405, JsonValue.NULL);
+ *    }
+ *    return response;
+ *});
+ *
+ *final Provider github = new Github(user, storage, resources);
+ *final Repo repo = github.repo("myrepo");
+ *final Invitations invitations = github.invitations();
+ *...
+ * </pre>
  * @author criske
  * @version $Id$
  * @since 0.0.8
