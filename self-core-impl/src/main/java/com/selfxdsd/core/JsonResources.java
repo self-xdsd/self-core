@@ -39,11 +39,9 @@ import java.net.http.HttpResponse;
  * @since 0.0.8
  * @todo #252:30min Add other methods such as delete and
  *  continue abstracting the HTTP calls away from the Provider's
- *  implementations (Issues, Comments etc). After that is done, we should
- *  add a mock implementation of JsonResources, which we will use
- *  in writing unit tests for the providers.
+ *  implementations (Issues, Comments etc).
  */
-interface JsonResources {
+public interface JsonResources {
 
     /**
      * Return an instance which has an accessToken for
