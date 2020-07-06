@@ -3,18 +3,17 @@
  * All rights reserved.
  * <p>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"),
- * to read the Software only. Permission is hereby NOT GRANTED to use, copy,
- * modify, merge, publish, distribute, sublicense, and/or sell copies of
- * the Software.
+ * of this software and associated documentation files (the "Software"), to read
+ * the Software only. Permission is hereby NOT GRANTED to use, copy, modify,
+ * merge, publish, distribute, sublicense, and/or sell copies of the Software.
  * <p>
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
  * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
- * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
- * OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT
- * OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
  * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
@@ -23,6 +22,7 @@
 package com.selfxdsd.core.tasks;
 
 import com.selfxdsd.api.*;
+import com.selfxdsd.api.Contract.Roles;
 import com.selfxdsd.api.storage.Storage;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -33,6 +33,7 @@ import java.util.List;
 
 /**
  * Unit tests for {@link ProjectTasks}.
+ *
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
@@ -105,8 +106,7 @@ public final class ProjectTasksTestCase {
     }
 
     /**
-     * Method ofProject should return the same instance if the ID
-     * is a match.
+     * Method ofProject should return the same instance if the ID is a match.
      */
     @Test
     public void ofProjectReturnsSelfIfSameId() {
@@ -126,8 +126,8 @@ public final class ProjectTasksTestCase {
     }
 
     /**
-     * Method ofProject should complain if the ID of another
-     * project is given as input.
+     * Method ofProject should complain if the ID of another project is given as
+     * input.
      */
     @Test(expected = IllegalStateException.class)
     public void ofProjectComplainsIfDifferentId() {
@@ -150,7 +150,7 @@ public final class ProjectTasksTestCase {
      * Method register works if the Issue belongs to the Project.
      */
     @Test
-    public void registersNewIssue(){
+    public void registersNewIssue() {
         final Task registered = Mockito.mock(Task.class);
         final Issue issue = this.mockIssue(
             "123",
@@ -178,10 +178,10 @@ public final class ProjectTasksTestCase {
     }
 
     /**
-     * If the given Issue is not part of the Repo that the
-     * project represents, registering should fail.
+     * If the given Issue is not part of the Repo that the project represents,
+     * registering should fail.
      */
-    @Test (expected = IllegalArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void registerComplainsOnIssueFromDiffRepo() {
         final Issue issue = this.mockIssue(
             "123",
@@ -201,7 +201,7 @@ public final class ProjectTasksTestCase {
      * Should return tasks for contributor (name and provider).
      */
     @Test
-    public void returnTasksForContributor(){
+    public void returnTasksForContributor() {
         final Storage storage = Mockito.mock(Storage.class);
 
         final Contributor mihai = Mockito.mock(Contributor.class);
@@ -230,10 +230,43 @@ public final class ProjectTasksTestCase {
     }
 
     /**
+     * Should return tasks for contract.
+     */
+    @Test
+    public void returnTasksForContract() {
+        final Contract.Id contractId = new Contract.Id("foo", "mihai",
+            Provider.Names.GITHUB, Roles.DEV);
+
+        final Contributor mihai = Mockito.mock(Contributor.class);
+        Mockito.when(mihai.username()).thenReturn("mihai");
+        Mockito.when(mihai.provider()).thenReturn(Provider.Names.GITHUB);
+        final Project project = Mockito.mock(Project.class);
+        Mockito.when(project.provider()).thenReturn(Provider.Names.GITHUB);
+        Mockito.when(project.repoFullName()).thenReturn("foo");
+        final Task task = Mockito.mock(Task.class);
+        Mockito.when(task.assignee()).thenReturn(mihai);
+        Mockito.when(task.role()).thenReturn(Roles.DEV);
+        Mockito.when(task.project()).thenReturn(project);
+
+        final Storage storage = Mockito.mock(Storage.class);
+
+        final Tasks tasks = new ProjectTasks(
+            "foo", Provider.Names.GITHUB,
+            List.of(
+                task
+            ),
+            storage
+        );
+        MatcherAssert.assertThat(tasks.ofContract(contractId),
+            Matchers.iterableWithSize(1)
+        );
+    }
+
+    /**
      * Returns unassigned tasks of the project.
      */
     @Test
-    public void returnsUnassignedTasks(){
+    public void returnsUnassignedTasks() {
         final Project project = Mockito.mock(Project.class);
         Mockito.when(project.provider()).thenReturn(Provider.Names.GITHUB);
         Mockito.when(project.repoFullName()).thenReturn("john/test");
@@ -258,6 +291,7 @@ public final class ProjectTasksTestCase {
 
     /**
      * Mock an Issue for test.
+     *
      * @param issueId ID.
      * @param repoFullName Repo fullname.
      * @param provider Provider.

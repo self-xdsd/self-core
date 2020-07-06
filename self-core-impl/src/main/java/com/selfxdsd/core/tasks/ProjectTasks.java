@@ -36,9 +36,12 @@ import java.util.stream.Collectors;
 /**
  * Active tasks in a Project. This class <b>just represents</b>
  * the tasks. The actual filtering has to be done in an upper layer.
+ * 
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
+ * @todo #223:30min It needs to implement the unit test for the method 
+ *  Tasks.ofContract() of the class ContributorTasks.
  */
 public final class ProjectTasks implements Tasks {
 
