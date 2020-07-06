@@ -26,18 +26,18 @@ public final class ContributorTasksTestCase {
         final Tasks tasks = new ContributorTasks(
             "foo",
             "github", List.of(
-            Mockito.mock(Task.class),
-            Mockito.mock(Task.class),
-            Mockito.mock(Task.class)
-        ),
+                Mockito.mock(Task.class),
+                Mockito.mock(Task.class),
+                Mockito.mock(Task.class)
+            ),
             Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(tasks, Matchers.iterableWithSize(3));
     }
 
     /**
-     * Should register a new task associated with an issue.
-     * Right now is throwing UOE.
+     * Should register a new task associated with an issue. Right now is
+     * throwing UOE.
      */
     @Test(expected = UnsupportedOperationException.class)
     public void registerTask() {
@@ -54,13 +54,11 @@ public final class ContributorTasksTestCase {
         tasks.register(issue);
     }
 
-
     /**
-     * ContributorTask.ofContributor returns self if the ID
-     * matches.
+     * ContributorTask.ofContributor returns self if the ID matches.
      */
     @Test
-    public void ofContributorReturnsSelf(){
+    public void ofContributorReturnsSelf() {
         final Tasks tasks = new ContributorTasks(
             "foo", "gitlab", List.of(),
             Mockito.mock(Storage.class)
@@ -72,11 +70,11 @@ public final class ContributorTasksTestCase {
     }
 
     /**
-     * ContributorTasks.ofContributor should complain if the
-     * ID of a different contributor is specified.
+     * ContributorTasks.ofContributor should complain if the ID of a different
+     * contributor is specified.
      */
-    @Test (expected = IllegalStateException.class)
-    public void ofContributorComplainsOnDifferentId(){
+    @Test(expected = IllegalStateException.class)
+    public void ofContributorComplainsOnDifferentId() {
         final Tasks tasks = new ContributorTasks(
             "foo", "gitlab", List.of(),
             Mockito.mock(Storage.class)
@@ -84,12 +82,11 @@ public final class ContributorTasksTestCase {
         tasks.ofContributor("bar", "gitlab");
     }
 
-
     /**
      * Should return tasks of a project.
      */
     @Test
-    public void tasksOfProject(){
+    public void tasksOfProject() {
         final Storage storage = Mockito.mock(Storage.class);
 
         final Project projectOne = Mockito.mock(Project.class);
@@ -120,11 +117,44 @@ public final class ContributorTasksTestCase {
     }
 
     /**
-     * Throws UnsupportedOperationException.
-     * Contributor should not have unassigned tasks.
+     * Should return tasks for contract.
+     */
+    @Test
+    public void returnTasksForContract() {
+        final Contract.Id contractId = new Contract.Id("foo", "mihai",
+            Provider.Names.GITHUB, Contract.Roles.DEV);
+
+        final Contributor mihai = Mockito.mock(Contributor.class);
+        Mockito.when(mihai.username()).thenReturn("mihai");
+        Mockito.when(mihai.provider()).thenReturn(Provider.Names.GITHUB);
+        final Project project = Mockito.mock(Project.class);
+        Mockito.when(project.provider()).thenReturn(Provider.Names.GITHUB);
+        Mockito.when(project.repoFullName()).thenReturn("foo");
+        final Task task = Mockito.mock(Task.class);
+        Mockito.when(task.assignee()).thenReturn(mihai);
+        Mockito.when(task.role()).thenReturn(Contract.Roles.DEV);
+        Mockito.when(task.project()).thenReturn(project);
+
+        final Storage storage = Mockito.mock(Storage.class);
+
+        final Tasks tasks = new ContributorTasks(
+            "foo", Provider.Names.GITHUB,
+            List.of(
+                task
+            ),
+            storage
+        );
+        MatcherAssert.assertThat(tasks.ofContract(contractId),
+            Matchers.iterableWithSize(1)
+        );
+    }
+
+    /**
+     * Throws UnsupportedOperationException. Contributor should not have
+     * unassigned tasks.
      */
     @Test(expected = UnsupportedOperationException.class)
-    public void throwsWhenReturnsUnassignedTasks(){
+    public void throwsWhenReturnsUnassignedTasks() {
         new ContributorTasks(
             "mihai", Provider.Names.GITHUB,
             List.of(), Mockito.mock(Storage.class))

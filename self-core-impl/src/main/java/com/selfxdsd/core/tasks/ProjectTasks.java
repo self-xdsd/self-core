@@ -40,8 +40,6 @@ import java.util.stream.Collectors;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
- * @todo #223:30min It needs to implement the unit test for the method 
- *  Tasks.ofContract() of the class ContributorTasks.
  */
 public final class ProjectTasks implements Tasks {
 
