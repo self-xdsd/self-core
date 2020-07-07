@@ -10,7 +10,7 @@ import javax.json.JsonObject;
  * @version $Id$
  * @since 0.0.8
  */
-public final class GithubComment implements Comment {
+final class GithubComment implements Comment {
 
     /**
      * Comment JSON as returned by Github's API.
@@ -21,7 +21,7 @@ public final class GithubComment implements Comment {
      * Ctor.
      * @param json Comment JSON as returned by Github's API.
      */
-    public GithubComment(final JsonObject json) {
+    GithubComment(final JsonObject json) {
         this.json = json;
     }
 

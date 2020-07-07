@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
  *  Github response headers, when {@link Resource} API has access to http
  *  response headers (issue #241).
  */
-public final class GithubIssueComments implements Comments {
+final class GithubIssueComments implements Comments {
 
     /**
      * Base Comments uri.
