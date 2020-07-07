@@ -143,7 +143,7 @@ public final class GithubIssueTestCase {
         );
         MatcherAssert.assertThat(
             issue.comments(),
-            Matchers.instanceOf(GithubIssueComments.class)
+            Matchers.instanceOf(DoNotRepeat.class)
         );
     }
 

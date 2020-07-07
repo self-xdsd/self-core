@@ -115,6 +115,8 @@ final class GithubIssue implements Issue {
 
     @Override
     public Comments comments() {
-        return new GithubIssueComments(this.issueUri, this.resources);
+        return new DoNotRepeat(
+            new GithubIssueComments(this.issueUri, this.resources)
+        );
     }
 }
