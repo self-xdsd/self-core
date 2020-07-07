@@ -39,7 +39,7 @@ final class GithubIssueComments implements Comments {
      * @param issueUri Comments Issue URI.
      * @param resources Github's JSON Resources.
      */
-    public GithubIssueComments(final URI issueUri,
+    GithubIssueComments(final URI issueUri,
                                final JsonResources resources) {
         final String issueUriStr = issueUri.toString();
         String slash = "/";
