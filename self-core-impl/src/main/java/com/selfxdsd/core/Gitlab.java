@@ -57,12 +57,6 @@ public final class Gitlab implements Provider {
     private final Storage storage;
 
     /**
-     *Token used for making API Requests which require
-     *user authentication.
-     */
-    private final String accessToken;
-
-    /**
      * Constructor.
      * @param user Authenticated user.
      * @param storage Storage where we might save some stuff.
