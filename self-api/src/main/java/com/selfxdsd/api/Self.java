@@ -44,4 +44,10 @@ public interface Self extends AutoCloseable {
      * @return ProjectManagers.
      */
     ProjectManagers projectManagers();
+
+    /**
+     * Projects in Self.
+     * @return Projects.
+     */
+    Projects projects();
 }

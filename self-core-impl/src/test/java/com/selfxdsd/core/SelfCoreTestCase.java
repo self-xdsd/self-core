@@ -81,6 +81,19 @@ public final class SelfCoreTestCase {
     }
 
     /**
+     * SelfCore can give us its Projects.
+     */
+    @Test
+    public void returnsProjects() {
+        final Projects all = Mockito.mock(Projects.class);
+        final Storage storage = Mockito.mock(Storage.class);
+        Mockito.when(storage.projects()).thenReturn(all);
+
+        final Self self = new SelfCore(storage);
+        MatcherAssert.assertThat(self.projects(), Matchers.is(all));
+    }
+
+    /**
      * SelfCore should close the underlying Storage when close() is called.
      * @throws Exception If something goes wrong.
      */
