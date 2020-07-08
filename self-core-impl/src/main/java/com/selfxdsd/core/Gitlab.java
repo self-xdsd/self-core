@@ -57,12 +57,6 @@ public final class Gitlab implements Provider {
     private final Storage storage;
 
     /**
-     *Token used for making API Requests which require
-     *user authentication.
-     */
-    private final String accessToken;
-
-    /**
      * Constructor.
      * @param user Authenticated user.
      * @param storage Storage where we might save some stuff.
@@ -100,9 +94,13 @@ public final class Gitlab implements Provider {
         final String accessToken
     ) {
         this.user = user;
-        this.resources = resources;
         this.storage = storage;
-        this.accessToken = accessToken;
+        if (accessToken == null || accessToken.isBlank()) {
+            this.resources = resources;
+        } else {
+            this.resources = resources
+                .authenticated(new AccessToken.Gitlab(accessToken));
+        }
     }
 
     @Override

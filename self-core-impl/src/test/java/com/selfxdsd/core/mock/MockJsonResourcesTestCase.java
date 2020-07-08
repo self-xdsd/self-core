@@ -1,10 +1,12 @@
 package com.selfxdsd.core.mock;
 
 
+import com.selfxdsd.core.AccessToken;
 import com.selfxdsd.core.JsonResources;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 import javax.json.Json;
 import javax.json.JsonObject;
@@ -29,12 +31,13 @@ public final class MockJsonResourcesTestCase {
     @Test
     public void simulatesGetRequest() {
         final URI uri = URI.create("/");
-        final JsonResources res = new MockJsonResources("tk123", r ->
+        final AccessToken token = mockAccessToken("header", "tk123");
+        final JsonResources res = new MockJsonResources(token, r ->
             new MockResource(200, Json
                 .createObjectBuilder()
                 .add("method", r.getMethod())
                 .add("uri", r.getUri().toString())
-                .add("token", r.getAccessToken())
+                .add("token", r.getAccessToken().value())
                 .build())
         );
         final JsonObject getObject = res.get(uri).asJsonObject();
@@ -53,12 +56,13 @@ public final class MockJsonResourcesTestCase {
     @Test
     public void simulatesPostRequest() {
         final URI uri = URI.create("/");
-        final JsonResources res = new MockJsonResources("tk123", r ->
+        final AccessToken token = mockAccessToken("header", "tk123");
+        final JsonResources res = new MockJsonResources(token, r ->
             new MockResource(200, Json
                 .createObjectBuilder((JsonObject) r.getBody())
                 .add("method", r.getMethod())
                 .add("uri", r.getUri().toString())
-                .add("token", r.getAccessToken())
+                .add("token", r.getAccessToken().value())
                 .build())
         );
         final JsonObject postObject = res.post(uri,
@@ -83,12 +87,13 @@ public final class MockJsonResourcesTestCase {
     @Test
     public void simulatesPatchRequest() {
         final URI uri = URI.create("/");
-        final JsonResources res = new MockJsonResources("tk123", r ->
+        final AccessToken token = mockAccessToken("header", "tk123");
+        final JsonResources res = new MockJsonResources(token, r ->
             new MockResource(200, Json
                 .createObjectBuilder((JsonObject) r.getBody())
                 .add("method", r.getMethod())
                 .add("uri", r.getUri().toString())
-                .add("token", r.getAccessToken())
+                .add("token", r.getAccessToken().value())
                 .build())
         );
         final JsonObject patchObject = res.patch(uri,
@@ -113,13 +118,14 @@ public final class MockJsonResourcesTestCase {
     @Test
     public void simulatesJsonArrayResourceResponse() {
         final URI uri = URI.create("/");
-        final JsonResources res = new MockJsonResources("tk123", r ->
+        final AccessToken token = mockAccessToken("header", "tk123");
+        final JsonResources res = new MockJsonResources(token, r ->
             new MockResource(200,
                 Json.createArrayBuilder()
                     .add(Json.createObjectBuilder()
                         .add("method", r.getMethod())
                         .add("uri", r.getUri().toString())
-                        .add("token", r.getAccessToken()))
+                        .add("token", r.getAccessToken().value()))
                     .build())
 
         );
@@ -159,7 +165,22 @@ public final class MockJsonResourcesTestCase {
      */
     @Test(expected = UnsupportedOperationException.class)
     public void throwsWhenConstructingWithAuthenticated() {
+        final AccessToken token = mockAccessToken("header", "token");
         new MockJsonResources(r -> new MockResource(400,
-            JsonValue.NULL)).authenticated("token");
+            JsonValue.NULL)).authenticated(token);
+    }
+
+    /**
+     * Mocks an access token.
+     * @param header Header name.
+     * @param value Token value.
+     * @return String.
+     */
+    private AccessToken mockAccessToken(final String header,
+                                        final String value){
+        final AccessToken token = Mockito.mock(AccessToken.class);
+        Mockito.when(token.header()).thenReturn(header);
+        Mockito.when(token.value()).thenReturn(value);
+        return token;
     }
 }
