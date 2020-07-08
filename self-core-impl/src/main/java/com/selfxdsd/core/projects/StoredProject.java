@@ -25,6 +25,7 @@ package com.selfxdsd.core.projects;
 import com.selfxdsd.api.*;
 import com.selfxdsd.api.storage.Storage;
 
+import javax.json.JsonObject;
 import java.util.Objects;
 
 /**
@@ -35,6 +36,9 @@ import java.util.Objects;
  * @todo #31:30min Implement the deactivate method which should remove the
  *  Project form the DB (it means Self will stop managing it). Return the
  *  corresponding Repo when done. Don't forget the tests.
+ * @todo #270:30min Continue implementation of the resolve(...) method.
+ *  It should decide what kind of event has occurred and delegate it
+ *  further to the ProjectManager who will deal with it.
  */
 public final class StoredProject implements Project {
 
@@ -92,11 +96,6 @@ public final class StoredProject implements Project {
     }
 
     @Override
-    public String webHookToken() {
-        return this.webHookToken;
-    }
-
-    @Override
     public String provider() {
         return this.owner.provider().name();
     }
@@ -145,8 +144,17 @@ public final class StoredProject implements Project {
     }
 
     @Override
+    public void resolve(final JsonObject event, final String secret) {
+        if(!this.webHookToken.equalsIgnoreCase(secret)) {
+            throw new IllegalArgumentException(
+                "The provided secret token is not correct!"
+            );
+        }
+    }
+
+    @Override
     public Repo deactivate() {
-        return null;
+        throw new UnsupportedOperationException("Not yet implemented.");
     }
 
     @Override

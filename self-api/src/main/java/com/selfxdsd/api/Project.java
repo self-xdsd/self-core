@@ -22,6 +22,8 @@
  */
 package com.selfxdsd.api;
 
+import javax.json.JsonObject;
+
 /**
  * A Project is a User's Repository which has been
  * registered (activated) on the Self platform.
@@ -39,13 +41,6 @@ public interface Project {
      * @return String.
      */
     String repoFullName();
-
-    /**
-     * A token used to secure the WebHook calls
-     * sent by a Provider to this project.
-     * @return String token.
-     */
-    String webHookToken();
 
     /**
      * Provider (github, gitlab etc).
@@ -94,6 +89,16 @@ public interface Project {
      * @return Language.
      */
     Language language();
+
+    /**
+     * Resolve the given event that happened in this Project.
+     * @param event JSON event.
+     * @param secret Secret token to make sure the event actually
+     *  belongs to this Project.
+     * @throws IllegalStateException If the provided secret
+     *  is not correct.
+     */
+    void resolve(final JsonObject event, final String secret);
 
     /**
      * Deactivate this project, tell  Self to stop

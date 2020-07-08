@@ -128,11 +128,5 @@ public final class StoredProjectManagerTestCase {
             assigned.repoFullName(),
             Matchers.equalTo("john/test")
         );
-        MatcherAssert.assertThat(
-            assigned.webHookToken(),
-            Matchers.not(
-                Matchers.isEmptyOrNullString()
-            )
-        );
     }
 }
