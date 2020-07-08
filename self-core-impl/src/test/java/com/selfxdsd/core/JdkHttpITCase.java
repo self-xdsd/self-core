@@ -102,7 +102,7 @@ public final class JdkHttpITCase {
             ).start(this.resource.port())
         ) {
             final JsonResources resources = new JsonResources.JdkHttp()
-                .authenticated("123token456");
+                .authenticated(new AccessToken.Github("123token456"));
             final Resource response = resources.post(
                 container.home(), body
             );
@@ -145,7 +145,7 @@ public final class JdkHttpITCase {
             ).start(this.resource.port())
         ) {
             final JsonResources resources = new JsonResources.JdkHttp()
-                .authenticated("123token456");
+                .authenticated(new AccessToken.Github("123token456"));
             final Resource response = resources.patch(
                 container.home(), body
             );

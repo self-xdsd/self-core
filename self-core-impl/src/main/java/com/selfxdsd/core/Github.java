@@ -93,7 +93,12 @@ public final class Github implements Provider {
     ) {
         this.user = user;
         this.storage = storage;
-        this.resources = resources.authenticated(accessToken);
+        if (accessToken == null || accessToken.isBlank()) {
+            this.resources = resources;
+        } else {
+            this.resources = resources
+                .authenticated(new AccessToken.Github(accessToken));
+        }
     }
 
     @Override

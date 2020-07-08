@@ -49,7 +49,7 @@ public interface JsonResources {
      * @param accessToken Access token.
      * @return JsonResources.
      */
-    JsonResources authenticated(final String accessToken);
+    JsonResources authenticated(final AccessToken accessToken);
 
     /**
      * Get the Resource at the specified URI.
@@ -98,25 +98,25 @@ public interface JsonResources {
         /**
          * Access token.
          */
-        private final String accessToken;
+        private final AccessToken accessToken;
 
         /**
          * Ctor.
          */
         JdkHttp() {
-            this("");
+            this(null);
         }
 
         /**
          * Ctor.
          * @param accessToken Access token for authenticated requests.
          */
-        private JdkHttp(final String accessToken) {
+        private JdkHttp(final AccessToken accessToken) {
             this.accessToken = accessToken;
         }
 
         @Override
-        public JsonResources authenticated(final String accessToken) {
+        public JsonResources authenticated(final AccessToken accessToken) {
             return new JsonResources.JdkHttp(accessToken);
         }
 
@@ -214,15 +214,13 @@ public interface JsonResources {
             final HttpRequest.BodyPublisher body
         ) {
             final HttpRequest request;
-            if(this.accessToken != null && !this.accessToken.isEmpty()) {
+            if(this.accessToken != null) {
                 request = HttpRequest.newBuilder()
                     .uri(uri)
                     .method(method, body)
                     .header("Content-Type", "application/json")
-                    .header(
-                        "Authorization",
-                        "token " + this.accessToken
-                    ).build();
+                    .header(this.accessToken.header(), this.accessToken.value())
+                    .build();
             } else {
                 request = HttpRequest.newBuilder()
                     .uri(uri)

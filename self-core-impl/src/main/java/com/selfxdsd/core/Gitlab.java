@@ -100,9 +100,13 @@ public final class Gitlab implements Provider {
         final String accessToken
     ) {
         this.user = user;
-        this.resources = resources;
         this.storage = storage;
-        this.accessToken = accessToken;
+        if (accessToken == null || accessToken.isBlank()) {
+            this.resources = resources;
+        } else {
+            this.resources = resources
+                .authenticated(new AccessToken.Gitlab(accessToken));
+        }
     }
 
     @Override

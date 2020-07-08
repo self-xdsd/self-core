@@ -1,5 +1,6 @@
 package com.selfxdsd.core.mock;
 
+import com.selfxdsd.core.AccessToken;
 import com.selfxdsd.core.JsonResources;
 import com.selfxdsd.core.Resource;
 
@@ -35,7 +36,7 @@ import java.util.function.Function;
  *                response = new MockResource(404, JsonValue.NULL);
  *            }
  *        } else if (uri.contains("user/repository_invitations")) {
- *            if (r.getAccessToken().isEmpty()) {
+ *            if (r.getAccessToken() == null) {
  *                //not authorized, require authentication
  *                response = new MockResource(401, JsonValue.NULL);
  *            } else {
@@ -74,7 +75,7 @@ public final class MockJsonResources implements JsonResources {
     /**
      * Access token for authenticated requests.
      */
-    private final String accessToken;
+    private final AccessToken accessToken;
     /**
      * Callback used by tests to simulate a Resource response.
      */
@@ -85,7 +86,7 @@ public final class MockJsonResources implements JsonResources {
      * @param accessToken Access token for authenticated requests.
      * @param onRequest Callback used by tests to simulate a Resource response.
      */
-    public MockJsonResources(final String accessToken,
+    public MockJsonResources(final AccessToken accessToken,
                              final
                              Function<MockRequest, MockResource> onRequest) {
         this.accessToken = accessToken;
@@ -98,11 +99,11 @@ public final class MockJsonResources implements JsonResources {
      */
     public MockJsonResources(final
                              Function<MockRequest, MockResource> onRequest) {
-        this("", onRequest);
+        this(null, onRequest);
     }
 
     @Override
-    public JsonResources authenticated(final String accessToken) {
+    public JsonResources authenticated(final AccessToken accessToken) {
         throw new UnsupportedOperationException("Use the appropriate "
             + "MockJsonResources constructor to mock "
             + "an authenticated JsonResources.");
@@ -161,7 +162,7 @@ public final class MockJsonResources implements JsonResources {
         /**
          * Access token for authenticated requests.
          */
-        private final String accessToken;
+        private final AccessToken accessToken;
 
         /**
          * Ctor.
@@ -173,7 +174,7 @@ public final class MockJsonResources implements JsonResources {
         private MockRequest(final String method,
                             final URI uri,
                             final JsonValue body,
-                            final String accessToken) {
+                            final AccessToken accessToken) {
             this.method = method;
             this.uri = uri;
             this.body = body;
@@ -206,9 +207,9 @@ public final class MockJsonResources implements JsonResources {
 
         /**
          * Access token for authenticated requests.
-         * @return String.
+         * @return AccessToken.
          */
-        public String getAccessToken() {
+        public AccessToken getAccessToken() {
             return accessToken;
         }
     }
