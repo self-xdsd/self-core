@@ -128,7 +128,11 @@ public final class Github implements Provider {
 
     @Override
     public Organizations organizations() {
-        throw new UnsupportedOperationException("Not implemented yet");
+        return new GithubOrganizations(
+            this.resources,
+            URI.create(this.uri.toString() + "/user/orgs"),
+            this.user,
+            this.storage);
     }
 
     @Override

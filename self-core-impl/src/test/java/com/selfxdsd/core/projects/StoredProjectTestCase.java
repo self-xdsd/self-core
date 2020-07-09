@@ -29,6 +29,8 @@ import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import javax.json.JsonObject;
+
 /**
  * Unit tests for {@link StoredProject}.
  * @author Mihai Andronache (amihaiemil@gmail.com)
@@ -58,10 +60,11 @@ public final class StoredProjectTestCase {
     }
 
     /**
-     * StoredProject can return its webhook token.
+     * Method resolve throws IAE if the secret token does
+     * not match.
      */
-    @Test
-    public void returnsWebHookToken() {
+    @Test(expected = IllegalArgumentException.class)
+    public void resolveComplainsOnIncorrectSecret() {
         final Project project = new StoredProject(
             Mockito.mock(User.class),
             "john/test",
@@ -69,10 +72,7 @@ public final class StoredProjectTestCase {
             Mockito.mock(ProjectManager.class),
             Mockito.mock(Storage.class)
         );
-        MatcherAssert.assertThat(
-            project.webHookToken(),
-            Matchers.equalTo("wh123token")
-        );
+        project.resolve(Mockito.mock(JsonObject.class), "wh123wrong");
     }
 
     /**
