@@ -29,8 +29,6 @@ import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import javax.json.JsonObject;
-
 /**
  * Unit tests for {@link StoredProject}.
  * @author Mihai Andronache (amihaiemil@gmail.com)
@@ -72,7 +70,7 @@ public final class StoredProjectTestCase {
             Mockito.mock(ProjectManager.class),
             Mockito.mock(Storage.class)
         );
-        project.resolve(Mockito.mock(JsonObject.class), "wh123wrong");
+        project.resolve(Mockito.mock(Event.class), "wh123wrong");
     }
 
     /**

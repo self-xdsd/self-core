@@ -22,8 +22,6 @@
  */
 package com.selfxdsd.api;
 
-import javax.json.JsonObject;
-
 /**
  * A Project is a User's Repository which has been
  * registered (activated) on the Self platform.
@@ -92,13 +90,13 @@ public interface Project {
 
     /**
      * Resolve the given event that happened in this Project.
-     * @param event JSON event.
+     * @param event Event received from the Provider.
      * @param secret Secret token to make sure the event actually
      *  belongs to this Project.
      * @throws IllegalStateException If the provided secret
      *  is not correct.
      */
-    void resolve(final JsonObject event, final String secret);
+    void resolve(final Event event, final String secret);
 
     /**
      * Deactivate this project, tell  Self to stop

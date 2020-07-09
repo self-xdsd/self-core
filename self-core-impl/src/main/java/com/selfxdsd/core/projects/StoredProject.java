@@ -25,7 +25,6 @@ package com.selfxdsd.core.projects;
 import com.selfxdsd.api.*;
 import com.selfxdsd.api.storage.Storage;
 
-import javax.json.JsonObject;
 import java.util.Objects;
 
 /**
@@ -144,7 +143,7 @@ public final class StoredProject implements Project {
     }
 
     @Override
-    public void resolve(final JsonObject event, final String secret) {
+    public void resolve(final Event event, final String secret) {
         if(!this.webHookToken.equalsIgnoreCase(secret)) {
             throw new IllegalArgumentException(
                 "The provided secret token is not correct!"
