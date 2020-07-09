@@ -39,8 +39,10 @@ final class GithubIssueComments implements Comments {
      * @param issueUri Comments Issue URI.
      * @param resources Github's JSON Resources.
      */
-    GithubIssueComments(final URI issueUri,
-                               final JsonResources resources) {
+    GithubIssueComments(
+        final URI issueUri,
+        final JsonResources resources
+    ) {
         final String issueUriStr = issueUri.toString();
         String slash = "/";
         if(issueUriStr.endsWith("/")){
@@ -64,6 +66,11 @@ final class GithubIssueComments implements Comments {
               + resource.statusCode()
             );
         }
+    }
+
+    @Override
+    public Comment received(final JsonObject comment) {
+        return new GithubComment(comment);
     }
 
     @Override

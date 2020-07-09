@@ -22,56 +22,47 @@
  */
 package com.selfxdsd.core;
 
-import com.selfxdsd.api.Comment;
-import com.selfxdsd.api.Comments;
+import com.selfxdsd.api.Issue;
+import com.selfxdsd.api.Issues;
+import com.selfxdsd.api.storage.Storage;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.Test;
 
+import javax.json.Json;
 import javax.json.JsonObject;
-import java.util.Iterator;
+import java.net.URI;
+
+import static org.mockito.Mockito.mock;
 
 /**
- * Comments decorator which makes sure a comment is not posted
- * if it already exists.
+ * Unit tests for {@link GithubIssues}.
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
- * @since 0.0.8
+ * @since 0.0.9
  */
-final class DoNotRepeat implements Comments {
+public final class GithubIssuesTestCase {
 
     /**
-     * Original comments.
+     * GithubIssue can receive an issue in JSON format
+     * and return it as Issue.
+     * @checkstyle LineLength (10 lines)
      */
-    private final Comments origin;
-
-    /**
-     * Ctor.
-     * @param origin Original comments.
-     */
-    DoNotRepeat(final Comments origin) {
-        this.origin = origin;
+    @Test
+    public void receivesIssueFromJson(){
+        final Issues issues = new GithubIssues(
+            new JsonResources.JdkHttp(),
+            URI.create(
+                "https://api.github.com/repos/amihaiemil/docker-java-api/issues"
+            ),
+            mock(Storage.class)
+        );
+        final JsonObject json = Json.createObjectBuilder()
+            .add("number", 3)
+            .build();
+        final Issue issue = issues.received(json);
+        MatcherAssert.assertThat(issue.issueId(), Matchers.equalTo("3"));
+        MatcherAssert.assertThat(issue.json(), Matchers.equalTo(json));
     }
 
-    @Override
-    public Comment post(final String body) {
-        Comment posted = null;
-        for(final Comment comment : this.origin) {
-            if(comment.body().equalsIgnoreCase(body)) {
-                posted = comment;
-                break;
-            }
-        }
-        if(posted == null) {
-            posted = this.origin.post(body);
-        }
-        return posted;
-    }
-
-    @Override
-    public Comment received(final JsonObject comment) {
-        return this.origin.received(comment);
-    }
-
-    @Override
-    public Iterator<Comment> iterator() {
-        return this.origin.iterator();
-    }
 }

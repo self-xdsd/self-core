@@ -24,54 +24,44 @@ package com.selfxdsd.core;
 
 import com.selfxdsd.api.Comment;
 import com.selfxdsd.api.Comments;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.Test;
 
-import javax.json.JsonObject;
-import java.util.Iterator;
+import javax.json.Json;
+import java.net.URI;
 
 /**
- * Comments decorator which makes sure a comment is not posted
- * if it already exists.
+ * Unit tests for {@link GithubIssueComments}.
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
- * @since 0.0.8
+ * @since 0.0.9
  */
-final class DoNotRepeat implements Comments {
+public final class GithubIssueCommentsTestCase {
 
     /**
-     * Original comments.
+     * GithuIssueComments can receive a comment in JSON format.
      */
-    private final Comments origin;
-
-    /**
-     * Ctor.
-     * @param origin Original comments.
-     */
-    DoNotRepeat(final Comments origin) {
-        this.origin = origin;
+    @Test
+    public void receivesCommentFromJson(){
+        final Comments comments = new GithubIssueComments(
+            URI.create(
+                "https://api.github.com/repos/octocat/Hello-World/issues/1/"
+            ),
+            new JsonResources.JdkHttp()
+        );
+        final Comment received = comments.received(
+            Json.createObjectBuilder()
+                .add("body", "some comment here")
+                .build()
+        );
+        MatcherAssert.assertThat(
+            received,
+            Matchers.allOf(
+                Matchers.notNullValue(),
+                Matchers.instanceOf(GithubComment.class)
+            )
+        );
     }
-
-    @Override
-    public Comment post(final String body) {
-        Comment posted = null;
-        for(final Comment comment : this.origin) {
-            if(comment.body().equalsIgnoreCase(body)) {
-                posted = comment;
-                break;
-            }
-        }
-        if(posted == null) {
-            posted = this.origin.post(body);
-        }
-        return posted;
-    }
-
-    @Override
-    public Comment received(final JsonObject comment) {
-        return this.origin.received(comment);
-    }
-
-    @Override
-    public Iterator<Comment> iterator() {
-        return this.origin.iterator();
-    }
+    
 }

@@ -20,58 +20,39 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package com.selfxdsd.core;
-
-import com.selfxdsd.api.Comment;
-import com.selfxdsd.api.Comments;
-
-import javax.json.JsonObject;
-import java.util.Iterator;
+package com.selfxdsd.api;
 
 /**
- * Comments decorator which makes sure a comment is not posted
- * if it already exists.
+ * Event received from the Provider.
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
- * @since 0.0.8
+ * @since 0.0.9
  */
-final class DoNotRepeat implements Comments {
+public interface Event {
 
     /**
-     * Original comments.
+     * Type of the event.
+     * @return String.
      */
-    private final Comments origin;
+    String type();
 
     /**
-     * Ctor.
-     * @param origin Original comments.
+     * Issue where the event happened.
+     * @return Issue.
      */
-    DoNotRepeat(final Comments origin) {
-        this.origin = origin;
-    }
+    Issue issue();
 
-    @Override
-    public Comment post(final String body) {
-        Comment posted = null;
-        for(final Comment comment : this.origin) {
-            if(comment.body().equalsIgnoreCase(body)) {
-                posted = comment;
-                break;
-            }
-        }
-        if(posted == null) {
-            posted = this.origin.post(body);
-        }
-        return posted;
-    }
+    /**
+     * Comment, present if this event is
+     * related to the Issue's comments (created, deleted etc).
+     * @return Comment.
+     */
+    Comment comment();
 
-    @Override
-    public Comment received(final JsonObject comment) {
-        return this.origin.received(comment);
-    }
+    /**
+     * Project where this event occured.
+     * @return Project.
+     */
+    Project project();
 
-    @Override
-    public Iterator<Comment> iterator() {
-        return this.origin.iterator();
-    }
 }

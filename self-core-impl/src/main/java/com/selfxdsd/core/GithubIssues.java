@@ -94,9 +94,26 @@ final class GithubIssues implements Issues {
         }
         Issue issue = null;
         if(jsonObject != null){
-            issue = new GithubIssue(issueUri, jsonObject, storage, resources);
+            issue = new GithubIssue(
+                issueUri,
+                jsonObject,
+                this.storage,
+                this.resources
+            );
         }
         return issue;
+    }
+
+    @Override
+    public Issue received(final JsonObject issue) {
+        return new GithubIssue(
+            URI.create(
+                this.issuesUri.toString() + "/" + issue.getInt("number")
+            ),
+            issue,
+            this.storage,
+            this.resources
+        );
     }
 
     @Override

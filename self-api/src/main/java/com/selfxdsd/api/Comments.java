@@ -1,5 +1,7 @@
 package com.selfxdsd.api;
 
+import javax.json.JsonObject;
+
 /**
  * Comments related to a particular Provider resource (e.g Issue).
  * @author criske
@@ -17,4 +19,10 @@ public interface Comments extends Iterable<Comment> {
      */
     Comment post(final String body);
 
+    /**
+     * A comment in JSON format received from the Provider.
+     * @param comment Comment in JSON format.
+     * @return Comment.
+     */
+    Comment received(final JsonObject comment);
 }

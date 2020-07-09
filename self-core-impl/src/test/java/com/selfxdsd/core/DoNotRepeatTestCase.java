@@ -29,6 +29,7 @@ import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import javax.json.JsonObject;
 import java.util.Iterator;
 import java.util.List;
 
@@ -109,6 +110,28 @@ public final class DoNotRepeatTestCase {
         MatcherAssert.assertThat(
             comment.body(),
             Matchers.equalTo("new comment")
+        );
+    }
+
+    /**
+     * DoNotRepeat delegates comment receival to origin.
+     */
+    @Test
+    public void receivesComment() {
+        final JsonObject json = Mockito.mock(JsonObject.class);
+        final Comment received = Mockito.mock(Comment.class);
+        Mockito.when(received.json()).thenReturn(json);
+        final Comments origin = Mockito.mock(Comments.class);
+        Mockito.when(origin.received(json)).thenReturn(received);
+
+        final Comments doNotRepeat = new DoNotRepeat(origin);
+        MatcherAssert.assertThat(
+            doNotRepeat.received(json),
+            Matchers.is(received)
+        );
+        MatcherAssert.assertThat(
+            doNotRepeat.received(json).json(),
+            Matchers.is(json)
         );
     }
 

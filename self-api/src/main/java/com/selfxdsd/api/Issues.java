@@ -22,6 +22,8 @@
  */
 package com.selfxdsd.api;
 
+import javax.json.JsonObject;
+
 /**
  * Issues in a repository.
  * @author Mihai Andronache (amihaiemil@gmail.com)
@@ -37,4 +39,12 @@ public interface Issues extends Iterable<Issue> {
      */
     Issue getById(final String issueId);
 
+    /**
+     * Get an Issue from an existing JsonObject which
+     * Self may receive as part of an event sent
+     * by the Provider.
+     * @param issue The issue's JSON representation.
+     * @return Issue.
+     */
+    Issue received(final JsonObject issue);
 }
