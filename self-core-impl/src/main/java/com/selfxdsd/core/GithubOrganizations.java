@@ -34,7 +34,7 @@ final class GithubOrganizations implements Organizations {
      * @param resources Github's JSON Resources.
      * @param uri Organizations URI.
      */
-    public GithubOrganizations(final JsonResources resources,
+    GithubOrganizations(final JsonResources resources,
                                final URI uri) {
         this.uri = uri;
         this.resources = resources;

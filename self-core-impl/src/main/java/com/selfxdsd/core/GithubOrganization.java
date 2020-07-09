@@ -32,7 +32,7 @@ final class GithubOrganization implements Organization {
      * @param json The Organization in JSON format as returned by Github's API.
      * @param resources Github's JSON Resources.
      */
-    public GithubOrganization(final JsonObject json,
+    GithubOrganization(final JsonObject json,
                               final JsonResources resources) {
         this.json = json;
         this.resources = resources;
