@@ -130,8 +130,9 @@ public final class Github implements Provider {
     public Organizations organizations() {
         return new GithubOrganizations(
             this.resources,
-            URI.create(this.uri.toString() + "/user/orgs")
-        );
+            URI.create(this.uri.toString() + "/user/orgs"),
+            this.user,
+            this.storage);
     }
 
     @Override

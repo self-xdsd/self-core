@@ -1,6 +1,8 @@
 package com.selfxdsd.core;
 
 import com.selfxdsd.api.Organization;
+import com.selfxdsd.api.User;
+import com.selfxdsd.api.storage.Storage;
 import com.selfxdsd.core.mock.MockJsonResources;
 import com.selfxdsd.core.mock.MockJsonResources.MockResource;
 import org.hamcrest.MatcherAssert;
@@ -8,6 +10,7 @@ import org.hamcrest.Matchers;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.mockito.Mockito;
 
 import javax.json.Json;
 import javax.json.JsonValue;
@@ -50,7 +53,9 @@ public final class GithubOrganizationsTestCase {
 
         final Iterable<Organization> organizations =
             () -> new GithubOrganizations(resources,
-                URI.create("https://api.github.com/user/orgs")).iterator();
+                URI.create("https://api.github.com/user/orgs"),
+                Mockito.mock(User.class),
+                Mockito.mock(Storage.class)).iterator();
         MatcherAssert.assertThat(organizations, Matchers.iterableWithSize(2));
     }
 
@@ -67,7 +72,9 @@ public final class GithubOrganizationsTestCase {
             null,
             req -> new MockResource(401, JsonValue.NULL));
         new GithubOrganizations(resources,
-            URI.create("https://api.github.com/user/orgs")).iterator();
+            URI.create("https://api.github.com/user/orgs"),
+            Mockito.mock(User.class),
+            Mockito.mock(Storage.class)).iterator();
     }
 
     /**
@@ -84,6 +91,8 @@ public final class GithubOrganizationsTestCase {
             null,
             req -> new MockResource(500, JsonValue.NULL));
         new GithubOrganizations(resources,
-            URI.create("https://api.github.com/user/orgs")).iterator();
+            URI.create("https://api.github.com/user/orgs"),
+            Mockito.mock(User.class),
+            Mockito.mock(Storage.class)).iterator();
     }
 }

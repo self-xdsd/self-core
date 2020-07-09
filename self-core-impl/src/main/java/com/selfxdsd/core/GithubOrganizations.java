@@ -2,6 +2,8 @@ package com.selfxdsd.core;
 
 import com.selfxdsd.api.Organization;
 import com.selfxdsd.api.Organizations;
+import com.selfxdsd.api.User;
+import com.selfxdsd.api.storage.Storage;
 
 import javax.json.JsonArray;
 import javax.json.JsonObject;
@@ -29,15 +31,31 @@ final class GithubOrganizations implements Organizations {
     private final URI uri;
 
     /**
+     * Current authenticated User.
+     */
+    private final User owner;
+
+    /**
+     * Storage used by Organization Repos.
+     */
+    private final Storage storage;
+
+    /**
      * Ctor.
      *
      * @param resources Github's JSON Resources.
      * @param uri Organizations URI.
+     * @param owner Current authenticated User.
+     * @param storage Storage used by Organization Repos.
      */
     GithubOrganizations(final JsonResources resources,
-                               final URI uri) {
+                        final URI uri,
+                        final User owner,
+                        final Storage storage) {
         this.uri = uri;
         this.resources = resources;
+        this.owner = owner;
+        this.storage = storage;
     }
 
     @Override
@@ -59,8 +77,11 @@ final class GithubOrganizations implements Organizations {
         }
         return organizations
             .stream()
-            .map(o -> (Organization) new GithubOrganization((JsonObject) o,
-                this.resources))
+            .map(o -> (Organization) new GithubOrganization(
+                this.owner,
+                (JsonObject) o,
+                this.resources,
+                this.storage))
             .iterator();
     }
 }

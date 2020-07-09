@@ -2,8 +2,11 @@ package com.selfxdsd.core;
 
 import com.selfxdsd.api.Organization;
 import com.selfxdsd.api.Repos;
+import com.selfxdsd.api.User;
+import com.selfxdsd.api.storage.Storage;
 
 import javax.json.JsonObject;
+import java.net.URI;
 
 /**
  * A Github Provider Organization.
@@ -11,8 +14,6 @@ import javax.json.JsonObject;
  * @author criske
  * @version $Id$
  * @since 0.0.9
- * @todo #122:30 Continue to implement and test Github Organization Repos for
- *  the authenticated User.
  */
 final class GithubOrganization implements Organization {
 
@@ -27,15 +28,30 @@ final class GithubOrganization implements Organization {
     private final JsonResources resources;
 
     /**
+     * Current authenticated User.
+     */
+    private final User owner;
+
+    /**
+     * Storage used by Organization Repos.
+     */
+    private final Storage storage;
+    /**
      * Ctor.
      *
+     * @param owner Current authenticated User.
      * @param json The Organization in JSON format as returned by Github's API.
      * @param resources Github's JSON Resources.
+     * @param storage Storage used by Organization Repos.
      */
-    GithubOrganization(final JsonObject json,
-                              final JsonResources resources) {
+    GithubOrganization(final User owner,
+                       final JsonObject json,
+                       final JsonResources resources,
+                       final Storage storage) {
+        this.owner = owner;
         this.json = json;
         this.resources = resources;
+        this.storage = storage;
     }
 
     @Override
@@ -45,7 +61,11 @@ final class GithubOrganization implements Organization {
 
     @Override
     public Repos repos() {
-        throw new UnsupportedOperationException("Not implemented yet");
+        final URI reposUri = URI.create(this.json.getString("repos_url"));
+        return new GithubOrganizationRepos(reposUri,
+            this.owner,
+            this.resources,
+            this.storage);
     }
 
     @Override
