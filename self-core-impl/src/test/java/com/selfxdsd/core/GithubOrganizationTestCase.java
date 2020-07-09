@@ -22,7 +22,7 @@ public final class GithubOrganizationTestCase {
      */
     @Test
     public void returnsOrganizationData(){
-        JsonObject json = Json.createObjectBuilder()
+        final JsonObject json = Json.createObjectBuilder()
             .add("id", 1)
             .build();
         final Organization organization = new GithubOrganization(

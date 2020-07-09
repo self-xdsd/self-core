@@ -11,9 +11,10 @@ import javax.json.JsonObject;
  * @author criske
  * @version $Id$
  * @since 0.0.9
- * @todo #122:30 Implement and test GithubOrganization Repos.
+ * @todo #122:30 Continue to implement and test Github Organization Repos for
+ *  the authenticated User.
  */
-public final class GithubOrganization implements Organization {
+final class GithubOrganization implements Organization {
 
     /**
      * The Organization in JSON format as returned by Github's API.

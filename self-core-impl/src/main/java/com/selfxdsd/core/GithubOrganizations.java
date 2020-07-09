@@ -16,7 +16,7 @@ import java.util.Iterator;
  * @version $Id$
  * @since 0.0.9
  */
-public final class GithubOrganizations implements Organizations {
+final class GithubOrganizations implements Organizations {
 
     /**
      * Github's JSON Resources.
@@ -32,7 +32,7 @@ public final class GithubOrganizations implements Organizations {
      * Ctor.
      *
      * @param resources Github's JSON Resources.
-     * @param uri Organizations URI..
+     * @param uri Organizations URI.
      */
     public GithubOrganizations(final JsonResources resources,
                                final URI uri) {
