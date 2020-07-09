@@ -27,6 +27,8 @@ package com.selfxdsd.api;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
+ * @todo #277:30min Allow {@link User} interface to have access
+ *  to {@link Organizations}.
  */
 public interface User {
 
