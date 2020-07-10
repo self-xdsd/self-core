@@ -177,5 +177,10 @@ public final class StoredProjectManager implements ProjectManager {
         public Projects projects() {
             return this.manager.projects();
         }
+
+        @Override
+        public Organizations organizations() {
+            return this.manager.provider().organizations();
+        }
     }
 }

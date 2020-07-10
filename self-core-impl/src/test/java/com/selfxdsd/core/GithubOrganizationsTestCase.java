@@ -53,7 +53,7 @@ public final class GithubOrganizationsTestCase {
 
         final Iterable<Organization> organizations =
             () -> new GithubOrganizations(resources,
-                URI.create("https://api.github.com/user/orgs"),
+                URI.create("https://api.github.com/"),
                 Mockito.mock(User.class),
                 Mockito.mock(Storage.class)).iterator();
         MatcherAssert.assertThat(organizations, Matchers.iterableWithSize(2));
@@ -72,7 +72,7 @@ public final class GithubOrganizationsTestCase {
             null,
             req -> new MockResource(401, JsonValue.NULL));
         new GithubOrganizations(resources,
-            URI.create("https://api.github.com/user/orgs"),
+            URI.create("https://api.github.com/"),
             Mockito.mock(User.class),
             Mockito.mock(Storage.class)).iterator();
     }
@@ -91,7 +91,7 @@ public final class GithubOrganizationsTestCase {
             null,
             req -> new MockResource(500, JsonValue.NULL));
         new GithubOrganizations(resources,
-            URI.create("https://api.github.com/user/orgs"),
+            URI.create("https://api.github.com/"),
             Mockito.mock(User.class),
             Mockito.mock(Storage.class)).iterator();
     }

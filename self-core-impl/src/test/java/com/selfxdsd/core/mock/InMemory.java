@@ -25,6 +25,8 @@ package com.selfxdsd.core.mock;
 import com.selfxdsd.api.*;
 import com.selfxdsd.api.storage.Storage;
 
+import javax.json.JsonValue;
+
 /**
  * In Memory storage used for testing.
  * @author Mihai Andronache (amihaiemil@gmail.com)
@@ -36,7 +38,9 @@ public final class InMemory implements Storage {
     /**
      * In-memory users.
      */
-    private Users users = new InMemoryUsers(this);
+    private Users users = new InMemoryUsers(this,
+        new MockJsonResources(r -> new MockJsonResources
+            .MockResource(404, JsonValue.NULL)));
     /**
      * In-memory project-managers.
      */
