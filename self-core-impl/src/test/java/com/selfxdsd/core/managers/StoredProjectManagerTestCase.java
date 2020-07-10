@@ -129,4 +129,87 @@ public final class StoredProjectManagerTestCase {
             Matchers.equalTo("john/test")
         );
     }
+
+    /**
+     * StoredProjectManager can register a newIssue event.
+     */
+    @Test
+    public void registersNewIssueEvent() {
+        final Storage storage = new InMemory();
+        final ProjectManager manager = new StoredProjectManager(
+            1,
+            "zoeself",
+            Provider.Names.GITHUB,
+            "123token",
+            storage
+        );
+        final Project project = storage.projects()
+            .register(
+                this.mockRepo("mihai/test", "github"),
+                manager,
+                "wh123tk"
+            );
+        final Issue issue = Mockito.mock(Issue.class);
+        Mockito.when(issue.author()).thenReturn("mihai");
+        Mockito.when(issue.repoFullName()).thenReturn("mihai/test");
+        Mockito.when(issue.provider()).thenReturn("github");
+        final Comments comments = Mockito.mock(Comments.class);
+        Mockito.when(comments.post(Mockito.anyString())).thenReturn(null);
+        Mockito.when(issue.comments()).thenReturn(comments);
+
+        MatcherAssert.assertThat(
+            project.tasks(),
+            Matchers.emptyIterable()
+        );
+        manager.newIssue(
+            new Event() {
+                @Override
+                public String type() {
+                    return "newIssue";
+                }
+
+                @Override
+                public Issue issue() {
+                    return issue;
+                }
+
+                @Override
+                public Comment comment() {
+                    return null;
+                }
+
+                @Override
+                public Project project() {
+                    return project;
+                }
+            }
+        );
+        MatcherAssert.assertThat(
+            project.tasks(),
+            Matchers.iterableWithSize(1)
+        );
+        Mockito.verify(comments, Mockito.times(1))
+            .post(
+                "@mihai thank you for reporting this. "
+                + "I'll assign someone to take care of it soon."
+            );
+    }
+
+    /**
+     * Mock a Repo for test.
+     * @param fullName Full name.
+     * @param provider Provider.
+     * @return Repo.
+     */
+    private Repo mockRepo(final String fullName, final String provider) {
+        final User user = Mockito.mock(User.class);
+        final Provider prov = Mockito.mock(Provider.class);
+        Mockito.when(prov.name()).thenReturn(provider);
+        Mockito.when(user.provider()).thenReturn(prov);
+        final Repo repo = Mockito.mock(Repo.class);
+        Mockito.when(repo.fullName()).thenReturn(fullName);
+        Mockito.when(repo.owner()).thenReturn(user);
+        Mockito.when(repo.provider()).thenReturn(provider);
+        return repo;
+    }
 }

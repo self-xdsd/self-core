@@ -35,9 +35,10 @@ import java.util.Objects;
  * @todo #31:30min Implement the deactivate method which should remove the
  *  Project form the DB (it means Self will stop managing it). Return the
  *  corresponding Repo when done. Don't forget the tests.
- * @todo #270:30min Continue implementation of the resolve(...) method.
+ * @todo #272:30min Continue implementation of the resolve(...) method.
  *  It should decide what kind of event has occurred and delegate it
- *  further to the ProjectManager who will deal with it.
+ *  further to the ProjectManager who will deal with it. We still need
+ *  the Issue Reopened case and Comment Created case.
  */
 public final class StoredProject implements Project {
 
@@ -148,6 +149,9 @@ public final class StoredProject implements Project {
             throw new IllegalArgumentException(
                 "The provided secret token is not correct!"
             );
+        }
+        if(event.type().equals("newIssue")) {
+            this.projectManager.newIssue(event);
         }
     }
 

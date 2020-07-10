@@ -109,6 +109,11 @@ final class GithubIssue implements Issue {
     }
 
     @Override
+    public String author() {
+        return this.json.getJsonObject("user").getString("login");
+    }
+
+    @Override
     public JsonObject json() {
         return this.json;
     }

@@ -129,6 +129,30 @@ public final class GithubIssueTestCase {
         );
     }
 
+    /**
+     * GithubIssue can return its author.
+     */
+    @Test
+    public void returnsAuthor() {
+        final Issue issue = new GithubIssue(
+            URI.create("http://localhost/issues/1"),
+            Json.createObjectBuilder()
+                .add("id", 1)
+                .add(
+                    "user",
+                    Json.createObjectBuilder()
+                        .add("login", "amihaiemil")
+                        .build()
+                )
+                .build(),
+            Mockito.mock(Storage.class),
+            Mockito.mock(JsonResources.class)
+        );
+        MatcherAssert.assertThat(
+            issue.author(),
+            Matchers.equalTo("amihaiemil")
+        );
+    }
 
     /**
      * Returns Issue's comments.

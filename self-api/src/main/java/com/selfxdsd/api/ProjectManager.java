@@ -62,4 +62,10 @@ public interface ProjectManager {
      */
     Projects projects();
 
+    /**
+     * Handle the "newIssue" event.
+     * @param event Event.
+     */
+    void newIssue(final Event event);
+
 }

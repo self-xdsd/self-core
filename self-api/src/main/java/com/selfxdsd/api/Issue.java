@@ -60,6 +60,12 @@ public interface Issue {
     String repoFullName();
 
     /**
+     * The author's username.
+     * @return String.
+     */
+    String author();
+
+    /**
      * The Issue in JSON format as returned by the provider's API.
      * @return JsonObject.
      */
