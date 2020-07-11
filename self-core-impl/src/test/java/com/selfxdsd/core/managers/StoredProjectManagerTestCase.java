@@ -131,10 +131,10 @@ public final class StoredProjectManagerTestCase {
     }
 
     /**
-     * StoredProjectManager can register a newIssue event.
+     * StoredProjectManager can handle a newIssue event.
      */
     @Test
-    public void registersNewIssueEvent() {
+    public void handlesNewIssueEvent() {
         final Storage storage = new InMemory();
         final ProjectManager manager = new StoredProjectManager(
             1,
@@ -145,7 +145,11 @@ public final class StoredProjectManagerTestCase {
         );
         final Project project = storage.projects()
             .register(
-                this.mockRepo("mihai/test", "github"),
+                this.mockRepo(
+                    "mihai/test",
+                    "github",
+                    Mockito.mock(Issues.class)
+                ),
                 manager,
                 "wh123tk"
             );
@@ -196,12 +200,164 @@ public final class StoredProjectManagerTestCase {
     }
 
     /**
+     * StoredProjectManager can handle a reopened Issue event when the
+     * initial Task associated with the Issue has been finished (in this
+     * case we register a new task and leave a comment).
+     */
+    @Test
+    public void handlesTaskFinishedReopenedIssueEvent() {
+        final Storage storage = new InMemory();
+        final ProjectManager manager = new StoredProjectManager(
+            1,
+            "zoeself",
+            Provider.Names.GITHUB,
+            "123token",
+            storage
+        );
+        final Project project = storage.projects()
+            .register(
+                this.mockRepo(
+                    "mihai/test",
+                    "github",
+                    Mockito.mock(Issues.class)
+                ),
+                manager,
+                "wh123tk"
+            );
+        final Issue issue = Mockito.mock(Issue.class);
+        Mockito.when(issue.author()).thenReturn("mihai");
+        Mockito.when(issue.repoFullName()).thenReturn("mihai/test");
+        Mockito.when(issue.provider()).thenReturn("github");
+        final Comments comments = Mockito.mock(Comments.class);
+        Mockito.when(comments.post(Mockito.anyString())).thenReturn(null);
+        Mockito.when(issue.comments()).thenReturn(comments);
+
+        MatcherAssert.assertThat(
+            project.tasks(),
+            Matchers.emptyIterable()
+        );
+        manager.reopenedIssue(
+            new Event() {
+                @Override
+                public String type() {
+                    return "reopened";
+                }
+
+                @Override
+                public Issue issue() {
+                    return issue;
+                }
+
+                @Override
+                public Comment comment() {
+                    return null;
+                }
+
+                @Override
+                public Project project() {
+                    return project;
+                }
+            }
+        );
+        MatcherAssert.assertThat(
+            project.tasks(),
+            Matchers.iterableWithSize(1)
+        );
+        Mockito.verify(comments, Mockito.times(1))
+            .post(
+                "@mihai thanks for reopening this, "
+                    + "I'll find someone to take a look at it again. \n"
+                    + "However, please keep in mind that reopening tickets "
+                    + "is a bad practice. "
+                    + "Next time, please open a new ticket."
+            );
+    }
+
+    /**
+     * StoredProjectManager can handle a reopened Issue event when the
+     * current Task is still ongoing (doesn't do anything, actually).
+     */
+    @Test
+    public void handlesTaskOngoingReopenedIssueEvent() {
+        final Storage storage = new InMemory();
+        final ProjectManager manager = new StoredProjectManager(
+            1,
+            "zoeself",
+            Provider.Names.GITHUB,
+            "123token",
+            storage
+        );
+        final Issue issue = Mockito.mock(Issue.class);
+        Mockito.when(issue.issueId()).thenReturn("1");
+        Mockito.when(issue.author()).thenReturn("mihai");
+        Mockito.when(issue.repoFullName()).thenReturn("mihai/test");
+        Mockito.when(issue.provider()).thenReturn("github");
+        Mockito.when(issue.role()).thenReturn(Contract.Roles.DEV);
+
+        final Issues issues = Mockito.mock(Issues.class);
+        Mockito.when(issues.getById("1")).thenReturn(issue);
+
+        final Project project = storage.projects()
+            .register(
+                this.mockRepo("mihai/test", "github", issues),
+                manager,
+                "wh123tk"
+            );
+        project.tasks().register(issue);
+
+        final Comments comments = Mockito.mock(Comments.class);
+        Mockito.when(comments.post(Mockito.anyString())).thenThrow(
+            new IllegalStateException(
+                "No comments should be posted!"
+            )
+        );
+        Mockito.when(issue.comments()).thenReturn(comments);
+
+        MatcherAssert.assertThat(
+            project.tasks(),
+            Matchers.iterableWithSize(1)
+        );
+        manager.reopenedIssue(
+            new Event() {
+                @Override
+                public String type() {
+                    return "reopened";
+                }
+
+                @Override
+                public Issue issue() {
+                    return issue;
+                }
+
+                @Override
+                public Comment comment() {
+                    return null;
+                }
+
+                @Override
+                public Project project() {
+                    return project;
+                }
+            }
+        );
+        MatcherAssert.assertThat(
+            project.tasks(),
+            Matchers.iterableWithSize(1)
+        );
+    }
+
+    /**
      * Mock a Repo for test.
      * @param fullName Full name.
      * @param provider Provider.
+     * @param issues Repo issues.
      * @return Repo.
      */
-    private Repo mockRepo(final String fullName, final String provider) {
+    private Repo mockRepo(
+        final String fullName,
+        final String provider,
+        final Issues issues
+    ) {
         final User user = Mockito.mock(User.class);
         final Provider prov = Mockito.mock(Provider.class);
         Mockito.when(prov.name()).thenReturn(provider);
@@ -210,6 +366,12 @@ public final class StoredProjectManagerTestCase {
         Mockito.when(repo.fullName()).thenReturn(fullName);
         Mockito.when(repo.owner()).thenReturn(user);
         Mockito.when(repo.provider()).thenReturn(provider);
+        Mockito.when(repo.issues()).thenReturn(issues);
+        Mockito.when(
+            prov.repo(
+                fullName.substring(fullName.indexOf("/") + 1)
+            )
+        ).thenReturn(repo);
         return repo;
     }
 }
