@@ -75,7 +75,6 @@ final class GithubRepo extends BaseRepo {
                               + active.repoFullName()
                         )
                         .add("content_type", "json")
-                        .add("active", "false")
                         .add("secret", active.webHookToken())
                 ).build()
         );
