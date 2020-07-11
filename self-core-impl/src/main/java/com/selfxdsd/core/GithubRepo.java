@@ -72,9 +72,10 @@ final class GithubRepo extends BaseRepo {
                         .add(
                             "url",
                             "https://self-xdsd.com/github/"
-                              + active.repo().fullName()
+                              + active.repoFullName()
                         )
                         .add("content_type", "json")
+                        .add("active", "false")
                         .add("secret", active.webHookToken())
                 ).build()
         );
