@@ -27,6 +27,7 @@ import com.selfxdsd.api.Project;
 import com.selfxdsd.api.storage.Storage;
 import com.selfxdsd.api.User;
 
+import javax.json.Json;
 import java.net.URI;
 
 /**
@@ -56,10 +57,27 @@ final class GithubRepo extends BaseRepo {
 
     @Override
     public Project activate() {
-        return this.storage()
-            .projectManagers()
-            .pick(this.provider())
-            .assign(this);
+        final Project active = super.activate();
+        this.resources().post(
+            URI.create(this.repoUri().toString() + "/hooks"),
+            Json.createObjectBuilder()
+                .add(
+                    "events",
+                    Json.createArrayBuilder()
+                        .add("issues")
+                )
+                .add(
+                    "config",
+                    Json.createObjectBuilder()
+                        .add(
+                            "url",
+                            "https://self-xdsd.com/github/"
+                              + active.repo().fullName()
+                        )
+                        .add("content_type", "json")
+                ).build()
+        );
+        return active;
     }
 
     @Override

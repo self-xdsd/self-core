@@ -128,7 +128,12 @@ abstract class BaseRepo implements Repo {
     }
 
     @Override
-    public abstract Project activate();
+    public Project activate() {
+        return this.storage()
+            .projectManagers()
+            .pick(this.provider())
+            .assign(this);
+    }
 
     @Override
     public String provider() {

@@ -56,7 +56,7 @@ final class GitlabRepo extends BaseRepo {
 
     @Override
     public Project activate() {
-        return this.storage().projectManagers().pick(provider()).assign(this);
+        return super.activate();
     }
 
     @Override
