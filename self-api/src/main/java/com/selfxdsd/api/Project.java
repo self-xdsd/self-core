@@ -99,6 +99,12 @@ public interface Project {
     void resolve(final Event event, final String secret);
 
     /**
+     * This project's webhook token.
+     * @return Secret token to be specified in the webhook.
+     */
+    String webHookToken();
+
+    /**
      * Deactivate this project, tell  Self to stop
      * managing it.
      * @return This project's repository.
