@@ -44,15 +44,20 @@ final class GithubOrganizations implements Organizations {
      * Ctor.
      *
      * @param resources Github's JSON Resources.
-     * @param uri Organizations URI.
+     * @param githubUri Github's base API Uri..
      * @param owner Current authenticated User.
      * @param storage Storage used by Organization Repos.
      */
     GithubOrganizations(final JsonResources resources,
-                        final URI uri,
+                        final URI githubUri,
                         final User owner,
                         final Storage storage) {
-        this.uri = uri;
+        final String githubUriStr = githubUri.toString();
+        String slash = "/";
+        if(githubUriStr.endsWith("/")){
+            slash = "";
+        }
+        this.uri = URI.create(githubUriStr + slash + "user/orgs");
         this.resources = resources;
         this.owner = owner;
         this.storage = storage;
