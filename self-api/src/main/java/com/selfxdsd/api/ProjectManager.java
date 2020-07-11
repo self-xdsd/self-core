@@ -68,4 +68,10 @@ public interface ProjectManager {
      */
     void newIssue(final Event event);
 
+    /**
+     * Handle the "reopened" Issue event.
+     * @param event Event.
+     */
+    void reopenedIssue(final Event event);
+
 }

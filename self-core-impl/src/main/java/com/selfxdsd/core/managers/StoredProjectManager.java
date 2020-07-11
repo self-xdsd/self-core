@@ -140,6 +140,27 @@ public final class StoredProjectManager implements ProjectManager {
     }
 
     @Override
+    public void reopenedIssue(final Event event) {
+        final Project project = event.project();
+        final Issue issue = event.issue();
+        final Task task = project.tasks()
+            .getById(
+                issue.issueId(),
+                issue.repoFullName(),
+                issue.provider()
+            );
+        if(task == null) {
+            project.tasks().register(issue);
+            issue.comments().post(
+                String.format(
+                    project.language().reply("reopened.comment"),
+                    issue.author()
+                )
+            );
+        }
+    }
+
+    @Override
     public int hashCode() {
         return this.id;
     }
