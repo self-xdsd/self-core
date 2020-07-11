@@ -27,7 +27,9 @@ import com.selfxdsd.api.storage.Storage;
 import com.selfxdsd.core.tasks.*;
 
 import java.util.*;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * In-memory Tasks for test purposes.
@@ -102,12 +104,14 @@ public final class InMemoryTasks implements Tasks {
     @Override
     public Tasks ofProject(final String repoFullName,
                            final String repoProvider) {
-        final List<Task> tasksOf = tasks.values()
+        final Supplier<Stream<Task>> tasksOf = () -> tasks.values()
             .stream()
             .filter(t -> t.project().repoFullName().equals(repoFullName)
-                && t.project().provider().equals(repoProvider))
-            .collect(Collectors.toList());
-        return new ProjectTasks(repoFullName, repoProvider, tasksOf, storage);
+                && t.project().provider().equals(repoProvider));
+        return new ProjectTasks(repoFullName,
+                repoProvider,
+                tasksOf,
+                storage);
     }
 
     @Override

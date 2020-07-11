@@ -9,7 +9,8 @@ import com.selfxdsd.api.storage.Storage;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 /**
  * Unassigned Tasks. This class <b>just represents</b>
@@ -65,11 +66,10 @@ public final class UnassignedTasks implements Tasks {
     @Override
     public Tasks ofProject(final String repoFullName,
                            final String repoProvider) {
-        final List<Task> ofProject = tasks.stream()
+        final Supplier<Stream<Task>> ofProject = () -> tasks.stream()
             .filter(t -> t.assignee() == null
                     && t.project().repoFullName().equals(repoFullName)
-                    && t.project().provider().equals(repoProvider))
-            .collect(Collectors.toList());
+                    && t.project().provider().equals(repoProvider));
         return new ProjectTasks(repoFullName, repoProvider, ofProject, storage);
     }
 

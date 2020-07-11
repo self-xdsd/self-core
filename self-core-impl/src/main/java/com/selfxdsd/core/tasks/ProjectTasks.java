@@ -28,10 +28,11 @@ import com.selfxdsd.api.Task;
 import com.selfxdsd.api.Tasks;
 import com.selfxdsd.api.storage.Storage;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Active tasks in a Project. This class <b>just represents</b>
@@ -54,9 +55,9 @@ public final class ProjectTasks implements Tasks {
     private final String provider;
 
     /**
-     * The project's tasks.
+     * The project's stream tasks supplier.
      */
-    private final List<Task> tasks;
+    private final Supplier<Stream<Task>> tasks;
 
     /**
      * Self storage, to save new tasks.
@@ -67,19 +68,18 @@ public final class ProjectTasks implements Tasks {
      * Constructor.
      * @param repoFullName Full name of the Repo represented by the Project.
      * @param provider Provider of the Repo represented by the Project.
-     * @param tasks Project's tasks.
+     * @param tasks Project's tasks stream supplier.
      * @param storage Self's storage, to save new contracts.
      */
     public ProjectTasks(
         final String repoFullName,
         final String provider,
-        final List<Task> tasks,
+        final Supplier<Stream<Task>> tasks,
         final Storage storage
     ) {
         this.repoFullName = repoFullName;
         this.provider = provider;
-        this.tasks = new ArrayList<>();
-        this.tasks.addAll(tasks);
+        this.tasks = tasks;
         this.storage = storage;
     }
 
@@ -89,7 +89,7 @@ public final class ProjectTasks implements Tasks {
         final String repoFullName,
         final String provider
     ) {
-        return this.tasks.stream().filter(
+        return this.tasks.get().filter(
             task -> {
                 final Issue issue = task.issue();
                 return issue.issueId().equals(issueId)
@@ -109,9 +109,7 @@ public final class ProjectTasks implements Tasks {
               + " at " + this.provider + "."
             );
         } else {
-            final Task registered = this.storage.tasks().register(issue);
-            this.tasks.add(registered);
-            return registered;
+            return this.storage.tasks().register(issue);
         }
     }
 
@@ -133,7 +131,7 @@ public final class ProjectTasks implements Tasks {
     @Override
     public Tasks ofContributor(final String username, final String provider) {
         final List<Task> ofContributor = tasks
-            .stream()
+            .get()
             .filter(t -> t.assignee() != null
                 && t.assignee().username().equals(username)
                 && t.assignee().provider().equals(provider))
@@ -144,7 +142,7 @@ public final class ProjectTasks implements Tasks {
     @Override
     public Tasks ofContract(final Contract.Id id) {
         final List<Task> tasksOf = this.tasks
-            .stream()
+            .get()
             .filter(
                 t -> t.project().repoFullName().equals(id.getRepoFullName())
             && t.project().provider().equals(id.getProvider())
@@ -157,7 +155,7 @@ public final class ProjectTasks implements Tasks {
 
     @Override
     public Tasks unassigned() {
-        final List<Task> unassigned = tasks.stream()
+        final List<Task> unassigned = tasks.get()
             .filter(t -> t.assignee() == null
                 && t.project().repoFullName().equals(repoFullName)
                 && t.project().provider().equals(provider))
@@ -167,6 +165,6 @@ public final class ProjectTasks implements Tasks {
 
     @Override
     public Iterator<Task> iterator() {
-        return this.tasks.iterator();
+        return this.tasks.get().iterator();
     }
 }

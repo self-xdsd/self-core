@@ -9,7 +9,9 @@ import com.selfxdsd.api.storage.Storage;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Active tasks of a Contributor. This class <b>just represents</b>
@@ -74,10 +76,9 @@ public final class ContributorTasks implements Tasks {
     @Override
     public Tasks ofProject(final String repoFullName,
                            final String repoProvider) {
-        final List<Task> ofProject = tasks.stream()
+        final Supplier<Stream<Task>> ofProject = () -> tasks.stream()
             .filter(t -> t.project().repoFullName().equals(repoFullName)
-                && t.project().provider().equals(provider))
-            .collect(Collectors.toList());
+                && t.project().provider().equals(provider));
         return new ProjectTasks(repoFullName, provider, ofProject, storage);
     }
 

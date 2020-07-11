@@ -29,7 +29,10 @@ import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 /**
  * Unit tests for {@link ProjectTasks}.
@@ -47,7 +50,7 @@ public final class ProjectTasksTestCase {
     public void canBeIterated() {
         final Tasks tasks = new ProjectTasks(
             "john/test", "github",
-            List.of(
+            () -> Stream.of(
                 Mockito.mock(Task.class),
                 Mockito.mock(Task.class),
                 Mockito.mock(Task.class)
@@ -64,7 +67,7 @@ public final class ProjectTasksTestCase {
     public void getByIdFindsNothing() {
         final Tasks tasks = new ProjectTasks(
             "john/test", "github",
-            List.of(),
+            Stream::empty,
             Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(
@@ -96,7 +99,7 @@ public final class ProjectTasksTestCase {
         Mockito.when(second.issue()).thenReturn(issueTwo);
         final Tasks tasks = new ProjectTasks(
             "john/test", "github",
-            List.of(first, second),
+            () -> Stream.of(first, second),
             Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(
@@ -112,7 +115,7 @@ public final class ProjectTasksTestCase {
     public void ofProjectReturnsSelfIfSameId() {
         final Tasks tasks = new ProjectTasks(
             "john/test", "github",
-            List.of(
+            () -> Stream.of(
                 Mockito.mock(Task.class),
                 Mockito.mock(Task.class),
                 Mockito.mock(Task.class)
@@ -133,7 +136,7 @@ public final class ProjectTasksTestCase {
     public void ofProjectComplainsIfDifferentId() {
         final Tasks tasks = new ProjectTasks(
             "john/test", "github",
-            List.of(
+            () -> Stream.of(
                 Mockito.mock(Task.class),
                 Mockito.mock(Task.class),
                 Mockito.mock(Task.class)
@@ -160,14 +163,19 @@ public final class ProjectTasksTestCase {
         );
         Mockito.when(registered.issue()).thenReturn(issue);
 
+        final List<Task> source = new ArrayList<>();
         final Tasks all = Mockito.mock(Tasks.class);
-        Mockito.when(all.register(issue)).thenReturn(registered);
+        Mockito.when(all.spliterator()).thenAnswer(inv -> source.spliterator());
+        Mockito.when(all.register(issue)).thenAnswer(inv -> {
+            source.add(registered);
+            return registered;
+        });
         final Storage storage = Mockito.mock(Storage.class);
         Mockito.when(storage.tasks()).thenReturn(all);
 
         final Tasks tasks = new ProjectTasks(
             "john/test", "github",
-            List.of(),
+            ()-> StreamSupport.stream(all.spliterator(), false),
             storage
         );
         MatcherAssert.assertThat(tasks, Matchers.emptyIterable());
@@ -191,7 +199,7 @@ public final class ProjectTasksTestCase {
         );
         final Tasks tasks = new ProjectTasks(
             "john/test", "github",
-            List.of(),
+            Stream::empty,
             Mockito.mock(Storage.class)
         );
         tasks.register(issue);
@@ -214,7 +222,7 @@ public final class ProjectTasksTestCase {
 
         final Tasks tasks = new ProjectTasks(
             "john/test", "github",
-            List.of(
+            () -> Stream.of(
                 Mockito.mock(Task.class),
                 Mockito.mock(Task.class),
                 Mockito.mock(Task.class),
@@ -252,9 +260,7 @@ public final class ProjectTasksTestCase {
 
         final Tasks tasks = new ProjectTasks(
             "foo", Provider.Names.GITHUB,
-            List.of(
-                task
-            ),
+            () -> Stream.of(task),
             storage
         );
         MatcherAssert.assertThat(tasks.ofContract(contractId),
@@ -281,7 +287,7 @@ public final class ProjectTasksTestCase {
 
         final Tasks tasks = new ProjectTasks(
             "john/test", Provider.Names.GITHUB,
-            List.of(assigned, unassigned),
+            () -> Stream.of(assigned, unassigned),
             Mockito.mock(Storage.class)
         );
 
