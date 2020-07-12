@@ -245,5 +245,10 @@ public final class StoredTask implements Task {
         public Tasks tasks() {
             return null;
         }
+
+        @Override
+        public BigDecimal value() {
+            return BigDecimal.valueOf(0);
+        }
     }
 }

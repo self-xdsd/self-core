@@ -8,6 +8,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * Unit tests for {@link StoredContract}.
@@ -183,6 +184,72 @@ public final class StoredContractTestCase {
         MatcherAssert.assertThat(
             contract.tasks(),
             Matchers.is(tasks)
+        );
+    }
+
+    /**
+     * StoredContract can return its value.
+     * @checkstyle ExecutableStatementCount (50 lines)
+     */
+    @Test
+    public void returnsValue() {
+        final Task one = Mockito.mock(Task.class);
+        Mockito.when(one.value()).thenReturn(BigDecimal.valueOf(10000));
+        final Task two = Mockito.mock(Task.class);
+        Mockito.when(two.value()).thenReturn(BigDecimal.valueOf(15000));
+        final Task three = Mockito.mock(Task.class);
+        Mockito.when(three.value()).thenReturn(BigDecimal.valueOf(7500));
+        final Tasks tasks = Mockito.mock(Tasks.class);
+        Mockito.when(tasks.iterator()).thenReturn(
+            List.of(one, two, three).iterator()
+        );
+        final Invoices invoices = Mockito.mock(Invoices.class);
+        final Invoice active = Mockito.mock(Invoice.class);
+        Mockito.when(active.totalAmount())
+            .thenReturn(BigDecimal.valueOf(12300));
+        Mockito.when(invoices.active()).thenReturn(active);
+
+        final Tasks allTasks = Mockito.mock(Tasks.class);
+        Mockito.when(
+            allTasks.ofContract(
+                new Contract.Id(
+                "john/test",
+                "mihai",
+                "github",
+                "DEV"
+                )
+            )
+        ).thenReturn(tasks);
+        final Invoices allInvoices = Mockito.mock(Invoices.class);
+        Mockito.when(
+            allInvoices.ofContract(
+                new Contract.Id(
+            "john/test",
+            "mihai",
+            "github",
+            "DEV"
+                )
+            )
+        ).thenReturn(invoices);
+
+        final Storage storage = Mockito.mock(Storage.class);
+        Mockito.when(storage.tasks()).thenReturn(allTasks);
+        Mockito.when(storage.invoices()).thenReturn(allInvoices);
+
+        final Contract contract = new StoredContract(
+            new Contract.Id(
+                "john/test",
+                "mihai",
+                "github",
+                "DEV"
+            ),
+            BigDecimal.valueOf(15000),
+            storage
+        );
+
+        MatcherAssert.assertThat(
+            contract.value(),
+            Matchers.equalTo(BigDecimal.valueOf(44800))
         );
     }
 }

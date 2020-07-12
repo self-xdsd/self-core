@@ -22,11 +22,7 @@
  */
 package com.selfxdsd.core.contracts;
 
-import com.selfxdsd.api.Contract;
-import com.selfxdsd.api.Contributor;
-import com.selfxdsd.api.Invoices;
-import com.selfxdsd.api.Project;
-import com.selfxdsd.api.Tasks;
+import com.selfxdsd.api.*;
 import com.selfxdsd.api.storage.Storage;
 
 import java.math.BigDecimal;
@@ -184,6 +180,16 @@ public final class StoredContract implements Contract {
     @Override
     public Tasks tasks() {
         return storage.tasks().ofContract(this.id);
+    }
+
+    @Override
+    public BigDecimal value() {
+        BigDecimal total = BigDecimal.valueOf(0);
+        for(final Task task : this.tasks()) {
+            total = total.add(task.value());
+        }
+        total = total.add(this.invoices().active().totalAmount());
+        return total;
     }
 
     @Override

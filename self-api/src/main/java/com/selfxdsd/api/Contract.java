@@ -72,6 +72,14 @@ public interface Contract {
     Tasks tasks();
 
     /**
+     * This contract's current value. It's the sum of
+     * the active tasks' value and the value of the active
+     * Invoice.
+     * @return Value.
+     */
+    BigDecimal value();
+
+    /**
      * Possible roles in a Contract.
      */
     class Roles {
