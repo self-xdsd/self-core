@@ -11,7 +11,7 @@ import javax.json.JsonObject;
 public interface Comments extends Iterable<Comment> {
 
     /**
-     * Crates a new Comment related to a particular Provider
+     * Creates a new Comment related to a particular Provider
      * resource (e.g Issue).
      * @param body Comment's content.
      * @return Created Comment.
