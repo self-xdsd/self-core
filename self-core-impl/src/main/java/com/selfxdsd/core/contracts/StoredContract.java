@@ -106,6 +106,11 @@ public final class StoredContract implements Contract {
         );
     }
 
+    @Override
+    public Id contractId() {
+        return this.id;
+    }
+
     /**
      * The Project.
      *

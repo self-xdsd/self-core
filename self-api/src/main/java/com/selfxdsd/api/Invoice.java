@@ -20,10 +20,10 @@ public interface Invoice {
     int invoiceId();
 
     /**
-     * The contract id.
-     * @return Contract.Id
+     * The contract.
+     * @return Contract
      */
-    Contract.Id contractId();
+    Contract contract();
 
     /**
      * Returns the Invoice's creation time.

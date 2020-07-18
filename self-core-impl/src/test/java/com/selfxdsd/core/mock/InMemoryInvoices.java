@@ -48,7 +48,7 @@ public final class InMemoryInvoices implements Invoices {
             id,
             () -> StreamSupport
                 .stream(storage.invoices().spliterator(), false)
-                .filter(i -> i.contractId().equals(id)),
+                .filter(i -> i.contract().contractId().equals(id)),
             this.storage
         );
     }
@@ -61,7 +61,7 @@ public final class InMemoryInvoices implements Invoices {
     @Override
     public Invoice createNewInvoice(final Contract.Id contractId) {
         final Invoice created = new StoredInvoice(
-            this.idGenerator++, contractId,
+            this.idGenerator++, this.storage.contracts().findById(contractId),
             LocalDateTime.now(), this.storage
         );
         this.invoices.put(created.invoiceId(), created);

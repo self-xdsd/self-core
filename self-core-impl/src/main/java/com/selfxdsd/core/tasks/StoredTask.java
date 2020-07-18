@@ -217,6 +217,11 @@ public final class StoredTask implements Task {
         }
 
         @Override
+        public Id contractId() {
+            return null;
+        }
+
+        @Override
         public Project project() {
             return this.project;
         }
