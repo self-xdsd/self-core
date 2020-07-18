@@ -60,7 +60,10 @@ final class GitlabOrganization implements Organization {
 
     @Override
     public Repos repos() {
-        throw new UnsupportedOperationException("Not implemented yet");
+        return new GitlabOrganizationRepos(this.organizationId(),
+            this.owner,
+            this.resources,
+            this.storage);
     }
 
     @Override

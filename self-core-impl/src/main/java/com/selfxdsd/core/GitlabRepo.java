@@ -54,6 +54,24 @@ final class GitlabRepo extends BaseRepo {
         super(resources, uri, owner, storage);
     }
 
+    /**
+     * Creates a Gitlab Repo from name.
+     * @param resources Gitlab's JSON Resources.
+     * @param repoName Repository name.
+     * @param owner Owner of this repo.
+     * @param storage Storage used to save the Project when
+     *  this repo is activated.
+     * @return GitlabRepo.
+     */
+    static GitlabRepo createFromName(final String repoName,
+                                     final JsonResources resources,
+                                     final User owner,
+                                     final Storage storage) {
+        final URI repo = URI.create("https://gitlab.com/api/v4/projects/"
+            + repoName);
+        return new GitlabRepo(resources, repo, owner, storage);
+    }
+
     @Override
     public Project activate() {
         return this.storage().projectManagers().pick(provider()).assign(this);

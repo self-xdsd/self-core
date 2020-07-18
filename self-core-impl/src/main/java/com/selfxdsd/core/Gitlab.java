@@ -33,6 +33,8 @@ import java.net.URI;
  * @version $Id$
  * @since 0.0.1
  * @todo #27:30min Continue adding integration tests for Gitlab provider.
+ * @todo #300:30min Gitlab Invitations: implement and test invitations for
+ *  Gitlab provider.
  */
 public final class Gitlab implements Provider {
 
@@ -110,13 +112,10 @@ public final class Gitlab implements Provider {
 
     @Override
     public Repo repo(final String name) {
-        final URI repo = URI.create(this.uri.toString() + "/projects/" + name);
-        return new GitlabRepo(
+        return GitlabRepo.createFromName(name,
             this.resources,
-            repo,
             this.user,
-            this.storage
-        );
+            this.storage);
     }
 
     @Override

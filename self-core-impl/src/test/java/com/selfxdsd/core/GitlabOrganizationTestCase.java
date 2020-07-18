@@ -1,6 +1,7 @@
 package com.selfxdsd.core;
 
 import com.selfxdsd.api.Organization;
+import com.selfxdsd.api.Repos;
 import com.selfxdsd.api.User;
 import com.selfxdsd.api.storage.Storage;
 import org.hamcrest.MatcherAssert;
@@ -41,18 +42,18 @@ public final class GitlabOrganizationTestCase {
     }
 
     /**
-     * Fetches organization repos. Checks if repos url is
-     * correctly extracted from organization JSON data and passed to
-     * GitlabOrganizationRepos constructor.
+     * Fetches organization repos.
      */
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void fetchesOrganizationRepos(){
-        new GitlabOrganization(
+        final Repos repos = new GitlabOrganization(
             Mockito.mock(User.class),
-            Json.createObjectBuilder().build(),
+            Json.createObjectBuilder().add("id", 1).build(),
             Mockito.mock(JsonResources.class),
             Mockito.mock(Storage.class)
         ).repos();
+        MatcherAssert.assertThat(repos,
+            Matchers.instanceOf(GitlabOrganizationRepos.class));
     }
 
 }

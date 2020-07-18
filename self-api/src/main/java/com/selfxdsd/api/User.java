@@ -27,8 +27,6 @@ package com.selfxdsd.api;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
- * @todo #298:30min Continue with GitlabOrganizations by implementing and
- *  testing Gitlab Organization Repos.
  */
 public interface User {
 
