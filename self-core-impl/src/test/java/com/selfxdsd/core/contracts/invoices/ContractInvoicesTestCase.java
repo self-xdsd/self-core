@@ -299,8 +299,10 @@ public final class ContractInvoicesTestCase {
         final Contract.Id contractId,
         final boolean isPaid
     ){
+        final Contract contract = Mockito.mock(Contract.class);
+        Mockito.when(contract.contractId()).thenReturn(contractId);
         final Invoice invoice = Mockito.mock(Invoice.class);
-        Mockito.when(invoice.contractId()).thenReturn(contractId);
+        Mockito.when(invoice.contract()).thenReturn(contract);
         Mockito.when(invoice.isPaid()).thenReturn(isPaid);
         Mockito.when(invoice.createdAt()).thenReturn(LocalDateTime.now());
         return invoice;

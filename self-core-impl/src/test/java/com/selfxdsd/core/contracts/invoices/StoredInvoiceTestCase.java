@@ -28,10 +28,9 @@ public final class StoredInvoiceTestCase {
      */
     @Test
     public void hasCorrectId(){
-        Contract.Id contractId = new Contract.Id("repo", "john",
-            Provider.Names.GITHUB, Contract.Roles.DEV);
         final Invoice invoice = new StoredInvoice(
-            1, contractId, LocalDateTime.now(), mock(Storage.class)
+            1, Mockito.mock(Contract.class),
+            LocalDateTime.now(), mock(Storage.class)
         );
         assertThat(invoice.invoiceId(), is(1));
     }
@@ -40,13 +39,12 @@ public final class StoredInvoiceTestCase {
      * Invoice has the correct contract id.
      */
     @Test
-    public void hasCorrectContractId(){
-        Contract.Id contractId = new Contract.Id("repo", "john",
-            Provider.Names.GITHUB, Contract.Roles.DEV);
+    public void returnsContract(){
+        final Contract contract = Mockito.mock(Contract.class);
         final Invoice invoice = new StoredInvoice(
-            1, contractId, LocalDateTime.now(), mock(Storage.class)
+            1, contract, LocalDateTime.now(), mock(Storage.class)
         );
-        assertThat(invoice.contractId(), is(contractId));
+        assertThat(invoice.contract(), is(contract));
     }
 
     /**
@@ -57,7 +55,7 @@ public final class StoredInvoiceTestCase {
         final LocalDateTime creationTime = LocalDateTime.now();
         final Invoice invoice = new StoredInvoice(
             1,
-            Mockito.mock(Contract.Id.class),
+            Mockito.mock(Contract.class),
             creationTime,
             mock(Storage.class)
         );

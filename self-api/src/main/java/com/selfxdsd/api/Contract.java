@@ -34,6 +34,12 @@ import java.util.Objects;
 public interface Contract {
 
     /**
+     * This contract's ID.
+     * @return Contract ID.
+     */
+    Contract.Id contractId();
+
+    /**
      * The Project.
      * @return Project.
      */

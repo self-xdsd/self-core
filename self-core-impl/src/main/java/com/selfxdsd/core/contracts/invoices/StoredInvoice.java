@@ -22,9 +22,9 @@ public final class StoredInvoice implements Invoice {
     private final int id;
 
     /**
-     * Contract's id of this invoice.
+     * Contract.
      */
-    private final Contract.Id contractId;
+    private final Contract contract;
 
     /**
      * Creation time.
@@ -49,23 +49,23 @@ public final class StoredInvoice implements Invoice {
     /**
      * Ctor.
      * @param id Invoice id.
-     * @param contractId Contract's id of this invoice.
+     * @param contract Contract.
      * @param createdAt Invoice creation time.
      * @param storage Self storage context.
      */
     public StoredInvoice(
         final int id,
-        final Contract.Id contractId,
+        final Contract contract,
         final LocalDateTime createdAt,
         final Storage storage
     ) {
-        this(id, contractId, createdAt, null, null, storage);
+        this(id, contract, createdAt, null, null, storage);
     }
 
     /**
      * Ctor.
      * @param id Invoice id.
-     * @param contractId Contract's id of this invoice
+     * @param contract Contract.
      * @param createdAt Invoice creation time.
      * @param paymentTime Time when this Invoice has been paid.
      * @param transactionId The payment's transaction ID.
@@ -73,14 +73,14 @@ public final class StoredInvoice implements Invoice {
      */
     public StoredInvoice(
         final int id,
-        final Contract.Id contractId,
+        final Contract contract,
         final LocalDateTime createdAt,
         final LocalDateTime paymentTime,
         final String transactionId,
         final Storage storage
     ) {
         this.id = id;
-        this.contractId = contractId;
+        this.contract = contract;
         this.createdAt = createdAt;
         this.paymentTime = paymentTime;
         this.transactionId = transactionId;
@@ -93,8 +93,8 @@ public final class StoredInvoice implements Invoice {
     }
 
     @Override
-    public Contract.Id contractId() {
-        return this.contractId;
+    public Contract contract() {
+        return this.contract;
     }
 
     @Override
