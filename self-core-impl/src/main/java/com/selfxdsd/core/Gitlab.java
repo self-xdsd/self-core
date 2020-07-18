@@ -126,7 +126,11 @@ public final class Gitlab implements Provider {
 
     @Override
     public Organizations organizations() {
-        throw new UnsupportedOperationException("Not yet implemented.");
+        return new GitlabOrganizations(
+            this.resources,
+            this.uri,
+            this.user,
+            this.storage);
     }
 
     @Override

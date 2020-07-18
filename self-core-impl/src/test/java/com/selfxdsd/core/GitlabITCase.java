@@ -1,7 +1,10 @@
 package com.selfxdsd.core;
 
+import com.selfxdsd.api.Organizations;
 import com.selfxdsd.api.Provider;
 import com.selfxdsd.api.User;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
 import org.junit.Test;
 
 import javax.json.JsonObject;
@@ -42,9 +45,12 @@ public final class GitlabITCase {
     /**
      * Provider fetches its organizations.
      */
-    @Test(expected = UnsupportedOperationException.class)
-    public void fetchesOrganizations(){
-        createGitlab("criske").organizations();
+    @Test
+    public void fetchesOrganizations() {
+        final Organizations organizations = createGitlab("criske")
+            .organizations();
+        MatcherAssert.assertThat(organizations,
+            Matchers.instanceOf(GitlabOrganizations.class));
     }
 
     /**
