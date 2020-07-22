@@ -31,6 +31,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import javax.json.Json;
+import javax.json.JsonObject;
 import java.net.URI;
 
 /**
@@ -169,6 +170,20 @@ public final class GithubIssueTestCase {
             issue.comments(),
             Matchers.instanceOf(DoNotRepeat.class)
         );
+    }
+
+    /**
+     * Should have an estimation in minutes.
+     */
+    @Test
+    public void returnsEstimation() {
+        final int estimation = new GithubIssue(
+            URI.create("http://localhost/issues/1"),
+            JsonObject.EMPTY_JSON_OBJECT,
+            Mockito.mock(Storage.class),
+            Mockito.mock(JsonResources.class)
+        ).estimation();
+        MatcherAssert.assertThat(estimation, Matchers.is(60));
     }
 
 }

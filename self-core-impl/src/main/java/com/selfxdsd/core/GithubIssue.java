@@ -38,6 +38,9 @@ import java.net.URI;
  * @todo #128:30min Initially, all the Issues will have the DEV or REV role.
  *  In a future version, we will set an Issue's role based on labels set
  *  by the user.
+ * @todo #305:30min Labels API: should be able to list and add labels for
+ *  Provider resources (Repo, Issue). Labels will be used mainly for an Issue
+ *  to get its estimation.
  */
 final class GithubIssue implements Issue {
 
@@ -123,5 +126,10 @@ final class GithubIssue implements Issue {
         return new DoNotRepeat(
             new GithubIssueComments(this.issueUri, this.resources)
         );
+    }
+
+    @Override
+    public int estimation() {
+        return 60;
     }
 }

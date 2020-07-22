@@ -77,4 +77,11 @@ public interface Issue {
      */
     Comments comments();
 
+    /**
+     * The estimation in minutes for the given issue.
+     *
+     * @return Integer.
+     */
+    int estimation();
+
 }
