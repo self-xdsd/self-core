@@ -50,6 +50,7 @@ public final class StoredTaskTestCase {
             project,
             "issueId123",
             Contract.Roles.DEV,
+            60,
             Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(task.project(), Matchers.is(project));
@@ -72,6 +73,7 @@ public final class StoredTaskTestCase {
             project,
             "123",
             Contract.Roles.DEV,
+            60,
             Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(task.issue(), Matchers.is(issue));
@@ -86,6 +88,7 @@ public final class StoredTaskTestCase {
             Mockito.mock(Project.class),
             "issueId123",
             Contract.Roles.DEV,
+            60,
             Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(
@@ -103,6 +106,7 @@ public final class StoredTaskTestCase {
             Mockito.mock(Project.class),
             "issueId123",
             Contract.Roles.DEV,
+            60,
             Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(
@@ -271,17 +275,18 @@ public final class StoredTaskTestCase {
      * should be 0.
      */
     @Test
-    public void returnsZeroEstimationUnassigned() {
+    public void returnsEstimation() {
         final Task task = new StoredTask(
             Mockito.mock(Project.class),
             "issueId123",
             Contract.Roles.DEV,
+            45,
             Mockito.mock(Storage.class)
         );
 
         MatcherAssert.assertThat(
             task.estimation(),
-            Matchers.equalTo(0)
+            Matchers.equalTo(45)
         );
     }
 

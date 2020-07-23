@@ -73,12 +73,14 @@ public final class StoredTask implements Task {
      * @param project Project.
      * @param issueId Id of the Issue that this task represents.
      * @param role Role.
+     * @param estimation Estimation in minutes.
      * @param storage Storage.
      */
     public StoredTask(
         final Project project,
         final String issueId,
         final String role,
+        final int estimation,
         final Storage storage
     ) {
         this(
@@ -87,7 +89,7 @@ public final class StoredTask implements Task {
             storage,
             null,
             null,
-            0
+            estimation
         );
     }
 
