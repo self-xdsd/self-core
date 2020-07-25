@@ -45,8 +45,10 @@ public final class InvoiceTasksTestCase {
      */
     @Test
     public void canBeIterated() {
+        final Invoice invoice = Mockito.mock(Invoice.class);
+        Mockito.when(invoice.invoiceId()).thenReturn(1);
         final InvoicedTasks tasks = new InvoiceTasks(
-            1,
+            invoice,
             () -> {
                 final List<InvoicedTask> list = new ArrayList<>();
                 list.add(Mockito.mock(InvoicedTask.class));
@@ -64,8 +66,10 @@ public final class InvoiceTasksTestCase {
      */
     @Test
     public void ofInvoiceReturnsSelf() {
+        final Invoice one = Mockito.mock(Invoice.class);
+        Mockito.when(one.invoiceId()).thenReturn(1);
         final InvoicedTasks tasks = new InvoiceTasks(
-            1,
+            one,
             () -> {
                 final List<InvoicedTask> list = new ArrayList<>();
                 list.add(Mockito.mock(InvoicedTask.class));
@@ -75,7 +79,7 @@ public final class InvoiceTasksTestCase {
             },
             Mockito.mock(Storage.class)
         );
-        MatcherAssert.assertThat(tasks.ofInvoice(1), Matchers.is(tasks));
+        MatcherAssert.assertThat(tasks.ofInvoice(one), Matchers.is(tasks));
     }
 
     /**
@@ -84,8 +88,10 @@ public final class InvoiceTasksTestCase {
      */
     @Test(expected = IllegalStateException.class)
     public void ofInvoiceComplainsOnDifferentId() {
+        final Invoice one = Mockito.mock(Invoice.class);
+        Mockito.when(one.invoiceId()).thenReturn(1);
         final InvoicedTasks tasks = new InvoiceTasks(
-            1,
+            one,
             () -> {
                 final List<InvoicedTask> list = new ArrayList<>();
                 list.add(Mockito.mock(InvoicedTask.class));
@@ -95,7 +101,9 @@ public final class InvoiceTasksTestCase {
             },
             Mockito.mock(Storage.class)
         );
-        tasks.ofInvoice(2);
+        final Invoice two = Mockito.mock(Invoice.class);
+        Mockito.when(two.invoiceId()).thenReturn(2);
+        tasks.ofInvoice(two);
     }
 
     /**
@@ -104,8 +112,11 @@ public final class InvoiceTasksTestCase {
      */
     @Test (expected = IllegalStateException.class)
     public void registerComplainsOnDifferentId() {
+        final Invoice invoice = Mockito.mock(Invoice.class);
+        Mockito.when(invoice.invoiceId()).thenReturn(1);
+
         final InvoicedTasks tasks = new InvoiceTasks(
-            1,
+            invoice,
             () -> {
                 final List<InvoicedTask> list = new ArrayList<>();
                 list.add(Mockito.mock(InvoicedTask.class));
@@ -130,8 +141,11 @@ public final class InvoiceTasksTestCase {
         final Storage storage = Mockito.mock(Storage.class);
         Mockito.when(storage.invoicedTasks()).thenReturn(all);
 
+        final Invoice one = Mockito.mock(Invoice.class);
+        Mockito.when(one.invoiceId()).thenReturn(1);
+
         final InvoicedTasks tasks = new InvoiceTasks(
-            1,
+            one,
             () -> {
                 final List<InvoicedTask> list = new ArrayList<>();
                 list.add(Mockito.mock(InvoicedTask.class));

@@ -104,7 +104,7 @@ public final class StoredInvoice implements Invoice {
 
     @Override
     public InvoicedTasks tasks() {
-        return this.storage.invoicedTasks().ofInvoice(this.id);
+        return this.storage.invoicedTasks().ofInvoice(this);
     }
 
     @Override

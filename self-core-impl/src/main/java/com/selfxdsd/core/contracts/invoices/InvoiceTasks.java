@@ -22,6 +22,7 @@
  */
 package com.selfxdsd.core.contracts.invoices;
 
+import com.selfxdsd.api.Invoice;
 import com.selfxdsd.api.InvoicedTask;
 import com.selfxdsd.api.InvoicedTasks;
 import com.selfxdsd.api.Task;
@@ -40,9 +41,9 @@ import java.util.stream.Stream;
 public final class InvoiceTasks implements InvoicedTasks {
 
     /**
-     * ID of the Invoice to which these InvoicedTasks belong.
+     * The Invoice to which these InvoicedTasks belong.
      */
-    private final int invoiceId;
+    private final Invoice invoice;
 
     /**
      * Storage context.
@@ -62,28 +63,29 @@ public final class InvoiceTasks implements InvoicedTasks {
     /**
      * Ctor.
      *
-     * @param invoiceId ID of the Invoice to which these
+     * @param invoice The Invoice to which these
      *  InvoiceTasks belong.
      * @param tasks Supplier of the InvoicedTask Stream.
      * @param storage Storage.
      */
     public InvoiceTasks(
-        final int invoiceId,
+        final Invoice invoice,
         final Supplier<Stream<InvoicedTask>> tasks,
         final Storage storage
     ) {
-        this.invoiceId = invoiceId;
+        this.invoice = invoice;
         this.storage = storage;
         this.tasks = tasks;
     }
 
     @Override
-    public InvoicedTasks ofInvoice(final int invoiceId) {
-        if(this.invoiceId == invoiceId) {
+    public InvoicedTasks ofInvoice(final Invoice invoice) {
+        if(this.invoice.invoiceId() == invoice.invoiceId()) {
             return this;
         }
         throw new IllegalStateException(
-            "Already seeing the tasks invoiced with Invoice #" + this.invoiceId
+            "Already seeing the tasks invoiced with Invoice #"
+          + this.invoice.invoiceId()
           + ", you cannot see other InvoicedTasks here."
         );
     }
@@ -93,11 +95,12 @@ public final class InvoiceTasks implements InvoicedTasks {
         final int invoiceId,
         final Task finished
     ) {
-        if(this.invoiceId == invoiceId) {
+        if(this.invoice.invoiceId() == invoiceId) {
             return this.storage.invoicedTasks().register(invoiceId, finished);
         }
         throw new IllegalStateException(
-            "These are the tasks registered with Invoice #" + this.invoiceId
+            "These are the tasks registered with Invoice #"
+          + this.invoice.invoiceId()
           + ". You cannot register a Task in a different Invoice here."
         );
     }
