@@ -126,10 +126,6 @@ abstract class BaseSelf implements Self {
             return this.user.projects();
         }
 
-        @Override
-        public Organizations organizations() {
-            return this.user.organizations();
-        }
     }
 
 }

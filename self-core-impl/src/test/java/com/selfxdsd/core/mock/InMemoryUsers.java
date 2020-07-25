@@ -80,7 +80,7 @@ public final class InMemoryUsers implements Users {
         User signedUp = this.users.get(key);
         if(signedUp == null) {
             signedUp = new StoredUser(
-                username, email, provider, this.storage, this.resources
+                username, email, provider, this.storage
             );
             this.users.put(
                 key, signedUp

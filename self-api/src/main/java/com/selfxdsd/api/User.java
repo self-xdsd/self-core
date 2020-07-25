@@ -54,10 +54,4 @@ public interface User {
      * @return Projects.
      */
     Projects projects();
-
-    /**
-     * User's organizations.
-     * @return Organizations.
-     */
-    Organizations organizations();
 }

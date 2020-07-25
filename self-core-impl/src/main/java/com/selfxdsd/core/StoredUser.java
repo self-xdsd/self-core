@@ -22,13 +22,11 @@
  */
 package com.selfxdsd.core;
 
-import com.selfxdsd.api.Organizations;
 import com.selfxdsd.api.Projects;
 import com.selfxdsd.api.Provider;
 import com.selfxdsd.api.User;
 import com.selfxdsd.api.storage.Storage;
 
-import java.net.URI;
 import java.util.Objects;
 
 /**
@@ -60,30 +58,22 @@ public final class StoredUser implements User {
     private final Storage storage;
 
     /**
-     * Provider's JSON resources.
-     */
-    private final JsonResources resources;
-
-    /**
      * Ctor.
      * @param username Username.
      * @param email E-Mail.
      * @param provider Provider's name (github, gitlab etc).
      * @param storage Self's Storage.
-     * @param resources Provider's JSON resources.
      */
     public StoredUser(
         final String username,
         final String email,
         final String provider,
-        final Storage storage,
-        final JsonResources resources
+        final Storage storage
     ) {
         this.username = username;
         this.email = email;
         this.provider = provider;
         this.storage = storage;
-        this.resources = resources;
     }
 
     @Override
@@ -110,24 +100,6 @@ public final class StoredUser implements User {
     @Override
     public Projects projects() {
         return this.storage.projects().ownedBy(this);
-    }
-
-    @Override
-    public Organizations organizations() {
-        final Organizations organizations;
-        switch (this.provider){
-            case Provider.Names.GITHUB: organizations =
-                new GithubOrganizations(this.resources,
-                    URI.create("https://api.github.com"), this,
-                    this.storage);
-                break;
-            case Provider.Names.GITLAB:
-                throw new UnsupportedOperationException("Gitlab organizations "
-                    +"not implemented yet!");
-            default: throw new IllegalStateException("Unknown provider "
-                + this.provider);
-        }
-        return organizations;
     }
 
     @Override

@@ -28,7 +28,6 @@ import com.selfxdsd.api.User;
 import com.selfxdsd.api.storage.Storage;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
-import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -49,8 +48,7 @@ public final class StoredUserTestCase {
             "amihaiemil",
             "amihaiemil@gmail.com",
             Provider.Names.GITHUB,
-            Mockito.mock(Storage.class),
-            Mockito.mock(JsonResources.class)
+            Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(
             user.username(),
@@ -67,8 +65,7 @@ public final class StoredUserTestCase {
             "amihaiemil",
             "amihaiemil@gmail.com",
             Provider.Names.GITHUB,
-            Mockito.mock(Storage.class),
-            Mockito.mock(JsonResources.class)
+            Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(
             user.email(),
@@ -85,8 +82,7 @@ public final class StoredUserTestCase {
             "amihaiemil",
             "amihaiemil@gmail.com",
             Provider.Names.GITHUB,
-            Mockito.mock(Storage.class),
-            Mockito.mock(JsonResources.class)
+            Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(
             ghUser.provider(),
@@ -97,8 +93,7 @@ public final class StoredUserTestCase {
             "amihaiemil",
             "amihaiemil@gmail.com",
             Provider.Names.GITLAB,
-            Mockito.mock(Storage.class),
-            Mockito.mock(JsonResources.class)
+            Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(
             glUser.provider(),
@@ -116,8 +111,7 @@ public final class StoredUserTestCase {
             "amihaiemil",
             "amihaiemil@gmail.com",
             Provider.Names.GITHUB,
-            storage,
-            Mockito.mock(JsonResources.class)
+            storage
         );
 
         final Projects owned = Mockito.mock(Projects.class);
@@ -129,40 +123,6 @@ public final class StoredUserTestCase {
             ghUser.projects(),
             Matchers.is(owned)
         );
-    }
-
-    /**
-     * StoredUser can return its Organizations.
-     * @checkstyle IllegalCatch (40 lines)
-     */
-    @Test
-    public void returnsOrganizations(){
-
-        final User ghUser = new StoredUser(
-            "amihaiemil",
-            "amihaiemil@gmail.com",
-            Provider.Names.GITHUB,
-            Mockito.mock(Storage.class),
-            Mockito.mock(JsonResources.class)
-        );
-        MatcherAssert.assertThat(ghUser.organizations(),
-            Matchers.instanceOf(GithubOrganizations.class));
-
-        final User glUser = new StoredUser(
-            "amihaiemil",
-            "amihaiemil@gmail.com",
-            Provider.Names.GITLAB,
-            Mockito.mock(Storage.class),
-            Mockito.mock(JsonResources.class)
-        );
-        try {
-            glUser.organizations();
-            Assert.fail();
-        }catch (final Exception exception){
-            MatcherAssert.assertThat(exception,
-                Matchers.instanceOf(UnsupportedOperationException.class));
-        }
-
     }
 
 }
