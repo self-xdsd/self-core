@@ -1,8 +1,6 @@
 package com.selfxdsd.core.contracts.invoices;
 
-import com.selfxdsd.api.Contract;
-import com.selfxdsd.api.Invoice;
-import com.selfxdsd.api.InvoicedTasks;
+import com.selfxdsd.api.*;
 import com.selfxdsd.api.storage.Storage;
 
 import java.math.BigDecimal;
@@ -90,6 +88,30 @@ public final class StoredInvoice implements Invoice {
     @Override
     public int invoiceId() {
         return this.id;
+    }
+
+    @Override
+    public InvoicedTask register(final Task task) {
+        final Contract.Id taskContract = new Contract.Id(
+            task.project().repoFullName(),
+            task.assignee().username(),
+            task.project().provider(),
+            task.role()
+        );
+        if(!this.contract.contractId().equals(taskContract)) {
+            throw new IllegalArgumentException(
+                "The given Task does not belong to this Invoice!"
+            );
+        } else {
+            if(this.isPaid()) {
+                throw new IllegalStateException(
+                    "Invoice is already paid, can't add a new Task to it!"
+                );
+            }
+            return this.storage.invoicedTasks().register(
+                this, task
+            );
+        }
     }
 
     @Override
