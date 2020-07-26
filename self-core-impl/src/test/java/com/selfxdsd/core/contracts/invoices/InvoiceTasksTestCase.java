@@ -112,11 +112,11 @@ public final class InvoiceTasksTestCase {
      */
     @Test (expected = IllegalStateException.class)
     public void registerComplainsOnDifferentId() {
-        final Invoice invoice = Mockito.mock(Invoice.class);
-        Mockito.when(invoice.invoiceId()).thenReturn(1);
+        final Invoice one = Mockito.mock(Invoice.class);
+        Mockito.when(one.invoiceId()).thenReturn(1);
 
         final InvoicedTasks tasks = new InvoiceTasks(
-            invoice,
+            one,
             () -> {
                 final List<InvoicedTask> list = new ArrayList<>();
                 list.add(Mockito.mock(InvoicedTask.class));
@@ -126,7 +126,10 @@ public final class InvoiceTasksTestCase {
             },
             Mockito.mock(Storage.class)
         );
-        tasks.register(2, Mockito.mock(Task.class));
+
+        final Invoice two = Mockito.mock(Invoice.class);
+        Mockito.when(two.invoiceId()).thenReturn(2);
+        tasks.register(two, Mockito.mock(Task.class));
     }
 
     /**
@@ -136,13 +139,14 @@ public final class InvoiceTasksTestCase {
     public void registersFinishedTask() {
         final InvoicedTask registered = Mockito.mock(InvoicedTask.class);
         final Task finished = Mockito.mock(Task.class);
-        final InvoicedTasks all = Mockito.mock(InvoicedTasks.class);
-        Mockito.when(all.register(1, finished)).thenReturn(registered);
-        final Storage storage = Mockito.mock(Storage.class);
-        Mockito.when(storage.invoicedTasks()).thenReturn(all);
 
         final Invoice one = Mockito.mock(Invoice.class);
         Mockito.when(one.invoiceId()).thenReturn(1);
+
+        final InvoicedTasks all = Mockito.mock(InvoicedTasks.class);
+        Mockito.when(all.register(one, finished)).thenReturn(registered);
+        final Storage storage = Mockito.mock(Storage.class);
+        Mockito.when(storage.invoicedTasks()).thenReturn(all);
 
         final InvoicedTasks tasks = new InvoiceTasks(
             one,
@@ -156,7 +160,7 @@ public final class InvoiceTasksTestCase {
             storage
         );
         MatcherAssert.assertThat(
-            tasks.register(1, finished),
+            tasks.register(one, finished),
             Matchers.is(registered)
         );
     }

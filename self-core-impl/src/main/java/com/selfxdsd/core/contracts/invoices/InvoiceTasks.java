@@ -92,11 +92,11 @@ public final class InvoiceTasks implements InvoicedTasks {
 
     @Override
     public InvoicedTask register(
-        final int invoiceId,
+        final Invoice invoice,
         final Task finished
     ) {
-        if(this.invoice.invoiceId() == invoiceId) {
-            return this.storage.invoicedTasks().register(invoiceId, finished);
+        if(this.invoice.invoiceId() == invoice.invoiceId()) {
+            return this.storage.invoicedTasks().register(invoice, finished);
         }
         throw new IllegalStateException(
             "These are the tasks registered with Invoice #"

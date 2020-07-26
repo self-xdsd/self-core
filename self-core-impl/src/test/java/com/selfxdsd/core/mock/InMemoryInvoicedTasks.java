@@ -79,12 +79,12 @@ public final class InMemoryInvoicedTasks implements InvoicedTasks {
 
     @Override
     public InvoicedTask register(
-        final int invoiceId,
+        final Invoice invoice,
         final Task finished
     ) {
         final InvoicedTask registered = new StoredInvoicedTask(
             this.idGenerator++,
-            invoiceId,
+            invoice.invoiceId(),
             finished.value(),
             finished,
             this.storage
