@@ -10,6 +10,9 @@ import java.time.LocalDateTime;
  * @author criske
  * @version $Id$
  * @since 0.0.3
+ * @todo #315:30min An Invoice should have the method #register(Task).
+ *  This method should check if the Invoice is active. If it is, register
+ *  the Task to the invoice.
  */
 public interface Invoice {
 
