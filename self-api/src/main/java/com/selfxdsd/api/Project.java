@@ -91,12 +91,8 @@ public interface Project {
     /**
      * Resolve the given event that happened in this Project.
      * @param event Event received from the Provider.
-     * @param secret Secret token to make sure the event actually
-     *  belongs to this Project.
-     * @throws IllegalStateException If the provided secret
-     *  is not correct.
      */
-    void resolve(final Event event, final String secret);
+    void resolve(final Event event);
 
     /**
      * This project's webhook token.
