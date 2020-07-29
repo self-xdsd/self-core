@@ -158,6 +158,11 @@ public final class StoredProject implements Project {
     }
 
     @Override
+    public String webHookToken() {
+        return this.webHookToken;
+    }
+
+    @Override
     public Repo deactivate() {
         throw new UnsupportedOperationException("Not yet implemented.");
     }
