@@ -76,22 +76,6 @@ public final class StoredProjectTestCase {
     }
 
     /**
-     * Method resolve throws IAE if the secret token does
-     * not match.
-     */
-    @Test(expected = IllegalArgumentException.class)
-    public void resolveComplainsOnIncorrectSecret() {
-        final Project project = new StoredProject(
-            Mockito.mock(User.class),
-            "john/test",
-            "wh123token",
-            Mockito.mock(ProjectManager.class),
-            Mockito.mock(Storage.class)
-        );
-        project.resolve(Mockito.mock(Event.class), "wh123wrong");
-    }
-
-    /**
      * StoredProject can return its provider.
      */
     @Test

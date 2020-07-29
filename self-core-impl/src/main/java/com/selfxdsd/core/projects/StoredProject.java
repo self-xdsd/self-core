@@ -144,12 +144,7 @@ public final class StoredProject implements Project {
     }
 
     @Override
-    public void resolve(final Event event, final String secret) {
-        if(!this.webHookToken.equalsIgnoreCase(secret)) {
-            throw new IllegalArgumentException(
-                "The provided secret token is not correct!"
-            );
-        }
+    public void resolve(final Event event) {
         if(event.type().equals("newIssue")) {
             this.projectManager.newIssue(event);
         } else if(event.type().equals("reopened")) {
