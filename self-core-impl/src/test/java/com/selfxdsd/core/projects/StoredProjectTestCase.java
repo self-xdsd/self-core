@@ -58,6 +58,24 @@ public final class StoredProjectTestCase {
     }
 
     /**
+     * StoredProject can return its webhook token.
+     */
+    @Test
+    public void returnsWebhookToken(){
+        final Project project = new StoredProject(
+            Mockito.mock(User.class),
+            "mihai/test",
+            "wh123token",
+            Mockito.mock(ProjectManager.class),
+            Mockito.mock(Storage.class)
+        );
+        MatcherAssert.assertThat(
+            project.webHookToken(),
+            Matchers.equalTo("wh123token")
+        );
+    }
+
+    /**
      * Method resolve throws IAE if the secret token does
      * not match.
      */
