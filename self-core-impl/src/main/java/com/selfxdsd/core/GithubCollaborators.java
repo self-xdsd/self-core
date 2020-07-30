@@ -22,55 +22,53 @@
  */
 package com.selfxdsd.core;
 
-import com.selfxdsd.api.Repo;
+import com.selfxdsd.api.Collaborators;
 import com.selfxdsd.api.storage.Storage;
-import com.selfxdsd.api.User;
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
-import org.junit.Test;
-import org.mockito.Mockito;
+
 import java.net.URI;
 
 /**
- * Unit tests for {@link GithubRepo}.
+ * Github repo collaborators.
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
- * @since 0.0.1
+ * @since 0.0.13
  */
-public final class GithubRepoTestCase {
+final class GithubCollaborators implements Collaborators {
 
     /**
-     * A GithubRepo can return its owner.
+     * Github repo Collaborators base uri.
      */
-    @Test
-    public void returnsOwner() {
-        final User owner = Mockito.mock(User.class);
-        final Repo repo = new GithubRepo(
-            Mockito.mock(JsonResources.class),
-            URI.create("http://localhost:8080"),
-            owner,
-            Mockito.mock(Storage.class)
-        );
-        MatcherAssert.assertThat(repo.owner(), Matchers.is(owner));
+    private final URI collaboratorsUri;
+
+    /**
+     * Github's JSON Resources.
+     */
+    private final JsonResources resources;
+
+    /**
+     * Self storage, in case we want to store something.
+     */
+    private final Storage storage;
+
+    /**
+     * Ctor.
+     *
+     * @param resources Github's JSON Resources.
+     * @param collaboratorsUri Collaborators base URI.
+     * @param storage Storage.
+     */
+    GithubCollaborators(
+        final JsonResources resources,
+        final URI collaboratorsUri,
+        final Storage storage
+    ) {
+        this.resources = resources;
+        this.collaboratorsUri = collaboratorsUri;
+        this.storage = storage;
     }
 
-    /**
-     * A GithubRepo can return its collaborators.
-     */
-    @Test
-    public void returnsCollaborators() {
-        final Repo repo = new GithubRepo(
-            Mockito.mock(JsonResources.class),
-            URI.create("http://localhost:8080/repos/mihai/test/"),
-            Mockito.mock(User.class),
-            Mockito.mock(Storage.class)
-        );
-        MatcherAssert.assertThat(
-            repo.collaborators(),
-            Matchers.allOf(
-                Matchers.notNullValue(),
-                Matchers.instanceOf(GithubCollaborators.class)
-            )
-        );
+    @Override
+    public boolean invite(final String username) {
+        return false;
     }
 }

@@ -22,6 +22,7 @@
  */
 package com.selfxdsd.core;
 
+import com.selfxdsd.api.Collaborators;
 import com.selfxdsd.api.Issues;
 import com.selfxdsd.api.Project;
 import com.selfxdsd.api.User;
@@ -34,6 +35,8 @@ import java.net.URI;
  * @author criske
  * @version $Id$
  * @since 0.0.1
+ * @todo #328:60min Implement the GitLab Collaborators, especially
+ *  the invite(...) method. Don't forget about the tests.
  */
 final class GitlabRepo extends BaseRepo {
 
@@ -84,6 +87,11 @@ final class GitlabRepo extends BaseRepo {
 
     @Override
     public Issues issues() {
+        throw new UnsupportedOperationException("Not yet implemented.");
+    }
+
+    @Override
+    public Collaborators collaborators() {
         throw new UnsupportedOperationException("Not yet implemented.");
     }
 
