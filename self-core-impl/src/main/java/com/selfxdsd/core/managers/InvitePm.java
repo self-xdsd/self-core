@@ -45,6 +45,7 @@ public final class InvitePm extends Intermediary {
 
     @Override
     public void perform(final Event event) {
+        event.project().repo().
         this.next().perform(event);
     }
 }
