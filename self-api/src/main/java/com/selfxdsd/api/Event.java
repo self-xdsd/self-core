@@ -55,4 +55,9 @@ public interface Event {
      */
     Project project();
 
+    /**
+     * The Provider which sent this event.
+     * @return Provider.
+     */
+    Provider provider();
 }
