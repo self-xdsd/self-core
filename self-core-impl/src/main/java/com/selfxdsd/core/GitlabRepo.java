@@ -92,7 +92,12 @@ final class GitlabRepo extends BaseRepo {
 
     @Override
     public Collaborators collaborators() {
-        throw new UnsupportedOperationException("Not yet implemented.");
+        final String repoUriPath = this.repoUri().getPath();
+        final String repoName = repoUriPath.substring(repoUriPath
+            .lastIndexOf("/") + 1);
+        final URI uri = URI.create("https://gitlab.com/api/v4/projects/"
+            + repoName + "/members");
+        return new GitlabCollaborators(this.resources(), uri, this.storage());
     }
 
 }
