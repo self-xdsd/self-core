@@ -54,4 +54,23 @@ public final class GithubRepoTestCase {
         MatcherAssert.assertThat(repo.owner(), Matchers.is(owner));
     }
 
+    /**
+     * A GithubRepo can return its collaborators.
+     */
+    @Test
+    public void returnsCollaborators() {
+        final Repo repo = new GithubRepo(
+            Mockito.mock(JsonResources.class),
+            URI.create("http://localhost:8080/repos/mihai/test/"),
+            Mockito.mock(User.class),
+            Mockito.mock(Storage.class)
+        );
+        MatcherAssert.assertThat(
+            repo.collaborators(),
+            Matchers.allOf(
+                Matchers.notNullValue(),
+                Matchers.instanceOf(GithubCollaborators.class)
+            )
+        );
+    }
 }

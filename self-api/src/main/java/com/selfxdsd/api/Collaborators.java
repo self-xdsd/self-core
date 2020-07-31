@@ -1,13 +1,13 @@
 /**
  * Copyright (c) 2020, Self XDSD Contributors
  * All rights reserved.
- *
+ * <p>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"),
  * to read the Software only. Permission is hereby NOT GRANTED to use, copy,
  * modify, merge, publish, distribute, sublicense, and/or sell copies of
  * the Software.
- *
+ * <p>
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -22,57 +22,21 @@
  */
 package com.selfxdsd.api;
 
-import javax.json.JsonObject;
-
 /**
- * A Repository belonging to a com.selfxdsd.api.User on Github, Gitlab,
- * Bitbucket etc.
+ * Repo collaborators.
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
- * @since 0.0.1
+ * @since 0.0.13
  */
-public interface Repo {
-    /**
-     * Owner of this repository.
-     * @return User.
-     */
-    User owner();
+public interface Collaborators {
 
     /**
-     * The Json representation of this Repo as returned by the API
-     * of the User's provider (Github, BitBucket etc).
-     * @return JsonObject.
+     * Invite a user to be a collaborator.
+     * @param username Username.
+     * @param permission Permission level the user will have in the repo.
+     * @return True or false, whether the invitations
+     *  was successful or not.
      */
-    JsonObject json();
+    boolean invite(final String username, final String permission);
 
-    /**
-     * Activate this repository, tell Self to start
-     * managing it.
-     * @return Project.
-     */
-    Project activate();
-
-    /**
-     * This Repo's full name (e.g. amihaiemil/docker-java-api).
-     * @return String.
-     */
-    String fullName();
-
-    /**
-     * Provider name of this repository.
-     * @return Provider.
-     */
-    String provider();
-
-    /**
-     * The repo's Issues.
-     * @return Issues.
-     */
-    Issues issues();
-
-    /**
-     * The repo's collaborators.
-     * @return Collaborators.
-     */
-    Collaborators collaborators();
 }

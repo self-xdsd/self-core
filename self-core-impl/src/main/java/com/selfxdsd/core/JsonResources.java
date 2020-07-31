@@ -87,6 +87,19 @@ public interface JsonResources {
     );
 
     /**
+     * Put a JsonObject at the specified URI.
+     * @param uri URI.
+     * @param body JSON body of the request.
+     * @return Resource.
+     * @throws IllegalStateException If IOException or InterruptedException
+     *  occur while making the HTTP request.
+     */
+    Resource put(
+        final URI uri,
+        final JsonObject body
+    );
+
+    /**
      * JSON Resources obtained by making HTTP calls, using
      * the JDK.
      * @author Mihai Andronache (amihaiemil@gmail.com)
@@ -195,6 +208,32 @@ public interface JsonResources {
             } catch (final IOException | InterruptedException ex) {
                 throw new IllegalStateException(
                     "Couldn't PATCH " + body.toString()
+                  + " at [" + uri.toString() +"]",
+                    ex
+                );
+            }
+        }
+
+        @Override
+        public Resource put(final URI uri, final JsonObject body) {
+            try {
+                final HttpResponse<String> response = HttpClient.newHttpClient()
+                    .send(
+                        this.request(
+                            uri,
+                            "PUT",
+                            HttpRequest.BodyPublishers.ofString(
+                                body.toString()
+                            )
+                        ),
+                        HttpResponse.BodyHandlers.ofString()
+                    );
+                return new JsonResponse(
+                    response.statusCode(), response.body()
+                );
+            } catch (final IOException | InterruptedException ex) {
+                throw new IllegalStateException(
+                    "Couldn't PUT " + body.toString()
                   + " at [" + uri.toString() +"]",
                     ex
                 );

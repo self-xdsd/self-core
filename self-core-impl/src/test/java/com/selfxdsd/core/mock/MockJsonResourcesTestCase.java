@@ -112,6 +112,37 @@ public final class MockJsonResourcesTestCase {
     }
 
     /**
+     * Simulates PUT request.
+     * @checkstyle RegexpSingleline (20 lines)
+     */
+    @Test
+    public void simulatesPutRequest() {
+        final URI uri = URI.create("/");
+        final AccessToken token = mockAccessToken("header", "tk123");
+        final JsonResources res = new MockJsonResources(token, r ->
+            new MockResource(200, Json
+                .createObjectBuilder((JsonObject) r.getBody())
+                .add("method", r.getMethod())
+                .add("uri", r.getUri().toString())
+                .add("token", r.getAccessToken().value())
+                .build())
+        );
+        final JsonObject patchObject = res.put(uri,
+            Json.createObjectBuilder()
+                .add("message", "Hello")
+                .build()
+        ).asJsonObject();
+        MatcherAssert.assertThat(patchObject.getString("method"),
+            Matchers.equalTo("PUT"));
+        MatcherAssert.assertThat(patchObject.getString("uri"),
+            Matchers.equalTo(uri.toString()));
+        MatcherAssert.assertThat(patchObject.getString("token"),
+            Matchers.equalTo("tk123"));
+        MatcherAssert.assertThat(patchObject.getString("message"),
+            Matchers.equalTo("Hello"));
+    }
+
+    /**
      * Simulates JsonArray Resource response.
      * @checkstyle RegexpSingleline (20 lines)
      */

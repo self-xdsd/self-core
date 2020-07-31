@@ -142,6 +142,17 @@ public final class MockJsonResources implements JsonResources {
         return onRequest.apply(request);
     }
 
+    @Override
+    public Resource put(final URI uri, final JsonObject body) {
+        final MockRequest request = new MockRequest(
+            "PUT",
+            uri,
+            body,
+            this.accessToken
+        );
+        return this.onRequest.apply(request);
+    }
+
     /**
      * Encapsulates the elements of a {@link MockJsonResources}
      * request.
