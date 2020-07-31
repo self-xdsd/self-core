@@ -36,8 +36,6 @@ import java.net.URI;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.13
- * @todo #328:30min Implement the invite method using JsonResources.put.
- *  Don't forget about unit tests.
  */
 final class GithubCollaborators implements Collaborators {
 
