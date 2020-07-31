@@ -121,7 +121,7 @@ public final class MockJsonResources implements JsonResources {
     }
 
     @Override
-    public Resource post(final URI uri, final JsonObject body) {
+    public Resource post(final URI uri, final JsonValue body) {
         final MockRequest request = new MockRequest(
             "POST",
             uri,
@@ -132,7 +132,7 @@ public final class MockJsonResources implements JsonResources {
     }
 
     @Override
-    public Resource patch(final URI uri, final JsonObject body) {
+    public Resource patch(final URI uri, final JsonValue body) {
         final MockRequest request = new MockRequest(
             "PATCH",
             uri,
@@ -143,7 +143,7 @@ public final class MockJsonResources implements JsonResources {
     }
 
     @Override
-    public Resource put(final URI uri, final JsonObject body) {
+    public Resource put(final URI uri, final JsonValue body) {
         final MockRequest request = new MockRequest(
             "PUT",
             uri,
