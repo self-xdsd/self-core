@@ -33,9 +33,10 @@ public interface Collaborators {
     /**
      * Invite a user to be a collaborator.
      * @param username Username.
+     * @param permission Permission level the user will have in the repo.
      * @return True or false, whether the invitations
      *  was successful or not.
      */
-    boolean invite(final String username);
+    boolean invite(final String username, final String permission);
 
 }

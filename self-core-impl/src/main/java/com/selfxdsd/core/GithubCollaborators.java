@@ -81,7 +81,10 @@ final class GithubCollaborators implements Collaborators {
     }
 
     @Override
-    public boolean invite(final String username) {
+    public boolean invite(
+        final String username,
+        final String permission
+    ) {
         final boolean result;
         LOG.debug(
             "Inviting user " + username
@@ -89,7 +92,9 @@ final class GithubCollaborators implements Collaborators {
         );
         final Resource response = this.resources.put(
             URI.create(this.collaboratorsUri.toString() + "/" + username),
-            Json.createObjectBuilder().build()
+            Json.createObjectBuilder()
+                .add("permission", permission.toLowerCase())
+                .build()
         );
         if(response.statusCode() == HttpURLConnection.HTTP_CREATED) {
             result = true;
