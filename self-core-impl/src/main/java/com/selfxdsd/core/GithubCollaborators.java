@@ -87,8 +87,9 @@ final class GithubCollaborators implements Collaborators {
     ) {
         final boolean result;
         LOG.debug(
-            "Inviting user " + username
-            + " to [" + this.collaboratorsUri.toString() + "]."
+            "Inviting user " + username + " with permission ["
+            + permission + "]" + " to ["
+            + this.collaboratorsUri.toString() + "]."
         );
         final Resource response = this.resources.put(
             URI.create(this.collaboratorsUri.toString() + "/" + username),
