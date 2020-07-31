@@ -71,7 +71,7 @@ final class GitlabRepo extends BaseRepo {
                                      final User owner,
                                      final Storage storage) {
         final URI repo = URI.create("https://gitlab.com/api/v4/projects/"
-            + repoName);
+            + owner.username() + "%2F"+repoName);
         return new GitlabRepo(resources, repo, owner, storage);
     }
 

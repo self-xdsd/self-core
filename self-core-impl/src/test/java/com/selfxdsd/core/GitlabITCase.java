@@ -28,7 +28,7 @@ public final class GitlabITCase {
     @Test
     public void fetchesRepoOk() {
         final Provider gitlab = createGitlab("criske");
-        final JsonObject jsonRepo = gitlab.repo("18889648").json();
+        final JsonObject jsonRepo = gitlab.repo("test2").json();
         assertThat(jsonRepo.getInt("id"), equalTo(18889648));
         assertThat(jsonRepo.getString("path_with_namespace"),
             equalTo("criske/test2"));
