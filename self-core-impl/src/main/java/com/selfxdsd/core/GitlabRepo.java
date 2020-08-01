@@ -92,9 +92,9 @@ final class GitlabRepo extends BaseRepo {
 
     @Override
     public Collaborators collaborators() {
-        final String repoUriPath = this.repoUri().getPath();
-        final String repoName = repoUriPath.substring(repoUriPath
-            .lastIndexOf("/") + 1);
+        final String repoUriStr = this.repoUri().toString();
+        final String repoName = repoUriStr.substring(repoUriStr
+            .lastIndexOf("projects/") + 9);
         final URI uri = URI.create("https://gitlab.com/api/v4/projects/"
             + repoName + "/members");
         return new GitlabCollaborators(this.resources(), uri, this.storage());

@@ -72,9 +72,8 @@ public final class GitlabCollaboratorsTestCase {
                     );
                     MatcherAssert.assertThat(
                         req.getUri().toString(),
-                        Matchers.equalTo(
-                            "https://gitlab.com/api/v4/projects/repo/members"
-                        )
+                        Matchers.equalTo("https://gitlab.com/api/v4/"
+                                + "projects/amihaiemil%2Frepo/members")
                     );
                     return new MockJsonResources.MockResource(
                         HttpURLConnection.HTTP_CREATED,
@@ -123,9 +122,8 @@ public final class GitlabCollaboratorsTestCase {
                     );
                     MatcherAssert.assertThat(
                         req.getUri().toString(),
-                        Matchers.equalTo(
-                            "https://gitlab.com/api/v4/projects/repo/members"
-                        )
+                        Matchers.equalTo("https://gitlab.com/api/v4/"
+                                + "projects/amihaiemil%2Frepo/members")
                     );
                     return new MockJsonResources.MockResource(
                         HttpURLConnection.HTTP_CONFLICT,
@@ -174,9 +172,8 @@ public final class GitlabCollaboratorsTestCase {
                     );
                     MatcherAssert.assertThat(
                         req.getUri().toString(),
-                        Matchers.equalTo(
-                            "https://gitlab.com/api/v4/projects/repo/members"
-                        )
+                        Matchers.equalTo("https://gitlab.com/api/v4/"
+                                + "projects/amihaiemil%2Frepo/members")
                     );
                     return new MockJsonResources.MockResource(
                         HttpURLConnection.HTTP_NOT_FOUND,
