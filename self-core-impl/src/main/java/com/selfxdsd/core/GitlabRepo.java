@@ -35,8 +35,6 @@ import java.net.URI;
  * @author criske
  * @version $Id$
  * @since 0.0.1
- * @todo #328:60min Implement the GitLab Collaborators, especially
- *  the invite(...) method. Don't forget about the tests.
  */
 final class GitlabRepo extends BaseRepo {
 
