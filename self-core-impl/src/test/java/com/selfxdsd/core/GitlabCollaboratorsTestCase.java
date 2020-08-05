@@ -83,7 +83,7 @@ public final class GitlabCollaboratorsTestCase {
             )
         );
         final boolean res = provider
-            .repo("repo")
+            .repo("amihaiemil", "repo")
             .collaborators()
             .invite("1234", "30");
         MatcherAssert.assertThat(
@@ -133,7 +133,7 @@ public final class GitlabCollaboratorsTestCase {
             )
         );
         final boolean res = provider
-            .repo("repo")
+            .repo("amihaiemil", "repo")
             .collaborators()
             .invite("1234", "30");
         MatcherAssert.assertThat(
@@ -183,7 +183,7 @@ public final class GitlabCollaboratorsTestCase {
             )
         );
         final boolean res = provider
-            .repo("repo")
+            .repo("amihaiemil", "repo")
             .collaborators()
             .invite("534534", "30");
         MatcherAssert.assertThat(

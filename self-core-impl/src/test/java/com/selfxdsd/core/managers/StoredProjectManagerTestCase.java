@@ -369,6 +369,7 @@ public final class StoredProjectManagerTestCase {
         Mockito.when(repo.issues()).thenReturn(issues);
         Mockito.when(
             prov.repo(
+                fullName.substring(0, fullName.indexOf("/")),
                 fullName.substring(fullName.indexOf("/") + 1)
             )
         ).thenReturn(repo);

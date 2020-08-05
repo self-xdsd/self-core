@@ -105,13 +105,13 @@ public final class StoredProjectTestCase {
         final Repo repo = Mockito.mock(Repo.class);
         final Provider prov = Mockito.mock(Provider.class);
         Mockito.when(prov.name()).thenReturn(Provider.Names.GITHUB);
-        Mockito.when(prov.repo("test")).thenReturn(repo);
+        Mockito.when(prov.repo("john", "test")).thenReturn(repo);
         final User owner = Mockito.mock(User.class);
         Mockito.when(owner.provider()).thenReturn(prov);
 
         final Project project = new StoredProject(
             owner,
-            "jogn/test",
+            "john/test",
             "wh123token",
             Mockito.mock(ProjectManager.class),
             Mockito.mock(Storage.class)

@@ -58,18 +58,22 @@ final class GitlabRepo extends BaseRepo {
     /**
      * Creates a Gitlab Repo from name.
      * @param resources Gitlab's JSON Resources.
+     * @param login Owner's login (Username or Org name).
      * @param repoName Repository name.
      * @param owner Owner of this repo.
      * @param storage Storage used to save the Project when
      *  this repo is activated.
      * @return GitlabRepo.
      */
-    static GitlabRepo createFromName(final String repoName,
-                                     final JsonResources resources,
-                                     final User owner,
-                                     final Storage storage) {
+    static GitlabRepo createFromName(
+        final String login,
+        final String repoName,
+        final JsonResources resources,
+        final User owner,
+        final Storage storage
+    ) {
         final URI repo = URI.create("https://gitlab.com/api/v4/projects/"
-            + owner.username() + "%2F"+repoName);
+            + login + "%2F"+repoName);
         return new GitlabRepo(resources, repo, owner, storage);
     }
 
