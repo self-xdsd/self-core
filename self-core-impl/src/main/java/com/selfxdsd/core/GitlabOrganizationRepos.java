@@ -82,11 +82,20 @@ final class GitlabOrganizationRepos implements Repos {
      *
      * @param repoData Repo as JSON.
      * @return Repo.
+     * @todo #333:30min The method Provider.repo(name) has been changed to
+     *  Provider.repo(owner, name), where owner is either the User's login
+     *  or the Organization's name. This change was necessary because it's
+     *  not correct to assume that the User is always the actual owner --
+     *  a repo can also be owned by an Organization. In this task, figure out
+     *  what value needs to be passed bellow (currently, we always pass empty
+     *  string).
      */
     private Repo buildRepo(final JsonValue repoData) {
         final String repoName = ((JsonObject) repoData)
             .getString("path");
-        return GitlabRepo.createFromName(repoName,
+        return GitlabRepo.createFromName(
+            "",
+            repoName,
             this.resources,
             this.owner,
             this.storage);
