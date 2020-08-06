@@ -23,10 +23,11 @@
 package com.selfxdsd.core.projects;
 
 import com.selfxdsd.api.*;
+import com.selfxdsd.api.storage.Paged;
 
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
+import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 /**
  * Projects belonging to a User. Pay attention:
@@ -51,17 +52,17 @@ public final class UserProjects implements Projects {
     /**
      * The projects.
      */
-    private final List<Project> projects;
+    private final Supplier<Stream<Project>> projects;
 
     /**
      * Constructor.
      * @param user The user.
      * @param projects The user's projects.
      */
-    public UserProjects(final User user, final List<Project> projects) {
+    public UserProjects(final User user,
+                        final Supplier<Stream<Project>> projects) {
         this.user = user;
-        this.projects = new ArrayList<>();
-        this.projects.addAll(projects);
+        this.projects = projects;
     }
 
     @Override
@@ -77,12 +78,8 @@ public final class UserProjects implements Projects {
 
     @Override
     public Projects assignedTo(final int projectManagerId) {
-        final List<Project> assigned = new ArrayList<>();
-        for(final Project project : this.projects) {
-            if(project.projectManager().id() == projectManagerId) {
-                assigned.add(project);
-            }
-        }
+        final Supplier<Stream<Project>> assigned = ()-> this.projects.get()
+                .filter(p -> p.projectManager().id() == projectManagerId);
         return new PmProjects(projectManagerId, assigned);
     }
 
@@ -94,7 +91,7 @@ public final class UserProjects implements Projects {
         }
         throw new IllegalStateException(
             "Already seeing the projects of User " + this.user.username()
-          + ", from provider " + this.user.provider().name()
+                + ", from provider " + this.user.provider().name()
         );
     }
 
@@ -103,19 +100,26 @@ public final class UserProjects implements Projects {
         final String repoFullName, final String repoProvider
     ) {
         return projects
-            .stream()
-            .filter(
-                p -> {
-                    return p.repoFullName().equals(repoFullName)
-                        && p.provider().equals(repoProvider);
-                }
-            )
+            .get()
+            .filter(p -> p.repoFullName().equals(repoFullName)
+                && p.provider().equals(repoProvider))
             .findFirst()
             .orElse(null);
     }
 
     @Override
+    public ProjectsPaged page(final Paged.Page page) {
+        final Supplier<Stream<Project>> userPageProjects = () -> this.projects
+            .get()
+            .skip((page.getNumber() - 1) * page.getSize())
+            .limit(page.getSize());
+        final int totalRecords = (int) this.projects.get().count();
+        return new DefaultProjectsPaged(page,
+            totalRecords, new UserProjects(this.user, userPageProjects));
+    }
+
+    @Override
     public Iterator<Project> iterator() {
-        return this.projects.iterator();
+        return this.projects.get().iterator();
     }
 }

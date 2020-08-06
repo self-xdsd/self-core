@@ -23,11 +23,11 @@
 package com.selfxdsd.core.projects;
 
 import com.selfxdsd.api.*;
+import com.selfxdsd.api.storage.Paged;
 
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
-import java.util.stream.StreamSupport;
+import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 /**
  * Projects assigned to a certain PM. This class <b>just represents</b>
@@ -48,14 +48,16 @@ public final class PmProjects implements Projects {
     /**
      * Projects of the PM.
      */
-    private final Iterable<Project> projects;
+    private final Supplier<Stream<Project>> projects;
+
 
     /**
      * Constructor.
      * @param pmId ID of the manager.
      * @param projects Projects to choose from.
      */
-    public PmProjects(final int pmId, final Iterable<Project> projects) {
+    public PmProjects(final int pmId,
+                      final Supplier<Stream<Project>> projects) {
         this.pmId = pmId;
         this.projects = projects;
     }
@@ -68,7 +70,7 @@ public final class PmProjects implements Projects {
     ) {
         throw new IllegalStateException(
             "Projects of a PM are immutable, "
-          + "can't register a new one here."
+                + "can't register a new one here."
         );
     }
 
@@ -84,14 +86,13 @@ public final class PmProjects implements Projects {
 
     @Override
     public Projects ownedBy(final User user) {
-        final List<Project> owned = new ArrayList<>();
-        for(final Project project : this.projects) {
-            final User owner = project.owner();
-            if(owner.username().equals(user.username())
-                && owner.provider().name().equals(user.provider().name())) {
-                owned.add(project);
-            }
-        }
+        final Supplier<Stream<Project>> owned = () -> this.projects.get()
+            .filter(p -> {
+                final User owner = p.owner();
+                return owner.username().equals(user.username())
+                    && owner.provider().name()
+                    .equals(user.provider().name());
+            });
         return new UserProjects(user, owned);
     }
 
@@ -99,20 +100,27 @@ public final class PmProjects implements Projects {
     public Project getProjectById(
         final String repoFullName, final String repoProvider
     ) {
-        return StreamSupport
-            .stream(this.projects.spliterator(), false)
-            .filter(
-                p -> {
-                    return p.repoFullName().equals(repoFullName)
-                        && p.provider().equals(repoProvider);
-                }
-            )
+        return this.projects.get()
+            .filter(p -> p.repoFullName().equals(repoFullName)
+                && p.provider().equals(repoProvider))
             .findFirst()
             .orElse(null);
     }
 
     @Override
-    public Iterator<Project> iterator() {
-        return this.projects.iterator();
+    public ProjectsPaged page(final Paged.Page page) {
+        final Supplier<Stream<Project>> pmPageProjects = () -> this.projects
+            .get()
+            .skip((page.getNumber() - 1) * page.getSize())
+            .limit(page.getSize());
+        final int totalRecords = (int) this.projects.get().count();
+        return new DefaultProjectsPaged(page, totalRecords,
+            new PmProjects(this.pmId, pmPageProjects));
     }
+
+    @Override
+    public Iterator<Project> iterator() {
+        return this.projects.get().iterator();
+    }
+
 }
