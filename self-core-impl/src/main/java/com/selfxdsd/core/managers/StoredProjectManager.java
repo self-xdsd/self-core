@@ -38,6 +38,8 @@ import java.util.UUID;
  * @since 0.0.1
  * @todo #212:30min Test equals and hashcode methods for each Stored*
  *  classes (StoredProjectManager, StoredProject etc.).
+ *
+ * @todo #290:15min Create unit test for PmUser class.
  */
 public final class StoredProjectManager implements ProjectManager {
 
