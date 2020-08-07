@@ -39,7 +39,8 @@ import java.util.UUID;
  * @todo #212:30min Test equals and hashcode methods for each Stored*
  *  classes (StoredProjectManager, StoredProject etc.).
  *
- * @todo #290:15min Create unit test for PmUser class.
+ * @todo #290:15min Unit tests have been added for class Authenticated. 
+ *  We should also add unit tests for class PmUser.
  */
 public final class StoredProjectManager implements ProjectManager {
 
@@ -213,6 +214,5 @@ public final class StoredProjectManager implements ProjectManager {
         public Projects projects() {
             return this.manager.projects();
         }
-
     }
 }

@@ -24,11 +24,9 @@ package com.selfxdsd.core;
 
 import com.selfxdsd.api.*;
 import com.selfxdsd.api.storage.Storage;
-import com.selfxdsd.core.BaseSelf.Authenticated;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
-import static org.mockito.Matchers.anyString;
 import org.mockito.Mockito;
 
 /**
@@ -109,35 +107,5 @@ public final class SelfCoreTestCase {
         final Self self = new SelfCore(storage);
         self.close();
         Mockito.verify(storage, Mockito.times(1)).close();
-    }
-
-    /**
-     * Should verify an authenticated user.
-     */
-    @Test
-    public void authenticatedUser() {
-        final User user = Mockito.mock(User.class);
-        Mockito.when(user.username()).thenReturn("john");
-        Mockito.when(user.email()).thenReturn("john@john.com");
-        final Provider provider = Mockito.mock(Provider.class);
-        Mockito.when(user.provider()).thenReturn(provider);
-        final Projects all = Mockito.mock(Projects.class);
-        Mockito.when(user.projects()).thenReturn(all);
-        final Authenticated authenticated = new Authenticated(user, "tok3n");
-        final Provider prov = new Authenticated(user, "tok3n").provider();
-
-        MatcherAssert.assertThat(
-            authenticated.username(),
-            Matchers.equalTo("john")
-        );
-        MatcherAssert.assertThat(
-            authenticated.email(),
-            Matchers.equalTo("john@john.com")
-        );
-        Mockito.verify(provider).withToken(anyString());
-        MatcherAssert.assertThat(
-            authenticated.projects(),
-            Matchers.equalTo(all)
-        );
     }
 }
