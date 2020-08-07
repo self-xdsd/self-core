@@ -42,8 +42,8 @@ import java.util.stream.Stream;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
- * @todo #346:30min Write unit tests for paging InMemoryProjects, PmProjects
- *  and UserProjects.
+ * @todo #359:30min Write unit tests for paging InMemoryProjects and
+ *  UserProjects.
  */
 public final class InMemoryProjects extends ProjectsPaged {
 

@@ -6,6 +6,8 @@ package com.selfxdsd.api.storage;
  * @author criske
  * @version $Id$
  * @since 0.0.13
+ * @todo #360:30min Provider paging implementation for other Self entities:
+ *  Collaborators, Contracts, Contributors, Tasks, Invoices, InvoicedTasks.
  */
 public interface Paged {
 
