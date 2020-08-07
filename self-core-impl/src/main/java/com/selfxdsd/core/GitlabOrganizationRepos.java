@@ -84,11 +84,12 @@ final class GitlabOrganizationRepos implements Repos {
      * @return Repo.
      */
     private Repo buildRepo(final JsonValue repoData) {
-        final String repoName = ((JsonObject) repoData)
-            .getString("path");
-        return GitlabRepo.createFromName(repoName,
-            this.resources,
+        final String repoUri = ((JsonObject) repoData)
+            .getJsonObject("_links").getString("self");
+        return new GitlabRepo(this.resources,
+            URI.create(repoUri),
             this.owner,
-            this.storage);
+            this.storage
+        );
     }
 }

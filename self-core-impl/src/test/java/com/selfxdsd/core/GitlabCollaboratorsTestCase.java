@@ -35,12 +35,12 @@ import javax.json.Json;
 import java.net.HttpURLConnection;
 
 /**
- * Unit tests for {@link GithubCollaborators}.
- * @author Mihai Andronache (amihaiemil@gmail.com)
+ * Unit tests for {@link GitlabCollaborators}.
+ * @author criske
  * @version $Id$
  * @since 0.0.13
  */
-public final class GithubCollaboratorsTestCase {
+public final class GitlabCollaboratorsTestCase {
 
     /**
      * A new Collaboration invitation can be sent ok (receives CREATED).
@@ -49,34 +49,31 @@ public final class GithubCollaboratorsTestCase {
     public void sendsInvitationCreated() {
         final User user = Mockito.mock(User.class);
         Mockito.when(user.username()).thenReturn("amihaiemil");
-        final Provider provider = new Github(
+        final Provider provider = new Gitlab(
             user,
             Mockito.mock(Storage.class),
             new MockJsonResources(
-                new AccessToken.Github("github123"),
+                new AccessToken.Gitlab("gitlab123"),
                 req -> {
                     MatcherAssert.assertThat(
                         req.getAccessToken().value(),
-                        Matchers.equalTo("token github123")
+                        Matchers.equalTo("gitlab123")
                     );
                     MatcherAssert.assertThat(
                         req.getMethod(),
-                        Matchers.equalTo("PUT")
+                        Matchers.equalTo("POST")
                     );
                     MatcherAssert.assertThat(
                         req.getBody(),
-                        Matchers.equalTo(
-                            Json.createObjectBuilder()
-                                .add("permission", "manage")
-                                .build()
-                        )
+                        Matchers.equalTo(Json.createObjectBuilder()
+                            .add("user_id", "1234")
+                            .add("access_level", 30)
+                            .build())
                     );
                     MatcherAssert.assertThat(
                         req.getUri().toString(),
-                        Matchers.equalTo(
-                            "https://api.github.com/repos/amihaiemil/repo"
-                            + "/collaborators/mihai"
-                        )
+                        Matchers.equalTo("https://gitlab.com/api/v4/"
+                                + "projects/amihaiemil%2Frepo/members")
                     );
                     return new MockJsonResources.MockResource(
                         HttpURLConnection.HTTP_CREATED,
@@ -88,7 +85,7 @@ public final class GithubCollaboratorsTestCase {
         final boolean res = provider
             .repo("amihaiemil", "repo")
             .collaborators()
-            .invite("mihai", "manage");
+            .invite("1234", "30");
         MatcherAssert.assertThat(
             res, Matchers.is(Boolean.TRUE)
         );
@@ -96,43 +93,40 @@ public final class GithubCollaboratorsTestCase {
 
     /**
      * An existing Collaboration invitation can be sent ok
-     * (receives NO CONTENT).
+     * (receives CONFLICT).
      */
     @Test
-    public void sendsInvitationNoContent() {
+    public void sendsInvitationConflict() {
         final User user = Mockito.mock(User.class);
         Mockito.when(user.username()).thenReturn("amihaiemil");
-        final Provider provider = new Github(
+        final Provider provider = new Gitlab(
             user,
             Mockito.mock(Storage.class),
             new MockJsonResources(
-                new AccessToken.Github("github123"),
+                new AccessToken.Gitlab("gitlab123"),
                 req -> {
                     MatcherAssert.assertThat(
                         req.getAccessToken().value(),
-                        Matchers.equalTo("token github123")
+                        Matchers.equalTo("gitlab123")
                     );
                     MatcherAssert.assertThat(
                         req.getMethod(),
-                        Matchers.equalTo("PUT")
+                        Matchers.equalTo("POST")
                     );
                     MatcherAssert.assertThat(
                         req.getBody(),
-                        Matchers.equalTo(
-                            Json.createObjectBuilder()
-                                .add("permission", "manage")
-                                .build()
-                        )
+                        Matchers.equalTo(Json.createObjectBuilder()
+                            .add("user_id", "1234")
+                            .add("access_level", 30)
+                            .build())
                     );
                     MatcherAssert.assertThat(
                         req.getUri().toString(),
-                        Matchers.equalTo(
-                            "https://api.github.com/repos/amihaiemil/repo"
-                                + "/collaborators/mihai"
-                        )
+                        Matchers.equalTo("https://gitlab.com/api/v4/"
+                                + "projects/amihaiemil%2Frepo/members")
                     );
                     return new MockJsonResources.MockResource(
-                        HttpURLConnection.HTTP_NO_CONTENT,
+                        HttpURLConnection.HTTP_CONFLICT,
                         Json.createObjectBuilder().build()
                     );
                 }
@@ -141,7 +135,7 @@ public final class GithubCollaboratorsTestCase {
         final boolean res = provider
             .repo("amihaiemil", "repo")
             .collaborators()
-            .invite("mihai", "manage");
+            .invite("1234", "30");
         MatcherAssert.assertThat(
             res, Matchers.is(Boolean.TRUE)
         );
@@ -155,34 +149,31 @@ public final class GithubCollaboratorsTestCase {
     public void sendsInvitationNotFound() {
         final User user = Mockito.mock(User.class);
         Mockito.when(user.username()).thenReturn("amihaiemil");
-        final Provider provider = new Github(
+        final Provider provider = new Gitlab(
             user,
             Mockito.mock(Storage.class),
             new MockJsonResources(
-                new AccessToken.Github("github123"),
+                new AccessToken.Gitlab("gitlab123"),
                 req -> {
                     MatcherAssert.assertThat(
                         req.getAccessToken().value(),
-                        Matchers.equalTo("token github123")
+                        Matchers.equalTo("gitlab123")
                     );
                     MatcherAssert.assertThat(
                         req.getMethod(),
-                        Matchers.equalTo("PUT")
+                        Matchers.equalTo("POST")
                     );
                     MatcherAssert.assertThat(
                         req.getBody(),
-                        Matchers.equalTo(
-                            Json.createObjectBuilder()
-                                .add("permission", "manage")
-                                .build()
-                        )
+                        Matchers.equalTo(Json.createObjectBuilder()
+                            .add("user_id", "534534")
+                            .add("access_level", 30)
+                            .build())
                     );
                     MatcherAssert.assertThat(
                         req.getUri().toString(),
-                        Matchers.equalTo(
-                            "https://api.github.com/repos/amihaiemil/repo"
-                                + "/collaborators/mihai"
-                        )
+                        Matchers.equalTo("https://gitlab.com/api/v4/"
+                                + "projects/amihaiemil%2Frepo/members")
                     );
                     return new MockJsonResources.MockResource(
                         HttpURLConnection.HTTP_NOT_FOUND,
@@ -194,7 +185,7 @@ public final class GithubCollaboratorsTestCase {
         final boolean res = provider
             .repo("amihaiemil", "repo")
             .collaborators()
-            .invite("mihai", "manage");
+            .invite("534534", "30");
         MatcherAssert.assertThat(
             res, Matchers.is(Boolean.FALSE)
         );

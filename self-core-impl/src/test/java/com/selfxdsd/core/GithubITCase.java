@@ -51,7 +51,9 @@ public final class GithubITCase {
         final User user = Mockito.mock(User.class);
         Mockito.when(user.username()).thenReturn("amihaiemil");
         final Provider github = new Github(user, null);
-        final JsonObject repo = github.repo("docker-java-api").json();
+        final JsonObject repo = github
+            .repo("amihaiemil", "docker-java-api")
+            .json();
         MatcherAssert.assertThat(
             repo.getString("name"),
             Matchers.equalTo("docker-java-api")
@@ -71,7 +73,7 @@ public final class GithubITCase {
         Mockito.when(user.username()).thenReturn("amihaiemil");
         final Provider github = new Github(user, null);
         try {
-            github.repo("docker-java-apsi").json();
+            github.repo("amihaiemil", "docker-java-apsi").json();
             Assert.fail("IllegalStateException was expected.");
         } catch (final IllegalStateException ex) {
             MatcherAssert.assertThat(
@@ -105,7 +107,9 @@ public final class GithubITCase {
         );
 
         final Provider github = new Github(user, storage);
-        final Project assigned = github.repo("docker-java-api").activate();
+        final Project assigned = github
+            .repo("amihaiemil", "docker-java-api")
+            .activate();
         MatcherAssert.assertThat(
             assigned.projectManager().id(),
             Matchers.equalTo(1)

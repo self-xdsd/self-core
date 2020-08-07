@@ -38,12 +38,12 @@ public interface Provider {
     String name();
 
     /**
-     * Get a Repo by its simple name. E.g. "testrepo" is the simple name
-     * of repo "amihaiemil/testrepo".
+     * Get a Repo.
+     * @param owner Login of the User owner or Organization name.
      * @param name Simple name of the repo.
      * @return Repo.
      */
-    Repo repo(final String name);
+    Repo repo(final String owner, final String name);
 
     /**
      * Get the invitations for the authenticated user.

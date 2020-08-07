@@ -113,6 +113,7 @@ public final class StoredProject implements Project {
     @Override
     public Repo repo() {
         return this.owner.provider().repo(
+            this.repoFullName.substring(0, this.repoFullName.indexOf("/")),
             this.repoFullName.substring(this.repoFullName.indexOf("/") + 1)
         );
     }

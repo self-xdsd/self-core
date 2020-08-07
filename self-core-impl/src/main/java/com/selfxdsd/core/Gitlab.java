@@ -111,8 +111,10 @@ public final class Gitlab implements Provider {
     }
 
     @Override
-    public Repo repo(final String name) {
-        return GitlabRepo.createFromName(name,
+    public Repo repo(final String owner, final String name) {
+        return GitlabRepo.createFromName(
+            owner,
+            name,
             this.resources,
             this.user,
             this.storage);

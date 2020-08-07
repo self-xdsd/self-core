@@ -37,14 +37,26 @@ public final class GitlabOrganizationReposTestCase {
                     .add(Json.createObjectBuilder()
                         .add("id", 1)
                         .add("path", "gitlab-repo-1")
+                        .add("_links", Json
+                            .createObjectBuilder()
+                            .add("self", "https://gitlab.com/api/v4/projects/1")
+                            .build())
                         .build())
                     .add(Json.createObjectBuilder()
                         .add("id", 2)
                         .add("path", "gitlab-repo-2")
+                        .add("_links", Json
+                            .createObjectBuilder()
+                            .add("self", "https://gitlab.com/api/v4/projects/2")
+                            .build())
                         .build())
                     .add(Json.createObjectBuilder()
                         .add("id", 3)
                         .add("path", "gitlab-repo-3")
+                        .add("_links", Json
+                            .createObjectBuilder()
+                            .add("self", "https://gitlab.com/api/v4/projects/3")
+                            .build())
                         .build())
                     .build());
             }

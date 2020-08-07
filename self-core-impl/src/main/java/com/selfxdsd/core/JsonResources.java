@@ -25,6 +25,7 @@ package com.selfxdsd.core;
 import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
+import javax.json.JsonValue;
 import java.io.IOException;
 import java.io.StringReader;
 import java.net.URI;
@@ -70,7 +71,7 @@ public interface JsonResources {
      */
     Resource post(
         final URI uri,
-        final JsonObject body
+        final JsonValue body
     );
 
     /**
@@ -83,7 +84,7 @@ public interface JsonResources {
      */
     Resource patch(
         final URI uri,
-        final JsonObject body
+        final JsonValue body
     );
 
     /**
@@ -96,7 +97,7 @@ public interface JsonResources {
      */
     Resource put(
         final URI uri,
-        final JsonObject body
+        final JsonValue body
     );
 
     /**
@@ -159,7 +160,7 @@ public interface JsonResources {
         @Override
         public Resource post(
             final URI uri,
-            final JsonObject body
+            final JsonValue body
         ) {
             try {
                 final HttpResponse<String> response = HttpClient.newHttpClient()
@@ -188,7 +189,7 @@ public interface JsonResources {
         @Override
         public Resource patch(
             final URI uri,
-            final JsonObject body
+            final JsonValue body
         ) {
             try {
                 final HttpResponse<String> response = HttpClient.newHttpClient()
@@ -215,7 +216,7 @@ public interface JsonResources {
         }
 
         @Override
-        public Resource put(final URI uri, final JsonObject body) {
+        public Resource put(final URI uri, final JsonValue body) {
             try {
                 final HttpResponse<String> response = HttpClient.newHttpClient()
                     .send(
