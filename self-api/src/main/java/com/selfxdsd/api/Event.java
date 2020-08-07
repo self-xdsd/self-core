@@ -57,7 +57,7 @@ public interface Event {
 
     /**
      * The Provider which sent this event.
-     * @return Provider.
+     * @return String.
      */
-    Provider provider();
+    String provider();
 }

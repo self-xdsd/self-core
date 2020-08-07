@@ -188,8 +188,8 @@ public final class StoredProjectManagerTestCase {
                 }
 
                 @Override
-                public Provider provider() {
-                    return null;
+                public String provider() {
+                    return Provider.Names.GITHUB;
                 }
             }
         );
@@ -264,8 +264,8 @@ public final class StoredProjectManagerTestCase {
                 }
 
                 @Override
-                public Provider provider() {
-                    return null;
+                public String provider() {
+                    return Provider.Names.GITHUB;
                 }
             }
         );
@@ -350,8 +350,8 @@ public final class StoredProjectManagerTestCase {
                 }
 
                 @Override
-                public Provider provider() {
-                    return null;
+                public String provider() {
+                    return Provider.Names.GITHUB;
                 }
             }
         );
