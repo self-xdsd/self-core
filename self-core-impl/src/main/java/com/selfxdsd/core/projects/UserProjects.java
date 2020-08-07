@@ -61,7 +61,7 @@ public final class UserProjects extends ProjectsPaged {
      */
     public UserProjects(final User user,
                         final Supplier<Stream<Project>> projects) {
-        this(user, projects, new Page(1,10));
+        this(user, projects, new Page(1, 10));
     }
 
     /**
@@ -73,7 +73,7 @@ public final class UserProjects extends ProjectsPaged {
     public UserProjects(final User user,
                         final Supplier<Stream<Project>> projects,
                         final Page page) {
-        super(page, () -> (int) projects.get().count());
+        super(page, (int) projects.get().count());
         this.user = user;
         this.projects = projects;
     }

@@ -25,7 +25,10 @@ package com.selfxdsd.core.mock;
 import com.selfxdsd.api.*;
 import com.selfxdsd.api.storage.Paged;
 import com.selfxdsd.api.storage.Storage;
-import com.selfxdsd.core.projects.*;
+import com.selfxdsd.core.projects.PmProjects;
+import com.selfxdsd.core.projects.ProjectsPaged;
+import com.selfxdsd.core.projects.StoredProject;
+import com.selfxdsd.core.projects.UserProjects;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -72,7 +75,7 @@ public final class InMemoryProjects extends ProjectsPaged {
         final Storage storage,
         final Map<ProjectKey, Project> projects,
         final Page page) {
-        super(page, projects::size);
+        super(page, projects.size());
         this.storage = storage;
     }
 

@@ -70,7 +70,7 @@ public final class PmProjects extends ProjectsPaged {
     public PmProjects(final int pmId,
                       final Supplier<Stream<Project>> projects,
                       final Page page) {
-        super(page, () -> (int) projects.get().count());
+        super(page, (int) projects.get().count());
         this.pmId = pmId;
         this.projects = projects;
     }

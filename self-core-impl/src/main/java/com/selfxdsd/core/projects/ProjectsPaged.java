@@ -2,8 +2,6 @@ package com.selfxdsd.core.projects;
 
 import com.selfxdsd.api.Projects;
 
-import java.util.function.Supplier;
-
 /**
  * Base paging implementation of Projects.
  *
@@ -19,19 +17,17 @@ public abstract class ProjectsPaged implements Projects {
     private final Page current;
 
     /**
-     * Total number of Projects across all pages obtained dynamically
-     * from data source. This ensure we are in sync with the data source size.
+     * Total number of Project from data source.
      */
-    private final Supplier<Integer> totalRecords;
+    private final int totalRecords;
 
     /**
      * Ctor.
      * @param current Current page.
-     * @param totalRecords Total number of Projects across all pages
-     *                     obtained dynamically from data source.
+     * @param totalRecords Total number of Project from data source.
      */
     protected ProjectsPaged(final Page current,
-                            final Supplier<Integer> totalRecords) {
+                            final int totalRecords) {
         this.current = current;
         this.totalRecords = totalRecords;
     }
@@ -45,7 +41,7 @@ public abstract class ProjectsPaged implements Projects {
     @Override
     public final int totalPages() {
         final int totalPages = Math.max(1,
-            this.totalRecords.get() / current.getSize());
+            this.totalRecords / current.getSize());
         if (current.getNumber() < 1 || current.getNumber() > totalPages) {
             throw new IllegalStateException("Invalid page number "
                 + current.getNumber() + ". Must be between 1 and "
