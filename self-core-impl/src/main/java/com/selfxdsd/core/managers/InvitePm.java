@@ -38,10 +38,6 @@ import org.slf4j.LoggerFactory;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.13
- * @todo #327:30min Add method ProjectManager.userId() which should return the
- *  user ID (not username) registered with the Provider. Then, modify
- *  the invitation logic to use the user ID in case of GitLab. After this,
- *  don't forget to write unit tests for this class.
  */
 public final class InvitePm extends Intermediary {
 
