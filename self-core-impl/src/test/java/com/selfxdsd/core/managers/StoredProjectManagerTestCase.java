@@ -46,6 +46,7 @@ public final class StoredProjectManagerTestCase {
     public void returnsId() {
         final ProjectManager manager = new StoredProjectManager(
             1,
+            "123",
             "zoeself",
             Provider.Names.GITHUB,
             "1s23token",
@@ -58,12 +59,32 @@ public final class StoredProjectManagerTestCase {
     }
 
     /**
+     * StoredProjectManager returns its user id.
+     */
+    @Test
+    public void returnsUserId() {
+        final ProjectManager manager = new StoredProjectManager(
+            1,
+            "123",
+            "zoeself",
+            Provider.Names.GITHUB,
+            "1s23token",
+            Mockito.mock(Storage.class)
+        );
+        MatcherAssert.assertThat(
+            manager.userId(),
+            Matchers.equalTo("123")
+        );
+    }
+
+    /**
      * StoredProjectManager returns its provider.
      */
     @Test
     public void returnsProvider() {
         final ProjectManager manager = new StoredProjectManager(
             1,
+            "123",
             "zoeself",
             Provider.Names.GITHUB,
             "123token",
@@ -92,6 +113,7 @@ public final class StoredProjectManagerTestCase {
 
         final ProjectManager manager = new StoredProjectManager(
             1,
+            "123",
             "zoeself",
             Provider.Names.GITHUB,
             "123token",
@@ -113,6 +135,7 @@ public final class StoredProjectManagerTestCase {
         Mockito.when(repo.fullName()).thenReturn("john/test");
         final ProjectManager manager = new StoredProjectManager(
             1,
+            "123",
             "zoeself",
             Provider.Names.GITHUB,
             "123token",
@@ -138,6 +161,7 @@ public final class StoredProjectManagerTestCase {
         final Storage storage = new InMemory();
         final ProjectManager manager = new StoredProjectManager(
             1,
+            "123",
             "zoeself",
             Provider.Names.GITHUB,
             "123token",
@@ -214,6 +238,7 @@ public final class StoredProjectManagerTestCase {
         final Storage storage = new InMemory();
         final ProjectManager manager = new StoredProjectManager(
             1,
+            "123",
             "zoeself",
             Provider.Names.GITHUB,
             "123token",
@@ -292,6 +317,7 @@ public final class StoredProjectManagerTestCase {
         final Storage storage = new InMemory();
         final ProjectManager manager = new StoredProjectManager(
             1,
+            "123",
             "zoeself",
             Provider.Names.GITHUB,
             "123token",

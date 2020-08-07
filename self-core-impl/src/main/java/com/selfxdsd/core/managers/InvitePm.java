@@ -23,6 +23,7 @@
 package com.selfxdsd.core.managers;
 
 import com.selfxdsd.api.Event;
+import com.selfxdsd.api.ProjectManager;
 import com.selfxdsd.api.Provider;
 import com.selfxdsd.api.Repo;
 import com.selfxdsd.api.pm.Intermediary;
@@ -37,10 +38,6 @@ import org.slf4j.LoggerFactory;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.13
- * @todo #327:30min Add method ProjectManager.userId() which should return the
- *  user ID (not username) registered with the Provider. Then, modify
- *  the invitation logic to use the user ID in case of GitLab. After this,
- *  don't forget to write unit tests for this class.
  */
 public final class InvitePm extends Intermediary {
 
@@ -64,23 +61,24 @@ public final class InvitePm extends Intermediary {
     public void perform(final Event event) {
         final Repo repo = event.project().repo();
         final String provider = event.provider();
+        final ProjectManager manager = event.project().projectManager();
         LOG.debug(
             "Inviting PM to repo " + repo.fullName() + " at " + provider
         );
+        final String user;
         final String permission;
         if(Provider.Names.GITHUB.equals(provider)) {
+            user = manager.username();
             permission = Github.Permissions.MAINTAIN;
         } else if (Provider.Names.GITLAB.equals(provider)) {
+            user = manager.userId();
             permission = Gitlab.Permissions.MAINTAINER;
         } else {
             throw new IllegalStateException(
                 "Unknown Provider: [" + provider + "]."
             );
         }
-        final boolean response = repo.collaborators().invite(
-            event.project().projectManager().username(),
-            permission
-        );
+        final boolean response = repo.collaborators().invite(user, permission);
         if(response) {
             LOG.debug("PM invited successfully!");
         } else {

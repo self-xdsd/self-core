@@ -61,8 +61,8 @@ public final class InMemoryProjectManagers implements ProjectManagers {
      */
     public InMemoryProjectManagers(final Storage storage) {
         this.storage = storage;
-        register("zoeself", Provider.Names.GITHUB, "123token");
-        register("zoeself", Provider.Names.GITLAB, "123token");
+        register("123", "zoeself", Provider.Names.GITHUB, "123token");
+        register("123", "zoeself", Provider.Names.GITLAB, "123token");
     }
 
     @Override
@@ -85,14 +85,16 @@ public final class InMemoryProjectManagers implements ProjectManagers {
 
     @Override
     public ProjectManager register(
+        final String userId,
         final String username,
         final String provider,
         final String accessToken
     ) {
-        final int id = ++idCounter;
+        final int id = ++this.idCounter;
         final StoredProjectManager projectManager = new StoredProjectManager(
-            id, username, provider, accessToken, storage);
-        pms.put(id, projectManager);
+            id, userId, username, provider, accessToken, this.storage
+        );
+        this.pms.put(id, projectManager);
         return projectManager;
     }
 }

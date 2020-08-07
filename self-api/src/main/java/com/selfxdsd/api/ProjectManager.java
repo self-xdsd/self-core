@@ -38,6 +38,12 @@ public interface ProjectManager {
     int id();
 
     /**
+     * The PM's user ID from the Provider.
+     * @return String.
+     */
+    String userId();
+
+    /**
      * The PM's username.
      * @return String.
      */
