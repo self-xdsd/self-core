@@ -23,6 +23,7 @@
 package com.selfxdsd.core.managers;
 
 import com.selfxdsd.api.Event;
+import com.selfxdsd.api.Project;
 import com.selfxdsd.api.pm.Intermediary;
 import com.selfxdsd.api.pm.Step;
 import org.slf4j.Logger;
@@ -33,7 +34,7 @@ import org.slf4j.LoggerFactory;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.13
- * @todo #348:60min Implement and test Repo.webhooks().add(...)
+ * @todo #355:60min Implement and test Repo.webhooks().add(...)
  *  method, which will setup a webhook in the Repo. Afterwards,
  *  continue implementing and testing this class.
  */
@@ -56,6 +57,20 @@ public final class SetupWebhook extends Intermediary {
 
     @Override
     public void perform(final Event event) {
+        final Project project = event.project();
+        LOG.debug(
+            "Setting up webhook for project "
+            + project.repoFullName() + " at " + event.provider()
+        );
+        final boolean result = project.repo().webhooks().add(project);
+        if(result) {
+            LOG.debug("Webhook successfully created!");
+        } else {
+            LOG.debug(
+                "There was a problem setting up the webhook. "
+                + "Please see log above."
+            );
+        }
         this.next().perform(event);
     }
 }
