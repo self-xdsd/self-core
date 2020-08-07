@@ -22,11 +22,8 @@
  */
 package com.selfxdsd.core;
 
-import com.selfxdsd.api.Collaborators;
-import com.selfxdsd.api.Issues;
-import com.selfxdsd.api.Project;
+import com.selfxdsd.api.*;
 import com.selfxdsd.api.storage.Storage;
-import com.selfxdsd.api.User;
 
 import java.net.URI;
 
@@ -82,6 +79,15 @@ final class GithubRepo extends BaseRepo {
         return new GithubCollaborators(
             this.resources(),
             URI.create(this.repoUri().toString() + "/collaborators"),
+            this.storage()
+        );
+    }
+
+    @Override
+    public Webhooks webhooks() {
+        return new GithubWebhooks(
+            this.resources(),
+            URI.create(this.repoUri().toString() + "/hooks"),
             this.storage()
         );
     }

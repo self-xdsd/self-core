@@ -1,13 +1,13 @@
 /**
  * Copyright (c) 2020, Self XDSD Contributors
  * All rights reserved.
- *
+ * <p>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"),
  * to read the Software only. Permission is hereby NOT GRANTED to use, copy,
  * modify, merge, publish, distribute, sublicense, and/or sell copies of
  * the Software.
- *
+ * <p>
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -20,65 +20,68 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package com.selfxdsd.api;
+package com.selfxdsd.core;
 
-import javax.json.JsonObject;
+import com.selfxdsd.api.Project;
+import com.selfxdsd.api.Webhooks;
+import com.selfxdsd.api.storage.Storage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.net.URI;
 
 /**
- * A Repository belonging to a com.selfxdsd.api.User on Github, Gitlab,
- * Bitbucket etc.
+ * Github repo webhooks.
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
- * @since 0.0.1
+ * @since 0.0.13
+ * @todo #355:30min Implement and write tests for method add(Project).
+ *  It should set up a webhook. Please see PR #292 for how the webhook
+ *  should be configured.
  */
-public interface Repo {
-    /**
-     * Owner of this repository.
-     * @return User.
-     */
-    User owner();
+final class GithubWebhooks implements Webhooks {
 
     /**
-     * The Json representation of this Repo as returned by the API
-     * of the User's provider (Github, BitBucket etc).
-     * @return JsonObject.
+     * Logger.
      */
-    JsonObject json();
+    private static final Logger LOG = LoggerFactory.getLogger(
+        GithubWebhooks.class
+    );
 
     /**
-     * Activate this repository, tell Self to start
-     * managing it.
-     * @return Project.
+     * Github repo Webhooks base uri.
      */
-    Project activate();
+    private final URI hooksUri;
 
     /**
-     * This Repo's full name (e.g. amihaiemil/docker-java-api).
-     * @return String.
+     * Github's JSON Resources.
      */
-    String fullName();
+    private final JsonResources resources;
 
     /**
-     * Provider name of this repository.
-     * @return Provider.
+     * Self storage, in case we want to store something.
      */
-    String provider();
+    private final Storage storage;
 
     /**
-     * The repo's Issues.
-     * @return Issues.
+     * Ctor.
+     *
+     * @param resources Github's JSON Resources.
+     * @param hooksUri Hooks base URI.
+     * @param storage Storage.
      */
-    Issues issues();
+    GithubWebhooks(
+        final JsonResources resources,
+        final URI hooksUri,
+        final Storage storage
+    ) {
+        this.resources = resources;
+        this.hooksUri = hooksUri;
+        this.storage = storage;
+    }
 
-    /**
-     * The repo's collaborators.
-     * @return Collaborators.
-     */
-    Collaborators collaborators();
-
-    /**
-     * The repo's webhooks.
-     * @return Webhooks.
-     */
-    Webhooks webhooks();
+    @Override
+    public boolean add(final Project project) {
+        return false;
+    }
 }

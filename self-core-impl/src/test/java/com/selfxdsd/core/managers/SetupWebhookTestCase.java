@@ -1,13 +1,13 @@
 /**
  * Copyright (c) 2020, Self XDSD Contributors
  * All rights reserved.
- *
+ * <p>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"),
  * to read the Software only. Permission is hereby NOT GRANTED to use, copy,
  * modify, merge, publish, distribute, sublicense, and/or sell copies of
  * the Software.
- *
+ * <p>
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -20,65 +20,45 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package com.selfxdsd.api;
+package com.selfxdsd.core.managers;
 
-import javax.json.JsonObject;
+import com.selfxdsd.api.Event;
+import com.selfxdsd.api.Project;
+import com.selfxdsd.api.Repo;
+import com.selfxdsd.api.Webhooks;
+import com.selfxdsd.api.pm.Step;
+import org.junit.Test;
+import org.mockito.Mockito;
 
 /**
- * A Repository belonging to a com.selfxdsd.api.User on Github, Gitlab,
- * Bitbucket etc.
+ * Unit tests for {@link SetupWebhook}.
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
- * @since 0.0.1
+ * @since 0.0.13
  */
-public interface Repo {
-    /**
-     * Owner of this repository.
-     * @return User.
-     */
-    User owner();
+public final class SetupWebhookTestCase {
 
     /**
-     * The Json representation of this Repo as returned by the API
-     * of the User's provider (Github, BitBucket etc).
-     * @return JsonObject.
+     * SetupWebhook adds the webhook and calls on the next step.
      */
-    JsonObject json();
+    @Test
+    public void addsWebhook() {
+        final Project project = Mockito.mock(Project.class);
+        final Event event = Mockito.mock(Event.class);
+        Mockito.when(event.project()).thenReturn(project);
 
-    /**
-     * Activate this repository, tell Self to start
-     * managing it.
-     * @return Project.
-     */
-    Project activate();
+        final Webhooks webhooks = Mockito.mock(Webhooks.class);
+        Mockito.when(webhooks.add(project)).thenReturn(true);
+        final Repo repo = Mockito.mock(Repo.class);
+        Mockito.when(repo.webhooks()).thenReturn(webhooks);
+        Mockito.when(project.repo()).thenReturn(repo);
 
-    /**
-     * This Repo's full name (e.g. amihaiemil/docker-java-api).
-     * @return String.
-     */
-    String fullName();
+        final Step next = Mockito.mock(Step.class);
+        final Step setup = new SetupWebhook(next);
+        setup.perform(event);
 
-    /**
-     * Provider name of this repository.
-     * @return Provider.
-     */
-    String provider();
+        Mockito.verify(webhooks, Mockito.times(1)).add(project);
+        Mockito.verify(next, Mockito.times(1)).perform(event);
+    }
 
-    /**
-     * The repo's Issues.
-     * @return Issues.
-     */
-    Issues issues();
-
-    /**
-     * The repo's collaborators.
-     * @return Collaborators.
-     */
-    Collaborators collaborators();
-
-    /**
-     * The repo's webhooks.
-     * @return Webhooks.
-     */
-    Webhooks webhooks();
 }

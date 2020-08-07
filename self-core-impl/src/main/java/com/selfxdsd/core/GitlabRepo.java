@@ -22,10 +22,7 @@
  */
 package com.selfxdsd.core;
 
-import com.selfxdsd.api.Collaborators;
-import com.selfxdsd.api.Issues;
-import com.selfxdsd.api.Project;
-import com.selfxdsd.api.User;
+import com.selfxdsd.api.*;
 import com.selfxdsd.api.storage.Storage;
 
 import java.net.URI;
@@ -35,6 +32,8 @@ import java.net.URI;
  * @author criske
  * @version $Id$
  * @since 0.0.1
+ * @todo #355:30min Implement and test Webhooks for the
+ *  Gitlab repository.
  */
 final class GitlabRepo extends BaseRepo {
 
@@ -96,6 +95,11 @@ final class GitlabRepo extends BaseRepo {
     public Collaborators collaborators() {
         final URI uri = URI.create(this.repoUri().toString() +"/members");
         return new GitlabCollaborators(this.resources(), uri, this.storage());
+    }
+
+    @Override
+    public Webhooks webhooks() {
+        throw new UnsupportedOperationException("Not yet implemented.");
     }
 
 }
