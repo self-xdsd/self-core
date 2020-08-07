@@ -28,6 +28,8 @@ import com.selfxdsd.api.storage.Storage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.json.Json;
+import java.net.HttpURLConnection;
 import java.net.URI;
 
 /**
@@ -35,9 +37,6 @@ import java.net.URI;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.13
- * @todo #355:30min Implement and write tests for method add(Project).
- *  It should set up a webhook. Please see PR #292 for how the webhook
- *  should be configured.
  */
 final class GithubWebhooks implements Webhooks {
 
@@ -82,6 +81,40 @@ final class GithubWebhooks implements Webhooks {
 
     @Override
     public boolean add(final Project project) {
-        return false;
+        LOG.debug(
+            "Adding Github webhook for Project " + project.repoFullName()
+        );
+        final boolean added;
+        final Resource response = this.resources.post(
+            this.hooksUri,
+            Json.createObjectBuilder()
+                .add(
+                    "events",
+                    Json.createArrayBuilder()
+                        .add("issues")
+                )
+                .add(
+                    "config",
+                    Json.createObjectBuilder()
+                        .add(
+                            "url",
+                            "https://self-xdsd.com/github/"
+                            + project.repoFullName()
+                        )
+                        .add("content_type", "json")
+                        .add("secret", project.webHookToken())
+                ).build()
+        );
+        if(response.statusCode() == HttpURLConnection.HTTP_CREATED) {
+            added = true;
+            LOG.debug("Webhook added successfully!");
+        } else {
+            added = false;
+            LOG.debug(
+                "Problem when adding webhook. Expected 201 CREATED, "
+                + " but got " + response.statusCode()
+            );
+        }
+        return added;
     }
 }
