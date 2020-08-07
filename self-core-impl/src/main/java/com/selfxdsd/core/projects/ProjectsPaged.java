@@ -30,8 +30,13 @@ public abstract class ProjectsPaged implements Projects {
                             final int totalRecords) {
         this.current = current;
         this.totalRecords = totalRecords;
+        final int totalPages = this.totalPages();
+        if (current.getNumber() < 1 || current.getNumber() > totalPages) {
+            throw new IllegalStateException("Invalid page number "
+                + current.getNumber() + ". Must be between 1 and "
+                + totalPages);
+        }
     }
-
 
     @Override
     public final Page current() {
@@ -40,14 +45,7 @@ public abstract class ProjectsPaged implements Projects {
 
     @Override
     public final int totalPages() {
-        final int totalPages = Math.max(1,
-            this.totalRecords / current.getSize());
-        if (current.getNumber() < 1 || current.getNumber() > totalPages) {
-            throw new IllegalStateException("Invalid page number "
-                + current.getNumber() + ". Must be between 1 and "
-                + totalPages);
-        }
-        return totalPages;
+        return Math.max(1, this.totalRecords / this.current.getSize());
     }
 
 }

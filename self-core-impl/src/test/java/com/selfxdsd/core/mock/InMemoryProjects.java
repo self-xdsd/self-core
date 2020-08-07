@@ -55,7 +55,7 @@ public final class InMemoryProjects extends ProjectsPaged {
     /**
      * Projects' "table".
      */
-    private final Map<ProjectKey, Project> projects = new HashMap<>();
+    private final Map<ProjectKey, Project> projects;
 
     /**
      * Constructor.
@@ -77,6 +77,7 @@ public final class InMemoryProjects extends ProjectsPaged {
         final Page page) {
         super(page, projects.size());
         this.storage = storage;
+        this.projects = projects;
     }
 
     @Override
