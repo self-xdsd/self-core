@@ -23,16 +23,33 @@
 package com.selfxdsd.core.managers;
 
 import com.selfxdsd.api.Event;
+import com.selfxdsd.api.Provider;
+import com.selfxdsd.api.Repo;
 import com.selfxdsd.api.pm.Intermediary;
 import com.selfxdsd.api.pm.Step;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Step to invite the PM to the project's repository.
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.13
+ * @todo #327:15min Create classes for permissions constants in both
+ *  Github and Gitlab.
+ * @todo #327:30min Add method ProjectManager.userId() which should return the
+ *  user ID (not username) registered with the Provider. Then, modify
+ *  the invitation logic to use the user ID in case of GitLab. After this,
+ *  don't forget to write unit tests for this class.
  */
 public final class InvitePm extends Intermediary {
+
+    /**
+     * Logger.
+     */
+    private static final Logger LOG = LoggerFactory.getLogger(
+        InvitePm.class
+    );
 
     /**
      * Ctor.
@@ -45,6 +62,33 @@ public final class InvitePm extends Intermediary {
 
     @Override
     public void perform(final Event event) {
+        final Repo repo = event.project().repo();
+        final String provider = event.provider().name();
+        LOG.debug(
+            "Inviting PM to repo " + repo.fullName() + " at " + provider
+        );
+        final String permission;
+        if(Provider.Names.GITHUB.equals(provider)) {
+            permission = "manage";
+        } else if (Provider.Names.GITLAB.equals(provider)) {
+            permission = "40";
+        } else {
+            throw new IllegalStateException(
+                "Unknown Provider: [" + provider + "]."
+            );
+        }
+        final boolean response = repo.collaborators().invite(
+            event.project().projectManager().username(),
+            permission
+        );
+        if(response) {
+            LOG.debug("PM invited successfully!");
+        } else {
+            LOG.debug(
+                "There was a problem while inviting the PM, "
+                + "check the logs above."
+            );
+        }
         this.next().perform(event);
     }
 }

@@ -186,6 +186,11 @@ public final class StoredProjectManagerTestCase {
                 public Project project() {
                     return project;
                 }
+
+                @Override
+                public Provider provider() {
+                    return null;
+                }
             }
         );
         MatcherAssert.assertThat(
@@ -256,6 +261,11 @@ public final class StoredProjectManagerTestCase {
                 @Override
                 public Project project() {
                     return project;
+                }
+
+                @Override
+                public Provider provider() {
+                    return null;
                 }
             }
         );
@@ -337,6 +347,11 @@ public final class StoredProjectManagerTestCase {
                 @Override
                 public Project project() {
                     return project;
+                }
+
+                @Override
+                public Provider provider() {
+                    return null;
                 }
             }
         );
