@@ -141,4 +141,40 @@ public final class Github implements Provider {
             this.user, this.storage, this.resources, accessToken
         );
     }
+
+    /**
+     * Values of permission levels.
+     * @see <a href="https://developer.github.com/v3/repos/collaborators/#add-a-repository-collaborator">here</a>
+     */
+    public static final class Permissions {
+        /**
+         * Hidden ctor.
+         */
+        private Permissions(){ }
+
+        /**
+         * Pull.
+         */
+        public static final String PULL = "pull";
+
+        /**
+         * Push.
+         */
+        public static final String PUSH = "push";
+
+        /**
+         * ADmin.
+         */
+        public static final String ADMIN = "admin";
+
+        /**
+         * Maintener.
+         */
+        public static final String MAINTAIN = "maintain";
+
+        /**
+         * Triage.
+         */
+        public static final String TRIAGE = "triage";
+    }
 }

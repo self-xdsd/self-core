@@ -143,4 +143,45 @@ public final class Gitlab implements Provider {
             accessToken
         );
     }
+
+    /**
+     * Values of access levels.
+     * @see <a href="https://docs.gitlab.com/ee/api/members.html#valid-access-levels">here</a>
+     */
+    public static final class Permissions {
+        /**
+         * Hidden ctor.
+         */
+        private Permissions(){ }
+
+        /**
+         * No access.
+         */
+        public static final String NO_ACCESS = "0";
+
+        /**
+         * Guest.
+         */
+        public static final String GUEST = "10";
+
+        /**
+         * Reporter.
+         */
+        public static final String REPORTER = "20";
+
+        /**
+         * Developer.
+         */
+        public static final String DEVELOPER = "30";
+
+        /**
+         * Maintainer.
+         */
+        public static final String MAINTAINER = "40";
+
+        /**
+         * Owner.
+         */
+        public static final String OWNER = "50";
+    }
 }
