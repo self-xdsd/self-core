@@ -1,6 +1,7 @@
 package com.selfxdsd.core.mock;
 
 import com.selfxdsd.api.*;
+import com.selfxdsd.api.storage.Paged;
 import com.selfxdsd.api.storage.Storage;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -8,6 +9,8 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import java.util.Iterator;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -110,6 +113,32 @@ public final class InMemoryProjectsTestCase {
     }
 
     /**
+     * InMemoryProjects can return the Projects owned by
+     * a User in a Page.
+     */
+    @Test
+    public void returnsOwnedByPaginated() {
+        final Storage storage = new InMemory();
+        final Projects projects = storage.projects();
+        final ProjectManager projectManager = storage
+            .projectManagers().pick("github");
+        final User owner = this.mockUser("amihaiemil", "github");
+        IntStream.rangeClosed(1, 10)
+            .mapToObj(i -> this.mockRepo("amihaiemil/test"+i, "github"))
+            .collect(Collectors.toUnmodifiableList())
+            .forEach(repo -> {
+                Mockito.when(repo.owner()).thenReturn(owner);
+                projects.register(repo,
+                    projectManager,
+                    "whtoken123"+ repo.fullName());
+            });
+        final Projects owned = projects
+            .page(new Paged.Page(2, 2))
+            .ownedBy(owner);
+        MatcherAssert.assertThat(owned, Matchers.iterableWithSize(2));
+    }
+
+    /**
      * Check if the right project is returned.
      */
     @Test
@@ -134,8 +163,30 @@ public final class InMemoryProjectsTestCase {
         assertThat(first, is(found));
     }
 
+
     /**
-     * Check if no project is returned when id is not found..
+     * Check if the right project is returned in page.
+     */
+    @Test
+    public void getProjectByIdInPage() {
+        final Storage storage = new InMemory();
+        final ProjectManager projectManager = storage
+            .projectManagers().pick("github");
+        final Projects all = storage.projects();
+        IntStream.rangeClosed(1, 5)
+            .mapToObj(i -> this.mockRepo("amihaiemil/test" + i, "github"))
+            .collect(Collectors.toUnmodifiableList())
+            .forEach(repo -> all.register(repo,
+                projectManager,
+                "whtoken123" + repo.fullName()));
+        final Project found = all
+            .page(new Paged.Page(3, 2))
+            .getProjectById("amihaiemil/test1", "github");
+        assertThat(found, Matchers.notNullValue());
+    }
+
+    /**
+     * Check if no project is returned when id is not found.
      */
     @Test
     public void getProjectByNotFoundId() {
@@ -143,6 +194,48 @@ public final class InMemoryProjectsTestCase {
         Projects all = storage.projects();
         Project project = all.getProjectById("octo/missing", "github");
         assertThat(project, nullValue());
+    }
+
+    /**
+     * Check if no project is returned when id is not found in page, even
+     * though existing overall.
+     */
+    @Test
+    public void getProjectByNotFoundIdInPage() {
+        final Storage storage = new InMemory();
+        final ProjectManager projectManager = storage
+            .projectManagers().pick("github");
+        final Projects all = storage.projects();
+        IntStream.rangeClosed(1, 5)
+            .mapToObj(i -> this.mockRepo("amihaiemil/test" + i, "github"))
+            .collect(Collectors.toUnmodifiableList())
+            .forEach(repo -> all.register(repo,
+                projectManager,
+                "whtoken123" + repo.fullName()));
+        final Project found = all
+            .page(new Paged.Page(3, 2))
+            .getProjectById("amihaiemil/test3", "github");
+        assertThat(found, Matchers.nullValue());
+    }
+
+
+    /**
+     * Iterates projects in a given page.
+     */
+    @Test
+    public void iteratesProjectsPaged() {
+        final Storage storage = new InMemory();
+        final ProjectManager projectManager = storage
+            .projectManagers().pick("github");
+        final Projects all = storage.projects();
+        IntStream.rangeClosed(1, 10)
+            .mapToObj(i -> this.mockRepo("amihaiemil/test" + i, "github"))
+            .collect(Collectors.toUnmodifiableList())
+            .forEach(repo -> all.register(repo,
+                projectManager,
+                "whtoken123" + repo.fullName()));
+        assertThat(all.page(new Paged.Page(2, 3)),
+            Matchers.iterableWithSize(3));
     }
 
     /**
