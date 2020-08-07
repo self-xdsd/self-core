@@ -22,13 +22,15 @@
  */
 package com.selfxdsd.api;
 
+import com.selfxdsd.api.storage.Paged;
+
 /**
  * Projects managed by Self.
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
  */
-public interface Projects extends Iterable<Project> {
+public interface Projects extends Iterable<Project>, Paged {
 
     /**
      * Register a new Project with Self.
@@ -69,4 +71,12 @@ public interface Projects extends Iterable<Project> {
         final String repoFullName,
         final String repoProvider
     );
+
+    /**
+     * Get the Projects at the provided Page.
+     * @param page Page number.
+     * @return Projects in a page.
+     */
+    Projects page(final Paged.Page page);
+
 }

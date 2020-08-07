@@ -30,6 +30,7 @@ import org.mockito.Mockito;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * Unit tests for {@link UserProjects}.
@@ -50,7 +51,7 @@ public final class UserProjectsTestCase {
         list.add(this.projectAssignedTo(3));
         list.add(this.projectAssignedTo(2));
         final Projects projects = new UserProjects(
-            Mockito.mock(User.class), list
+            Mockito.mock(User.class), list::stream
         );
 
         MatcherAssert.assertThat(
@@ -69,7 +70,7 @@ public final class UserProjectsTestCase {
         list.add(Mockito.mock(Project.class));
         list.add(Mockito.mock(Project.class));
         final Projects projects = new UserProjects(
-            Mockito.mock(User.class), list
+            Mockito.mock(User.class), list::stream
         );
         MatcherAssert.assertThat(projects, Matchers.iterableWithSize(3));
     }
@@ -81,7 +82,7 @@ public final class UserProjectsTestCase {
     public void ownedByReturnsItself() {
         final Projects projects = new UserProjects(
             this.mockUser("mihai", "github"),
-            new ArrayList<>()
+            Stream::empty
         );
         MatcherAssert.assertThat(
             projects.ownedBy(this.mockUser("mihai", "github")),
@@ -97,7 +98,7 @@ public final class UserProjectsTestCase {
     public void ownedByComplainsOnDifferendUser() {
         final Projects projects = new UserProjects(
             this.mockUser("mihai", "github"),
-            new ArrayList<>()
+            Stream::empty
         );
         projects.ownedBy(this.mockUser("vlad", "github"));
     }
@@ -109,10 +110,10 @@ public final class UserProjectsTestCase {
     public void projectByIdFound() {
         final Projects projects = new UserProjects(
             this.mockUser("mihai", "github"),
-            List.of(
+            () -> List.of(
                 mockProject("mihai/test", "github"),
                 mockProject("mihai/test2", "github")
-            )
+            ).stream()
         );
         final Project found = projects.getProjectById("mihai/test", "github");
         MatcherAssert.assertThat(
@@ -131,7 +132,7 @@ public final class UserProjectsTestCase {
     @Test
     public void projectByIdNotFound() {
         final Projects projects = new UserProjects(
-            this.mockUser("mihai", "github"), List.of()
+            this.mockUser("mihai", "github"), Stream::empty
         );
         MatcherAssert.assertThat(
             projects.getProjectById("mihai/test", "github"),

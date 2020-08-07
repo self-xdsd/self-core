@@ -30,6 +30,7 @@ import org.mockito.Mockito;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * Unit tests for {@link PmProjects}.
@@ -46,7 +47,7 @@ public final class PmProjectsTestCase {
      */
     @Test(expected = IllegalStateException.class)
     public void registerIsForbidden() {
-        final Projects projects = new PmProjects(1, new ArrayList<>());
+        final Projects projects = new PmProjects(1, Stream::empty);
         projects.register(
             Mockito.mock(Repo.class),
             Mockito.mock(ProjectManager.class),
@@ -59,7 +60,7 @@ public final class PmProjectsTestCase {
      */
     @Test
     public void assignedToReturnsItself() {
-        final Projects projects = new PmProjects(1, new ArrayList<>());
+        final Projects projects = new PmProjects(1, Stream::empty);
         MatcherAssert.assertThat(
             projects.assignedTo(1), Matchers.is(projects)
         );
@@ -71,7 +72,7 @@ public final class PmProjectsTestCase {
      */
     @Test(expected = IllegalStateException.class)
     public void assignedToComplainsOnDifferendId() {
-        final Projects projects = new PmProjects(1, new ArrayList<>());
+        final Projects projects = new PmProjects(1, Stream::empty);
         projects.assignedTo(2);
     }
 
@@ -84,7 +85,7 @@ public final class PmProjectsTestCase {
         list.add(Mockito.mock(Project.class));
         list.add(Mockito.mock(Project.class));
         list.add(Mockito.mock(Project.class));
-        final Projects projects = new PmProjects(1, list);
+        final Projects projects = new PmProjects(1, list::stream);
         MatcherAssert.assertThat(projects, Matchers.iterableWithSize(3));
     }
 
@@ -99,7 +100,7 @@ public final class PmProjectsTestCase {
         list.add(this.projectOwnedBy("vlad", "github"));
         list.add(this.projectOwnedBy("mihai", "gitlab"));
         list.add(this.projectOwnedBy("mihai", "github"));
-        final Projects projects = new PmProjects(1, list);
+        final Projects projects = new PmProjects(1, list::stream);
         MatcherAssert.assertThat(
             projects.ownedBy(
                 this.mockUser("mihai", "github")
@@ -132,10 +133,10 @@ public final class PmProjectsTestCase {
     public void projectByIdFound() {
         final Projects projects = new PmProjects(
             1,
-            List.of(
+            () -> List.of(
                 mockProject("john/test", "github"),
                 mockProject("john/test2", "github")
-            )
+            ).stream()
         );
         final Project found = projects.getProjectById("john/test", "github");
         MatcherAssert.assertThat(
@@ -153,7 +154,7 @@ public final class PmProjectsTestCase {
      */
     @Test
     public void projectByIdNotFound() {
-        final Projects projects = new PmProjects(1, List.of());
+        final Projects projects = new PmProjects(1, Stream::empty);
         MatcherAssert.assertThat(
             projects.getProjectById("mihai/missing", "github"),
             Matchers.nullValue()

@@ -23,11 +23,11 @@
 package com.selfxdsd.core.projects;
 
 import com.selfxdsd.api.*;
+import com.selfxdsd.api.storage.Paged;
 
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
-import java.util.stream.StreamSupport;
+import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 /**
  * Projects assigned to a certain PM. This class <b>just represents</b>
@@ -38,7 +38,7 @@ import java.util.stream.StreamSupport;
  * @version $Id$
  * @since 0.0.1
  */
-public final class PmProjects implements Projects {
+public final class PmProjects extends ProjectsPaged {
 
     /**
      * ID of the manager.
@@ -48,14 +48,29 @@ public final class PmProjects implements Projects {
     /**
      * Projects of the PM.
      */
-    private final Iterable<Project> projects;
+    private final Supplier<Stream<Project>> projects;
+
 
     /**
      * Constructor.
      * @param pmId ID of the manager.
      * @param projects Projects to choose from.
      */
-    public PmProjects(final int pmId, final Iterable<Project> projects) {
+    public PmProjects(final int pmId,
+                      final Supplier<Stream<Project>> projects) {
+        this(pmId, projects, new Page(1, 10));
+    }
+
+    /**
+     * Constructor.
+     * @param pmId ID of the manager.
+     * @param projects Projects to choose from.
+     * @param page Current Page.
+     */
+    public PmProjects(final int pmId,
+                      final Supplier<Stream<Project>> projects,
+                      final Page page) {
+        super(page, (int) projects.get().count());
         this.pmId = pmId;
         this.projects = projects;
     }
@@ -68,7 +83,7 @@ public final class PmProjects implements Projects {
     ) {
         throw new IllegalStateException(
             "Projects of a PM are immutable, "
-          + "can't register a new one here."
+                + "can't register a new one here."
         );
     }
 
@@ -84,14 +99,16 @@ public final class PmProjects implements Projects {
 
     @Override
     public Projects ownedBy(final User user) {
-        final List<Project> owned = new ArrayList<>();
-        for(final Project project : this.projects) {
-            final User owner = project.owner();
-            if(owner.username().equals(user.username())
-                && owner.provider().name().equals(user.provider().name())) {
-                owned.add(project);
-            }
-        }
+        final Page page = super.current();
+        final Supplier<Stream<Project>> owned = () -> this.projects.get()
+            .skip((page.getNumber() - 1) * page.getSize())
+            .limit(page.getSize())
+            .filter(p -> {
+                final User owner = p.owner();
+                return owner.username().equals(user.username())
+                    && owner.provider().name()
+                    .equals(user.provider().name());
+            });
         return new UserProjects(user, owned);
     }
 
@@ -99,20 +116,28 @@ public final class PmProjects implements Projects {
     public Project getProjectById(
         final String repoFullName, final String repoProvider
     ) {
-        return StreamSupport
-            .stream(this.projects.spliterator(), false)
-            .filter(
-                p -> {
-                    return p.repoFullName().equals(repoFullName)
-                        && p.provider().equals(repoProvider);
-                }
-            )
+        final Page page = super.current();
+        return this.projects.get()
+            .skip((page.getNumber() - 1) * page.getSize())
+            .limit(page.getSize())
+            .filter(p -> p.repoFullName().equals(repoFullName)
+                && p.provider().equals(repoProvider))
             .findFirst()
             .orElse(null);
     }
 
     @Override
-    public Iterator<Project> iterator() {
-        return this.projects.iterator();
+    public Projects page(final Paged.Page page) {
+        return new PmProjects(this.pmId, this.projects, page);
     }
+
+    @Override
+    public Iterator<Project> iterator() {
+        final Page page = super.current();
+        return this.projects.get()
+            .skip((page.getNumber() - 1) * page.getSize())
+            .limit(page.getSize())
+            .iterator();
+    }
+
 }

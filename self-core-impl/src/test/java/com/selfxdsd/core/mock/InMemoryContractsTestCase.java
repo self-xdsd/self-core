@@ -163,12 +163,14 @@ public final class InMemoryContractsTestCase {
     @Test(expected = IllegalStateException.class)
     public void addThrowsExceptionWhenContributorNotFound() {
         final Storage storage = new InMemory();
-        final Project project = storage.projects()
-            .register(
-                mock(Repo.class),
-                storage.projectManagers().pick("github"),
-                "whtoken123"
-            );
+        final Repo repo = Mockito.mock(Repo.class);
+        Mockito.when(repo.fullName()).thenReturn("john/other-test");
+        Mockito.when(repo.provider()).thenReturn("github");
+        storage.projects().register(
+            repo,
+            storage.projectManagers().pick("github"),
+            "whtoken123"
+        );
         storage.contracts().addContract(
             "john/test",
             "jhon_doe",
