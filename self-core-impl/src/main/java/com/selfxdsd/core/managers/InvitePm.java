@@ -27,6 +27,8 @@ import com.selfxdsd.api.Provider;
 import com.selfxdsd.api.Repo;
 import com.selfxdsd.api.pm.Intermediary;
 import com.selfxdsd.api.pm.Step;
+import com.selfxdsd.core.Github;
+import com.selfxdsd.core.Gitlab;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,8 +37,6 @@ import org.slf4j.LoggerFactory;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.13
- * @todo #327:15min Create classes for permissions constants in both
- *  Github and Gitlab.
  * @todo #327:30min Add method ProjectManager.userId() which should return the
  *  user ID (not username) registered with the Provider. Then, modify
  *  the invitation logic to use the user ID in case of GitLab. After this,
@@ -69,9 +69,9 @@ public final class InvitePm extends Intermediary {
         );
         final String permission;
         if(Provider.Names.GITHUB.equals(provider)) {
-            permission = "manage";
+            permission = Github.Permissions.MAINTAIN;
         } else if (Provider.Names.GITLAB.equals(provider)) {
-            permission = "40";
+            permission = Gitlab.Permissions.MAINTAINER;
         } else {
             throw new IllegalStateException(
                 "Unknown Provider: [" + provider + "]."
