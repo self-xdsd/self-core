@@ -63,7 +63,7 @@ public final class InvitePm extends Intermediary {
     @Override
     public void perform(final Event event) {
         final Repo repo = event.project().repo();
-        final String provider = event.provider().name();
+        final String provider = event.provider();
         LOG.debug(
             "Inviting PM to repo " + repo.fullName() + " at " + provider
         );
