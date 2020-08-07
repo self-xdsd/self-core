@@ -42,7 +42,7 @@ import java.util.stream.Stream;
  *  this is a User's Projects, meaning the given Repo has to
  *  belong to this User, the PM has to work for the same provider etc.
  */
-public final class UserProjects implements Projects {
+public final class UserProjects extends ProjectsPaged {
 
     /**
      * User to whom these projects belong.
@@ -61,6 +61,19 @@ public final class UserProjects implements Projects {
      */
     public UserProjects(final User user,
                         final Supplier<Stream<Project>> projects) {
+        this(user, projects, new Page(1,10));
+    }
+
+    /**
+     * Constructor.
+     * @param user The user.
+     * @param projects The user's projects.
+     * @param page Current page.
+     */
+    public UserProjects(final User user,
+                        final Supplier<Stream<Project>> projects,
+                        final Page page) {
+        super(page, () -> (int) projects.get().count());
         this.user = user;
         this.projects = projects;
     }
@@ -78,8 +91,11 @@ public final class UserProjects implements Projects {
 
     @Override
     public Projects assignedTo(final int projectManagerId) {
-        final Supplier<Stream<Project>> assigned = ()-> this.projects.get()
-                .filter(p -> p.projectManager().id() == projectManagerId);
+        final Page page = super.current();
+        final Supplier<Stream<Project>> assigned = () -> this.projects.get()
+            .skip((page.getNumber() - 1) * page.getSize())
+            .limit(page.getSize())
+            .filter(p -> p.projectManager().id() == projectManagerId);
         return new PmProjects(projectManagerId, assigned);
     }
 
@@ -99,8 +115,11 @@ public final class UserProjects implements Projects {
     public Project getProjectById(
         final String repoFullName, final String repoProvider
     ) {
+        final Page page = super.current();
         return projects
             .get()
+            .skip((page.getNumber() - 1) * page.getSize())
+            .limit(page.getSize())
             .filter(p -> p.repoFullName().equals(repoFullName)
                 && p.provider().equals(repoProvider))
             .findFirst()
@@ -108,14 +127,8 @@ public final class UserProjects implements Projects {
     }
 
     @Override
-    public ProjectsPaged page(final Paged.Page page) {
-        final Supplier<Stream<Project>> userPageProjects = () -> this.projects
-            .get()
-            .skip((page.getNumber() - 1) * page.getSize())
-            .limit(page.getSize());
-        final int totalRecords = (int) this.projects.get().count();
-        return new DefaultProjectsPaged(page,
-            totalRecords, new UserProjects(this.user, userPageProjects));
+    public Projects page(final Paged.Page page) {
+        return new UserProjects(this.user, this.projects, page);
     }
 
     @Override

@@ -25,10 +25,7 @@ package com.selfxdsd.core.mock;
 import com.selfxdsd.api.*;
 import com.selfxdsd.api.storage.Paged;
 import com.selfxdsd.api.storage.Storage;
-import com.selfxdsd.core.projects.DefaultProjectsPaged;
-import com.selfxdsd.core.projects.PmProjects;
-import com.selfxdsd.core.projects.StoredProject;
-import com.selfxdsd.core.projects.UserProjects;
+import com.selfxdsd.core.projects.*;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -45,7 +42,7 @@ import java.util.stream.Stream;
  * @todo #346:30min Write unit tests for paging InMemoryProjects, PmProjects
  *  and UserProjects.
  */
-public final class InMemoryProjects implements Projects {
+public final class InMemoryProjects extends ProjectsPaged {
 
     /**
      * Parent storage.
@@ -58,24 +55,25 @@ public final class InMemoryProjects implements Projects {
     private final Map<ProjectKey, Project> projects = new HashMap<>();
 
     /**
-     * Projects' id counter.
-     */
-    private int idCounter;
-
-    /**
-     * Stream based abstraction of InMemoryProjects data source.
-     */
-    private final Projects projectsListing;
-
-    /**
      * Constructor.
      * @param storage Parent storage.
      */
     public InMemoryProjects(final Storage storage) {
+        this(storage, new HashMap<>(), new Page(1, 10));
+    }
+
+    /**
+     * Constructor.
+     * @param storage Parent storage.
+     * @param projects Projects "table".
+     * @param page Current Page.
+     */
+    private InMemoryProjects(
+        final Storage storage,
+        final Map<ProjectKey, Project> projects,
+        final Page page) {
+        super(page, projects::size);
         this.storage = storage;
-        this.projectsListing = new InMemoryProjectsListing(
-            () -> projects.entrySet().stream()
-        );
     }
 
     @Override
@@ -107,29 +105,64 @@ public final class InMemoryProjects implements Projects {
 
     @Override
     public Projects assignedTo(final int projectManagerId) {
-        return this.projectsListing.assignedTo(projectManagerId);
+        final Page page = super.current();
+        final Supplier<Stream<Project>> assigned = () -> this.projects
+            .values()
+            .stream()
+            .skip((page.getNumber() - 1) * page.getSize())
+            .limit(page.getSize())
+            .filter(p -> p.projectManager().id() == projectManagerId);
+        return new PmProjects(projectManagerId, assigned);
     }
 
     @Override
     public Projects ownedBy(final User user) {
-        return this.projectsListing.ownedBy(user);
+        final Page page = super.current();
+        final Supplier<Stream<Project>> owned = () -> this.projects
+            .values()
+            .stream()
+            .skip((page.getNumber() - 1) * page.getSize())
+            .limit(page.getSize())
+            .filter(p -> {
+                final User owner = p.owner();
+                return owner.username().equals(user.username())
+                    && owner.provider().name()
+                    .equals(user.provider().name());
+            });
+        return new UserProjects(user, owned);
     }
 
     @Override
     public Project getProjectById(
         final String repoFullName, final String repoProvider
     ) {
-        return this.projectsListing.getProjectById(repoFullName, repoProvider);
+        final Page page = super.current();
+        return this.projects
+            .entrySet()
+            .stream()
+            .skip((page.getNumber() - 1) * page.getSize())
+            .limit(page.getSize())
+            .filter(e -> e.getKey()
+                .equals(new ProjectKey(repoFullName, repoProvider)))
+            .map(Map.Entry::getValue)
+            .findFirst().orElse(null);
     }
 
     @Override
     public ProjectsPaged page(final Paged.Page page) {
-        return this.projectsListing.page(page);
+        return new InMemoryProjects(this.storage, this.projects, page);
     }
 
     @Override
     public Iterator<Project> iterator() {
-        return this.projectsListing.iterator();
+        final Page page = super.current();
+        return this.projects
+            .entrySet()
+            .stream()
+            .skip((page.getNumber() - 1) * page.getSize())
+            .limit(page.getSize())
+            .map(Map.Entry::getValue)
+            .iterator();
     }
 
     /**
@@ -180,87 +213,6 @@ public final class InMemoryProjects implements Projects {
                 this.repoFullName,
                 this.repoProvider
             );
-        }
-    }
-
-    /**
-     * Stream based abstraction of InMemoryProjects data source.
-     * Main purpose is to adapt to pagination:
-     * see {@link InMemoryProjectsListing#page(Paged.Page)}
-     */
-    private static final class InMemoryProjectsListing implements Projects{
-
-        /**
-         * InMemoryProjects data source as stream.
-         */
-        private final Supplier<Stream<Map.Entry<ProjectKey, Project>>> projects;
-
-        /**
-         * Ctor.
-         * @param projects InMemoryProjects data source as stream.
-         */
-        private InMemoryProjectsListing(
-            final Supplier<Stream<Map.Entry<ProjectKey, Project>>> projects) {
-            this.projects = projects;
-        }
-
-        @Override
-        public Project register(final Repo repo,
-                                final ProjectManager manager,
-                                final String webHookToken) {
-            throw new UnsupportedOperationException("You can't register"
-                + " a project here. InMemoryProjectsListing"
-                + " is for listing only");
-        }
-
-        @Override
-        public PmProjects assignedTo(final int projectManagerId) {
-            final Supplier<Stream<Project>> assigned = () -> this.projects.get()
-                .map(Map.Entry::getValue)
-                .filter(p -> p.projectManager().id() == projectManagerId);
-            return new PmProjects(projectManagerId, assigned);
-        }
-
-        @Override
-        public Projects ownedBy(final User user) {
-            final Supplier<Stream<Project>> owned = () -> this.projects.get()
-                .map(Map.Entry::getValue)
-                .filter(p -> {
-                    final User owner = p.owner();
-                    return owner.username().equals(user.username())
-                        && owner.provider().name()
-                        .equals(user.provider().name());
-                });
-            return new UserProjects(user, owned);
-        }
-
-        @Override
-        public Project getProjectById(final String repoFullName,
-                                      final String repoProvider) {
-            return this.projects.get()
-                .filter(e -> e.getKey()
-                    .equals(new ProjectKey(repoFullName, repoProvider)))
-                .map(Map.Entry::getValue)
-                .findFirst().orElse(null);
-        }
-
-        @Override
-        public ProjectsPaged page(final Paged.Page page) {
-            //@checkstyle RegexpSingleline (10 lines)
-            //@checkstyle LineLength (10 lines)
-            final Supplier<Stream<Map.Entry<ProjectKey, Project>>> pageProjects = () ->
-                this.projects
-                    .get()
-                .skip((page.getNumber() - 1) * page.getSize())
-                .limit(page.getSize());
-            final int totalRecords = (int) this.projects.get().count();
-            return new DefaultProjectsPaged(page, totalRecords,
-                new InMemoryProjectsListing(pageProjects));
-        }
-
-        @Override
-        public Iterator<Project> iterator() {
-            return this.projects.get().map(Map.Entry::getValue).iterator();
         }
     }
 

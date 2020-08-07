@@ -38,7 +38,7 @@ import java.util.stream.Stream;
  * @version $Id$
  * @since 0.0.1
  */
-public final class PmProjects implements Projects {
+public final class PmProjects extends ProjectsPaged {
 
     /**
      * ID of the manager.
@@ -58,6 +58,19 @@ public final class PmProjects implements Projects {
      */
     public PmProjects(final int pmId,
                       final Supplier<Stream<Project>> projects) {
+        this(pmId, projects, new Page(1, 10));
+    }
+
+    /**
+     * Constructor.
+     * @param pmId ID of the manager.
+     * @param projects Projects to choose from.
+     * @param page Current Page.
+     */
+    public PmProjects(final int pmId,
+                      final Supplier<Stream<Project>> projects,
+                      final Page page) {
+        super(page, () -> (int) projects.get().count());
         this.pmId = pmId;
         this.projects = projects;
     }
@@ -86,7 +99,10 @@ public final class PmProjects implements Projects {
 
     @Override
     public Projects ownedBy(final User user) {
+        final Page page = super.current();
         final Supplier<Stream<Project>> owned = () -> this.projects.get()
+            .skip((page.getNumber() - 1) * page.getSize())
+            .limit(page.getSize())
             .filter(p -> {
                 final User owner = p.owner();
                 return owner.username().equals(user.username())
@@ -100,7 +116,10 @@ public final class PmProjects implements Projects {
     public Project getProjectById(
         final String repoFullName, final String repoProvider
     ) {
+        final Page page = super.current();
         return this.projects.get()
+            .skip((page.getNumber() - 1) * page.getSize())
+            .limit(page.getSize())
             .filter(p -> p.repoFullName().equals(repoFullName)
                 && p.provider().equals(repoProvider))
             .findFirst()
@@ -108,19 +127,17 @@ public final class PmProjects implements Projects {
     }
 
     @Override
-    public ProjectsPaged page(final Paged.Page page) {
-        final Supplier<Stream<Project>> pmPageProjects = () -> this.projects
-            .get()
-            .skip((page.getNumber() - 1) * page.getSize())
-            .limit(page.getSize());
-        final int totalRecords = (int) this.projects.get().count();
-        return new DefaultProjectsPaged(page, totalRecords,
-            new PmProjects(this.pmId, pmPageProjects));
+    public Projects page(final Paged.Page page) {
+        return new PmProjects(this.pmId, this.projects, page);
     }
 
     @Override
     public Iterator<Project> iterator() {
-        return this.projects.get().iterator();
+        final Page page = super.current();
+        return this.projects.get()
+            .skip((page.getNumber() - 1) * page.getSize())
+            .limit(page.getSize())
+            .iterator();
     }
 
 }
