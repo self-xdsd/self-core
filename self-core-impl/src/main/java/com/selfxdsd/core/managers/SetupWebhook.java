@@ -34,9 +34,6 @@ import org.slf4j.LoggerFactory;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.13
- * @todo #355:60min Implement and test Repo.webhooks().add(...)
- *  method, which will setup a webhook in the Repo. Afterwards,
- *  continue implementing and testing this class.
  */
 public final class SetupWebhook extends Intermediary {
 
