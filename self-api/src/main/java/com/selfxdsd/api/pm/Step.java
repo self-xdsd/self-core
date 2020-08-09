@@ -30,8 +30,6 @@ import com.selfxdsd.api.Event;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.13
- * @todo #327:30min Implement a Step which sets up the project Webhook
- *  in the Repo.
  */
 public interface Step {
 
