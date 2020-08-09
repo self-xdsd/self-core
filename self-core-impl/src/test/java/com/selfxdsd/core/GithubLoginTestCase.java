@@ -23,12 +23,14 @@ public final class GithubLoginTestCase {
      * @throws Exception If something goes wrong.
      */
     @Test
-    public void githubLoginWorks() throws Exception {
+    public void githubAdminLoginWorks() throws Exception {
         final Storage storage = new InMemory();
         final Self self = new SelfCore(storage);
         final Login githubLogin = new GithubLogin(
             "amihaiemil", "amihaiemil@gmail.com", "gh123token"
         );
+        assertThat(githubLogin.role(), equalTo("admin"));
+
         final User amihaiemil = self.login(githubLogin);
         assertThat(amihaiemil.username(), equalTo("amihaiemil"));
         assertThat(amihaiemil.email(), equalTo("amihaiemil@gmail.com"));
@@ -37,5 +39,28 @@ public final class GithubLoginTestCase {
         assertThat(storage.users(), iterableWithSize(1));
         assertThat(storage.users().user("amihaiemil", "github")
                 .username(), equalTo("amihaiemil"));
+    }
+
+    /**
+     * SelfCore can sign up a Github User.
+     * @throws Exception If something goes wrong.
+     */
+    @Test
+    public void githubUserLoginWorks() throws Exception {
+        final Storage storage = new InMemory();
+        final Self self = new SelfCore(storage);
+        final Login githubLogin = new GithubLogin(
+            "john", "john@gmail.com", "gh124token"
+        );
+        assertThat(githubLogin.role(), equalTo("user"));
+
+        final User amihaiemil = self.login(githubLogin);
+        assertThat(amihaiemil.username(), equalTo("john"));
+        assertThat(amihaiemil.email(), equalTo("john@gmail.com"));
+        assertThat(amihaiemil.provider(), instanceOf(Github.class));
+        assertThat(amihaiemil.provider().name(), equalTo("github"));
+        assertThat(storage.users(), iterableWithSize(1));
+        assertThat(storage.users().user("john", "github")
+            .username(), equalTo("john"));
     }
 }

@@ -39,36 +39,6 @@ import org.mockito.Mockito;
 public final class SelfCoreTestCase {
 
     /**
-     * SelfCore can sign up a User on any platform.
-     */
-    @Test
-    public void platformLoginWorks() {
-        final User authUser = Mockito.mock(User.class);
-        final Storage storage = Mockito.mock(Storage.class);
-        final Users all = Mockito.mock(Users.class);
-        Mockito.when(
-            all.signUp(
-                "amihaiemil",
-                Provider.Names.GITHUB,
-                "amihaiemil@gmail.com"
-            )
-        ).thenReturn(authUser);
-        Mockito.when(storage.users()).thenReturn(all);
-
-        final Self self = new SelfCore(storage);
-        final Login auth = new GithubLogin(
-            "amihaiemil",
-            "amihaiemil@gmail.com",
-            "123t"
-        );
-
-        MatcherAssert.assertThat(
-            self.login(auth),
-            Matchers.instanceOf(BaseSelf.Authenticated.class)
-        );
-    }
-
-    /**
      * SelfCore can give us its ProjectManagers.
      */
     @Test
