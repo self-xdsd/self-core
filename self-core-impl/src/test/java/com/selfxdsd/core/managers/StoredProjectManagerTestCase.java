@@ -25,6 +25,7 @@ package com.selfxdsd.core.managers;
 import com.selfxdsd.api.*;
 import com.selfxdsd.api.storage.Storage;
 import com.selfxdsd.core.Github;
+import com.selfxdsd.core.Gitlab;
 import com.selfxdsd.core.mock.InMemory;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -122,6 +123,140 @@ public final class StoredProjectManagerTestCase {
         MatcherAssert.assertThat(
             manager.projects(),
             Matchers.is(assigned)
+        );
+    }
+
+    /**
+     * PmUser returns its username.
+     */
+    @Test
+    public void pmUserReturnsUsername() {
+        final Projects assigned = Mockito.mock(Projects.class);
+        final Projects all = Mockito.mock(Projects.class);
+        Mockito.when(all.assignedTo(1)).thenReturn(assigned);
+
+        final Storage storage = Mockito.mock(Storage.class);
+        Mockito.when(storage.projects()).thenReturn(all);
+
+
+        final ProjectManager ProjectManager = new StoredProjectManager(1,
+                "123",
+                "zoeself",
+                Provider.Names.GITLAB,
+                "123token",
+                storage);
+
+        User PmUser = new StoredProjectManager(ProjectManager.id(),
+                ProjectManager.userId(),
+                ProjectManager.username(),
+                Provider.Names.GITLAB,
+                "123token",
+                storage).new PmUser(ProjectManager);
+
+        MatcherAssert.assertThat(
+                PmUser.username(),
+                Matchers.is("zoeself")
+        );
+    }
+
+    /**
+     * PmUser returns its role.
+     */
+    @Test
+    public void pmUserReturnsRole() {
+        final Projects assigned = Mockito.mock(Projects.class);
+        final Projects all = Mockito.mock(Projects.class);
+        Mockito.when(all.assignedTo(1)).thenReturn(assigned);
+
+        final Storage storage = Mockito.mock(Storage.class);
+        Mockito.when(storage.projects()).thenReturn(all);
+
+        ProjectManager ProjectManager = new StoredProjectManager(1,
+                "123",
+                "zoeself",
+                Provider.Names.GITLAB,
+                "123token",
+                storage);
+        User PmUser = new StoredProjectManager(ProjectManager.id(),
+                ProjectManager.userId(),
+                ProjectManager.username(),
+                Provider.Names.GITLAB,
+                "123token",
+                storage).new PmUser(ProjectManager);
+
+        MatcherAssert.assertThat(
+                PmUser.role(),
+                Matchers.is("user")
+        );
+    }
+
+    /**
+     * PmUser returns its assigned projects.
+     */
+    @Test
+    public void pmUserReturnsProjects() {
+        final Projects assigned = Mockito.mock(Projects.class);
+        final Projects all = Mockito.mock(Projects.class);
+        Mockito.when(all.assignedTo(1)).thenReturn(assigned);
+
+        final Storage storage = Mockito.mock(Storage.class);
+        Mockito.when(storage.projects()).thenReturn(all);
+
+
+        ProjectManager ProjectManager = new StoredProjectManager(1,
+                "123",
+                "zoeself",
+                Provider.Names.GITLAB,
+                "123token",
+                storage);
+
+        User PmUser = new StoredProjectManager(ProjectManager.id(),
+                ProjectManager.userId(),
+                ProjectManager.username(),
+                Provider.Names.GITLAB,
+                "123token",
+                storage).new PmUser(ProjectManager);
+
+        MatcherAssert.assertThat(
+                PmUser.projects(),
+                Matchers.is(assigned)
+        );
+
+    }
+
+    /**
+     * PmUser returns its provider.
+     */
+    @Test
+    public void pmUserReturnsProvider() {
+        final Projects assigned = Mockito.mock(Projects.class);
+        final Projects all = Mockito.mock(Projects.class);
+        Mockito.when(all.assignedTo(1)).thenReturn(assigned);
+
+        final Storage storage = Mockito.mock(Storage.class);
+        Mockito.when(storage.projects()).thenReturn(all);
+
+
+        ProjectManager ProjectManager = new StoredProjectManager(1,
+                "123",
+                "zoeself",
+                Provider.Names.GITLAB,
+                "123token",
+                storage);
+
+        User PmUser = new StoredProjectManager(ProjectManager.id(),
+                ProjectManager.userId(),
+                ProjectManager.username(),
+                Provider.Names.GITLAB,
+                "123token",
+                storage).new PmUser(ProjectManager);
+
+        MatcherAssert.assertThat(
+                PmUser.provider(),
+                Matchers.allOf(
+                        Matchers.notNullValue(),
+                        Matchers.instanceOf(Gitlab.class)
+                )
         );
     }
 

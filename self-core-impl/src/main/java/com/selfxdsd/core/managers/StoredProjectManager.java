@@ -217,7 +217,7 @@ public final class StoredProjectManager implements ProjectManager {
      * @version $Id$
      * @since 0.0.1
      */
-    private final class PmUser implements User {
+    final class PmUser implements User {
 
         /**
          * The PM.
