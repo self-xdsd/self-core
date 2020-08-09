@@ -158,12 +158,6 @@ public final class StoredProjectManagerTestCase {
     @Test
     public void pmUserReturnsProjects() {
         final Projects assigned = Mockito.mock(Projects.class);
-        final Projects all = Mockito.mock(Projects.class);
-        Mockito.when(all.assignedTo(1)).thenReturn(assigned);
-
-        final Storage storage = Mockito.mock(Storage.class);
-        Mockito.when(storage.projects()).thenReturn(all);
-
         final ProjectManager manager = Mockito.mock(ProjectManager.class);
         final User pmUser = new StoredProjectManager.PmUser(manager);
         Mockito.when(pmUser.projects()).thenReturn(assigned);
