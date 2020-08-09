@@ -23,6 +23,7 @@
 package com.selfxdsd.core.projects;
 
 import com.selfxdsd.api.*;
+import com.selfxdsd.api.storage.Paged;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -30,6 +31,7 @@ import org.mockito.Mockito;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 /**
@@ -160,6 +162,121 @@ public final class PmProjectsTestCase {
             Matchers.nullValue()
         );
     }
+
+    /**
+     * Should a iterate over an existing page.
+     */
+    @Test
+    public void iteratePageWorks(){
+        final Projects projects = new PmProjects(1, () -> IntStream
+            .rangeClosed(1, 14)
+            .mapToObj(i -> mockProject("repo-" + i,
+                Provider.Names.GITHUB)));
+        MatcherAssert.assertThat(projects, Matchers.iterableWithSize(10));
+        MatcherAssert.assertThat(projects.page(new Paged.Page(2, 5)),
+            Matchers.iterableWithSize(5));
+        MatcherAssert.assertThat(projects.page(new Paged.Page(3, 5)),
+            Matchers.iterableWithSize(4));
+        MatcherAssert.assertThat(projects.page(new Paged.Page(1, 15)),
+            Matchers.iterableWithSize(14));
+        MatcherAssert.assertThat(projects.page(new Paged.Page(14, 1)),
+            Matchers.iterableWithSize(1));
+    }
+
+    /**
+     * Should a iterate over an empty page.
+     */
+    @Test
+    public void iterateEmptyPageWorks(){
+        final Projects projects = new PmProjects(1, Stream::empty);
+        MatcherAssert.assertThat(projects, Matchers.emptyIterable());
+    }
+
+    /**
+     * Throws when page is upper out of bounds.
+     */
+    @Test(expected = IllegalStateException.class)
+    public void throwsWhenPageIsUpperOutOfBound(){
+        new PmProjects(1, () -> IntStream
+            .rangeClosed(1, 10)
+            .mapToObj(i -> mockProject("repo-" + i,
+                Provider.Names.GITHUB)))
+            .page(new Paged.Page(5, 10));
+    }
+
+    /**
+     * Throws when page is under out of bounds.
+     */
+    @Test(expected = IllegalStateException.class)
+    public void throwsWhenPageIsUnderOutOfBound(){
+        new PmProjects(1, () -> IntStream
+            .rangeClosed(1, 10)
+            .mapToObj(i -> mockProject("repo-" + i,
+                Provider.Names.GITHUB)))
+            .page(new Paged.Page(0, 10));
+    }
+
+    /**
+     * Should find a project by it's id in a random page.
+     */
+    @Test
+    public void projectByIdFoundInPage(){
+        final Project found = new PmProjects(1, () -> IntStream
+            .rangeClosed(1, 14)
+            .mapToObj(i -> mockProject("repo-" + i,
+                Provider.Names.GITHUB)))
+            .page(new Paged.Page(2, 5))
+            .getProjectById("repo-7", Provider.Names.GITHUB);
+        MatcherAssert.assertThat(
+            found.repoFullName(),
+            Matchers.equalTo("repo-7")
+        );
+        MatcherAssert.assertThat(
+            found.provider(),
+            Matchers.equalTo("github")
+        );
+    }
+
+    /**
+     * Should return null if project is not found by id in the specified page,
+     * even though project exists in overall.
+     */
+    @Test
+    public void existingProjectNotFoundByIdInPage(){
+        final Project found = new PmProjects(1, () -> IntStream
+            .rangeClosed(1, 14)
+            .mapToObj(i -> mockProject("repo-" + i,
+                Provider.Names.GITHUB)))
+            .page(new Paged.Page(2, 5))
+            .getProjectById("repo-1", Provider.Names.GITHUB);
+        MatcherAssert.assertThat(found, Matchers.nullValue());
+    }
+
+
+    /**
+     * Method ownedBy(User) returns the User's projects at the specified page.
+     */
+    @Test
+    public void ownedByInPageWorks() {
+        final List<Project> list = new ArrayList<>();
+        list.add(this.projectOwnedBy("mihai", "github"));
+        list.add(this.projectOwnedBy("mihai", "github"));
+        list.add(this.projectOwnedBy("vlad", "github"));
+        list.add(this.projectOwnedBy("mihai", "gitlab"));
+        list.add(this.projectOwnedBy("mihai", "github"));
+        final Projects projects = new PmProjects(1, list::stream);
+        MatcherAssert.assertThat(
+            projects.page(new Paged.Page(1, 3))
+                .ownedBy(this.mockUser("mihai", "github")),
+            Matchers.iterableWithSize(2)
+        );
+        MatcherAssert.assertThat(
+            projects.page(new Paged.Page(2, 3))
+                .ownedBy(this.mockUser("mihai", "github")),
+            Matchers.iterableWithSize(1)
+        );
+    }
+
 
     /**
      * Mock a User.

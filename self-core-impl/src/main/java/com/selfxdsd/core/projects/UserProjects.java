@@ -133,6 +133,10 @@ public final class UserProjects extends ProjectsPaged {
 
     @Override
     public Iterator<Project> iterator() {
-        return this.projects.get().iterator();
+        final Page page = super.current();
+        return this.projects.get()
+            .skip((page.getNumber() - 1) * page.getSize())
+            .limit(page.getSize())
+            .iterator();
     }
 }

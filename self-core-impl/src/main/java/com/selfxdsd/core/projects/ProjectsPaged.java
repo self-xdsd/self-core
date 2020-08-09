@@ -45,7 +45,8 @@ public abstract class ProjectsPaged implements Projects {
 
     @Override
     public final int totalPages() {
-        return Math.max(1, this.totalRecords / this.current.getSize());
+        final int size = this.current.getSize();
+        return Math.max(1, (this.totalRecords + size - 1) / size);
     }
 
 }

@@ -23,6 +23,7 @@
 package com.selfxdsd.core.projects;
 
 import com.selfxdsd.api.*;
+import com.selfxdsd.api.storage.Paged;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -73,6 +74,24 @@ public final class UserProjectsTestCase {
             Mockito.mock(User.class), list::stream
         );
         MatcherAssert.assertThat(projects, Matchers.iterableWithSize(3));
+    }
+
+    /**
+     * UserProjects can iterate over a page of projects.
+     */
+    @Test
+    public void iteratorPageWorks() {
+        final List<Project> list = new ArrayList<>();
+        list.add(Mockito.mock(Project.class));
+        list.add(Mockito.mock(Project.class));
+        list.add(Mockito.mock(Project.class));
+        final Projects projects = new UserProjects(
+            Mockito.mock(User.class), list::stream
+        );
+        MatcherAssert.assertThat(projects.page(new Paged.Page(1, 2)),
+            Matchers.iterableWithSize(2));
+        MatcherAssert.assertThat(projects.page(new Paged.Page(2, 2)),
+            Matchers.iterableWithSize(1));
     }
 
     /**
@@ -127,6 +146,33 @@ public final class UserProjectsTestCase {
     }
 
     /**
+     * Should find a project by it's id in a page.
+     */
+    @Test
+    public void projectByIdFoundInPage() {
+        final Projects projects = new UserProjects(
+            this.mockUser("mihai", "github"),
+            () -> List.of(
+                mockProject("mihai/test", "github"),
+                mockProject("mihai/test2", "github"),
+                mockProject("mihai/test3", "github"),
+                mockProject("mihai/test4", "github")
+            ).stream()
+        );
+        final Project found = projects
+            .page(new Paged.Page(2, 2))
+            .getProjectById("mihai/test3", "github");
+        MatcherAssert.assertThat(
+            found.repoFullName(),
+            Matchers.equalTo("mihai/test3")
+        );
+        MatcherAssert.assertThat(
+            found.provider(),
+            Matchers.equalTo("github")
+        );
+    }
+
+    /**
      * Should return null is project is not found by id.
      */
     @Test
@@ -136,6 +182,28 @@ public final class UserProjectsTestCase {
         );
         MatcherAssert.assertThat(
             projects.getProjectById("mihai/test", "github"),
+            Matchers.nullValue()
+        );
+    }
+
+    /**
+     * Should return null if project is not found by id in the page, even
+     * though it exists overall.
+     */
+    @Test
+    public void existingProjectByIdNotFoundInPage() {
+        final Projects projects = new UserProjects(
+            this.mockUser("mihai", "github"), () -> List.of(
+            mockProject("mihai/test", "github"),
+            mockProject("mihai/test2", "github"),
+            mockProject("mihai/test3", "github"),
+            mockProject("mihai/test4", "github")
+        ).stream()
+        );
+        MatcherAssert.assertThat(
+            projects
+                .page(new Paged.Page(2, 2))
+                .getProjectById("mihai/test", "github"),
             Matchers.nullValue()
         );
     }
