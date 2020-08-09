@@ -32,8 +32,6 @@ import java.net.URI;
  * @author criske
  * @version $Id$
  * @since 0.0.1
- * @todo #355:30min Implement and test Webhooks for the
- *  Gitlab repository.
  */
 final class GitlabRepo extends BaseRepo {
 
@@ -132,7 +130,8 @@ final class GitlabRepo extends BaseRepo {
 
     @Override
     public Webhooks webhooks() {
-        throw new UnsupportedOperationException("Not yet implemented.");
+        final URI uri = URI.create(this.repoUri().toString() +"/hooks");
+        return new GitlabWebhooks(this.resources(), uri, this.storage());
     }
 
 }
