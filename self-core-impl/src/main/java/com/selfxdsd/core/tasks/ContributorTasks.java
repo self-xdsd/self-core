@@ -62,7 +62,12 @@ public final class ContributorTasks implements Tasks {
     public Task getById(final String issueId,
                         final String repoFullName,
                         final String provider) {
-        return this.storage.tasks().getById(issueId, repoFullName, provider);
+        return this.tasks.get()
+                .filter(t -> t.issue().issueId().equals(issueId)
+                        && t.project().repoFullName().equals(repoFullName)
+                        && t.project().provider().equals(provider))
+                .findFirst()
+                .orElse(null);
     }
 
     @Override

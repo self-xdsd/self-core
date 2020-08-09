@@ -157,6 +157,61 @@ public final class ContributorTasksTestCase {
             .unassigned();
     }
 
+
+    /**
+     * Returns a Task by its composite id.
+     */
+    @Test
+    public void returnsTaskById(){
+        final Project project = Mockito.mock(Project.class);
+        Mockito.when(project.provider()).thenReturn(Provider.Names.GITHUB);
+        Mockito.when(project.repoFullName()).thenReturn("mihai/repo");
+
+        final Issue issue = Mockito.mock(Issue.class);
+        Mockito.when(issue.issueId()).thenReturn("1");
+
+        final Task task = Mockito.mock(Task.class);
+        Mockito.when(task.issue()).thenReturn(issue);
+
+        Mockito.when(task.project()).thenReturn(project);
+
+        final Storage storage = Mockito.mock(Storage.class);
+
+        final Task found = new ContributorTasks(
+                "mihai", Provider.Names.GITHUB,
+                List.of(task)::stream,
+                storage
+        ).getById("1", "mihai/repo", Provider.Names.GITHUB);
+        MatcherAssert.assertThat(found, Matchers.is(task));
+    }
+
+    /**
+     * Returns null when Task by its composite id was not found.
+     */
+    @Test
+    public void returnsNullWhenTaskByIdNotFound(){
+        final Project project = Mockito.mock(Project.class);
+        Mockito.when(project.provider()).thenReturn(Provider.Names.GITHUB);
+        Mockito.when(project.repoFullName()).thenReturn("mihai/repo");
+
+        final Issue issue = Mockito.mock(Issue.class);
+        Mockito.when(issue.issueId()).thenReturn("1");
+
+        final Task task = Mockito.mock(Task.class);
+        Mockito.when(task.issue()).thenReturn(issue);
+
+        Mockito.when(task.project()).thenReturn(project);
+
+        final Storage storage = Mockito.mock(Storage.class);
+
+        final Task found = new ContributorTasks(
+                "mihai", Provider.Names.GITHUB,
+                List.of(task)::stream,
+                storage
+        ).getById("2", "mihai/repo", Provider.Names.GITHUB);
+        MatcherAssert.assertThat(found, Matchers.nullValue());
+    }
+
     /**
      * Mock an Issue for test.
      *
