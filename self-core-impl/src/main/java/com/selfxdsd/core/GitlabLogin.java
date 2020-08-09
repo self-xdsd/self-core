@@ -56,6 +56,17 @@ public final class GitlabLogin implements Login {
     }
 
     @Override
+    public String role() {
+        final String role;
+        if("amihaiemil".equals(this.username)) {
+            role = "admin";
+        } else {
+            role = "user";
+        }
+        return role;
+    }
+
+    @Override
     public String provider() {
         return Provider.Names.GITLAB;
     }

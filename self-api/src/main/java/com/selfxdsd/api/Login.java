@@ -28,6 +28,12 @@ public interface Login {
     String accessToken();
 
     /**
+     * User's role in self (simple user, admin etc).
+     * @return String.
+     */
+    String role();
+
+    /**
      * Provider's name.
      * @return String.
      */
