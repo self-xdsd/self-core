@@ -31,6 +31,7 @@ import org.mockito.Mockito;
 
 /**
  * Unit tests for {@link SelfCore}.
+ *
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
@@ -41,7 +42,7 @@ public final class SelfCoreTestCase {
      * SelfCore can sign up a User on any platform.
      */
     @Test
-    public void platformLoginWorks(){
+    public void platformLoginWorks() {
         final User authUser = Mockito.mock(User.class);
         final Storage storage = Mockito.mock(Storage.class);
         final Users all = Mockito.mock(Users.class);
@@ -95,6 +96,7 @@ public final class SelfCoreTestCase {
 
     /**
      * SelfCore should close the underlying Storage when close() is called.
+     *
      * @throws Exception If something goes wrong.
      */
     @Test
@@ -106,6 +108,4 @@ public final class SelfCoreTestCase {
         self.close();
         Mockito.verify(storage, Mockito.times(1)).close();
     }
-
-
 }
