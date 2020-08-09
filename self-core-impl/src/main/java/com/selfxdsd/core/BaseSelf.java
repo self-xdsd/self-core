@@ -59,7 +59,8 @@ abstract class BaseSelf implements Self {
         User signedUp = this.storage.users().signUp(
             login.username(),
             login.provider(),
-            login.email()
+            login.email(),
+            login.role()
         );
         if(login.accessToken() != null && !login.accessToken().isBlank()) {
             signedUp = new Authenticated(signedUp, login.accessToken());
@@ -114,6 +115,11 @@ abstract class BaseSelf implements Self {
         @Override
         public String email() {
             return this.user.email();
+        }
+
+        @Override
+        public String role() {
+            return this.user.role();
         }
 
         @Override

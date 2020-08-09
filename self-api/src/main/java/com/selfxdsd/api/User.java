@@ -43,6 +43,12 @@ public interface User {
     String email();
 
     /**
+     * User's role in Self (simple user, admin etc).
+     * @return String.
+     */
+    String role();
+
+    /**
      * Provider. Github, Bitbucket, Gitlab etc.
      * @return String.
      */

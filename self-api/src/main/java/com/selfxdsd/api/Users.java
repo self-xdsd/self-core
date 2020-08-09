@@ -34,12 +34,14 @@ public interface Users extends Iterable<User> {
      * @param username Username.
      * @param provider Provider's name (github, gitlab etc).
      * @param email User's e-mail address.
+     * @param role User's role in Self (simple user, admin etc).
      * @return The registered User.
      */
     User signUp(
         final String username,
         final String provider,
-        final String email
+        final String email,
+        final String role
     );
 
     /**

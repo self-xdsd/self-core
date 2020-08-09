@@ -47,12 +47,31 @@ public final class StoredUserTestCase {
         final User user = new StoredUser(
             "amihaiemil",
             "amihaiemil@gmail.com",
+            "user",
             Provider.Names.GITHUB,
             Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(
             user.username(),
             Matchers.equalTo("amihaiemil")
+        );
+    }
+
+    /**
+     * StoredUser can return its role.
+     */
+    @Test
+    public void returnsRole() {
+        final User user = new StoredUser(
+            "amihaiemil",
+            "amihaiemil@gmail.com",
+            "admin",
+            Provider.Names.GITHUB,
+            Mockito.mock(Storage.class)
+        );
+        MatcherAssert.assertThat(
+            user.role(),
+            Matchers.equalTo("admin")
         );
     }
 
@@ -64,6 +83,7 @@ public final class StoredUserTestCase {
         final User user = new StoredUser(
             "amihaiemil",
             "amihaiemil@gmail.com",
+            "user",
             Provider.Names.GITHUB,
             Mockito.mock(Storage.class)
         );
@@ -81,6 +101,7 @@ public final class StoredUserTestCase {
         final User ghUser = new StoredUser(
             "amihaiemil",
             "amihaiemil@gmail.com",
+            "user",
             Provider.Names.GITHUB,
             Mockito.mock(Storage.class)
         );
@@ -92,6 +113,7 @@ public final class StoredUserTestCase {
         final User glUser = new StoredUser(
             "amihaiemil",
             "amihaiemil@gmail.com",
+            "user",
             Provider.Names.GITLAB,
             Mockito.mock(Storage.class)
         );
@@ -110,6 +132,7 @@ public final class StoredUserTestCase {
         final User ghUser = new StoredUser(
             "amihaiemil",
             "amihaiemil@gmail.com",
+            "user",
             Provider.Names.GITHUB,
             storage
         );

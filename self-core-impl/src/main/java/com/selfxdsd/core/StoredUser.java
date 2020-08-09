@@ -48,6 +48,11 @@ public final class StoredUser implements User {
     private final String email;
 
     /**
+     * Role in Self.
+     */
+    private final String role;
+
+    /**
      * Provider's name.
      */
     private final String provider;
@@ -61,17 +66,20 @@ public final class StoredUser implements User {
      * Ctor.
      * @param username Username.
      * @param email E-Mail.
+     * @param role User's role in Self (simple user, admin etc).
      * @param provider Provider's name (github, gitlab etc).
      * @param storage Self's Storage.
      */
     public StoredUser(
         final String username,
         final String email,
+        final String role,
         final String provider,
         final Storage storage
     ) {
         this.username = username;
         this.email = email;
+        this.role = role;
         this.provider = provider;
         this.storage = storage;
     }
@@ -84,6 +92,11 @@ public final class StoredUser implements User {
     @Override
     public String email() {
         return this.email;
+    }
+
+    @Override
+    public String role() {
+        return this.role;
     }
 
     @Override

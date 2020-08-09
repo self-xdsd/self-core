@@ -72,6 +72,22 @@ public final class AuthenticatedTestCase {
     }
 
     /**
+     * Authenticated can return the User's role.
+     */
+    @Test
+    public void returnsRole() {
+        final User user = Mockito.mock(User.class);
+        Mockito.when(user.role()).thenReturn("user");
+        final BaseSelf.Authenticated authenticated =
+            new BaseSelf.Authenticated(user, "tok3n");
+
+        MatcherAssert.assertThat(
+            authenticated.role(),
+            Matchers.equalTo("user")
+        );
+    }
+
+    /**
      * Should verify the provider.
      */
     @Test

@@ -243,6 +243,11 @@ public final class StoredProjectManager implements ProjectManager {
         }
 
         @Override
+        public String role() {
+            return "user";
+        }
+
+        @Override
         public Provider provider() {
             return StoredProjectManager.this.provider();
         }
