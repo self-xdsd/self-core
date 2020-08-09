@@ -48,7 +48,7 @@ public final class StoredInvoicedTask implements InvoicedTask {
     private final int invoiceId;
 
     /**
-     * Value of this invoiced task, in USD cents.
+     * Value of this invoiced task, in cents.
      *
      * We store this value in the DB instead of
      * returning it on-the-fly from the Task because
@@ -72,7 +72,7 @@ public final class StoredInvoicedTask implements InvoicedTask {
      * Constructor.
      * @param invoicedTaskId This task's ID.
      * @param invoiceId Invoice ID.
-     * @param value This invoiced Task's value in USD cents.
+     * @param value This invoiced Task's value in gcents.
      * @param task The Task.
      * @param storage Parent storage.
      */

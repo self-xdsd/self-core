@@ -70,7 +70,7 @@ public interface Task {
     LocalDateTime deadline();
 
     /**
-     * Value of this Task in USD cents.
+     * Value of this Task in cents.
      * @return BigDecimal.
      */
     BigDecimal value();

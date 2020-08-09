@@ -51,7 +51,7 @@ public interface InvoicedTask {
     Task task();
 
     /**
-     * Value of this invoiced task in USD cents.
+     * Value of this invoiced task in cents.
      * @return BigDecimal value.
      */
     BigDecimal value();

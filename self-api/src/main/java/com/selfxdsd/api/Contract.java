@@ -52,7 +52,7 @@ public interface Contract {
     Contributor contributor();
 
     /**
-     * The Contributor's hourly rate in USD Cents.
+     * The Contributor's hourly rate in cents.
      * @return BigDecimal.
      */
     BigDecimal hourlyRate();

@@ -148,7 +148,7 @@ public final class StoredContract implements Contract {
     }
 
     /**
-     * The Contributor's hourly rate in USD Cents.
+     * The Contributor's hourly rate in cents.
      *
      * @return BigDecimal.
      */
