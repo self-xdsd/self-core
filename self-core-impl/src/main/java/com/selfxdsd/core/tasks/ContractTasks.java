@@ -7,7 +7,8 @@ import com.selfxdsd.api.Tasks;
 import com.selfxdsd.api.storage.Storage;
 
 import java.util.Iterator;
-import java.util.List;
+import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 /**
  * Active tasks of a Contract. This class <b>just represents</b>
@@ -26,7 +27,7 @@ public final class ContractTasks implements Tasks {
     /**
      * Contract's tasks.
      */
-    private final List<Task> tasks;
+    private final Supplier<Stream<Task>> tasks;
 
     /**
      * Storage used to save new tasks.
@@ -40,7 +41,7 @@ public final class ContractTasks implements Tasks {
      * @param storage Storage used to save new tasks.
      */
     public ContractTasks(final Contract.Id contractId,
-                         final List<Task> tasks,
+                         final Supplier<Stream<Task>> tasks,
                          final Storage storage) {
         this.contractId = contractId;
         this.tasks = tasks;
@@ -51,7 +52,7 @@ public final class ContractTasks implements Tasks {
     public Task getById(final String issueId,
                         final String repoFullName,
                         final String provider) {
-        return this.tasks.stream()
+        return this.tasks.get()
             .filter(t -> t.issue().issueId().equals(issueId)
                 && t.project().repoFullName().equals(repoFullName)
                 && t.project().provider().equals(provider))
@@ -111,6 +112,6 @@ public final class ContractTasks implements Tasks {
 
     @Override
     public Iterator<Task> iterator() {
-        return this.tasks.iterator();
+        return this.tasks.get().iterator();
     }
 }

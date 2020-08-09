@@ -1,15 +1,15 @@
-package com.selfxdsd.core.projects;
+package com.selfxdsd.core;
 
-import com.selfxdsd.api.Projects;
+import com.selfxdsd.api.storage.Paged;
 
 /**
- * Base paging implementation of Projects.
+ * Base implementation of {@link Paged}.
  *
  * @author criske
  * @version $Id$
  * @since 0.0.13
  */
-public abstract class ProjectsPaged implements Projects {
+public abstract class BasePaged implements Paged {
 
     /**
      * Current page.
@@ -26,8 +26,8 @@ public abstract class ProjectsPaged implements Projects {
      * @param current Current page.
      * @param totalRecords Total number of Project from data source.
      */
-    protected ProjectsPaged(final Page current,
-                            final int totalRecords) {
+    protected BasePaged(final Page current,
+                        final int totalRecords) {
         this.current = current;
         this.totalRecords = totalRecords;
         final int totalPages = this.totalPages();

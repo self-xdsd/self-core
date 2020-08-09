@@ -7,7 +7,9 @@ import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * Unit tests for {@link UnassignedTasks}.
@@ -28,7 +30,7 @@ public final class UnassignedTaskTestCase {
                 Mockito.mock(Task.class),
                 Mockito.mock(Task.class),
                 Mockito.mock(Task.class)
-            ),
+            )::stream,
             Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(tasks, Matchers.iterableWithSize(3));
@@ -40,7 +42,7 @@ public final class UnassignedTaskTestCase {
     @Test
     public void getByIdFindsNothing() {
         final Tasks tasks = new UnassignedTasks(
-            List.of(),
+            Stream::empty,
             Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(
@@ -71,7 +73,7 @@ public final class UnassignedTaskTestCase {
         );
         Mockito.when(second.issue()).thenReturn(issueTwo);
         final Tasks tasks = new UnassignedTasks(
-            List.of(first, second),
+            List.of(first, second)::stream,
             Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(
@@ -94,14 +96,21 @@ public final class UnassignedTaskTestCase {
         );
         Mockito.when(registered.issue()).thenReturn(issue);
 
+        final List<Task> allSrc = new ArrayList<>();
         final Tasks all = Mockito.mock(Tasks.class);
         final Storage storage = Mockito.mock(Storage.class);
         Mockito.when(storage.tasks()).thenReturn(all);
+        Mockito.when(all.spliterator()).thenReturn(allSrc.spliterator());
 
         final Tasks tasks = new UnassignedTasks(
-            List.of(),
+            allSrc::stream,
             storage
         );
+        Mockito.when(all.register(Mockito.any(Issue.class)))
+                .thenAnswer(invocation -> {
+                    allSrc.add(registered);
+                    return registered;
+                });
         MatcherAssert.assertThat(tasks, Matchers.emptyIterable());
         tasks.register(issue);
         MatcherAssert.assertThat(tasks, Matchers.iterableWithSize(1));
@@ -115,7 +124,7 @@ public final class UnassignedTaskTestCase {
      */
     @Test(expected = UnsupportedOperationException.class)
     public void throwsWhenGetTasksOfContributor(){
-        new UnassignedTasks(List.of(), Mockito.mock(Storage.class))
+        new UnassignedTasks(Stream::empty, Mockito.mock(Storage.class))
             .ofContributor("foo", Provider.Names.GITHUB);
     }
 
@@ -139,10 +148,7 @@ public final class UnassignedTaskTestCase {
         Mockito.when(taskTwo.project()).thenReturn(projectTwo);
 
         final Tasks tasks = new UnassignedTasks(
-            List.of(
-                taskOne,
-                taskTwo
-            ),
+            List.of(taskOne, taskTwo)::stream,
             storage
         );
 
@@ -158,7 +164,7 @@ public final class UnassignedTaskTestCase {
     @Test
     public void returnsItSelf(){
         final Tasks tasks = new UnassignedTasks(
-            List.of(),
+            Stream::empty,
             Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(tasks.unassigned(),
@@ -171,7 +177,7 @@ public final class UnassignedTaskTestCase {
      */
     @Test(expected = UnsupportedOperationException.class)
     public void throwsWhenGetTasksOfContract(){
-        new UnassignedTasks(List.of(), Mockito.mock(Storage.class))
+        new UnassignedTasks(Stream::empty, Mockito.mock(Storage.class))
             .ofContract(new Contract.Id("john/repo", "mihai",
                 Provider.Names.GITHUB, Contract.Roles.DEV));
     }

@@ -6,9 +6,7 @@ import com.selfxdsd.api.Task;
 import com.selfxdsd.api.Tasks;
 import com.selfxdsd.api.storage.Storage;
 
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
@@ -25,7 +23,7 @@ public final class UnassignedTasks implements Tasks {
     /**
      * The unassigned tasks.
      */
-    private final List<Task> tasks;
+    private final Supplier<Stream<Task>> tasks;
 
     /**
      * Self storage, to save new unassigned tasks.
@@ -37,9 +35,9 @@ public final class UnassignedTasks implements Tasks {
      * @param tasks Unassigned tasks.
      * @param storage Storage.
      */
-    public UnassignedTasks(final List<Task> tasks,
+    public UnassignedTasks(final Supplier<Stream<Task>> tasks,
                            final Storage storage) {
-        this.tasks = new ArrayList<>(tasks);
+        this.tasks = tasks;
         this.storage = storage;
     }
 
@@ -48,7 +46,7 @@ public final class UnassignedTasks implements Tasks {
                         final String repoFullName,
                         final String provider) {
         return this.tasks
-            .stream()
+            .get()
             .filter(t -> t.issue().issueId().equals(issueId)
                 && t.issue().repoFullName().equals(repoFullName)
                 && t.issue().provider().equals(provider))
@@ -58,18 +56,16 @@ public final class UnassignedTasks implements Tasks {
 
     @Override
     public Task register(final Issue issue) {
-        Task registered = this.storage.tasks().register(issue);
-        tasks.add(registered);
-        return registered;
+        return this.storage.tasks().register(issue);
     }
 
     @Override
     public Tasks ofProject(final String repoFullName,
                            final String repoProvider) {
-        final Supplier<Stream<Task>> ofProject = () -> tasks.stream()
+        final Supplier<Stream<Task>> ofProject = () -> tasks.get()
             .filter(t -> t.assignee() == null
-                    && t.project().repoFullName().equals(repoFullName)
-                    && t.project().provider().equals(repoProvider));
+                && t.project().repoFullName().equals(repoFullName)
+                && t.project().provider().equals(repoProvider));
         return new ProjectTasks(repoFullName, repoProvider, ofProject, storage);
     }
 
@@ -93,6 +89,6 @@ public final class UnassignedTasks implements Tasks {
 
     @Override
     public Iterator<Task> iterator() {
-        return this.tasks.iterator();
+        return this.tasks.get().iterator();
     }
 }

@@ -28,10 +28,11 @@ import com.selfxdsd.api.Contributor;
 import com.selfxdsd.api.storage.Storage;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Contracts belonging to a Project. Pay attention:
@@ -57,7 +58,7 @@ public final class ProjectContracts implements Contracts {
     /**
      * The project's contracts.
      */
-    private final List<Contract> contracts;
+    private final Supplier<Stream<Contract>> contracts;
 
     /**
      * Self storage, to save new contracts.
@@ -74,13 +75,12 @@ public final class ProjectContracts implements Contracts {
     public ProjectContracts(
         final String repoFullName,
         final String provider,
-        final List<Contract> contracts,
+        final Supplier<Stream<Contract>> contracts,
         final Storage storage
     ) {
         this.repoFullName = repoFullName;
         this.provider = provider;
-        this.contracts = new ArrayList<>();
-        this.contracts.addAll(contracts);
+        this.contracts = contracts;
         this.storage = storage;
     }
 
@@ -96,29 +96,25 @@ public final class ProjectContracts implements Contracts {
         }
         throw new IllegalStateException(
             "Already seeing the contracts of Project " + this.repoFullName
-           +", operating at " + this.provider
+                +", operating at " + this.provider
         );
     }
 
     @Override
     public Contracts ofContributor(final Contributor contributor) {
         final List<Contract> ofContributor = this.contracts
-            .stream()
-            .filter(
-                contract -> {
-                    return contract
-                        .contributor()
-                        .username()
-                        .equals(contributor.username())
-                        && contract
-                            .contributor()
-                            .provider()
-                            .equals(contributor.provider());
-                }
-            )
+            .get()
+            .filter(contract -> contract
+                .contributor()
+                .username()
+                .equals(contributor.username())
+                && contract
+                .contributor()
+                .provider()
+                .equals(contributor.provider()))
             .collect(Collectors.toList());
         return new ContributorContracts(
-            contributor, ofContributor, this.storage
+            contributor, ofContributor::stream, this.storage
         );
     }
 
@@ -135,8 +131,8 @@ public final class ProjectContracts implements Contracts {
         ) {
             throw new IllegalArgumentException(
                 "These are the Contracts of Project " + this.repoFullName
-              + " from " + this.provider + ". "
-              + "You cannot register another Project's contracts here."
+                    + " from " + this.provider + ". "
+                    + "You cannot register another Project's contracts here."
             );
         } else {
             final Contract registered = this.storage.contracts().addContract(
@@ -146,23 +142,22 @@ public final class ProjectContracts implements Contracts {
                 hourlyRate,
                 role
             );
-            this.contracts.add(registered);
             return registered;
         }
     }
 
     @Override
     public Contract findById(final Contract.Id id) {
-        return this.contracts.stream()
+        return this.contracts.get()
             .filter(c -> new Contract.Id(c.project().repoFullName(),
-                    c.contributor().username(),
-                    c.project().provider(),
-                    c.role()).equals(id)).findFirst()
+                c.contributor().username(),
+                c.project().provider(),
+                c.role()).equals(id)).findFirst()
             .orElse(null);
     }
 
     @Override
     public Iterator<Contract> iterator() {
-        return this.contracts.iterator();
+        return this.contracts.get().iterator();
     }
 }

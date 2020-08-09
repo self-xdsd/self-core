@@ -22,14 +22,16 @@
  */
 package com.selfxdsd.core.contracts;
 
-import com.selfxdsd.api.*;
+import com.selfxdsd.api.Contract;
+import com.selfxdsd.api.Contracts;
+import com.selfxdsd.api.Contributor;
+import com.selfxdsd.api.Project;
 import com.selfxdsd.api.storage.Storage;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 /**
  * Contracts belonging to a Contributor. Pay attention:
@@ -50,7 +52,7 @@ public final class ContributorContracts implements Contracts {
     /**
      * The contributor's contracts.
      */
-    private final List<Contract> contracts;
+    private final Supplier<Stream<Contract>> contracts;
 
     /**
      * Self storage, to save new contracts.
@@ -65,12 +67,11 @@ public final class ContributorContracts implements Contracts {
      */
     public ContributorContracts(
         final Contributor contributor,
-        final List<Contract> contracts,
+        final Supplier<Stream<Contract>> contracts,
         final Storage storage
     ) {
         this.contributor = contributor;
-        this.contracts = new ArrayList<>();
-        this.contracts.addAll(contracts);
+        this.contracts = contracts;
         this.storage = storage;
     }
 
@@ -79,16 +80,15 @@ public final class ContributorContracts implements Contracts {
         final String repoFullName,
         final String repoProvider
     ) {
-        final List<Contract> ofProject = this.contracts
-            .stream()
+        final Supplier<Stream<Contract>> ofProject = () -> this.contracts
+            .get()
             .filter(
                 contract -> {
                     final Project project = contract.project();
                     return project.repoFullName().equals(repoFullName)
                         && project.provider().equals(repoProvider);
                 }
-            )
-            .collect(Collectors.toList());
+            );
         return new ProjectContracts(
             repoFullName, repoProvider, ofProject, this.storage
         );
@@ -125,30 +125,28 @@ public final class ContributorContracts implements Contracts {
               + "You cannot register another Contributor's contracts here."
             );
         } else {
-            final Contract registered = this.storage.contracts().addContract(
+            return this.storage.contracts().addContract(
                 repoFullName,
                 this.contributor.username(),
                 this.contributor.provider(),
                 hourlyRate,
                 role
             );
-            this.contracts.add(registered);
-            return registered;
         }
     }
 
     @Override
     public Contract findById(final Contract.Id id) {
-        return this.contracts.stream()
+        return this.contracts.get()
             .filter(c -> new Contract.Id(c.project().repoFullName(),
-                    c.contributor().username(),
-                    c.project().provider(),
-                    c.role()).equals(id)).findFirst()
+                c.contributor().username(),
+                c.project().provider(),
+                c.role()).equals(id)).findFirst()
             .orElse(null);
     }
 
     @Override
     public Iterator<Contract> iterator() {
-        return this.contracts.iterator();
+        return this.contracts.get().iterator();
     }
 }

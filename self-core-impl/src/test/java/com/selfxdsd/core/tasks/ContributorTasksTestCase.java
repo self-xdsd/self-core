@@ -8,6 +8,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * Unit tests for {@link ContributorTasks}.
@@ -25,11 +26,10 @@ public final class ContributorTasksTestCase {
     public void canBeIterated() {
         final Tasks tasks = new ContributorTasks(
             "foo",
-            "github", List.of(
+            "github",
+            List.of(Mockito.mock(Task.class),
                 Mockito.mock(Task.class),
-                Mockito.mock(Task.class),
-                Mockito.mock(Task.class)
-            ),
+                Mockito.mock(Task.class))::stream,
             Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(tasks, Matchers.iterableWithSize(3));
@@ -48,7 +48,7 @@ public final class ContributorTasksTestCase {
             Contract.Roles.DEV
         );
         final Tasks tasks = new ContributorTasks(
-            "foo", "github", List.of(),
+            "foo", "github", Stream::empty,
             Mockito.mock(Storage.class)
         );
         tasks.register(issue);
@@ -60,7 +60,7 @@ public final class ContributorTasksTestCase {
     @Test
     public void ofContributorReturnsSelf() {
         final Tasks tasks = new ContributorTasks(
-            "foo", "gitlab", List.of(),
+            "foo", "gitlab", Stream::empty,
             Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(
@@ -76,7 +76,7 @@ public final class ContributorTasksTestCase {
     @Test(expected = IllegalStateException.class)
     public void ofContributorComplainsOnDifferentId() {
         final Tasks tasks = new ContributorTasks(
-            "foo", "gitlab", List.of(),
+            "foo", "gitlab", Stream::empty,
             Mockito.mock(Storage.class)
         );
         tasks.ofContributor("bar", "gitlab");
@@ -103,10 +103,7 @@ public final class ContributorTasksTestCase {
 
         final Tasks tasks = new ContributorTasks(
             "mihai", Provider.Names.GITHUB,
-            List.of(
-                taskOne,
-                taskTwo
-            ),
+            List.of(taskOne, taskTwo)::stream,
             storage
         );
 
@@ -139,9 +136,7 @@ public final class ContributorTasksTestCase {
 
         final Tasks tasks = new ContributorTasks(
             "foo", Provider.Names.GITHUB,
-            List.of(
-                task
-            ),
+            List.of(task)::stream,
             storage
         );
         MatcherAssert.assertThat(tasks.ofContract(contractId),
@@ -157,8 +152,63 @@ public final class ContributorTasksTestCase {
     public void throwsWhenReturnsUnassignedTasks() {
         new ContributorTasks(
             "mihai", Provider.Names.GITHUB,
-            List.of(), Mockito.mock(Storage.class))
+            Stream::empty, Mockito.mock(Storage.class))
             .unassigned();
+    }
+
+
+    /**
+     * Returns a Task by its composite id.
+     */
+    @Test
+    public void returnsTaskById(){
+        final Project project = Mockito.mock(Project.class);
+        Mockito.when(project.provider()).thenReturn(Provider.Names.GITHUB);
+        Mockito.when(project.repoFullName()).thenReturn("mihai/repo");
+
+        final Issue issue = Mockito.mock(Issue.class);
+        Mockito.when(issue.issueId()).thenReturn("1");
+
+        final Task task = Mockito.mock(Task.class);
+        Mockito.when(task.issue()).thenReturn(issue);
+
+        Mockito.when(task.project()).thenReturn(project);
+
+        final Storage storage = Mockito.mock(Storage.class);
+
+        final Task found = new ContributorTasks(
+            "mihai", Provider.Names.GITHUB,
+            List.of(task)::stream,
+            storage
+        ).getById("1", "mihai/repo", Provider.Names.GITHUB);
+        MatcherAssert.assertThat(found, Matchers.is(task));
+    }
+
+    /**
+     * Returns null when Task by its composite id was not found.
+     */
+    @Test
+    public void returnsNullWhenTaskByIdNotFound(){
+        final Project project = Mockito.mock(Project.class);
+        Mockito.when(project.provider()).thenReturn(Provider.Names.GITHUB);
+        Mockito.when(project.repoFullName()).thenReturn("mihai/repo");
+
+        final Issue issue = Mockito.mock(Issue.class);
+        Mockito.when(issue.issueId()).thenReturn("1");
+
+        final Task task = Mockito.mock(Task.class);
+        Mockito.when(task.issue()).thenReturn(issue);
+
+        Mockito.when(task.project()).thenReturn(project);
+
+        final Storage storage = Mockito.mock(Storage.class);
+
+        final Task found = new ContributorTasks(
+            "mihai", Provider.Names.GITHUB,
+            List.of(task)::stream,
+            storage
+        ).getById("2", "mihai/repo", Provider.Names.GITHUB);
+        MatcherAssert.assertThat(found, Matchers.nullValue());
     }
 
     /**

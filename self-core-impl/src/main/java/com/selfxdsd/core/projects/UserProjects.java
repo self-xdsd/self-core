@@ -24,6 +24,7 @@ package com.selfxdsd.core.projects;
 
 import com.selfxdsd.api.*;
 import com.selfxdsd.api.storage.Paged;
+import com.selfxdsd.core.BasePaged;
 
 import java.util.Iterator;
 import java.util.function.Supplier;
@@ -42,7 +43,7 @@ import java.util.stream.Stream;
  *  this is a User's Projects, meaning the given Repo has to
  *  belong to this User, the PM has to work for the same provider etc.
  */
-public final class UserProjects extends ProjectsPaged {
+public final class UserProjects extends BasePaged implements Projects {
 
     /**
      * User to whom these projects belong.

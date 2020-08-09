@@ -65,4 +65,24 @@ public final class GitlabRepoTestCase {
         Mockito.verify(project, Mockito.times(1)).resolve(Mockito.any());
     }
 
+    /**
+     * A GitlabRepo can return its webhooks.
+     */
+    @Test
+    public void returnsWebhooks() {
+        final Repo repo = new GitlabRepo(
+            Mockito.mock(JsonResources.class),
+            URI.create("http://localhost:8080/repos/mihai/test/"),
+            Mockito.mock(User.class),
+            Mockito.mock(Storage.class)
+        );
+        MatcherAssert.assertThat(
+            repo.webhooks(),
+            Matchers.allOf(
+                Matchers.notNullValue(),
+                Matchers.instanceOf(GitlabWebhooks.class)
+            )
+        );
+    }
+
 }
