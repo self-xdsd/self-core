@@ -67,21 +67,21 @@ public final class GitlabWebhooksTestCase {
                         Matchers.equalTo("POST")
                     );
                     MatcherAssert.assertThat(
-                            req.getBody(),
-                            Matchers.equalTo(Json.createObjectBuilder()
-                                    .add("id", "amihaiemil%2Frepo")
-                                    .add("url", "https://self-xdsd.com/gitlab/"
-                                            + "amihaiemil/repo")
-                                    .add("issues_events", true)
-                                    .add("token", "webhook_tok333n")
-                                    .build()
-                            )
+                        req.getBody(),
+                        Matchers.equalTo(Json.createObjectBuilder()
+                            .add("id", "amihaiemil%2Frepo")
+                            .add("url", "https://self-xdsd.com/gitlab/"
+                                + "amihaiemil/repo")
+                            .add("issues_events", true)
+                            .add("token", "webhook_tok333n")
+                            .build()
+                        )
                     );
                     MatcherAssert.assertThat(
                         req.getUri().toString(),
                         Matchers.equalTo(
                             "https://gitlab.com/api/v4/projects"
-                                    + "/amihaiemil%2Frepo/hooks"
+                                + "/amihaiemil%2Frepo/hooks"
                         )
                     );
                     return new MockJsonResources.MockResource(

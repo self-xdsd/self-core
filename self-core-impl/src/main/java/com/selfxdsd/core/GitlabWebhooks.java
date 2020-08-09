@@ -88,18 +88,18 @@ final class GitlabWebhooks implements Webhooks {
     @Override
     public boolean add(final Project project) {
         LOG.debug("Adding Gitlab webhook for Project "
-                + project.repoFullName());
+            + project.repoFullName());
         final boolean added;
         final Resource response = this.resources.post(
-                this.hooksUri,
-                Json.createObjectBuilder()
-                        .add("id", project.repoFullName()
-                                .replace("/", "%2F"))
-                        .add("url", "https://self-xdsd.com/gitlab/"
-                                + project.repoFullName())
-                        .add("issues_events", true)
-                        .add("token", project.webHookToken())
-                        .build()
+            this.hooksUri,
+            Json.createObjectBuilder()
+                .add("id", project.repoFullName()
+                    .replace("/", "%2F"))
+                .add("url", "https://self-xdsd.com/gitlab/"
+                    + project.repoFullName())
+                .add("issues_events", true)
+                .add("token", project.webHookToken())
+                .build()
         );
         if (response.statusCode() == HttpURLConnection.HTTP_CREATED) {
             added = true;
@@ -107,7 +107,7 @@ final class GitlabWebhooks implements Webhooks {
         } else {
             added = false;
             LOG.debug("Problem when adding webhook. Expected 201 CREATED, "
-                            + " but got " + response.statusCode());
+                + " but got " + response.statusCode());
         }
         return added;
     }
