@@ -54,10 +54,40 @@ final class GithubRepo extends BaseRepo {
 
     @Override
     public Project activate() {
-        return this.storage()
-            .projectManagers()
-            .pick(this.provider())
-            .assign(this);
+        final Project project = super.activate();
+        project.resolve(
+            new Event() {
+                @Override
+                public String type() {
+                    return Type.ACTIVATE;
+                }
+
+                @Override
+                public Issue issue() {
+                    throw new UnsupportedOperationException(
+                        "No Issue in the activate event"
+                    );
+                }
+
+                @Override
+                public Comment comment() {
+                    throw new UnsupportedOperationException(
+                        "No Comment in the activate event"
+                    );
+                }
+
+                @Override
+                public Project project() {
+                    return project;
+                }
+
+                @Override
+                public String provider() {
+                    return Provider.Names.GITHUB;
+                }
+            }
+        );
+        return project;
     }
 
     @Override

@@ -22,11 +22,8 @@
  */
 package com.selfxdsd.core;
 
-import com.selfxdsd.api.Project;
 import com.selfxdsd.api.Provider;
-import com.selfxdsd.api.storage.Storage;
 import com.selfxdsd.api.User;
-import com.selfxdsd.core.mock.InMemory;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
@@ -81,48 +78,6 @@ public final class GithubITCase {
                 Matchers.startsWith("Unexpected response when fetching")
             );
         }
-    }
-
-    /**
-     * A repo can be activated and assigned to a ProjectManager.
-     * The InMemory storage comes with a pre-registered
-     * ProjectManager who has the id 1.
-     */
-    @Test
-    public void activatesRepo() {
-        final Provider provider = Mockito.mock(Provider.class);
-        Mockito.when(provider.name()).thenReturn("github");
-        final User user = Mockito.mock(User.class);
-        Mockito.when(user.provider()).thenReturn(provider);
-        Mockito.when(user.username()).thenReturn("amihaiemil");
-        final Storage storage = new InMemory();
-
-        MatcherAssert.assertThat(
-            storage.projects(),
-            Matchers.iterableWithSize(0)
-        );
-        MatcherAssert.assertThat(
-            storage.projects().assignedTo(1),
-            Matchers.iterableWithSize(0)
-        );
-
-        final Provider github = new Github(user, storage);
-        final Project assigned = github
-            .repo("amihaiemil", "docker-java-api")
-            .activate();
-        MatcherAssert.assertThat(
-            assigned.projectManager().id(),
-            Matchers.equalTo(1)
-        );
-
-        MatcherAssert.assertThat(
-            storage.projects(),
-            Matchers.iterableWithSize(1)
-        );
-        MatcherAssert.assertThat(
-            storage.projects().assignedTo(1),
-            Matchers.iterableWithSize(1)
-        );
     }
 
     /**

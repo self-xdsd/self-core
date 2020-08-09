@@ -146,7 +146,9 @@ public final class StoredProject implements Project {
 
     @Override
     public void resolve(final Event event) {
-        if(event.type().equals("newIssue")) {
+        if(Event.Type.ACTIVATE.equals(event.type())) {
+            this.projectManager.newProject(event);
+        } else if(event.type().equals("newIssue")) {
             this.projectManager.newIssue(event);
         } else if(event.type().equals("reopened")) {
             this.projectManager.reopenedIssue(event);

@@ -23,9 +23,12 @@
 package com.selfxdsd.core.managers;
 
 import com.selfxdsd.api.*;
+import com.selfxdsd.api.pm.Step;
 import com.selfxdsd.api.storage.Storage;
 import com.selfxdsd.core.Github;
 import com.selfxdsd.core.Gitlab;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.UUID;
 
@@ -43,6 +46,13 @@ import java.util.UUID;
  *  We should also add unit tests for class PmUser.
  */
 public final class StoredProjectManager implements ProjectManager {
+
+    /**
+     * Logger.
+     */
+    private static final Logger LOG = LoggerFactory.getLogger(
+        StoredProjectManager.class
+    );
 
     /**
      * This PMs id.
@@ -140,6 +150,20 @@ public final class StoredProjectManager implements ProjectManager {
     @Override
     public Projects projects() {
         return this.storage.projects().assignedTo(this.id);
+    }
+
+    @Override
+    public void newProject(final Event event) {
+        final Step steps = new InvitePm(
+            new SetupWebhook(
+                lastly -> LOG.debug(
+                    "Finished setting up project "
+                    + event.project().repoFullName() + " at "
+                    + event.provider()
+                )
+            )
+        );
+        steps.perform(event);
     }
 
     @Override

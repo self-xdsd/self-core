@@ -60,4 +60,21 @@ public interface Event {
      * @return String.
      */
     String provider();
+
+    /**
+     * Event types.
+     */
+    final class Type {
+
+        /**
+         * Hidden ctor.
+         */
+        private Type(){}
+
+        /**
+         * Activate repo event.
+         */
+        public static final String ACTIVATE = "activate";
+
+    }
 }

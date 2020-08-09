@@ -69,6 +69,12 @@ public interface ProjectManager {
     Projects projects();
 
     /**
+     * Handle the "activate" (new project registered) event.
+     * @param event Event.
+     */
+    void newProject(final Event event);
+
+    /**
      * Handle the "newIssue" event.
      * @param event Event.
      */
