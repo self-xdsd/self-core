@@ -26,9 +26,11 @@ import com.selfxdsd.api.*;
 import com.selfxdsd.api.storage.Storage;
 import com.selfxdsd.core.tasks.*;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Objects;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -117,34 +119,30 @@ public final class InMemoryTasks implements Tasks {
 
     @Override
     public Tasks ofContributor(final String username, final String provider) {
-        final List<Task> tasksOf = tasks.values()
+        final Supplier<Stream<Task>> tasksOf = () -> tasks.values()
             .stream()
             .filter(t -> t.assignee().username().equals(username)
-                && t.assignee().provider().equals(provider))
-            .collect(Collectors.toList());
+                && t.assignee().provider().equals(provider));
         return new ContributorTasks(username, provider, tasksOf, storage);
     }
 
     @Override
     public Tasks ofContract(final Contract.Id id) {
-        final List<Task> tasksOf = tasks.values()
+        final Supplier<Stream<Task>> tasksOf = () -> tasks.values()
             .stream()
             .filter(
                 t -> t.project().repoFullName().equals(id.getRepoFullName())
             && t.project().provider().equals(id.getProvider())
             && t.assignee().username().endsWith(id.getContributorUsername())
-            && t.role().equals(id.getRole())
-            )
-            .collect(Collectors.toList());
+            && t.role().equals(id.getRole()));
         return new ContractTasks(id, tasksOf, this.storage);
     }
 
     @Override
     public Tasks unassigned() {
-        final List<Task> unassigned = tasks.values()
+        final Supplier<Stream<Task>> unassigned = () -> tasks.values()
             .stream()
-            .filter(t -> t.assignee() == null)
-            .collect(Collectors.toList());
+            .filter(t -> t.assignee() == null);
         return new UnassignedTasks(unassigned, storage);
     }
 

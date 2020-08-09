@@ -8,6 +8,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * Unit tests for {@link com.selfxdsd.core.tasks.ContractTasks}.
@@ -30,7 +31,7 @@ public final class ContractTasksTestCase {
                 Mockito.mock(Task.class),
                 Mockito.mock(Task.class),
                 Mockito.mock(Task.class)
-            ),
+            )::stream,
             Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(tasks, Matchers.iterableWithSize(3));
@@ -45,7 +46,7 @@ public final class ContractTasksTestCase {
             "github", "dev");
         final Tasks tasks = new ContractTasks(
             contractId,
-            List.of(),
+            Stream::empty,
             Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(tasks.ofContract(contractId),
@@ -60,7 +61,7 @@ public final class ContractTasksTestCase {
         final Tasks contractTasks = new ContractTasks(
             new Contract.Id("foo", "mihai",
                 "github", "dev"),
-            List.of(),
+            Stream::empty,
             Mockito.mock(Storage.class)
         );
         contractTasks.ofContract(new Contract.Id("other", "mihai2",
@@ -75,7 +76,7 @@ public final class ContractTasksTestCase {
         new ContractTasks(
             new Contract.Id("foo", "mihai",
                 "github", "dev"),
-            List.of(),
+            Stream::empty,
             Mockito.mock(Storage.class)
         ).unassigned();
     }
@@ -89,7 +90,7 @@ public final class ContractTasksTestCase {
         new ContractTasks(
             new Contract.Id("foo", "mihai",
                 "github", "dev"),
-            List.of(),
+            Stream::empty,
             Mockito.mock(Storage.class)
         ).register(Mockito.mock(Issue.class));
     }
@@ -105,7 +106,7 @@ public final class ContractTasksTestCase {
         final Tasks tasks = new ContractTasks(
             new Contract.Id("foo", "mihai",
                 "github", "dev"),
-            List.of(task),
+            List.of(task)::stream,
             Mockito.mock(Storage.class)
         );
 
@@ -125,7 +126,7 @@ public final class ContractTasksTestCase {
         new ContractTasks(
             new Contract.Id("foo", "mihai",
                 "github", "dev"),
-            List.of(),
+            Stream::empty,
             Mockito.mock(Storage.class)
         ).ofProject("other-foo", "github");
     }
@@ -140,7 +141,7 @@ public final class ContractTasksTestCase {
         final Tasks tasks = new ContractTasks(
             new Contract.Id("foo", "mihai",
                 "github", "dev"),
-            List.of(task),
+            List.of(task)::stream,
             Mockito.mock(Storage.class)
         );
 
@@ -160,7 +161,7 @@ public final class ContractTasksTestCase {
         new ContractTasks(
             new Contract.Id("foo", "mihai",
                 "github", "dev"),
-            List.of(),
+            Stream::empty,
             Mockito.mock(Storage.class)
         ).ofContributor("john", "github");
     }
@@ -177,7 +178,7 @@ public final class ContractTasksTestCase {
         final ContractTasks tasks = new ContractTasks(
             new Contract.Id("foo", "mihai",
                 "github", "dev"),
-            List.of(task),
+            List.of(task)::stream,
             Mockito.mock(Storage.class)
         );
 
@@ -200,7 +201,7 @@ public final class ContractTasksTestCase {
         final Task task = new ContractTasks(
             new Contract.Id("foo", "mihai",
                 "github", "dev"),
-            List.of(),
+            Stream::empty,
             Mockito.mock(Storage.class)
         ).getById("123", "john/repo", "github");
 

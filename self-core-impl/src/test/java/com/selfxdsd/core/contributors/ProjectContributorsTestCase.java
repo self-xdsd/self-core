@@ -33,9 +33,11 @@ import org.mockito.Mockito;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * Unit tests for {@link ProjectContributors}.
+ *
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.4
@@ -49,11 +51,9 @@ public final class ProjectContributorsTestCase {
     public void canBeIterated() {
         final Contributors contributors = new ProjectContributors(
             "john/test", Provider.Names.GITHUB,
-            List.of(
+            List.of(Mockito.mock(Contributor.class),
                 Mockito.mock(Contributor.class),
-                Mockito.mock(Contributor.class),
-                Mockito.mock(Contributor.class)
-            ),
+                Mockito.mock(Contributor.class))::stream,
             Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(contributors, Matchers.iterableWithSize(3));
@@ -66,7 +66,7 @@ public final class ProjectContributorsTestCase {
     public void getByIdFindsNothing() {
         final Contributors contributors = new ProjectContributors(
             "john/test", "github",
-            List.of(),
+            Stream::empty,
             Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(
@@ -90,7 +90,7 @@ public final class ProjectContributorsTestCase {
 
         final Contributors contributors = new ProjectContributors(
             "john/test", Provider.Names.GITHUB,
-            List.of(vlad, mihai),
+            List.of(vlad, mihai)::stream,
             Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(
@@ -108,11 +108,9 @@ public final class ProjectContributorsTestCase {
     public void ofProjectReturnsSelfIfSameId() {
         final Contributors contributors = new ProjectContributors(
             "john/test", Provider.Names.GITHUB,
-            List.of(
+            List.of(Mockito.mock(Contributor.class),
                 Mockito.mock(Contributor.class),
-                Mockito.mock(Contributor.class),
-                Mockito.mock(Contributor.class)
-            ),
+                Mockito.mock(Contributor.class))::stream,
             Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(
@@ -129,11 +127,9 @@ public final class ProjectContributorsTestCase {
     public void ofProjectComplainsIfDifferentId() {
         final Contributors contributors = new ProjectContributors(
             "john/test", Provider.Names.GITHUB,
-            List.of(
+            List.of(Mockito.mock(Contributor.class),
                 Mockito.mock(Contributor.class),
-                Mockito.mock(Contributor.class),
-                Mockito.mock(Contributor.class)
-            ),
+                Mockito.mock(Contributor.class))::stream,
             Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(
@@ -149,11 +145,9 @@ public final class ProjectContributorsTestCase {
     public void registerComplainsWhenDiffProvider() {
         final Contributors contributors = new ProjectContributors(
             "john/test", Provider.Names.GITHUB,
-            List.of(
+            List.of(Mockito.mock(Contributor.class),
                 Mockito.mock(Contributor.class),
-                Mockito.mock(Contributor.class),
-                Mockito.mock(Contributor.class)
-            ),
+                Mockito.mock(Contributor.class))::stream,
             Mockito.mock(Storage.class)
         );
         contributors.register("mihai", Provider.Names.GITLAB);
@@ -169,7 +163,7 @@ public final class ProjectContributorsTestCase {
         Mockito.when(vlad.provider()).thenReturn(Provider.Names.GITHUB);
         final Contributors contributors = new ProjectContributors(
             "john/test", Provider.Names.GITHUB,
-            List.of(vlad),
+            List.of(vlad)::stream,
             Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(
@@ -185,10 +179,17 @@ public final class ProjectContributorsTestCase {
     @Test
     public void registersNewContributor() {
         final Contributor mihai = Mockito.mock(Contributor.class);
+        final List<Contributor> allContributorsSrc = new ArrayList<>();
         final Contributors allContributors = Mockito.mock(Contributors.class);
         Mockito.when(
             allContributors.register("mihai", Provider.Names.GITHUB)
-        ).thenReturn(mihai);
+        ).thenAnswer(invocation -> {
+            allContributorsSrc.add(mihai);
+            return mihai;
+        });
+        Mockito.when(allContributors.spliterator())
+            .thenReturn(allContributorsSrc.spliterator());
+
         final Contracts allContracts = Mockito.mock(Contracts.class);
         Mockito.when(
             allContracts.addContract(
@@ -202,7 +203,7 @@ public final class ProjectContributorsTestCase {
 
         final Contributors contributors = new ProjectContributors(
             "john/test", Provider.Names.GITHUB,
-            List.of(),
+            allContributorsSrc::stream,
             storage
         );
         MatcherAssert.assertThat(contributors, Matchers.emptyIterable());
@@ -220,7 +221,7 @@ public final class ProjectContributorsTestCase {
     public void electsReturnsNullWhenNoContributors() {
         final Contributors contributors = new ProjectContributors(
             "john/test", Provider.Names.GITHUB,
-            List.of(),
+            Stream::empty,
             Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(
@@ -247,7 +248,7 @@ public final class ProjectContributorsTestCase {
                 this.mockContributor("mary", "REV", "QA"),
                 this.mockContributor("george", "DEV", "ARCH"),
                 this.mockContributor("karen", "DEV")
-            ),
+            )::stream,
             Mockito.mock(Storage.class)
         );
         final Task task = Mockito.mock(Task.class);
@@ -282,7 +283,7 @@ public final class ProjectContributorsTestCase {
                 this.mockContributor("mary", "REV", "QA"),
                 this.mockContributor("george", "DEV", "ARCH"),
                 this.mockContributor("karen", "DEV")
-            ),
+            )::stream,
             Mockito.mock(Storage.class)
         );
         final Task task = Mockito.mock(Task.class);
@@ -306,14 +307,13 @@ public final class ProjectContributorsTestCase {
      * @param roles Roles.
      * @return Contributor.
      */
-    public Contributor mockContributor(
-        final String username, final String... roles
-    ) {
+    public Contributor mockContributor(final String username,
+                                       final String... roles) {
         final Contributor contributor = Mockito.mock(Contributor.class);
         Mockito.when(contributor.username()).thenReturn(username);
 
         final List<Contract> contracts = new ArrayList<>();
-        for(final String role : roles) {
+        for (final String role : roles) {
             final Contract mock = Mockito.mock(Contract.class);
             Mockito.when(mock.role()).thenReturn(role);
             contracts.add(mock);
@@ -321,8 +321,9 @@ public final class ProjectContributorsTestCase {
 
         Mockito.when(contributor.contracts()).thenReturn(
             new ContributorContracts(
-                contributor, contracts, Mockito.mock(Storage.class)
-            )
+                contributor,
+                contracts::stream,
+                Mockito.mock(Storage.class))
         );
         return contributor;
     }

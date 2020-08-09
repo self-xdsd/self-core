@@ -6,11 +6,8 @@ import com.selfxdsd.api.Task;
 import com.selfxdsd.api.Tasks;
 import com.selfxdsd.api.storage.Storage;
 
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -36,7 +33,7 @@ public final class ContributorTasks implements Tasks {
     /**
      * The contributor's tasks.
      */
-    private final List<Task> tasks;
+    private final Supplier<Stream<Task>> tasks;
 
     /**
      * Self storage, to save new contracts.
@@ -53,11 +50,11 @@ public final class ContributorTasks implements Tasks {
      */
     public ContributorTasks(final String username,
                             final String provider,
-                            final List<Task> tasks,
+                            final Supplier<Stream<Task>> tasks,
                             final Storage storage) {
         this.username = username;
         this.provider = provider;
-        this.tasks = new ArrayList<>(tasks);
+        this.tasks = tasks;
         this.storage = storage;
     }
 
@@ -65,7 +62,12 @@ public final class ContributorTasks implements Tasks {
     public Task getById(final String issueId,
                         final String repoFullName,
                         final String provider) {
-        return this.storage.tasks().getById(issueId, repoFullName, provider);
+        return this.tasks.get()
+            .filter(t -> t.issue().issueId().equals(issueId)
+                && t.project().repoFullName().equals(repoFullName)
+                && t.project().provider().equals(provider))
+            .findFirst()
+            .orElse(null);
     }
 
     @Override
@@ -76,7 +78,7 @@ public final class ContributorTasks implements Tasks {
     @Override
     public Tasks ofProject(final String repoFullName,
                            final String repoProvider) {
-        final Supplier<Stream<Task>> ofProject = () -> tasks.stream()
+        final Supplier<Stream<Task>> ofProject = () -> tasks.get()
             .filter(t -> t.project().repoFullName().equals(repoFullName)
                 && t.project().provider().equals(provider));
         return new ProjectTasks(repoFullName, provider, ofProject, storage);
@@ -99,15 +101,13 @@ public final class ContributorTasks implements Tasks {
 
     @Override
     public Tasks ofContract(final Contract.Id id) {
-        final List<Task> tasksOf = this.tasks
-            .stream()
+        final Supplier<Stream<Task>> tasksOf = () -> this.tasks
+            .get()
             .filter(
                 t -> t.project().repoFullName().equals(id.getRepoFullName())
             && t.project().provider().equals(id.getProvider())
             && t.assignee().username().endsWith(id.getContributorUsername())
-            && t.role().equals(id.getRole())
-            )
-            .collect(Collectors.toList());
+            && t.role().equals(id.getRole()));
         return new ContractTasks(id, tasksOf, this.storage);
 
     }
@@ -121,6 +121,6 @@ public final class ContributorTasks implements Tasks {
 
     @Override
     public Iterator<Task> iterator() {
-        return this.tasks.iterator();
+        return this.tasks.get().iterator();
     }
 }

@@ -26,7 +26,7 @@ import com.selfxdsd.api.*;
 import com.selfxdsd.api.storage.Paged;
 import com.selfxdsd.api.storage.Storage;
 import com.selfxdsd.core.projects.PmProjects;
-import com.selfxdsd.core.projects.ProjectsPaged;
+import com.selfxdsd.core.BasePaged;
 import com.selfxdsd.core.projects.StoredProject;
 import com.selfxdsd.core.projects.UserProjects;
 
@@ -43,7 +43,7 @@ import java.util.stream.Stream;
  * @version $Id$
  * @since 0.0.1
  */
-public final class InMemoryProjects extends ProjectsPaged {
+public final class InMemoryProjects extends BasePaged implements Projects{
 
     /**
      * Parent storage.
@@ -151,7 +151,7 @@ public final class InMemoryProjects extends ProjectsPaged {
     }
 
     @Override
-    public ProjectsPaged page(final Paged.Page page) {
+    public Projects page(final Paged.Page page) {
         return new InMemoryProjects(this.storage, this.projects, page);
     }
 

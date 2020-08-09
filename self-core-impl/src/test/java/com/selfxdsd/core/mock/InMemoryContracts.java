@@ -135,7 +135,7 @@ public final class InMemoryContracts implements Contracts {
             .map(key -> this.contracts.get(key))
             .collect(Collectors.toList());
         return new ProjectContracts(
-            repoFullName, repoProvider, ofProject, this.storage
+            repoFullName, repoProvider, ofProject::stream, this.storage
         );
     }
 
@@ -153,7 +153,7 @@ public final class InMemoryContracts implements Contracts {
             .map(key -> this.contracts.get(key))
             .collect(Collectors.toList());
         return new ContributorContracts(
-            contributor, ofContributor, this.storage
+            contributor, ofContributor::stream, this.storage
         );
     }
 
