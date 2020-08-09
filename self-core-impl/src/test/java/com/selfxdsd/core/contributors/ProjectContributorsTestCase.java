@@ -33,9 +33,11 @@ import org.mockito.Mockito;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * Unit tests for {@link ProjectContributors}.
+ *
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.4
@@ -48,13 +50,11 @@ public final class ProjectContributorsTestCase {
     @Test
     public void canBeIterated() {
         final Contributors contributors = new ProjectContributors(
-            "john/test", Provider.Names.GITHUB,
-            List.of(
-                Mockito.mock(Contributor.class),
-                Mockito.mock(Contributor.class),
-                Mockito.mock(Contributor.class)
-            ),
-            Mockito.mock(Storage.class)
+                "john/test", Provider.Names.GITHUB,
+                List.of(Mockito.mock(Contributor.class),
+                        Mockito.mock(Contributor.class),
+                        Mockito.mock(Contributor.class))::stream,
+                Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(contributors, Matchers.iterableWithSize(3));
     }
@@ -65,13 +65,13 @@ public final class ProjectContributorsTestCase {
     @Test
     public void getByIdFindsNothing() {
         final Contributors contributors = new ProjectContributors(
-            "john/test", "github",
-            List.of(),
-            Mockito.mock(Storage.class)
+                "john/test", "github",
+                Stream::empty,
+                Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(
-            contributors.getById("george", Provider.Names.GITHUB),
-            Matchers.nullValue()
+                contributors.getById("george", Provider.Names.GITHUB),
+                Matchers.nullValue()
         );
     }
 
@@ -89,13 +89,13 @@ public final class ProjectContributorsTestCase {
 
 
         final Contributors contributors = new ProjectContributors(
-            "john/test", Provider.Names.GITHUB,
-            List.of(vlad, mihai),
-            Mockito.mock(Storage.class)
+                "john/test", Provider.Names.GITHUB,
+                List.of(vlad, mihai)::stream,
+                Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(
-            contributors.getById("mihai", Provider.Names.GITHUB),
-            Matchers.is(mihai)
+                contributors.getById("mihai", Provider.Names.GITHUB),
+                Matchers.is(mihai)
         );
     }
 
@@ -107,17 +107,15 @@ public final class ProjectContributorsTestCase {
     @Test
     public void ofProjectReturnsSelfIfSameId() {
         final Contributors contributors = new ProjectContributors(
-            "john/test", Provider.Names.GITHUB,
-            List.of(
-                Mockito.mock(Contributor.class),
-                Mockito.mock(Contributor.class),
-                Mockito.mock(Contributor.class)
-            ),
-            Mockito.mock(Storage.class)
+                "john/test", Provider.Names.GITHUB,
+                List.of(Mockito.mock(Contributor.class),
+                        Mockito.mock(Contributor.class),
+                        Mockito.mock(Contributor.class))::stream,
+                Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(
-            contributors.ofProject("john/test", Provider.Names.GITHUB),
-            Matchers.is(contributors)
+                contributors.ofProject("john/test", Provider.Names.GITHUB),
+                Matchers.is(contributors)
         );
     }
 
@@ -128,17 +126,15 @@ public final class ProjectContributorsTestCase {
     @Test(expected = IllegalStateException.class)
     public void ofProjectComplainsIfDifferentId() {
         final Contributors contributors = new ProjectContributors(
-            "john/test", Provider.Names.GITHUB,
-            List.of(
-                Mockito.mock(Contributor.class),
-                Mockito.mock(Contributor.class),
-                Mockito.mock(Contributor.class)
-            ),
-            Mockito.mock(Storage.class)
+                "john/test", Provider.Names.GITHUB,
+                List.of(Mockito.mock(Contributor.class),
+                        Mockito.mock(Contributor.class),
+                        Mockito.mock(Contributor.class))::stream,
+                Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(
-            contributors.ofProject("george/test", Provider.Names.GITLAB),
-            Matchers.is(contributors)
+                contributors.ofProject("george/test", Provider.Names.GITLAB),
+                Matchers.is(contributors)
         );
     }
 
@@ -148,13 +144,11 @@ public final class ProjectContributorsTestCase {
     @Test(expected = IllegalArgumentException.class)
     public void registerComplainsWhenDiffProvider() {
         final Contributors contributors = new ProjectContributors(
-            "john/test", Provider.Names.GITHUB,
-            List.of(
-                Mockito.mock(Contributor.class),
-                Mockito.mock(Contributor.class),
-                Mockito.mock(Contributor.class)
-            ),
-            Mockito.mock(Storage.class)
+                "john/test", Provider.Names.GITHUB,
+                List.of(Mockito.mock(Contributor.class),
+                        Mockito.mock(Contributor.class),
+                        Mockito.mock(Contributor.class))::stream,
+                Mockito.mock(Storage.class)
         );
         contributors.register("mihai", Provider.Names.GITLAB);
     }
@@ -168,13 +162,13 @@ public final class ProjectContributorsTestCase {
         Mockito.when(vlad.username()).thenReturn("vlad");
         Mockito.when(vlad.provider()).thenReturn(Provider.Names.GITHUB);
         final Contributors contributors = new ProjectContributors(
-            "john/test", Provider.Names.GITHUB,
-            List.of(vlad),
-            Mockito.mock(Storage.class)
+                "john/test", Provider.Names.GITHUB,
+                List.of(vlad)::stream,
+                Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(
-            contributors.register("vlad", Provider.Names.GITHUB),
-            Matchers.is(vlad)
+                contributors.register("vlad", Provider.Names.GITHUB),
+                Matchers.is(vlad)
         );
     }
 
@@ -185,30 +179,37 @@ public final class ProjectContributorsTestCase {
     @Test
     public void registersNewContributor() {
         final Contributor mihai = Mockito.mock(Contributor.class);
+        final List<Contributor> allContributorsSrc = new ArrayList<>();
         final Contributors allContributors = Mockito.mock(Contributors.class);
         Mockito.when(
-            allContributors.register("mihai", Provider.Names.GITHUB)
-        ).thenReturn(mihai);
+                allContributors.register("mihai", Provider.Names.GITHUB)
+        ).thenAnswer(invocation -> {
+            allContributorsSrc.add(mihai);
+            return mihai;
+        });
+        Mockito.when(allContributors.spliterator())
+                .thenReturn(allContributorsSrc.spliterator());
+
         final Contracts allContracts = Mockito.mock(Contracts.class);
         Mockito.when(
-            allContracts.addContract(
-                "john/test", "mihai", Provider.Names.GITHUB,
-                BigDecimal.valueOf(0), Contract.Roles.DEV
-            )
+                allContracts.addContract(
+                        "john/test", "mihai", Provider.Names.GITHUB,
+                        BigDecimal.valueOf(0), Contract.Roles.DEV
+                )
         ).thenReturn(Mockito.mock(Contract.class));
         final Storage storage = Mockito.mock(Storage.class);
         Mockito.when(storage.contributors()).thenReturn(allContributors);
         Mockito.when(storage.contracts()).thenReturn(allContracts);
 
         final Contributors contributors = new ProjectContributors(
-            "john/test", Provider.Names.GITHUB,
-            List.of(),
-            storage
+                "john/test", Provider.Names.GITHUB,
+                allContributorsSrc::stream,
+                storage
         );
         MatcherAssert.assertThat(contributors, Matchers.emptyIterable());
         MatcherAssert.assertThat(
-            contributors.register("mihai", Provider.Names.GITHUB),
-            Matchers.is(mihai)
+                contributors.register("mihai", Provider.Names.GITHUB),
+                Matchers.is(mihai)
         );
         MatcherAssert.assertThat(contributors, Matchers.iterableWithSize(1));
     }
@@ -219,13 +220,13 @@ public final class ProjectContributorsTestCase {
     @Test
     public void electsReturnsNullWhenNoContributors() {
         final Contributors contributors = new ProjectContributors(
-            "john/test", Provider.Names.GITHUB,
-            List.of(),
-            Mockito.mock(Storage.class)
+                "john/test", Provider.Names.GITHUB,
+                Stream::empty,
+                Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(
-            contributors.elect(Mockito.mock(Task.class)),
-            Matchers.nullValue()
+                contributors.elect(Mockito.mock(Task.class)),
+                Matchers.nullValue()
         );
     }
 
@@ -237,18 +238,18 @@ public final class ProjectContributorsTestCase {
     @Test
     public void electsNewContributorForAssignedTask() {
         final Contributor assignee = this.mockContributor(
-            "mihai", "DEV", "REV", "QA"
+                "mihai", "DEV", "REV", "QA"
         );
         final Contributors contributors = new ProjectContributors(
-            "john/test", Provider.Names.GITHUB,
-            List.of(
-                assignee,
-                this.mockContributor("vlad", "DEV"),
-                this.mockContributor("mary", "REV", "QA"),
-                this.mockContributor("george", "DEV", "ARCH"),
-                this.mockContributor("karen", "DEV")
-            ),
-            Mockito.mock(Storage.class)
+                "john/test", Provider.Names.GITHUB,
+                List.of(
+                        assignee,
+                        this.mockContributor("vlad", "DEV"),
+                        this.mockContributor("mary", "REV", "QA"),
+                        this.mockContributor("george", "DEV", "ARCH"),
+                        this.mockContributor("karen", "DEV")
+                )::stream,
+                Mockito.mock(Storage.class)
         );
         final Task task = Mockito.mock(Task.class);
         Mockito.when(task.assignee()).thenReturn(assignee);
@@ -256,16 +257,16 @@ public final class ProjectContributorsTestCase {
         final Contributor elected = contributors.elect(task);
 
         MatcherAssert.assertThat(
-            elected.username(),
-            Matchers.not(Matchers.equalTo("mihai"))
+                elected.username(),
+                Matchers.not(Matchers.equalTo("mihai"))
         );
         MatcherAssert.assertThat(
-            elected.username(),
-            Matchers.not(Matchers.equalTo("mary"))
+                elected.username(),
+                Matchers.not(Matchers.equalTo("mary"))
         );
         MatcherAssert.assertThat(
-            elected.username(),
-            Matchers.isOneOf("vlad", "george", "karen")
+                elected.username(),
+                Matchers.isOneOf("vlad", "george", "karen")
         );
     }
 
@@ -275,15 +276,15 @@ public final class ProjectContributorsTestCase {
     @Test
     public void electsNewContributorForUnassignedTask() {
         final Contributors contributors = new ProjectContributors(
-            "john/test", Provider.Names.GITHUB,
-            List.of(
-                this.mockContributor("mihai", "DEV", "REV", "QA"),
-                this.mockContributor("vlad", "DEV"),
-                this.mockContributor("mary", "REV", "QA"),
-                this.mockContributor("george", "DEV", "ARCH"),
-                this.mockContributor("karen", "DEV")
-            ),
-            Mockito.mock(Storage.class)
+                "john/test", Provider.Names.GITHUB,
+                List.of(
+                        this.mockContributor("mihai", "DEV", "REV", "QA"),
+                        this.mockContributor("vlad", "DEV"),
+                        this.mockContributor("mary", "REV", "QA"),
+                        this.mockContributor("george", "DEV", "ARCH"),
+                        this.mockContributor("karen", "DEV")
+                )::stream,
+                Mockito.mock(Storage.class)
         );
         final Task task = Mockito.mock(Task.class);
         Mockito.when(task.assignee()).thenReturn(null);
@@ -291,12 +292,12 @@ public final class ProjectContributorsTestCase {
         final Contributor elected = contributors.elect(task);
 
         MatcherAssert.assertThat(
-            elected.username(),
-            Matchers.not(Matchers.equalTo("mary"))
+                elected.username(),
+                Matchers.not(Matchers.equalTo("mary"))
         );
         MatcherAssert.assertThat(
-            elected.username(),
-            Matchers.isOneOf("mihai", "vlad", "george", "karen")
+                elected.username(),
+                Matchers.isOneOf("mihai", "vlad", "george", "karen")
         );
     }
 
@@ -307,22 +308,23 @@ public final class ProjectContributorsTestCase {
      * @return Contributor.
      */
     public Contributor mockContributor(
-        final String username, final String... roles
+            final String username, final String... roles
     ) {
         final Contributor contributor = Mockito.mock(Contributor.class);
         Mockito.when(contributor.username()).thenReturn(username);
 
         final List<Contract> contracts = new ArrayList<>();
-        for(final String role : roles) {
+        for (final String role : roles) {
             final Contract mock = Mockito.mock(Contract.class);
             Mockito.when(mock.role()).thenReturn(role);
             contracts.add(mock);
         }
 
         Mockito.when(contributor.contracts()).thenReturn(
-            new ContributorContracts(
-                contributor, contracts, Mockito.mock(Storage.class)
-            )
+                new ContributorContracts(
+                        contributor,
+                        contracts::stream,
+                        Mockito.mock(Storage.class))
         );
         return contributor;
     }

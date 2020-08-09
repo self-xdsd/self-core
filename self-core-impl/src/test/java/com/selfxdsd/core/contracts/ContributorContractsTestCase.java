@@ -33,6 +33,7 @@ import org.mockito.Mockito;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * Unit tests for {@link ContributorContracts}.
@@ -58,7 +59,7 @@ public final class ContributorContractsTestCase {
             new StoredContributor(
                 "mihai", "github", Mockito.mock(Storage.class)
             ),
-            list,
+            list::stream,
             Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(
@@ -78,7 +79,7 @@ public final class ContributorContractsTestCase {
                 new StoredContributor(
                 "mihai", "github", Mockito.mock(Storage.class)
                 ),
-                new ArrayList<>(),
+                Stream::empty,
                 Mockito.mock(Storage.class)
             ).ofProject("some/test", "github"),
             Matchers.emptyIterable()
@@ -88,7 +89,7 @@ public final class ContributorContractsTestCase {
                 new StoredContributor(
                 "mihai", "github", Mockito.mock(Storage.class)
                 ),
-                new ArrayList<>(),
+                Stream::empty,
                 Mockito.mock(Storage.class)
             ).ofProject("some/test", "github"),
             Matchers.instanceOf(ProjectContracts.class)
@@ -107,7 +108,7 @@ public final class ContributorContractsTestCase {
                 "github",
                 Mockito.mock(Storage.class)
             ),
-            new ArrayList<>(),
+            Stream::empty,
             Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(
@@ -134,7 +135,7 @@ public final class ContributorContractsTestCase {
                 "github",
                 Mockito.mock(Storage.class)
             ),
-            new ArrayList<>(),
+            Stream::empty,
             Mockito.mock(Storage.class)
         );
         contracts.ofContributor(
@@ -159,7 +160,7 @@ public final class ContributorContractsTestCase {
         MatcherAssert.assertThat(
             new ContributorContracts(
                 Mockito.mock(Contributor.class),
-                list,
+                list::stream,
                 Mockito.mock(Storage.class)
             ),
             Matchers.iterableWithSize(3)
@@ -168,7 +169,7 @@ public final class ContributorContractsTestCase {
         MatcherAssert.assertThat(
             new ContributorContracts(
                 Mockito.mock(Contributor.class),
-                new ArrayList<>(),
+                Stream::empty,
                 Mockito.mock(Storage.class)
             ),
             Matchers.emptyIterable()
@@ -182,6 +183,7 @@ public final class ContributorContractsTestCase {
     @Test
     public void addsNewContract(){
         final Contract newContract = Mockito.mock(Contract.class);
+        final List<Contract> allSrc = new ArrayList<>();
         final Contracts all = Mockito.mock(Contracts.class);
         Mockito.when(
             all.addContract(
@@ -191,7 +193,11 @@ public final class ContributorContractsTestCase {
                 BigDecimal.valueOf(10000),
                 Contract.Roles.DEV
             )
-        ).thenReturn(newContract);
+        ).thenAnswer(invocation -> {
+            allSrc.add(newContract);
+            return newContract;
+        });
+        Mockito.when(all.spliterator()).thenReturn(allSrc.spliterator());
         final Storage storage = Mockito.mock(Storage.class);
         Mockito.when(storage.contracts()).thenReturn(all);
         final Contributor mihai = new StoredContributor(
@@ -199,7 +205,7 @@ public final class ContributorContractsTestCase {
         );
 
         final Contracts ofMihai = new ContributorContracts(
-            mihai, List.of(), storage
+            mihai, allSrc::stream, storage
         );
         MatcherAssert.assertThat(ofMihai, Matchers.iterableWithSize(0));
         MatcherAssert.assertThat(
@@ -227,7 +233,7 @@ public final class ContributorContractsTestCase {
         );
 
         final Contracts ofMihai = new ContributorContracts(
-            mihai, List.of(), storage
+            mihai, Stream::empty, storage
         );
         ofMihai.addContract(
             "john/test",
@@ -249,7 +255,7 @@ public final class ContributorContractsTestCase {
         final Contributor contributor = Mockito.mock(Contributor.class);
         final Contracts contracts = new ContributorContracts(
             contributor,
-            List.of(contract),
+            ()->Stream.of(contract),
             storage
         );
 

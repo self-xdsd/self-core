@@ -29,11 +29,12 @@ import com.selfxdsd.api.Task;
 import com.selfxdsd.api.storage.Storage;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Contributors of a Project. This class <b>just represents</b>
@@ -57,7 +58,7 @@ public final class ProjectContributors implements Contributors {
     /**
      * The project's contributors.
      */
-    private final List<Contributor> contributors;
+    private final Supplier<Stream<Contributor>> contributors;
 
     /**
      * Self storage, to save new contributors.
@@ -74,13 +75,12 @@ public final class ProjectContributors implements Contributors {
     public ProjectContributors(
         final String repoFullName,
         final String provider,
-        final List<Contributor> contributors,
+        final Supplier<Stream<Contributor>> contributors,
         final Storage storage
     ) {
         this.repoFullName = repoFullName;
         this.provider = provider;
-        this.contributors = new ArrayList<>();
-        this.contributors.addAll(contributors);
+        this.contributors = contributors;
         this.storage = storage;
     }
 
@@ -112,7 +112,6 @@ public final class ProjectContributors implements Contributors {
                 this.repoFullName, username, this.provider,
                 BigDecimal.valueOf(0), Contract.Roles.DEV
             );
-            this.contributors.add(found);
         }
         return found;
     }
@@ -122,12 +121,11 @@ public final class ProjectContributors implements Contributors {
         final String username,
         final String provider
     ) {
-        return this.contributors.stream().filter(
-            c -> {
-                return c.username().equals(username)
-                    && c.provider().equals(provider);
-            }
-        ).findFirst().orElse(null);
+        return this.contributors.get()
+                .filter(c -> c.username().equals(username)
+                        && c.provider().equals(provider))
+                .findFirst()
+                .orElse(null);
     }
 
     @Override
@@ -158,7 +156,7 @@ public final class ProjectContributors implements Contributors {
      */
     @Override
     public Contributor elect(final Task task) {
-        final List<Contributor> eligible = this.contributors.stream()
+        final List<Contributor> eligible = this.contributors.get()
             .filter(
                 contributor -> {
                     if(task.assignee() != null) {
@@ -187,6 +185,6 @@ public final class ProjectContributors implements Contributors {
 
     @Override
     public Iterator<Contributor> iterator() {
-        return this.contributors.iterator();
+        return this.contributors.get().iterator();
     }
 }

@@ -6,8 +6,9 @@ package com.selfxdsd.api.storage;
  * @author criske
  * @version $Id$
  * @since 0.0.13
- * @todo #360:30min Provide paging implementation for other Self entities:
- *  Collaborators, Contracts, Contributors, Tasks, Invoices, InvoicedTasks.
+ * @todo #366:30min Provide paging implementation for other Self entities:
+ *  Contributors, Contracts, Invoices, InvoicedTasks, Tasks.
+ *  As guidance use implementation for Projects: Pm/User/InMemoryProjects.
  */
 public interface Paged {
 

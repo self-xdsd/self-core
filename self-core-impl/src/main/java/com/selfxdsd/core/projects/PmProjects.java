@@ -24,6 +24,7 @@ package com.selfxdsd.core.projects;
 
 import com.selfxdsd.api.*;
 import com.selfxdsd.api.storage.Paged;
+import com.selfxdsd.core.BasePaged;
 
 import java.util.Iterator;
 import java.util.function.Supplier;
@@ -38,7 +39,7 @@ import java.util.stream.Stream;
  * @version $Id$
  * @since 0.0.1
  */
-public final class PmProjects extends ProjectsPaged {
+public final class PmProjects extends BasePaged implements Projects {
 
     /**
      * ID of the manager.

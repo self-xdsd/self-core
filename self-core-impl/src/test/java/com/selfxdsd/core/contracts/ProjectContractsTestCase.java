@@ -33,6 +33,7 @@ import org.mockito.Mockito;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * Unit tests for {@link ProjectContracts}.
@@ -56,7 +57,7 @@ public final class ProjectContractsTestCase {
         list.add(this.mockContract("john/test", "alin", "bitbucket"));
         list.add(this.mockContract("john/test", "mihai", "github"));
         final Contracts contracts = new ProjectContracts(
-            "john/test", "github", list, Mockito.mock(Storage.class)
+            "john/test", "github", list::stream, Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(
             contracts.ofContributor(
@@ -85,7 +86,7 @@ public final class ProjectContractsTestCase {
         MatcherAssert.assertThat(
             new ProjectContracts(
                 "john/test", "gitlab",
-                new ArrayList<>(), Mockito.mock(Storage.class)
+                Stream::empty, Mockito.mock(Storage.class)
             ).ofContributor(
                 new StoredContributor(
                     "cristi", "github", Mockito.mock(Storage.class)
@@ -96,7 +97,7 @@ public final class ProjectContractsTestCase {
         MatcherAssert.assertThat(
             new ProjectContracts(
                 "john/test", "gitlab",
-                new ArrayList<>(), Mockito.mock(Storage.class)
+                Stream::empty, Mockito.mock(Storage.class)
             ).ofContributor(
                 new StoredContributor(
                     "cristi", "github", Mockito.mock(Storage.class)
@@ -114,7 +115,7 @@ public final class ProjectContractsTestCase {
     public void ofProjectReturnsItself() {
         final Contracts contracts = new ProjectContracts(
             "john/test", "github",
-            new ArrayList<>(), Mockito.mock(Storage.class)
+            Stream::empty, Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(
             contracts.ofProject("john/test", "github"),
@@ -130,7 +131,7 @@ public final class ProjectContractsTestCase {
     public void ofProjectComplainsWhenDifferentId() {
         final Contracts contracts = new ProjectContracts(
             "john/test", "github",
-            new ArrayList<>(), Mockito.mock(Storage.class)
+            Stream::empty, Mockito.mock(Storage.class)
         );
         contracts.ofProject("john/test", "gitlab");
     }
@@ -141,6 +142,7 @@ public final class ProjectContractsTestCase {
     @Test
     public void addsNewContract() {
         final Contract newContract = Mockito.mock(Contract.class);
+        final List<Contract> allSrc = new ArrayList<>();
         final Contracts all = Mockito.mock(Contracts.class);
         Mockito.when(
             all.addContract(
@@ -150,13 +152,17 @@ public final class ProjectContractsTestCase {
                 BigDecimal.valueOf(10000),
                 Contract.Roles.DEV
             )
-        ).thenReturn(newContract);
+        ).thenAnswer(invocation -> {
+            allSrc.add(newContract);
+            return newContract;
+        });
+        Mockito.when(all.spliterator()).thenReturn(allSrc.spliterator());
         final Storage storage = Mockito.mock(Storage.class);
         Mockito.when(storage.contracts()).thenReturn(all);
 
         final Contracts ofOne = new ProjectContracts(
             "john/test", "github",
-            List.of(), storage
+            allSrc::stream, storage
         );
         MatcherAssert.assertThat(ofOne, Matchers.iterableWithSize(0));
         MatcherAssert.assertThat(
@@ -180,7 +186,7 @@ public final class ProjectContractsTestCase {
     public void doesNotAddContractForDifferentProject() {
         new ProjectContracts(
             "john/test1", "github",
-            new ArrayList<>(), Mockito.mock(Storage.class)
+            Stream::empty, Mockito.mock(Storage.class)
         ).addContract(
             "john/test",
             "mihai",
@@ -203,7 +209,7 @@ public final class ProjectContractsTestCase {
         MatcherAssert.assertThat(
             new ProjectContracts(
                 "john/test", "github",
-                list, Mockito.mock(Storage.class)
+                list::stream, Mockito.mock(Storage.class)
             ),
             Matchers.iterableWithSize(3)
         );
@@ -211,7 +217,7 @@ public final class ProjectContractsTestCase {
         MatcherAssert.assertThat(
             new ProjectContracts(
                 "john/test", "github",
-                new ArrayList<>(), Mockito.mock(Storage.class)
+                Stream::empty, Mockito.mock(Storage.class)
             ),
             Matchers.emptyIterable()
         );
@@ -228,8 +234,7 @@ public final class ProjectContractsTestCase {
         final Contributor contributor = Mockito.mock(Contributor.class);
         final Contracts contracts = new ProjectContracts(
             "john/test",
-            Provider.Names.GITHUB,
-            List.of(contract),
+            Provider.Names.GITHUB, () -> Stream.of(contract),
             storage
         );
 

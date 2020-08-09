@@ -8,6 +8,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * Unit tests for {@link ContributorTasks}.
@@ -29,7 +30,7 @@ public final class ContributorTasksTestCase {
                 Mockito.mock(Task.class),
                 Mockito.mock(Task.class),
                 Mockito.mock(Task.class)
-            ),
+            )::stream,
             Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(tasks, Matchers.iterableWithSize(3));
@@ -48,7 +49,7 @@ public final class ContributorTasksTestCase {
             Contract.Roles.DEV
         );
         final Tasks tasks = new ContributorTasks(
-            "foo", "github", List.of(),
+            "foo", "github", Stream::empty,
             Mockito.mock(Storage.class)
         );
         tasks.register(issue);
@@ -60,7 +61,7 @@ public final class ContributorTasksTestCase {
     @Test
     public void ofContributorReturnsSelf() {
         final Tasks tasks = new ContributorTasks(
-            "foo", "gitlab", List.of(),
+            "foo", "gitlab", Stream::empty,
             Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(
@@ -76,7 +77,7 @@ public final class ContributorTasksTestCase {
     @Test(expected = IllegalStateException.class)
     public void ofContributorComplainsOnDifferentId() {
         final Tasks tasks = new ContributorTasks(
-            "foo", "gitlab", List.of(),
+            "foo", "gitlab", Stream::empty,
             Mockito.mock(Storage.class)
         );
         tasks.ofContributor("bar", "gitlab");
@@ -103,10 +104,7 @@ public final class ContributorTasksTestCase {
 
         final Tasks tasks = new ContributorTasks(
             "mihai", Provider.Names.GITHUB,
-            List.of(
-                taskOne,
-                taskTwo
-            ),
+            List.of(taskOne, taskTwo)::stream,
             storage
         );
 
@@ -139,9 +137,7 @@ public final class ContributorTasksTestCase {
 
         final Tasks tasks = new ContributorTasks(
             "foo", Provider.Names.GITHUB,
-            List.of(
-                task
-            ),
+            List.of(task)::stream,
             storage
         );
         MatcherAssert.assertThat(tasks.ofContract(contractId),
@@ -157,7 +153,7 @@ public final class ContributorTasksTestCase {
     public void throwsWhenReturnsUnassignedTasks() {
         new ContributorTasks(
             "mihai", Provider.Names.GITHUB,
-            List.of(), Mockito.mock(Storage.class))
+            Stream::empty, Mockito.mock(Storage.class))
             .unassigned();
     }
 
