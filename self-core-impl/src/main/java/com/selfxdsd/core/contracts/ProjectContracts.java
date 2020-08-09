@@ -96,7 +96,7 @@ public final class ProjectContracts implements Contracts {
         }
         throw new IllegalStateException(
             "Already seeing the contracts of Project " + this.repoFullName
-           +", operating at " + this.provider
+                +", operating at " + this.provider
         );
     }
 
@@ -104,18 +104,14 @@ public final class ProjectContracts implements Contracts {
     public Contracts ofContributor(final Contributor contributor) {
         final List<Contract> ofContributor = this.contracts
             .get()
-            .filter(
-                contract -> {
-                    return contract
-                        .contributor()
-                        .username()
-                        .equals(contributor.username())
-                        && contract
-                            .contributor()
-                            .provider()
-                            .equals(contributor.provider());
-                }
-            )
+            .filter(contract -> contract
+                .contributor()
+                .username()
+                .equals(contributor.username())
+                && contract
+                .contributor()
+                .provider()
+                .equals(contributor.provider()))
             .collect(Collectors.toList());
         return new ContributorContracts(
             contributor, ofContributor::stream, this.storage
@@ -135,8 +131,8 @@ public final class ProjectContracts implements Contracts {
         ) {
             throw new IllegalArgumentException(
                 "These are the Contracts of Project " + this.repoFullName
-              + " from " + this.provider + ". "
-              + "You cannot register another Project's contracts here."
+                    + " from " + this.provider + ". "
+                    + "You cannot register another Project's contracts here."
             );
         } else {
             final Contract registered = this.storage.contracts().addContract(
@@ -154,9 +150,9 @@ public final class ProjectContracts implements Contracts {
     public Contract findById(final Contract.Id id) {
         return this.contracts.get()
             .filter(c -> new Contract.Id(c.project().repoFullName(),
-                    c.contributor().username(),
-                    c.project().provider(),
-                    c.role()).equals(id)).findFirst()
+                c.contributor().username(),
+                c.project().provider(),
+                c.role()).equals(id)).findFirst()
             .orElse(null);
     }
 

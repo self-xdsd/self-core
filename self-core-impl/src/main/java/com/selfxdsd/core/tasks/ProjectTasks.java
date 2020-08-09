@@ -140,11 +140,10 @@ public final class ProjectTasks implements Tasks {
     public Tasks ofContract(final Contract.Id id) {
         final Supplier<Stream<Task>> tasksOf = () -> this.tasks
             .get()
-            .filter(
-                t -> t.project().repoFullName().equals(id.getRepoFullName())
-            && t.project().provider().equals(id.getProvider())
-            && t.assignee().username().endsWith(id.getContributorUsername())
-            && t.role().equals(id.getRole()));
+            .filter(t -> t.project().repoFullName().equals(id.getRepoFullName())
+                && t.project().provider().equals(id.getProvider())
+                && t.assignee().username().endsWith(id.getContributorUsername())
+                && t.role().equals(id.getRole()));
         return new ContractTasks(id, tasksOf, this.storage);
     }
 

@@ -26,11 +26,10 @@ public final class ContributorTasksTestCase {
     public void canBeIterated() {
         final Tasks tasks = new ContributorTasks(
             "foo",
-            "github", List.of(
+            "github",
+            List.of(Mockito.mock(Task.class),
                 Mockito.mock(Task.class),
-                Mockito.mock(Task.class),
-                Mockito.mock(Task.class)
-            )::stream,
+                Mockito.mock(Task.class))::stream,
             Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(tasks, Matchers.iterableWithSize(3));
@@ -178,9 +177,9 @@ public final class ContributorTasksTestCase {
         final Storage storage = Mockito.mock(Storage.class);
 
         final Task found = new ContributorTasks(
-                "mihai", Provider.Names.GITHUB,
-                List.of(task)::stream,
-                storage
+            "mihai", Provider.Names.GITHUB,
+            List.of(task)::stream,
+            storage
         ).getById("1", "mihai/repo", Provider.Names.GITHUB);
         MatcherAssert.assertThat(found, Matchers.is(task));
     }
@@ -205,9 +204,9 @@ public final class ContributorTasksTestCase {
         final Storage storage = Mockito.mock(Storage.class);
 
         final Task found = new ContributorTasks(
-                "mihai", Provider.Names.GITHUB,
-                List.of(task)::stream,
-                storage
+            "mihai", Provider.Names.GITHUB,
+            List.of(task)::stream,
+            storage
         ).getById("2", "mihai/repo", Provider.Names.GITHUB);
         MatcherAssert.assertThat(found, Matchers.nullValue());
     }

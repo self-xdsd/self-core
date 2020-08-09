@@ -77,7 +77,7 @@ public final class ContributorContractsTestCase {
         MatcherAssert.assertThat(
             new ContributorContracts(
                 new StoredContributor(
-                "mihai", "github", Mockito.mock(Storage.class)
+                    "mihai", "github", Mockito.mock(Storage.class)
                 ),
                 Stream::empty,
                 Mockito.mock(Storage.class)
@@ -87,7 +87,7 @@ public final class ContributorContractsTestCase {
         MatcherAssert.assertThat(
             new ContributorContracts(
                 new StoredContributor(
-                "mihai", "github", Mockito.mock(Storage.class)
+                    "mihai", "github", Mockito.mock(Storage.class)
                 ),
                 Stream::empty,
                 Mockito.mock(Storage.class)

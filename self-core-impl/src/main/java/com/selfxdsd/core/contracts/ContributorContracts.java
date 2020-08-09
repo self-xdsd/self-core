@@ -139,9 +139,9 @@ public final class ContributorContracts implements Contracts {
     public Contract findById(final Contract.Id id) {
         return this.contracts.get()
             .filter(c -> new Contract.Id(c.project().repoFullName(),
-                    c.contributor().username(),
-                    c.project().provider(),
-                    c.role()).equals(id)).findFirst()
+                c.contributor().username(),
+                c.project().provider(),
+                c.role()).equals(id)).findFirst()
             .orElse(null);
     }
 

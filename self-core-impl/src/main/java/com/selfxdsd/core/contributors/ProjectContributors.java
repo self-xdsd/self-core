@@ -122,10 +122,10 @@ public final class ProjectContributors implements Contributors {
         final String provider
     ) {
         return this.contributors.get()
-                .filter(c -> c.username().equals(username)
-                        && c.provider().equals(provider))
-                .findFirst()
-                .orElse(null);
+            .filter(c -> c.username().equals(username)
+                && c.provider().equals(provider))
+            .findFirst()
+            .orElse(null);
     }
 
     @Override
