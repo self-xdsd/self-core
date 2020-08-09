@@ -160,7 +160,7 @@ public final class StoredProjectManagerTestCase {
         final Projects assigned = Mockito.mock(Projects.class);
         final ProjectManager manager = Mockito.mock(ProjectManager.class);
         final User pmUser = new StoredProjectManager.PmUser(manager);
-        Mockito.when(pmUser.projects()).thenReturn(assigned);
+        Mockito.when(manager.projects()).thenReturn(assigned);
         MatcherAssert.assertThat(
                 pmUser.projects(),
                 Matchers.is(assigned)
