@@ -217,7 +217,7 @@ public final class StoredProjectManager implements ProjectManager {
      * @version $Id$
      * @since 0.0.1
      */
-    final class PmUser implements User {
+    static final class PmUser implements User {
 
         /**
          * The PM.
@@ -249,7 +249,7 @@ public final class StoredProjectManager implements ProjectManager {
 
         @Override
         public Provider provider() {
-            return StoredProjectManager.this.provider();
+            return this.manager.provider();
         }
 
         @Override
