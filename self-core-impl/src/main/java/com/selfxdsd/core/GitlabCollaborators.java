@@ -58,7 +58,7 @@ public final class GitlabCollaborators implements Collaborators {
 
     /**
      * Invite a user to be a collaborator.
-     * <br/>
+     * <br><br>
      * Note that for Gitlab the username must be the user ID
      * and permission is the access level with following
      * <a href="https://docs.gitlab.com/ee/api/members.html#valid-access-levels">
