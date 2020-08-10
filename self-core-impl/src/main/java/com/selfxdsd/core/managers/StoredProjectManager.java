@@ -39,8 +39,6 @@ import java.util.UUID;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
- * @todo #212:30min Test equals and hashcode methods for each Stored*
- *  classes (StoredProjectManager, StoredProject etc.).
  */
 public final class StoredProjectManager implements ProjectManager {
 

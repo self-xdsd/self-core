@@ -27,7 +27,7 @@ public final class StoredInvoiceTestCase {
      * Invoice has the correct id.
      */
     @Test
-    public void hasCorrectId(){
+    public void hasCorrectId() {
         final Invoice invoice = new StoredInvoice(
             1, Mockito.mock(Contract.class),
             LocalDateTime.now(), mock(Storage.class)
@@ -39,7 +39,7 @@ public final class StoredInvoiceTestCase {
      * Invoice has the correct contract id.
      */
     @Test
-    public void returnsContract(){
+    public void returnsContract() {
         final Contract contract = Mockito.mock(Contract.class);
         final Invoice invoice = new StoredInvoice(
             1, contract, LocalDateTime.now(), mock(Storage.class)
@@ -66,10 +66,9 @@ public final class StoredInvoiceTestCase {
     }
 
     /**
-     * A StoredInvoice will not register a Task which is from
-     * another Contract.
+     * A StoredInvoice will not register a Task which is from another Contract.
      */
-    @Test (expected = IllegalArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void registerRejectsForeignTask() {
         final Contract contract = Mockito.mock(Contract.class);
         Mockito.when(contract.contractId()).thenReturn(
@@ -99,8 +98,8 @@ public final class StoredInvoiceTestCase {
     }
 
     /**
-     * We shouldn't be able to register a new Task if the Invoice
-     * is already paid.
+     * We shouldn't be able to register a new Task if the Invoice is already
+     * paid.
      */
     @Test(expected = IllegalStateException.class)
     public void registerComplainsIfInvoiceIsPaid() {
@@ -137,9 +136,8 @@ public final class StoredInvoiceTestCase {
     }
 
     /**
-     * We should be able to register a new Task if the Task and
-     * the Invoice belong to the same Contract and the Invoice
-     * is active (not paid yet).
+     * We should be able to register a new Task if the Task and the Invoice
+     * belong to the same Contract and the Invoice is active (not paid yet).
      */
     @Test
     public void registersNewTask() {
@@ -186,6 +184,39 @@ public final class StoredInvoiceTestCase {
     }
 
     /**
+     * Can compare two StoredInvoice objects.
+     */
+    @Test
+    public void comparesStoredInvoiceObjects() {
+        final Invoice invoice = new StoredInvoice(
+            1, Mockito.mock(Contract.class),
+            LocalDateTime.now(), mock(Storage.class)
+        );
+        final Invoice invoiceTwo = new StoredInvoice(
+            1, Mockito.mock(Contract.class),
+            LocalDateTime.now(), mock(Storage.class)
+        );
+        MatcherAssert.assertThat(invoice, Matchers.is(invoiceTwo));
+    }
+
+    /**
+     * Verifies HashCode generation from StoredInvoice.
+     */
+    @Test
+    public void verifiesStoredInvoiceHashcode() {
+        final Invoice invoice = new StoredInvoice(
+            1, Mockito.mock(Contract.class),
+            LocalDateTime.now(), mock(Storage.class)
+        );
+        final Invoice invoiceTwo = new StoredInvoice(
+            1, Mockito.mock(Contract.class),
+            LocalDateTime.now(), mock(Storage.class)
+        );
+        MatcherAssert.assertThat(invoice.hashCode(),
+            Matchers.equalTo(invoiceTwo.hashCode()));
+    }
+
+    /**
      * Mocks an {@link InvoiceTask}.
      *
      * @param invoiceId Invoice id.
@@ -200,10 +231,12 @@ public final class StoredInvoiceTestCase {
             public int invoiceId() {
                 return invoiceId;
             }
+
             @Override
             public Duration timeSpent() {
                 return duration;
             }
+
             @Override
             public Task task() {
                 return mock(Task.class);

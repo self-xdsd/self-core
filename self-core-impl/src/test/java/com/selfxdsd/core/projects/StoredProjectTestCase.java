@@ -3,18 +3,17 @@
  * All rights reserved.
  * <p>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"),
- * to read the Software only. Permission is hereby NOT GRANTED to use, copy,
- * modify, merge, publish, distribute, sublicense, and/or sell copies of
- * the Software.
+ * of this software and associated documentation files (the "Software"), to read
+ * the Software only. Permission is hereby NOT GRANTED to use, copy, modify,
+ * merge, publish, distribute, sublicense, and/or sell copies of the Software.
  * <p>
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
  * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
- * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
- * OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT
- * OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
  * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
@@ -31,6 +30,7 @@ import org.mockito.Mockito;
 
 /**
  * Unit tests for {@link StoredProject}.
+ *
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
@@ -61,7 +61,7 @@ public final class StoredProjectTestCase {
      * StoredProject can return its webhook token.
      */
     @Test
-    public void returnsWebhookToken(){
+    public void returnsWebhookToken() {
         final Project project = new StoredProject(
             Mockito.mock(User.class),
             "mihai/test",
@@ -170,7 +170,7 @@ public final class StoredProjectTestCase {
      * StoredProject can return its contributors.
      */
     @Test
-    public void returnsContributors(){
+    public void returnsContributors() {
         final Contributors all = Mockito.mock(Contributors.class);
         final Contributors ofProject = Mockito.mock(Contributors.class);
         Mockito.when(
@@ -227,8 +227,8 @@ public final class StoredProjectTestCase {
     }
 
     /**
-     * The StoredProject can return its spoken language.
-     * For now, only English is available.
+     * The StoredProject can return its spoken language. For now, only English
+     * is available.
      */
     @Test
     public void returnsLanguage() {
@@ -249,7 +249,61 @@ public final class StoredProjectTestCase {
     }
 
     /**
+     * Can compare two StoredProject objects.
+     */
+    @Test
+    public void comparesStoredProjectObjects() {
+        final Provider prov = Mockito.mock(Provider.class);
+        Mockito.when(prov.name()).thenReturn(Provider.Names.GITHUB);
+        final User owner = Mockito.mock(User.class);
+        Mockito.when(owner.provider()).thenReturn(prov);
+        final Project project = new StoredProject(
+            owner,
+            "john/test",
+            "wh123token",
+            Mockito.mock(ProjectManager.class),
+            Mockito.mock(Storage.class)
+        );
+        final Project projectTwo = new StoredProject(
+            owner,
+            "john/test",
+            "wh123token",
+            Mockito.mock(ProjectManager.class),
+            Mockito.mock(Storage.class)
+        );
+        MatcherAssert.assertThat(project, Matchers.is(projectTwo));
+    }
+
+    /**
+     * Verifies HashCode generation from StoredProject.
+     */
+    @Test
+    public void verifiesStoredProjectHashcode() {
+        final Provider prov = Mockito.mock(Provider.class);
+        Mockito.when(prov.name()).thenReturn(Provider.Names.GITHUB);
+        final User owner = Mockito.mock(User.class);
+        Mockito.when(owner.provider()).thenReturn(prov);
+        final Project project = new StoredProject(
+            owner,
+            "john/test",
+            "wh123token",
+            Mockito.mock(ProjectManager.class),
+            Mockito.mock(Storage.class)
+        );
+        final Project projectTwo = new StoredProject(
+            owner,
+            "john/test",
+            "wh123token",
+            Mockito.mock(ProjectManager.class),
+            Mockito.mock(Storage.class)
+        );
+        MatcherAssert.assertThat(project.hashCode(),
+            Matchers.equalTo(projectTwo.hashCode()));
+    }
+
+    /**
      * Mock a Repo for test.
+     *
      * @param fullName Full name.
      * @param provider Provider.
      * @return Repo.

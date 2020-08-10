@@ -3,18 +3,17 @@
  * All rights reserved.
  * <p>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"),
- * to read the Software only. Permission is hereby NOT GRANTED to use, copy,
- * modify, merge, publish, distribute, sublicense, and/or sell copies of
- * the Software.
+ * of this software and associated documentation files (the "Software"), to read
+ * the Software only. Permission is hereby NOT GRANTED to use, copy, modify,
+ * merge, publish, distribute, sublicense, and/or sell copies of the Software.
  * <p>
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
  * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
- * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
- * OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT
- * OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
  * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
@@ -87,7 +86,6 @@ public final class ProjectContributorsTestCase {
         Mockito.when(vlad.username()).thenReturn("vlad");
         Mockito.when(vlad.provider()).thenReturn(Provider.Names.GITHUB);
 
-
         final Contributors contributors = new ProjectContributors(
             "john/test", Provider.Names.GITHUB,
             List.of(vlad, mihai)::stream,
@@ -99,10 +97,8 @@ public final class ProjectContributorsTestCase {
         );
     }
 
-
     /**
-     * Method ofProject should return the same instance if the ID
-     * is a match.
+     * Method ofProject should return the same instance if the ID is a match.
      */
     @Test
     public void ofProjectReturnsSelfIfSameId() {
@@ -120,8 +116,8 @@ public final class ProjectContributorsTestCase {
     }
 
     /**
-     * Method ofProject should complain if the ID of another
-     * project is given as input.
+     * Method ofProject should complain if the ID of another project is given as
+     * input.
      */
     @Test(expected = IllegalStateException.class)
     public void ofProjectComplainsIfDifferentId() {
@@ -173,8 +169,8 @@ public final class ProjectContributorsTestCase {
     }
 
     /**
-     * A new contributor is registered and a DEV Contract with hourly rate 0
-     * is created.
+     * A new contributor is registered and a DEV Contract with hourly rate 0 is
+     * created.
      */
     @Test
     public void registersNewContributor() {
@@ -231,9 +227,8 @@ public final class ProjectContributorsTestCase {
     }
 
     /**
-     * Elect(...) returns a new Contributor for an already assigned Task.
-     * The elected contributor cannot be the same as the one already
-     * assigned.
+     * Elect(...) returns a new Contributor for an already assigned Task. The
+     * elected contributor cannot be the same as the one already assigned.
      */
     @Test
     public void electsNewContributorForAssignedTask() {
@@ -302,13 +297,51 @@ public final class ProjectContributorsTestCase {
     }
 
     /**
+     * Can compare two StoredContributor objects.
+     */
+    @Test
+    public void comparesStoredContributorObjects() {
+        final Contributor contributor = new StoredContributor(
+            "mihai",
+            Provider.Names.GITHUB,
+            Mockito.mock(Storage.class)
+        );
+        final Contributor contributorTwo = new StoredContributor(
+            "mihai",
+            Provider.Names.GITHUB,
+            Mockito.mock(Storage.class)
+        );
+        MatcherAssert.assertThat(contributor, Matchers.is(contributorTwo));
+    }
+
+    /**
+     * Verifies HashCode generation from StoredContributor.
+     */
+    @Test
+    public void verifiesStoredContributorHashcode() {
+        final Contributor contributor = new StoredContributor(
+            "mihai",
+            Provider.Names.GITHUB,
+            Mockito.mock(Storage.class)
+        );
+        final Contributor contributorTwo = new StoredContributor(
+            "mihai",
+            Provider.Names.GITHUB,
+            Mockito.mock(Storage.class)
+        );
+        MatcherAssert.assertThat(contributor.hashCode(),
+            Matchers.equalTo(contributorTwo.hashCode()));
+    }
+
+    /**
      * Mock a Contributor.
+     *
      * @param username Username.
      * @param roles Roles.
      * @return Contributor.
      */
     public Contributor mockContributor(final String username,
-                                       final String... roles) {
+        final String... roles) {
         final Contributor contributor = Mockito.mock(Contributor.class);
         Mockito.when(contributor.username()).thenReturn(username);
 

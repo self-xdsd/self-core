@@ -3,18 +3,17 @@
  * All rights reserved.
  * <p>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"),
- * to read the Software only. Permission is hereby NOT GRANTED to use, copy,
- * modify, merge, publish, distribute, sublicense, and/or sell copies of
- * the Software.
+ * of this software and associated documentation files (the "Software"), to read
+ * the Software only. Permission is hereby NOT GRANTED to use, copy, modify,
+ * merge, publish, distribute, sublicense, and/or sell copies of the Software.
  * <p>
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
  * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
- * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
- * OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT
- * OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
  * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
@@ -33,6 +32,7 @@ import org.mockito.Mockito;
 
 /**
  * Unit tests for {@link StoredProjectManager}.
+ *
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
@@ -134,10 +134,9 @@ public final class StoredProjectManagerTestCase {
         Mockito.when(manager.username()).thenReturn("zoeself");
         final User pmUser = new StoredProjectManager.PmUser(manager);
         MatcherAssert.assertThat(
-                pmUser.username(),
-                Matchers.is("zoeself"));
+            pmUser.username(),
+            Matchers.is("zoeself"));
     }
-
 
     /**
      * PmUser returns its role.
@@ -145,11 +144,11 @@ public final class StoredProjectManagerTestCase {
     @Test
     public void pmUserReturnsRole() {
         final User pmUser = new StoredProjectManager.PmUser(
-                Mockito.mock(ProjectManager.class)
+            Mockito.mock(ProjectManager.class)
         );
         MatcherAssert.assertThat(
-                pmUser.role(),
-                Matchers.is("user"));
+            pmUser.role(),
+            Matchers.is("user"));
     }
 
     /**
@@ -162,8 +161,8 @@ public final class StoredProjectManagerTestCase {
         final User pmUser = new StoredProjectManager.PmUser(manager);
         Mockito.when(manager.projects()).thenReturn(assigned);
         MatcherAssert.assertThat(
-                pmUser.projects(),
-                Matchers.is(assigned)
+            pmUser.projects(),
+            Matchers.is(assigned)
         );
     }
 
@@ -178,14 +177,13 @@ public final class StoredProjectManagerTestCase {
         final User pmUser = new StoredProjectManager.PmUser(manager);
 
         MatcherAssert.assertThat(
-                pmUser.provider(),
-                Matchers.is(provider)
+            pmUser.provider(),
+            Matchers.is(provider)
         );
     }
 
     /**
-     * StoredProjectManager can assign a repo to the manager it
-     * represents.
+     * StoredProjectManager can assign a repo to the manager it represents.
      */
     @Test
     public void assignsRepo() {
@@ -287,9 +285,9 @@ public final class StoredProjectManagerTestCase {
     }
 
     /**
-     * StoredProjectManager can handle a reopened Issue event when the
-     * initial Task associated with the Issue has been finished (in this
-     * case we register a new task and leave a comment).
+     * StoredProjectManager can handle a reopened Issue event when the initial
+     * Task associated with the Issue has been finished (in this case we
+     * register a new task and leave a comment).
      */
     @Test
     public void handlesTaskFinishedReopenedIssueEvent() {
@@ -359,16 +357,16 @@ public final class StoredProjectManagerTestCase {
         Mockito.verify(comments, Mockito.times(1))
             .post(
                 "@mihai thanks for reopening this, "
-                    + "I'll find someone to take a look at it again. \n"
-                    + "However, please keep in mind that reopening tickets "
-                    + "is a bad practice. "
-                    + "Next time, please open a new ticket."
+                + "I'll find someone to take a look at it again. \n"
+                + "However, please keep in mind that reopening tickets "
+                + "is a bad practice. "
+                + "Next time, please open a new ticket."
             );
     }
 
     /**
-     * StoredProjectManager can handle a reopened Issue event when the
-     * current Task is still ongoing (doesn't do anything, actually).
+     * StoredProjectManager can handle a reopened Issue event when the current
+     * Task is still ongoing (doesn't do anything, actually).
      */
     @Test
     public void handlesTaskOngoingReopenedIssueEvent() {
@@ -446,7 +444,57 @@ public final class StoredProjectManagerTestCase {
     }
 
     /**
+     * Can compare two StoredProjectManager objects.
+     */
+    @Test
+    public void comparesStoredProjectManagerObjects() {
+        final ProjectManager manager = new StoredProjectManager(
+            1,
+            "123",
+            "zoeself",
+            Provider.Names.GITHUB,
+            "1s23token",
+            Mockito.mock(Storage.class)
+        );
+        final ProjectManager managerTwo = new StoredProjectManager(
+            1,
+            "123",
+            "zoeself",
+            Provider.Names.GITHUB,
+            "1s23token",
+            Mockito.mock(Storage.class)
+        );
+        MatcherAssert.assertThat(manager, Matchers.is(managerTwo));
+    }
+
+    /**
+     * Verifies HashCode generation from StoredProjectManager.
+     */
+    @Test
+    public void verifiesStoredProjectManagerHashcode() {
+        final ProjectManager manager = new StoredProjectManager(
+            1,
+            "123",
+            "zoeself",
+            Provider.Names.GITHUB,
+            "1s23token",
+            Mockito.mock(Storage.class)
+        );
+        final ProjectManager managerTwo = new StoredProjectManager(
+            1,
+            "123",
+            "zoeself",
+            Provider.Names.GITHUB,
+            "1s23token",
+            Mockito.mock(Storage.class)
+        );
+        MatcherAssert.assertThat(manager.hashCode(),
+            Matchers.equalTo(managerTwo.hashCode()));
+    }
+
+    /**
      * Mock a Repo for test.
+     *
      * @param fullName Full name.
      * @param provider Provider.
      * @param issues Repo issues.

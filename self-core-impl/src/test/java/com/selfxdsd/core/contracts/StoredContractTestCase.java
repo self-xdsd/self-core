@@ -138,7 +138,7 @@ public final class StoredContractTestCase {
      * Returns contracts invoices.
      */
     @Test
-    public void returnsInvoices(){
+    public void returnsInvoices() {
         final Storage storage = Mockito.mock(Storage.class);
         final Contract contract = new StoredContract(
             Mockito.mock(Project.class),
@@ -162,7 +162,7 @@ public final class StoredContractTestCase {
      * Returns contracts tasks.
      */
     @Test
-    public void returnsTasks(){
+    public void returnsTasks() {
         final Storage storage = Mockito.mock(Storage.class);
         final Project project = Mockito.mock(Project.class);
         final Contributor contributor = Mockito.mock(Contributor.class);
@@ -189,6 +189,7 @@ public final class StoredContractTestCase {
 
     /**
      * StoredContract can return its value.
+     *
      * @checkstyle ExecutableStatementCount (50 lines)
      */
     @Test
@@ -213,10 +214,10 @@ public final class StoredContractTestCase {
         Mockito.when(
             allTasks.ofContract(
                 new Contract.Id(
-                "john/test",
-                "mihai",
-                "github",
-                "DEV"
+                    "john/test",
+                    "mihai",
+                    "github",
+                    "DEV"
                 )
             )
         ).thenReturn(tasks);
@@ -224,10 +225,10 @@ public final class StoredContractTestCase {
         Mockito.when(
             allInvoices.ofContract(
                 new Contract.Id(
-            "john/test",
-            "mihai",
-            "github",
-            "DEV"
+                    "john/test",
+                    "mihai",
+                    "github",
+                    "DEV"
                 )
             )
         ).thenReturn(invoices);
@@ -251,5 +252,58 @@ public final class StoredContractTestCase {
             contract.value(),
             Matchers.equalTo(BigDecimal.valueOf(44800))
         );
+    }
+
+    /**
+     * Can compare two StoredContract objects.
+     */
+    @Test
+    public void comparesStoredContractObjects() {
+        final Storage storage = Mockito.mock(Storage.class);
+        final Project project = Mockito.mock(Project.class);
+        Mockito.when(project.repoFullName()).thenReturn("john/repo");
+        Mockito.when(project.provider()).thenReturn(Provider.Names.GITHUB);
+        final Contributor contributor = Mockito.mock(Contributor.class);
+        Mockito.when(contributor.username()).thenReturn("mihai");
+        final Contract contract = new StoredContract(
+            project,
+            contributor,
+            BigDecimal.ONE,
+            "DEV",
+            storage);
+        final Contract contractTwo = new StoredContract(
+            project,
+            contributor,
+            BigDecimal.ONE,
+            "DEV",
+            storage);
+        MatcherAssert.assertThat(contract, Matchers.is(contractTwo));
+    }
+
+    /**
+     * Verifies HashCode generation from StoredContract.
+     */
+    @Test
+    public void verifiesStoredContractHashcode() {
+        final Storage storage = Mockito.mock(Storage.class);
+        final Project project = Mockito.mock(Project.class);
+        Mockito.when(project.repoFullName()).thenReturn("john/repo");
+        Mockito.when(project.provider()).thenReturn(Provider.Names.GITHUB);
+        final Contributor contributor = Mockito.mock(Contributor.class);
+        Mockito.when(contributor.username()).thenReturn("mihai");
+        final Contract contract = new StoredContract(
+            project,
+            contributor,
+            BigDecimal.ONE,
+            "DEV",
+            storage);
+        final Contract contractTwo = new StoredContract(
+            project,
+            contributor,
+            BigDecimal.ONE,
+            "DEV",
+            storage);
+        MatcherAssert.assertThat(contract.hashCode(),
+            Matchers.equalTo(contractTwo.hashCode()));
     }
 }
