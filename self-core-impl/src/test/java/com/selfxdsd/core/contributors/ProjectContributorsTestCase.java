@@ -50,7 +50,7 @@ public final class ProjectContributorsTestCase {
     @Test
     public void canBeIterated() {
         final Contributors contributors = new ProjectContributors(
-            "john/test", Provider.Names.GITHUB,
+            this.mockProject("john/test", Provider.Names.GITHUB),
             List.of(Mockito.mock(Contributor.class),
                 Mockito.mock(Contributor.class),
                 Mockito.mock(Contributor.class))::stream,
@@ -65,7 +65,7 @@ public final class ProjectContributorsTestCase {
     @Test
     public void getByIdFindsNothing() {
         final Contributors contributors = new ProjectContributors(
-            "john/test", "github",
+            this.mockProject("john/test", Provider.Names.GITHUB),
             Stream::empty,
             Mockito.mock(Storage.class)
         );
@@ -89,7 +89,7 @@ public final class ProjectContributorsTestCase {
 
 
         final Contributors contributors = new ProjectContributors(
-            "john/test", Provider.Names.GITHUB,
+            this.mockProject("john/test", Provider.Names.GITHUB),
             List.of(vlad, mihai)::stream,
             Mockito.mock(Storage.class)
         );
@@ -107,7 +107,7 @@ public final class ProjectContributorsTestCase {
     @Test
     public void ofProjectReturnsSelfIfSameId() {
         final Contributors contributors = new ProjectContributors(
-            "john/test", Provider.Names.GITHUB,
+            this.mockProject("john/test", Provider.Names.GITHUB),
             List.of(Mockito.mock(Contributor.class),
                 Mockito.mock(Contributor.class),
                 Mockito.mock(Contributor.class))::stream,
@@ -126,7 +126,7 @@ public final class ProjectContributorsTestCase {
     @Test(expected = IllegalStateException.class)
     public void ofProjectComplainsIfDifferentId() {
         final Contributors contributors = new ProjectContributors(
-            "john/test", Provider.Names.GITHUB,
+            this.mockProject("john/test", Provider.Names.GITHUB),
             List.of(Mockito.mock(Contributor.class),
                 Mockito.mock(Contributor.class),
                 Mockito.mock(Contributor.class))::stream,
@@ -144,7 +144,7 @@ public final class ProjectContributorsTestCase {
     @Test(expected = IllegalArgumentException.class)
     public void registerComplainsWhenDiffProvider() {
         final Contributors contributors = new ProjectContributors(
-            "john/test", Provider.Names.GITHUB,
+            this.mockProject("john/test", Provider.Names.GITHUB),
             List.of(Mockito.mock(Contributor.class),
                 Mockito.mock(Contributor.class),
                 Mockito.mock(Contributor.class))::stream,
@@ -162,7 +162,7 @@ public final class ProjectContributorsTestCase {
         Mockito.when(vlad.username()).thenReturn("vlad");
         Mockito.when(vlad.provider()).thenReturn(Provider.Names.GITHUB);
         final Contributors contributors = new ProjectContributors(
-            "john/test", Provider.Names.GITHUB,
+            this.mockProject("john/test", Provider.Names.GITHUB),
             List.of(vlad)::stream,
             Mockito.mock(Storage.class)
         );
@@ -202,7 +202,7 @@ public final class ProjectContributorsTestCase {
         Mockito.when(storage.contracts()).thenReturn(allContracts);
 
         final Contributors contributors = new ProjectContributors(
-            "john/test", Provider.Names.GITHUB,
+            this.mockProject("john/test", Provider.Names.GITHUB),
             allContributorsSrc::stream,
             storage
         );
@@ -220,7 +220,7 @@ public final class ProjectContributorsTestCase {
     @Test
     public void electsReturnsNullWhenNoContributors() {
         final Contributors contributors = new ProjectContributors(
-            "john/test", Provider.Names.GITHUB,
+            this.mockProject("john/test", Provider.Names.GITHUB),
             Stream::empty,
             Mockito.mock(Storage.class)
         );
@@ -241,7 +241,7 @@ public final class ProjectContributorsTestCase {
             "mihai", "DEV", "REV", "QA"
         );
         final Contributors contributors = new ProjectContributors(
-            "john/test", Provider.Names.GITHUB,
+            this.mockProject("john/test", Provider.Names.GITHUB),
             List.of(
                 assignee,
                 this.mockContributor("vlad", "DEV"),
@@ -276,7 +276,7 @@ public final class ProjectContributorsTestCase {
     @Test
     public void electsNewContributorForUnassignedTask() {
         final Contributors contributors = new ProjectContributors(
-            "john/test", Provider.Names.GITHUB,
+            this.mockProject("john/test", Provider.Names.GITHUB),
             List.of(
                 this.mockContributor("mihai", "DEV", "REV", "QA"),
                 this.mockContributor("vlad", "DEV"),
@@ -326,5 +326,28 @@ public final class ProjectContributorsTestCase {
                 Mockito.mock(Storage.class))
         );
         return contributor;
+    }
+
+    /**
+     * Mock a Project.
+     * @param repoFullName Repo full name.
+     * @param providerName Provider name.
+     * @return Project.
+     */
+    private Project mockProject(
+        final String repoFullName,
+        final String providerName
+    ) {
+        final Project project = Mockito.mock(Project.class);
+        Mockito.when(project.repoFullName()).thenReturn(repoFullName);
+
+        final Provider provider = Mockito.mock(Provider.class);
+        Mockito.when(provider.name()).thenReturn(providerName);
+        final User owner = Mockito.mock(User.class);
+        Mockito.when(owner.provider()).thenReturn(provider);
+
+        Mockito.when(project.owner()).thenReturn(owner);
+
+        return project;
     }
 }

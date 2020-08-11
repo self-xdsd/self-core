@@ -22,10 +22,7 @@
  */
 package com.selfxdsd.core.contributors;
 
-import com.selfxdsd.api.Contract;
-import com.selfxdsd.api.Contributor;
-import com.selfxdsd.api.Contributors;
-import com.selfxdsd.api.Task;
+import com.selfxdsd.api.*;
 import com.selfxdsd.api.storage.Storage;
 
 import java.math.BigDecimal;
@@ -42,14 +39,17 @@ import java.util.stream.Stream;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.4
- * @todo #376:30min Change this class to encapsulate the whole Project,
- *  not just its ID. We need the Project in order to access its Wallet.
  * @todo #376:30min Once we have the Project encapsulated here, adapt
  *  the election algorithm to make sure that we only elect contributors
  *  whom we can afford to pay (the would-be Task value has to be less
  *  than the available cash in the Wallet).
  */
 public final class ProjectContributors implements Contributors {
+
+    /**
+     * The Project.
+     */
+    private final Project project;
 
     /**
      * Full name of the Repo represented by the Project.
@@ -73,19 +73,18 @@ public final class ProjectContributors implements Contributors {
 
     /**
      * Constructor.
-     * @param repoFullName Full name of the Repo represented by the Project.
-     * @param provider Provider of the Repo represented by the Project.
+     * @param project The project.
      * @param contributors Project's contributors.
      * @param storage Self's storage, to save new contracts.
      */
     public ProjectContributors(
-        final String repoFullName,
-        final String provider,
+        final Project project,
         final Supplier<Stream<Contributor>> contributors,
         final Storage storage
     ) {
-        this.repoFullName = repoFullName;
-        this.provider = provider;
+        this.project = project;
+        this.repoFullName = project.repoFullName();
+        this.provider = project.owner().provider().name();
         this.contributors = contributors;
         this.storage = storage;
     }
