@@ -26,6 +26,7 @@ import com.selfxdsd.api.*;
 import com.selfxdsd.api.storage.Storage;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -39,10 +40,6 @@ import java.util.stream.Stream;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.4
- * @todo #376:30min Once we have the Project encapsulated here, adapt
- *  the election algorithm to make sure that we only elect contributors
- *  whom we can afford to pay (the would-be Task value has to be less
- *  than the available cash in the Wallet).
  */
 public final class ProjectContributors implements Contributors {
 
@@ -172,14 +169,24 @@ public final class ProjectContributors implements Contributors {
                     return true;
                 }
             ).filter(
-               contributor -> {
-                   for(final Contract contract : contributor.contracts()) {
-                       if(contract.role().equals(task.role())) {
-                           return true;
-                       }
-                   }
-                   return false;
-               }
+                contributor -> {
+                    for(final Contract contract : contributor.contracts()) {
+                        if(contract.role().equals(task.role())) {
+                            final BigDecimal price = contract.hourlyRate()
+                                .multiply(
+                                    BigDecimal.valueOf(task.estimation())
+                                ).divide(
+                                    BigDecimal.valueOf(60),
+                                    RoundingMode.HALF_UP
+                                );
+                            final BigDecimal budget = this.project
+                                .wallet()
+                                .available();
+                            return price.compareTo(budget) <= 0;
+                        }
+                    }
+                    return false;
+                }
             ).collect(Collectors.toList());
         if(eligible.size() > 0) {
             Collections.shuffle(eligible);

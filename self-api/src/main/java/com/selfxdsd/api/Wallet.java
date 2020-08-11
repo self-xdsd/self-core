@@ -29,6 +29,9 @@ import java.math.BigDecimal;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.15
+ * @todo #380:30min Implement the Invoice :: Wallet.pay(Invoice) method,
+ *  which will perform the payment and return the Invoice with the trasactionId
+ *  and payment timestamp set.
  */
 public interface Wallet {
 
