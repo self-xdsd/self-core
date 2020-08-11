@@ -271,7 +271,7 @@ public final class StoredProjectTestCase {
             Mockito.mock(ProjectManager.class),
             Mockito.mock(Storage.class)
         );
-        MatcherAssert.assertThat(project, Matchers.is(projectTwo));
+        MatcherAssert.assertThat(project, Matchers.equalTo(projectTwo));
     }
 
     /**

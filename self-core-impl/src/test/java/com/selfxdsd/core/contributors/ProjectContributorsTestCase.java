@@ -311,7 +311,7 @@ public final class ProjectContributorsTestCase {
             Provider.Names.GITHUB,
             Mockito.mock(Storage.class)
         );
-        MatcherAssert.assertThat(contributor, Matchers.is(contributorTwo));
+        MatcherAssert.assertThat(contributor, Matchers.equalTo(contributorTwo));
     }
 
     /**

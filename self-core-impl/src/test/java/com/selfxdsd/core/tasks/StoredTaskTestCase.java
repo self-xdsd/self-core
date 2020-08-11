@@ -324,7 +324,7 @@ public final class StoredTaskTestCase {
             LocalDateTime.now().plusDays(10),
             120
         );
-        MatcherAssert.assertThat(task, Matchers.is(taskTwo));
+        MatcherAssert.assertThat(task, Matchers.equalTo(taskTwo));
     }
 
     /**

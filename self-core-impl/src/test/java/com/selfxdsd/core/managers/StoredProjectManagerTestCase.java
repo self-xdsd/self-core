@@ -464,7 +464,7 @@ public final class StoredProjectManagerTestCase {
             "1s23token",
             Mockito.mock(Storage.class)
         );
-        MatcherAssert.assertThat(manager, Matchers.is(managerTwo));
+        MatcherAssert.assertThat(manager, Matchers.equalTo(managerTwo));
     }
 
     /**

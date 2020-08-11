@@ -167,7 +167,7 @@ public final class StoredUserTestCase {
             Provider.Names.GITHUB,
             Mockito.mock(Storage.class)
         );
-        MatcherAssert.assertThat(user, Matchers.is(userTwo));
+        MatcherAssert.assertThat(user, Matchers.equalTo(userTwo));
     }
 
     /**

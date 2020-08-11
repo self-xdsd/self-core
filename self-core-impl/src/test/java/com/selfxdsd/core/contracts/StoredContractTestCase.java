@@ -277,7 +277,7 @@ public final class StoredContractTestCase {
             BigDecimal.ONE,
             "DEV",
             storage);
-        MatcherAssert.assertThat(contract, Matchers.is(contractTwo));
+        MatcherAssert.assertThat(contract, Matchers.equalTo(contractTwo));
     }
 
     /**

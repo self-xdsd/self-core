@@ -196,7 +196,7 @@ public final class StoredInvoiceTestCase {
             1, Mockito.mock(Contract.class),
             LocalDateTime.now(), mock(Storage.class)
         );
-        MatcherAssert.assertThat(invoice, Matchers.is(invoiceTwo));
+        MatcherAssert.assertThat(invoice, Matchers.equalTo(invoiceTwo));
     }
 
     /**
