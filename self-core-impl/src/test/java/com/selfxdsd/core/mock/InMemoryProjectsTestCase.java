@@ -239,6 +239,48 @@ public final class InMemoryProjectsTestCase {
     }
 
     /**
+     * InMemoryProjects has correct info about total pages after new projects
+     * has been registered.
+     */
+    @Test
+    public void hasCorrectTotalPages() {
+        final Storage storage = new InMemory();
+        final ProjectManager projectManager = storage
+            .projectManagers().pick("github");
+        final Projects all = storage.projects();
+
+        MatcherAssert.assertThat(all.current().getNumber(),
+            Matchers.is(1));
+        MatcherAssert.assertThat(all.current().getSize(),
+            Matchers.is(10));
+        MatcherAssert.assertThat(all.totalPages(),
+            Matchers.is(1));
+        MatcherAssert.assertThat(all, Matchers.emptyIterable());
+
+        for (int i = 0; i < 100; i++) {
+            final Repo repo = this.mockRepo("amihaiemil/test" + (i + 1),
+                "github");
+            all.register(repo, projectManager, "whtoken" + (i + 1));
+        }
+
+        MatcherAssert.assertThat(all.totalPages(),
+            Matchers.is(10));
+        MatcherAssert.assertThat(all, Matchers.iterableWithSize(10));
+        MatcherAssert.assertThat(all
+                .page(new Paged.Page(1, Integer.MAX_VALUE)),
+            Matchers.iterableWithSize(100));
+
+        Projects pageThree = all.page(new Paged.Page(3, 10));
+        MatcherAssert.assertThat(pageThree.totalPages(),
+            Matchers.is(10));
+        MatcherAssert.assertThat(pageThree.current().getNumber(),
+            Matchers.is(3));
+        MatcherAssert.assertThat(pageThree.current().getSize(),
+            Matchers.is(10));
+        MatcherAssert.assertThat(pageThree, Matchers.iterableWithSize(10));
+    }
+
+    /**
      * Helper method for mocking a {@link User}.
      * @param userName User name
      * @param providerName Provider name

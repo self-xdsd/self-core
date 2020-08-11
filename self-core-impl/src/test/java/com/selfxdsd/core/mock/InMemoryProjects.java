@@ -73,7 +73,7 @@ public final class InMemoryProjects extends BasePaged implements Projects{
         final Storage storage,
         final Map<ProjectKey, Project> projects,
         final Page page) {
-        super(page, projects.size());
+        super(page, projects::size);
         this.storage = storage;
         this.projects = projects;
     }
