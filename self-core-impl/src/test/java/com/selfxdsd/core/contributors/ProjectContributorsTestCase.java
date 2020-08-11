@@ -316,6 +316,9 @@ public final class ProjectContributorsTestCase {
         for (final String role : roles) {
             final Contract mock = Mockito.mock(Contract.class);
             Mockito.when(mock.role()).thenReturn(role);
+            Mockito.when(mock.hourlyRate()).thenReturn(
+                BigDecimal.valueOf(30000)
+            );
             contracts.add(mock);
         }
 
@@ -347,6 +350,7 @@ public final class ProjectContributorsTestCase {
         Mockito.when(owner.provider()).thenReturn(provider);
 
         Mockito.when(project.owner()).thenReturn(owner);
+        Mockito.when(project.wallet()).thenReturn(new Wallet.Missing());
 
         return project;
     }
