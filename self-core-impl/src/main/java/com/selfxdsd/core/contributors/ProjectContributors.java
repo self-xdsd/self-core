@@ -42,6 +42,12 @@ import java.util.stream.Stream;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.4
+ * @todo #376:30min Change this class to encapsulate the whole Project,
+ *  not just its ID. We need the Project in order to access its Wallet.
+ * @todo #376:30min Once we have the Project encapsulated here, adapt
+ *  the election algorithm to make sure that we only elect contributors
+ *  whom we can afford to pay (the would-be Task value has to be less
+ *  than the available cash in the Wallet).
  */
 public final class ProjectContributors implements Contributors {
 
