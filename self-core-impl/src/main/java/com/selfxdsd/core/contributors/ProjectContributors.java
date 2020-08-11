@@ -22,13 +22,11 @@
  */
 package com.selfxdsd.core.contributors;
 
-import com.selfxdsd.api.Contract;
-import com.selfxdsd.api.Contributor;
-import com.selfxdsd.api.Contributors;
-import com.selfxdsd.api.Task;
+import com.selfxdsd.api.*;
 import com.selfxdsd.api.storage.Storage;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -44,6 +42,11 @@ import java.util.stream.Stream;
  * @since 0.0.4
  */
 public final class ProjectContributors implements Contributors {
+
+    /**
+     * The Project.
+     */
+    private final Project project;
 
     /**
      * Full name of the Repo represented by the Project.
@@ -67,19 +70,18 @@ public final class ProjectContributors implements Contributors {
 
     /**
      * Constructor.
-     * @param repoFullName Full name of the Repo represented by the Project.
-     * @param provider Provider of the Repo represented by the Project.
+     * @param project The project.
      * @param contributors Project's contributors.
      * @param storage Self's storage, to save new contracts.
      */
     public ProjectContributors(
-        final String repoFullName,
-        final String provider,
+        final Project project,
         final Supplier<Stream<Contributor>> contributors,
         final Storage storage
     ) {
-        this.repoFullName = repoFullName;
-        this.provider = provider;
+        this.project = project;
+        this.repoFullName = project.repoFullName();
+        this.provider = project.owner().provider().name();
         this.contributors = contributors;
         this.storage = storage;
     }
@@ -167,14 +169,24 @@ public final class ProjectContributors implements Contributors {
                     return true;
                 }
             ).filter(
-               contributor -> {
-                   for(final Contract contract : contributor.contracts()) {
-                       if(contract.role().equals(task.role())) {
-                           return true;
-                       }
-                   }
-                   return false;
-               }
+                contributor -> {
+                    for(final Contract contract : contributor.contracts()) {
+                        if(contract.role().equals(task.role())) {
+                            final BigDecimal price = contract.hourlyRate()
+                                .multiply(
+                                    BigDecimal.valueOf(task.estimation())
+                                ).divide(
+                                    BigDecimal.valueOf(60),
+                                    RoundingMode.HALF_UP
+                                );
+                            final BigDecimal budget = this.project
+                                .wallet()
+                                .available();
+                            return price.compareTo(budget) <= 0;
+                        }
+                    }
+                    return false;
+                }
             ).collect(Collectors.toList());
         if(eligible.size() > 0) {
             Collections.shuffle(eligible);

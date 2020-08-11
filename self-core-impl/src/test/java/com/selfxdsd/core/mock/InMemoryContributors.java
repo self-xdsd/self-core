@@ -97,7 +97,11 @@ public final class InMemoryContributors implements Contributors {
             }
         ).collect(Collectors.toList());
         return new ProjectContributors(
-            repoFullName, repoProvider, found::stream, this.storage
+            this.storage.projects().getProjectById(
+                repoFullName,
+                repoProvider
+            ),
+            found::stream, this.storage
         );
     }
 

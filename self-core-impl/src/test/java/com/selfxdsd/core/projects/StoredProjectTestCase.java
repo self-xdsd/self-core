@@ -58,6 +58,27 @@ public final class StoredProjectTestCase {
     }
 
     /**
+     * StoredProject can return its wallet.
+     */
+    @Test
+    public void returnsWallet() {
+        final Project project = new StoredProject(
+            Mockito.mock(User.class),
+            "john/test",
+            "wh123token",
+            Mockito.mock(ProjectManager.class),
+            Mockito.mock(Storage.class)
+        );
+        MatcherAssert.assertThat(
+            project.wallet(),
+            Matchers.allOf(
+                Matchers.notNullValue(),
+                Matchers.instanceOf(Wallet.Missing.class)
+            )
+        );
+    }
+
+    /**
      * StoredProject can return its webhook token.
      */
     @Test

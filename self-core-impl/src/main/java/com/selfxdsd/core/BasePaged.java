@@ -2,6 +2,8 @@ package com.selfxdsd.core;
 
 import com.selfxdsd.api.storage.Paged;
 
+import java.util.function.Supplier;
+
 /**
  * Base implementation of {@link Paged}.
  *
@@ -17,17 +19,19 @@ public abstract class BasePaged implements Paged {
     private final Page current;
 
     /**
-     * Total number of Project from data source.
+     * Total number of Projects across all pages obtained dynamically
+     * from data source. This ensure we are in sync with the data source size.
      */
-    private final int totalRecords;
+    private final Supplier<Integer> totalRecords;
 
     /**
      * Ctor.
      * @param current Current page.
-     * @param totalRecords Total number of Project from data source.
+     * @param totalRecords Total number of Projects across all pages
+     *                     obtained dynamically from data source.
      */
     protected BasePaged(final Page current,
-                        final int totalRecords) {
+                        final Supplier<Integer> totalRecords) {
         this.current = current;
         this.totalRecords = totalRecords;
         final int totalPages = this.totalPages();
@@ -46,7 +50,7 @@ public abstract class BasePaged implements Paged {
     @Override
     public final int totalPages() {
         final int size = this.current.getSize();
-        return Math.max(1, (this.totalRecords + size - 1) / size);
+        return Math.max(1, (this.totalRecords.get() + size - 1) / size);
     }
 
 }

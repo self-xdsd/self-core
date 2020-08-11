@@ -39,6 +39,9 @@ import java.util.Objects;
  *  It should decide what kind of event has occurred and delegate it
  *  further to the ProjectManager who will deal with it. We still need
  *  the Issue Assigned case and Comment Created case.
+ * @todo #376:60min At the moment the wallet() method always returns the
+ *  Missing wallet. Implement the walletId DB column and attribute of a
+ *  Project and return a real Wallet if this id exists (!= null).
  */
 public final class StoredProject implements Project {
 
@@ -103,6 +106,11 @@ public final class StoredProject implements Project {
     @Override
     public User owner() {
         return this.owner;
+    }
+
+    @Override
+    public Wallet wallet() {
+        return new Wallet.Missing();
     }
 
     @Override
