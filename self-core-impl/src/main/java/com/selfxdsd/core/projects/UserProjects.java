@@ -74,7 +74,7 @@ public final class UserProjects extends BasePaged implements Projects {
     public UserProjects(final User user,
                         final Supplier<Stream<Project>> projects,
                         final Page page) {
-        super(page, (int) projects.get().count());
+        super(page, () -> (int) projects.get().count());
         this.user = user;
         this.projects = projects;
     }
