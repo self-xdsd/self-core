@@ -22,7 +22,11 @@
  */
 package com.selfxdsd.api;
 
+import com.selfxdsd.api.exceptions.InvoiceAlreadyPaidExeption;
+
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.UUID;
 
 /**
  * A project's wallet.
@@ -42,6 +46,14 @@ public interface Wallet {
     BigDecimal available();
 
     /**
+     * Pay an invoice.
+     * @param invoice The Invoice to be paid.
+     * @return The paid Invoice containing the payment time and transaction ID.
+     * @throws InvoiceAlreadyPaidExeption If the Invoice is already paid.
+     */
+    Invoice pay(final Invoice invoice);
+
+    /**
      * Missing wallet. Used when a Project has no wallet set up.
      */
     final class Missing implements Wallet {
@@ -54,6 +66,66 @@ public interface Wallet {
         @Override
         public BigDecimal available() {
             return this.cash;
+        }
+
+        @Override
+        public Invoice pay(final Invoice invoice) {
+            if(invoice.isPaid()) {
+                throw new InvoiceAlreadyPaidExeption(invoice);
+            }
+            final LocalDateTime paymentTime = LocalDateTime.now();
+            final String transactionId = "fk-" + UUID
+                .randomUUID()
+                .toString()
+                .replace("-", "");
+            return new Invoice() {
+                @Override
+                public int invoiceId() {
+                    return invoice.invoiceId();
+                }
+
+                @Override
+                public InvoicedTask register(final Task task) {
+                    throw new IllegalStateException(
+                        "Invoice is already paid, can't add a new Task to it!"
+                    );
+                }
+
+                @Override
+                public Contract contract() {
+                    return invoice.contract();
+                }
+
+                @Override
+                public LocalDateTime createdAt() {
+                    return invoice.createdAt();
+                }
+
+                @Override
+                public LocalDateTime paymentTime() {
+                    return paymentTime;
+                }
+
+                @Override
+                public String transactionId() {
+                    return transactionId;
+                }
+
+                @Override
+                public InvoicedTasks tasks() {
+                    return invoice.tasks();
+                }
+
+                @Override
+                public BigDecimal totalAmount() {
+                    return invoice.totalAmount();
+                }
+
+                @Override
+                public boolean isPaid() {
+                    return true;
+                }
+            };
         }
     }
 }
