@@ -66,7 +66,48 @@ public final class StoredInvoiceTestCase {
     }
 
     /**
-     * A StoredInvoice will not register a Task which is from another Contract.
+     * A StoredInvoice can return its payment time.
+     */
+    @Test
+    public void hasPaymentTime() {
+        final LocalDateTime paymentTime = LocalDateTime.now();
+        final Invoice invoice = new StoredInvoice(
+            1,
+            Mockito.mock(Contract.class),
+            LocalDateTime.now(),
+            paymentTime,
+            "transactionId",
+            mock(Storage.class)
+        );
+        MatcherAssert.assertThat(
+            invoice.paymentTime(),
+            Matchers.is(paymentTime)
+        );
+    }
+
+    /**
+     * A StoredInvoice can return its transaction id.
+     */
+    @Test
+    public void hasTransactionId() {
+        final LocalDateTime paymentTime = LocalDateTime.now();
+        final Invoice invoice = new StoredInvoice(
+            1,
+            Mockito.mock(Contract.class),
+            LocalDateTime.now(),
+            paymentTime,
+            "transactionId123",
+            mock(Storage.class)
+        );
+        MatcherAssert.assertThat(
+            invoice.transactionId(),
+            Matchers.is("transactionId123")
+        );
+    }
+
+    /**
+     * A StoredInvoice will not register a Task which is from
+     * another Contract.
      */
     @Test(expected = IllegalArgumentException.class)
     public void registerRejectsForeignTask() {

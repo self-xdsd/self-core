@@ -22,10 +22,13 @@
  */
 package com.selfxdsd.core;
 
+import com.selfxdsd.api.Invoice;
 import com.selfxdsd.api.Wallet;
+import com.selfxdsd.api.exceptions.InvoiceAlreadyPaidExeption;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 import java.math.BigDecimal;
 
@@ -43,11 +46,45 @@ public final class MissingWalletTestCase {
      */
     @Test
     public void maxValueCash() {
-        final Wallet missing = new Wallet.Missing();
+        final Wallet wallet = new Wallet.Missing();
         MatcherAssert.assertThat(
-            missing.available(),
+            wallet.available(),
             Matchers.equalTo(BigDecimal.valueOf(Integer.MAX_VALUE))
         );
+    }
+
+    /**
+     * The Missing wallet can pay an Invoice.
+     */
+    @Test
+    public void paysInvoice() {
+        final Wallet wallet = new Wallet.Missing();
+        final Invoice invoice = Mockito.mock(Invoice.class);
+        Mockito.when(invoice.isPaid()).thenReturn(Boolean.FALSE);
+
+        final Invoice paid = wallet.pay(invoice);
+
+        MatcherAssert.assertThat(paid.isPaid(), Matchers.is(Boolean.TRUE));
+        MatcherAssert.assertThat(paid.paymentTime(), Matchers.notNullValue());
+        MatcherAssert.assertThat(
+            paid.transactionId(),
+            Matchers.allOf(
+                Matchers.notNullValue(),
+                Matchers.startsWith("fk-")
+            )
+        );
+    }
+
+    /**
+     * The Missing wallet should throw an exception if we try to pay
+     * an Invoice which is already paid.
+     */
+    @Test(expected = InvoiceAlreadyPaidExeption.class)
+    public void complainsDoublePayment() {
+        final Wallet wallet = new Wallet.Missing();
+        final Invoice paid = Mockito.mock(Invoice.class);
+        Mockito.when(paid.isPaid()).thenReturn(Boolean.TRUE);
+        wallet.pay(paid);
     }
 
 }

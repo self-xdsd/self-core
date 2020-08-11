@@ -125,6 +125,16 @@ public final class StoredInvoice implements Invoice {
     }
 
     @Override
+    public LocalDateTime paymentTime() {
+        return this.paymentTime;
+    }
+
+    @Override
+    public String transactionId() {
+        return this.transactionId;
+    }
+
+    @Override
     public InvoicedTasks tasks() {
         return this.storage.invoicedTasks().ofInvoice(this);
     }
