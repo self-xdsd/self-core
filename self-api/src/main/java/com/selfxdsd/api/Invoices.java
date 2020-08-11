@@ -37,4 +37,10 @@ public interface Invoices extends Iterable<Invoice> {
      */
     Invoices ofContract(final Contract.Id id);
 
+    /**
+     * Register an Invoice as paid.
+     * @param invoice Paid invoice.
+     * @return True or false, depending on whether the operation succeeded.
+     */
+    boolean registerAsPaid(final Invoice invoice);
 }
