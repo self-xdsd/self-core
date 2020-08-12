@@ -9,18 +9,22 @@ import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.json.JsonValue;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.function.Function;
 
 /**
  * A mock implementation of {@link JsonResources} used to unit test
- * {@link com.selfxdsd.api.Provider} requests.
+ * {@link com.selfxdsd.api.Provider} requests. It also offers a way to test
+ * the requests history by using {@link MockJsonResources#requests()}.
  * <br/>
  * Here is an example of how this class could be used to test a
  * Github Provider.
  * <br/>
  * It handles most of the provider requests (repo and invitations).
  * <pre>
- * final JsonResources resources = new MockJsonResources(r -> {
+ * final MockJsonResources resources = new MockJsonResources(r -> {
  *    final MockResource response;
  *    if (r.getMethod().equals("GET")) {
  *        String uri = r.getUri().toString();
@@ -64,7 +68,8 @@ import java.util.function.Function;
  *final Provider github = new Github(user, storage, resources);
  *final Repo repo = github.repo("myrepo");
  *final Invitations invitations = github.invitations();
- *...
+ *final MockRequests requests = resources.requests();
+ * //...test requests and resource responses.
  * </pre>
  * @author criske
  * @version $Id$
@@ -80,6 +85,10 @@ public final class MockJsonResources implements JsonResources {
      * Callback used by tests to simulate a Resource response.
      */
     private final Function<MockRequest, MockResource> onRequest;
+    /**
+     * Request history.
+     */
+    private final MockRequests requests;
 
     /**
      * Ctor.
@@ -89,8 +98,9 @@ public final class MockJsonResources implements JsonResources {
     public MockJsonResources(final AccessToken accessToken,
                              final
                              Function<MockRequest, MockResource> onRequest) {
+        this.requests = new MockRequests();
         this.accessToken = accessToken;
-        this.onRequest = onRequest;
+        this.onRequest = (req) -> onRequest.apply(this.requests.add(req));
     }
 
     /**
@@ -151,6 +161,14 @@ public final class MockJsonResources implements JsonResources {
             this.accessToken
         );
         return this.onRequest.apply(request);
+    }
+
+    /**
+     * Get the requests history.
+     * @return MockRequests.
+     */
+    public MockRequests requests(){
+        return this.requests;
     }
 
     /**
@@ -222,6 +240,64 @@ public final class MockJsonResources implements JsonResources {
          */
         public AccessToken getAccessToken() {
             return accessToken;
+        }
+    }
+
+    /**
+     * Tracks the request history of {@link MockJsonResources}.
+     */
+    public static final class MockRequests implements Iterable<MockRequest> {
+
+        /**
+         * List that keeps the request history.
+         */
+        private final List<MockRequest> requests;
+
+        /**
+         * Private ctor.
+         */
+        private MockRequests(){
+            this.requests= new ArrayList<>();
+        }
+
+        /**
+         * Adds new request to the history.
+         * @param request Request.
+         * @return Added Request.
+         */
+        private MockRequest add(final MockRequest request){
+            requests.add(request);
+            return request;
+        }
+
+        /**
+         * The Request at the specified index.
+         * @param index Zero based index.
+         * @return MockRequest.
+         */
+        public MockRequest atIndex(final int index) {
+            return requests.get(index);
+        }
+
+        /**
+         * First request ever made.
+         * @return MockRequest
+         */
+        public MockRequest first() {
+            return requests.get(0);
+        }
+
+        /**
+         * Last request made.
+         * @return MockRequest
+         */
+        public MockRequest last() {
+            return requests.get(requests.size() - 1);
+        }
+
+        @Override
+        public Iterator<MockRequest> iterator() {
+            return requests.iterator();
         }
     }
 

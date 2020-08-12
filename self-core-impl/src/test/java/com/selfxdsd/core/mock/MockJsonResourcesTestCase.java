@@ -202,6 +202,29 @@ public final class MockJsonResourcesTestCase {
     }
 
     /**
+     * JsonResources requests history can be tested.
+     *  @checkstyle RegexpSingleline (20 lines)
+     */
+    @Test
+    public void requestHistoryCanBeTested() {
+        final MockJsonResources resources = new MockJsonResources(r ->
+            new MockResource(200, JsonValue.NULL));
+
+        resources.get(URI.create("/"));
+        resources.post(URI.create("/"), JsonValue.NULL);
+        resources.put(URI.create("/"), JsonValue.NULL);
+
+        MatcherAssert.assertThat(resources.requests(),
+            Matchers.iterableWithSize(3));
+        MatcherAssert.assertThat(resources.requests().first().getMethod(),
+            Matchers.equalTo("GET"));
+        MatcherAssert.assertThat(resources.requests().atIndex(1).getMethod(),
+            Matchers.equalTo("POST"));
+        MatcherAssert.assertThat(resources.requests().last().getMethod(),
+            Matchers.equalTo("PUT"));
+    }
+
+    /**
      * Mocks an access token.
      * @param header Header name.
      * @param value Token value.
