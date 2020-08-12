@@ -54,6 +54,12 @@ public final class InMemoryInvoices implements Invoices {
     }
 
     @Override
+    public boolean registerAsPaid(final Invoice invoice) {
+        this.invoices.put(invoice.invoiceId(), invoice);
+        return true;
+    }
+
+    @Override
     public Invoice getById(final int id) {
         return this.invoices.get(id);
     }

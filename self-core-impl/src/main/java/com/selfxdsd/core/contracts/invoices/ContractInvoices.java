@@ -89,6 +89,16 @@ public final class ContractInvoices implements Invoices {
     }
 
     @Override
+    public boolean registerAsPaid(final Invoice invoice) {
+        if(!invoice.contract().contractId().equals(this.contractId)){
+            throw new IllegalStateException(
+                "The given Invoice belongs to another contract."
+            );
+        }
+        return this.storage.invoices().registerAsPaid(invoice);
+    }
+
+    @Override
     public Invoice getById(final int id) {
         Invoice found = null;
         for(final Invoice invoice : this) {
