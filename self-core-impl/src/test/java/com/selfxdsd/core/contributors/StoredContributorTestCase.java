@@ -124,5 +124,41 @@ public final class StoredContributorTestCase {
             Matchers.is(tasks)
         );
     }
+    
+    /**
+     * Can compare two StoredContributor objects.
+     */
+    @Test
+    public void comparesStoredContributorObjects() {
+        final Contributor contributor = new StoredContributor(
+            "mihai",
+            Provider.Names.GITHUB,
+            Mockito.mock(Storage.class)
+        );
+        final Contributor contributorTwo = new StoredContributor(
+            "mihai",
+            Provider.Names.GITHUB,
+            Mockito.mock(Storage.class)
+        );
+        MatcherAssert.assertThat(contributor, Matchers.equalTo(contributorTwo));
+    }
 
+    /**
+     * Verifies HashCode generation from StoredContributor.
+     */
+    @Test
+    public void verifiesStoredContributorHashcode() {
+        final Contributor contributor = new StoredContributor(
+            "mihai",
+            Provider.Names.GITHUB,
+            Mockito.mock(Storage.class)
+        );
+        final Contributor contributorTwo = new StoredContributor(
+            "mihai",
+            Provider.Names.GITHUB,
+            Mockito.mock(Storage.class)
+        );
+        MatcherAssert.assertThat(contributor.hashCode(),
+            Matchers.equalTo(contributorTwo.hashCode()));
+    };
 }
