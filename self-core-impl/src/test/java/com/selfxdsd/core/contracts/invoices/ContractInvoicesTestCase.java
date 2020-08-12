@@ -31,7 +31,6 @@ import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.mockito.Mockito;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -197,6 +196,81 @@ public final class ContractInvoicesTestCase {
             Mockito.mock(Storage.class)
         );
         invoices.createNewInvoice(other);
+    }
+
+    /**
+     * Method registerPaidInvoice works.
+     */
+    @Test
+    public void registersPaidInvoice() {
+        final Invoice invoice = Mockito.mock(Invoice.class);
+        final Contract contract = Mockito.mock(Contract.class);
+        Mockito.when(invoice.contract()).thenReturn(contract);
+
+        final Contract.Id contractId = new Contract.Id(
+            "john/test",
+            "mihai",
+            Provider.Names.GITHUB,
+            Contract.Roles.DEV
+        );
+        Mockito.when(contract.contractId()).thenReturn(contractId);
+
+        final Invoices all = Mockito.mock(Invoices.class);
+        Mockito.when(all.registerAsPaid(invoice)).thenReturn(Boolean.TRUE);
+        final Storage storage = Mockito.mock(Storage.class);
+        Mockito.when(storage.invoices()).thenReturn(all);
+
+        final Invoices invoices = new ContractInvoices(
+            contractId,
+            () -> new ArrayList<Invoice>().stream(),
+            storage
+        );
+
+        MatcherAssert.assertThat(
+            invoices.registerAsPaid(invoice),
+            Matchers.is(Boolean.TRUE)
+        );
+    }
+
+    /**
+     * Method registerPaidInvoice complains if the given Invoice belongs
+     * to another contract.
+     */
+    @Test (expected = IllegalStateException.class)
+    public void registerPaidInvoiceComplainsOnDifferentContract() {
+        final Invoice invoice = Mockito.mock(Invoice.class);
+        final Contract contract = Mockito.mock(Contract.class);
+        Mockito.when(invoice.contract()).thenReturn(contract);
+        final Contract.Id other = new Contract.Id(
+            "john/test",
+            "vlad",
+            Provider.Names.GITHUB,
+            Contract.Roles.DEV
+        );
+        Mockito.when(contract.contractId()).thenReturn(other);
+
+        final Contract.Id contractId = new Contract.Id(
+            "john/test",
+            "mihai",
+            Provider.Names.GITHUB,
+            Contract.Roles.DEV
+        );
+
+        final Invoices all = Mockito.mock(Invoices.class);
+        Mockito.when(all.registerAsPaid(invoice)).thenReturn(Boolean.TRUE);
+        final Storage storage = Mockito.mock(Storage.class);
+        Mockito.when(storage.invoices()).thenReturn(all);
+
+        final Invoices invoices = new ContractInvoices(
+            contractId,
+            () -> new ArrayList<Invoice>().stream(),
+            storage
+        );
+
+        MatcherAssert.assertThat(
+            invoices.registerAsPaid(invoice),
+            Matchers.is(Boolean.TRUE)
+        );
     }
 
     /**
