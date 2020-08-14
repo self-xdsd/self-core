@@ -40,6 +40,8 @@ import java.util.stream.Stream;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.4
+ * @todo #393:30min Take the PM's commission into account when electing
+ *  a Contributor (to make sure we can afford to pay everything).
  */
 public final class ProjectContributors implements Contributors {
 

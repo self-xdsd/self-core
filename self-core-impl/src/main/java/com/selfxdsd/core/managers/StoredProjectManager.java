@@ -30,6 +30,7 @@ import com.selfxdsd.core.Gitlab;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 /**
@@ -75,6 +76,11 @@ public final class StoredProjectManager implements ProjectManager {
     private final String accessToken;
 
     /**
+     * Commission for each handled Task, in cents.
+     */
+    private final BigDecimal commission;
+
+    /**
      * Self's storage.
      */
     private final Storage storage;
@@ -86,6 +92,7 @@ public final class StoredProjectManager implements ProjectManager {
      * @param username PM's username.
      * @param provider The provider's name (Gitlab, Github etc).
      * @param accessToken API Access token.
+     * @param commission Commission in cents.
      * @param storage Self's storage.
      * @checkstyle ParameterNumber (10 lines)
      */
@@ -95,6 +102,7 @@ public final class StoredProjectManager implements ProjectManager {
         final String username,
         final String provider,
         final String accessToken,
+        final BigDecimal commission,
         final Storage storage
     ) {
         this.id = id;
@@ -102,6 +110,7 @@ public final class StoredProjectManager implements ProjectManager {
         this.username = username;
         this.provider = provider;
         this.accessToken = accessToken;
+        this.commission = commission;
         this.storage = storage;
     }
 
@@ -145,6 +154,11 @@ public final class StoredProjectManager implements ProjectManager {
     @Override
     public Projects projects() {
         return this.storage.projects().assignedTo(this.id);
+    }
+
+    @Override
+    public BigDecimal commission() {
+        return this.commission;
     }
 
     @Override

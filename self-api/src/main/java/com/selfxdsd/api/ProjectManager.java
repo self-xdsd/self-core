@@ -22,6 +22,8 @@
  */
 package com.selfxdsd.api;
 
+import java.math.BigDecimal;
+
 /**
  * A Project Manager.
  * @author Mihai Andronache (amihaiemil@gmail.com)
@@ -67,6 +69,13 @@ public interface ProjectManager {
      * @return Projects.
      */
     Projects projects();
+
+    /**
+     * The commission that this PM will earn for every handled
+     * Task, in cents.
+     * @return BigDecimal.
+     */
+    BigDecimal commission();
 
     /**
      * Handle the "activate" (new project registered) event.

@@ -30,6 +30,8 @@ import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import java.math.BigDecimal;
+
 /**
  * Unit tests for {@link StoredProjectManager}.
  *
@@ -50,6 +52,7 @@ public final class StoredProjectManagerTestCase {
             "zoeself",
             Provider.Names.GITHUB,
             "1s23token",
+            BigDecimal.valueOf(50),
             Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(
@@ -69,6 +72,7 @@ public final class StoredProjectManagerTestCase {
             "zoeself",
             Provider.Names.GITHUB,
             "1s23token",
+            BigDecimal.valueOf(50),
             Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(
@@ -88,6 +92,7 @@ public final class StoredProjectManagerTestCase {
             "zoeself",
             Provider.Names.GITHUB,
             "123token",
+            BigDecimal.valueOf(50),
             Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(
@@ -96,6 +101,26 @@ public final class StoredProjectManagerTestCase {
                 Matchers.notNullValue(),
                 Matchers.instanceOf(Github.class)
             )
+        );
+    }
+
+    /**
+     * StoredProjectManager returns its commission.
+     */
+    @Test
+    public void returnsCommission() {
+        final ProjectManager manager = new StoredProjectManager(
+            1,
+            "123",
+            "zoeself",
+            Provider.Names.GITHUB,
+            "123token",
+            BigDecimal.valueOf(50),
+            Mockito.mock(Storage.class)
+        );
+        MatcherAssert.assertThat(
+            manager.commission(),
+            Matchers.equalTo(BigDecimal.valueOf(50))
         );
     }
 
@@ -117,6 +142,7 @@ public final class StoredProjectManagerTestCase {
             "zoeself",
             Provider.Names.GITHUB,
             "123token",
+            BigDecimal.valueOf(50),
             storage
         );
         MatcherAssert.assertThat(
@@ -195,6 +221,7 @@ public final class StoredProjectManagerTestCase {
             "zoeself",
             Provider.Names.GITHUB,
             "123token",
+            BigDecimal.valueOf(50),
             new InMemory()
         );
         final Project assigned = manager.assign(repo);
@@ -221,6 +248,7 @@ public final class StoredProjectManagerTestCase {
             "zoeself",
             Provider.Names.GITHUB,
             "123token",
+            BigDecimal.valueOf(50),
             storage
         );
         final Project project = storage.projects()
@@ -298,6 +326,7 @@ public final class StoredProjectManagerTestCase {
             "zoeself",
             Provider.Names.GITHUB,
             "123token",
+            BigDecimal.valueOf(50),
             storage
         );
         final Project project = storage.projects()
@@ -377,6 +406,7 @@ public final class StoredProjectManagerTestCase {
             "zoeself",
             Provider.Names.GITHUB,
             "123token",
+            BigDecimal.valueOf(50),
             storage
         );
         final Issue issue = Mockito.mock(Issue.class);
@@ -454,6 +484,7 @@ public final class StoredProjectManagerTestCase {
             "zoeself",
             Provider.Names.GITHUB,
             "1s23token",
+            BigDecimal.valueOf(50),
             Mockito.mock(Storage.class)
         );
         final ProjectManager managerTwo = new StoredProjectManager(
@@ -462,6 +493,7 @@ public final class StoredProjectManagerTestCase {
             "zoeself",
             Provider.Names.GITHUB,
             "1s23token",
+            BigDecimal.valueOf(50),
             Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(manager, Matchers.equalTo(managerTwo));
@@ -478,6 +510,7 @@ public final class StoredProjectManagerTestCase {
             "zoeself",
             Provider.Names.GITHUB,
             "1s23token",
+            BigDecimal.valueOf(50),
             Mockito.mock(Storage.class)
         );
         final ProjectManager managerTwo = new StoredProjectManager(
@@ -486,6 +519,7 @@ public final class StoredProjectManagerTestCase {
             "zoeself",
             Provider.Names.GITHUB,
             "1s23token",
+            BigDecimal.valueOf(50),
             Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(manager.hashCode(),

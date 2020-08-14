@@ -27,6 +27,8 @@ package com.selfxdsd.api;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
+ * @todo #393:30min Method register(...): make sure to also accept
+ *  the PM's commission (BigDecimal) as parameter.
  */
 public interface ProjectManagers extends Iterable<ProjectManager> {
 
