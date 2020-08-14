@@ -22,13 +22,13 @@
  */
 package com.selfxdsd.api;
 
+import java.math.BigDecimal;
+
 /**
  * Project Managers API.
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
- * @todo #393:30min Method register(...): make sure to also accept
- *  the PM's commission (BigDecimal) as parameter.
  */
 public interface ProjectManagers extends Iterable<ProjectManager> {
 
@@ -52,12 +52,15 @@ public interface ProjectManagers extends Iterable<ProjectManager> {
      * @param username User name.
      * @param provider Provider name.
      * @param accessToken Access token.
+     * @param commission Commission that this PM will earn
+     *  for each Task it deals with.
      * @return The registered ProjectManager.
      */
     ProjectManager register(
         final String userId,
         final String username,
         final String provider,
-        final String accessToken
+        final String accessToken,
+        final BigDecimal commission
     );
 }
