@@ -40,8 +40,6 @@ import java.util.stream.Stream;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.4
- * @todo #393:30min Take the PM's commission into account when electing
- *  a Contributor (to make sure we can afford to pay everything).
  */
 public final class ProjectContributors implements Contributors {
 
@@ -180,6 +178,10 @@ public final class ProjectContributors implements Contributors {
                                 ).divide(
                                     BigDecimal.valueOf(60),
                                     RoundingMode.HALF_UP
+                                ).add(task
+                                    .project()
+                                    .projectManager()
+                                    .commission()
                                 );
                             final BigDecimal budget = this.project
                                 .wallet()
