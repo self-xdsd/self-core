@@ -188,7 +188,10 @@ public final class StoredContractTestCase {
     }
 
     /**
-     * StoredContract can return its value.
+     * StoredContract can return its value, which is
+     * the sum of the active Tasks, plus the total amount
+     * of the active invoice, plus the PM's commission for each
+     * Task.
      *
      * @checkstyle ExecutableStatementCount (50 lines)
      */
@@ -233,7 +236,18 @@ public final class StoredContractTestCase {
             )
         ).thenReturn(invoices);
 
+        final ProjectManager manager = Mockito.mock(ProjectManager.class);
+        Mockito.when(manager.commission()).thenReturn(BigDecimal.valueOf(50));
+
+        final Projects allProjects = Mockito.mock(Projects.class);
+        final Project project = Mockito.mock(Project.class);
+        Mockito.when(project.projectManager()).thenReturn(manager);
+        Mockito.when(
+            allProjects.getProjectById("john/test", "github")
+        ).thenReturn(project);
+
         final Storage storage = Mockito.mock(Storage.class);
+        Mockito.when(storage.projects()).thenReturn(allProjects);
         Mockito.when(storage.tasks()).thenReturn(allTasks);
         Mockito.when(storage.invoices()).thenReturn(allInvoices);
 
@@ -250,7 +264,7 @@ public final class StoredContractTestCase {
 
         MatcherAssert.assertThat(
             contract.value(),
-            Matchers.equalTo(BigDecimal.valueOf(44800))
+            Matchers.equalTo(BigDecimal.valueOf(44950))
         );
     }
 

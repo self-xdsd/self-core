@@ -80,7 +80,7 @@ public interface Contract {
     /**
      * This contract's current value. It's the sum of
      * the active tasks' value and the value of the active
-     * Invoice.
+     * Invoice, as well as the value of PM's commission.
      * @return Value.
      */
     BigDecimal value();

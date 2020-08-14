@@ -190,8 +190,13 @@ public final class StoredContract implements Contract {
     @Override
     public BigDecimal value() {
         BigDecimal total = BigDecimal.valueOf(0);
+        final BigDecimal commission = this.project()
+            .projectManager()
+            .commission();
         for(final Task task : this.tasks()) {
-            total = total.add(task.value());
+            total = total
+                .add(task.value())
+                .add(commission);
         }
         total = total.add(this.invoices().active().totalAmount());
         return total;
