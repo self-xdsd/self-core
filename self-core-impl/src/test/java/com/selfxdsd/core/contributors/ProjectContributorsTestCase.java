@@ -52,7 +52,8 @@ public final class ProjectContributorsTestCase {
             this.mockProject(
                 "john/test",
                 Provider.Names.GITHUB,
-                BigDecimal.valueOf(100000)
+                BigDecimal.valueOf(100000),
+                BigDecimal.valueOf(1000)
             ),
             List.of(Mockito.mock(Contributor.class),
                 Mockito.mock(Contributor.class),
@@ -71,7 +72,8 @@ public final class ProjectContributorsTestCase {
             this.mockProject(
                 "john/test",
                 Provider.Names.GITHUB,
-                BigDecimal.valueOf(100000)
+                BigDecimal.valueOf(100000),
+                BigDecimal.valueOf(1000)
             ),
             Stream::empty,
             Mockito.mock(Storage.class)
@@ -98,7 +100,8 @@ public final class ProjectContributorsTestCase {
             this.mockProject(
                 "john/test",
                 Provider.Names.GITHUB,
-                BigDecimal.valueOf(100000)
+                BigDecimal.valueOf(100000),
+                BigDecimal.valueOf(1000)
             ),
             List.of(vlad, mihai)::stream,
             Mockito.mock(Storage.class)
@@ -118,7 +121,8 @@ public final class ProjectContributorsTestCase {
             this.mockProject(
                 "john/test",
                 Provider.Names.GITHUB,
-                BigDecimal.valueOf(100000)
+                BigDecimal.valueOf(100000),
+                BigDecimal.valueOf(1000)
             ),
             List.of(Mockito.mock(Contributor.class),
                 Mockito.mock(Contributor.class),
@@ -141,7 +145,8 @@ public final class ProjectContributorsTestCase {
             this.mockProject(
                 "john/test",
                 Provider.Names.GITHUB,
-                BigDecimal.valueOf(100000)
+                BigDecimal.valueOf(100000),
+                BigDecimal.valueOf(1000)
             ),
             List.of(Mockito.mock(Contributor.class),
                 Mockito.mock(Contributor.class),
@@ -163,7 +168,8 @@ public final class ProjectContributorsTestCase {
             this.mockProject(
                 "john/test",
                 Provider.Names.GITHUB,
-                BigDecimal.valueOf(100000)
+                BigDecimal.valueOf(100000),
+                BigDecimal.valueOf(1000)
             ),
             List.of(Mockito.mock(Contributor.class),
                 Mockito.mock(Contributor.class),
@@ -185,7 +191,8 @@ public final class ProjectContributorsTestCase {
             this.mockProject(
                 "john/test",
                 Provider.Names.GITHUB,
-                BigDecimal.valueOf(100000)
+                BigDecimal.valueOf(100000),
+                BigDecimal.valueOf(1000)
             ),
             List.of(vlad)::stream,
             Mockito.mock(Storage.class)
@@ -229,7 +236,8 @@ public final class ProjectContributorsTestCase {
             this.mockProject(
                 "john/test",
                 Provider.Names.GITHUB,
-                BigDecimal.valueOf(100000)
+                BigDecimal.valueOf(100000),
+                BigDecimal.valueOf(1000)
             ),
             allContributorsSrc::stream,
             storage
@@ -251,7 +259,8 @@ public final class ProjectContributorsTestCase {
             this.mockProject(
                 "john/test",
                 Provider.Names.GITHUB,
-                BigDecimal.valueOf(100000)
+                BigDecimal.valueOf(100000),
+                BigDecimal.valueOf(1000)
             ),
             Stream::empty,
             Mockito.mock(Storage.class)
@@ -271,12 +280,14 @@ public final class ProjectContributorsTestCase {
         final Contributor assignee = this.mockContributor(
             "mihai", BigDecimal.valueOf(10000), "DEV", "REV", "QA"
         );
+        final Project project = this.mockProject(
+            "john/test",
+            Provider.Names.GITHUB,
+            BigDecimal.valueOf(100000),
+            BigDecimal.valueOf(1000)
+        );
         final Contributors contributors = new ProjectContributors(
-            this.mockProject(
-                "john/test",
-                Provider.Names.GITHUB,
-                BigDecimal.valueOf(100000)
-            ),
+            project,
             List.of(
                 assignee,
                 this.mockContributor("vlad", BigDecimal.valueOf(10000), "DEV"),
@@ -293,6 +304,7 @@ public final class ProjectContributorsTestCase {
         final Task task = Mockito.mock(Task.class);
         Mockito.when(task.assignee()).thenReturn(assignee);
         Mockito.when(task.role()).thenReturn("DEV");
+        Mockito.when(task.project()).thenReturn(project);
         final Contributor elected = contributors.elect(task);
 
         MatcherAssert.assertThat(
@@ -314,12 +326,14 @@ public final class ProjectContributorsTestCase {
      */
     @Test
     public void electsNewContributorForUnassignedTask() {
+        final Project project = this.mockProject(
+            "john/test",
+            Provider.Names.GITHUB,
+            BigDecimal.valueOf(100000),
+            BigDecimal.valueOf(1000)
+        );
         final Contributors contributors = new ProjectContributors(
-            this.mockProject(
-                "john/test",
-                Provider.Names.GITHUB,
-                BigDecimal.valueOf(100000)
-            ),
+            project,
             List.of(
                 this.mockContributor(
                     "mihai", BigDecimal.valueOf(10000), "DEV", "REV", "QA"
@@ -338,6 +352,7 @@ public final class ProjectContributorsTestCase {
         final Task task = Mockito.mock(Task.class);
         Mockito.when(task.assignee()).thenReturn(null);
         Mockito.when(task.role()).thenReturn("DEV");
+        Mockito.when(task.project()).thenReturn(project);
         final Contributor elected = contributors.elect(task);
 
         MatcherAssert.assertThat(
@@ -356,12 +371,14 @@ public final class ProjectContributorsTestCase {
      */
     @Test
     public void electIgnoresExpensiveContributors() {
+        final Project project = this.mockProject(
+            "john/test",
+            Provider.Names.GITHUB,
+            BigDecimal.valueOf(100000),
+            BigDecimal.valueOf(1000)
+        );
         final Contributors contributors = new ProjectContributors(
-            this.mockProject(
-                "john/test",
-                Provider.Names.GITHUB,
-                BigDecimal.valueOf(100000)
-            ),
+            project,
             List.of(
                 this.mockContributor(
                     "mihai", BigDecimal.valueOf(10000), "DEV"
@@ -381,6 +398,7 @@ public final class ProjectContributorsTestCase {
         Mockito.when(task.assignee()).thenReturn(null);
         Mockito.when(task.role()).thenReturn("DEV");
         Mockito.when(task.estimation()).thenReturn(60);
+        Mockito.when(task.project()).thenReturn(project);
         final Contributor elected = contributors.elect(task);
 
         MatcherAssert.assertThat(
@@ -403,12 +421,14 @@ public final class ProjectContributorsTestCase {
      */
     @Test
     public void electIgnoresAllExpensiveContributors() {
+        final Project project = this.mockProject(
+            "john/test",
+            Provider.Names.GITHUB,
+            BigDecimal.valueOf(100),
+            BigDecimal.valueOf(1000)
+        );
         final Contributors contributors = new ProjectContributors(
-            this.mockProject(
-                "john/test",
-                Provider.Names.GITHUB,
-                BigDecimal.valueOf(100)
-            ),
+            project,
             List.of(
                 this.mockContributor(
                     "mihai", BigDecimal.valueOf(10000), "DEV"
@@ -428,6 +448,39 @@ public final class ProjectContributorsTestCase {
         Mockito.when(task.assignee()).thenReturn(null);
         Mockito.when(task.role()).thenReturn("DEV");
         Mockito.when(task.estimation()).thenReturn(60);
+        Mockito.when(task.project()).thenReturn(project);
+        final Contributor elected = contributors.elect(task);
+
+        MatcherAssert.assertThat(
+            elected,
+            Matchers.nullValue()
+        );
+    }
+
+    /**
+     * Elect(...) will return null because pm commission added to
+     * contributor's hourly rate exceeds the budget.
+     */
+    @Test
+    public void electIgnoresContributorDueToHighPmCommission(){
+        final Project project = this.mockProject(
+            "john/test",
+            Provider.Names.GITHUB,
+            BigDecimal.valueOf(15000),
+            BigDecimal.valueOf(600)
+        );
+        final Contributors contributors = new ProjectContributors(
+            project,
+            List.of(this.mockContributor(
+                "mihai", BigDecimal.valueOf(14500), "DEV")
+            )::stream,
+            Mockito.mock(Storage.class)
+        );
+        final Task task = Mockito.mock(Task.class);
+        Mockito.when(task.assignee()).thenReturn(null);
+        Mockito.when(task.role()).thenReturn("DEV");
+        Mockito.when(task.estimation()).thenReturn(60);
+        Mockito.when(task.project()).thenReturn(project);
         final Contributor elected = contributors.elect(task);
 
         MatcherAssert.assertThat(
@@ -474,12 +527,14 @@ public final class ProjectContributorsTestCase {
      * @param repoFullName Repo full name.
      * @param providerName Provider name.
      * @param budget Budget.
+     * @param pmCommission Pm's commission.
      * @return Project.
      */
     private Project mockProject(
         final String repoFullName,
         final String providerName,
-        final BigDecimal budget
+        final BigDecimal budget,
+        final BigDecimal pmCommission
     ) {
         final Project project = Mockito.mock(Project.class);
         Mockito.when(project.repoFullName()).thenReturn(repoFullName);
@@ -493,6 +548,11 @@ public final class ProjectContributorsTestCase {
         final Wallet wallet = Mockito.mock(Wallet.class);
         Mockito.when(wallet.available()).thenReturn(budget);
         Mockito.when(project.wallet()).thenReturn(wallet);
+
+        final ProjectManager projectManager = Mockito
+            .mock(ProjectManager.class);
+        Mockito.when(projectManager.commission()).thenReturn(pmCommission);
+        Mockito.when(project.projectManager()).thenReturn(projectManager);
 
         return project;
     }

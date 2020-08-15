@@ -40,8 +40,8 @@ import java.util.stream.Stream;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.4
- * @todo #393:30min Take the PM's commission into account when electing
- *  a Contributor (to make sure we can afford to pay everything).
+ * @todo #402:30min When electing a contributor for a task, we must make sure
+ *  that ProjectContributors's contract Project matches Task's Project.
  */
 public final class ProjectContributors implements Contributors {
 
@@ -180,6 +180,9 @@ public final class ProjectContributors implements Contributors {
                                 ).divide(
                                     BigDecimal.valueOf(60),
                                     RoundingMode.HALF_UP
+                                ).add(this.project
+                                    .projectManager()
+                                    .commission()
                                 );
                             final BigDecimal budget = this.project
                                 .wallet()
