@@ -136,7 +136,7 @@ public final class StoredInvoiceTestCase {
         Mockito.when(task.assignee()).thenReturn(assignee);
         Mockito.when(task.role()).thenReturn(Contract.Roles.DEV);
 
-        invoice.register(task);
+        invoice.register(task, BigDecimal.valueOf(50));
     }
 
     /**
@@ -174,7 +174,7 @@ public final class StoredInvoiceTestCase {
         Mockito.when(task.assignee()).thenReturn(assignee);
         Mockito.when(task.role()).thenReturn(Contract.Roles.DEV);
 
-        invoice.register(task);
+        invoice.register(task, BigDecimal.valueOf(50));
     }
 
     /**
@@ -212,19 +212,21 @@ public final class StoredInvoiceTestCase {
             storage
         );
 
+        final BigDecimal commission = BigDecimal.valueOf(50);
+
         final InvoicedTask registered = Mockito.mock(InvoicedTask.class);
         final InvoicedTasks invoicedTasks = Mockito.mock(InvoicedTasks.class);
         Mockito
             .when(
                 invoicedTasks.register(
-                    invoice, task, BigDecimal.valueOf(50)
+                    invoice, task, commission
                 )
             )
             .thenReturn(registered);
         Mockito.when(storage.invoicedTasks()).thenReturn(invoicedTasks);
 
         MatcherAssert.assertThat(
-            invoice.register(task),
+            invoice.register(task, commission),
             Matchers.is(registered)
         );
     }

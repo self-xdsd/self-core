@@ -11,8 +11,6 @@ import java.time.LocalDateTime;
  * @author criske
  * @version $Id$
  * @since 0.0.3
- * @todo #400:30min Addapt method register to also accept the
- *  PMs commission as BigDecimal.
  */
 public final class StoredInvoice implements Invoice {
 
@@ -93,7 +91,10 @@ public final class StoredInvoice implements Invoice {
     }
 
     @Override
-    public InvoicedTask register(final Task task) {
+    public InvoicedTask register(
+        final Task task,
+        final BigDecimal commission
+    ) {
         final Contract.Id taskContract = new Contract.Id(
             task.project().repoFullName(),
             task.assignee().username(),
@@ -111,7 +112,7 @@ public final class StoredInvoice implements Invoice {
                 );
             }
             return this.storage.invoicedTasks().register(
-                this, task, BigDecimal.valueOf(50)
+                this, task, commission
             );
         }
     }

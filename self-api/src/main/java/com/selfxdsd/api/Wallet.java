@@ -82,7 +82,10 @@ public interface Wallet {
                 }
 
                 @Override
-                public InvoicedTask register(final Task task) {
+                public InvoicedTask register(
+                    final Task task,
+                    final BigDecimal commission
+                ) {
                     throw new IllegalStateException(
                         "Invoice is already paid, can't add a new Task to it!"
                     );

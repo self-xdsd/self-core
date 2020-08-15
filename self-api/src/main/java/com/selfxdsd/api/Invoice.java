@@ -22,9 +22,10 @@ public interface Invoice {
     /**
      * Register a Task on this Invoice.
      * @param task Task to be registered.
+     * @param commission PM's commission for the invoiced Task.
      * @return InvoicedTask.
      */
-    InvoicedTask register(final Task task);
+    InvoicedTask register(final Task task, final BigDecimal commission);
 
     /**
      * The contract.
