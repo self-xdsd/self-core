@@ -458,6 +458,38 @@ public final class ProjectContributorsTestCase {
     }
 
     /**
+     * Elect(...) will return null because pm commission added to
+     * contributor's hourly rate exceeds the budget.
+     */
+    @Test
+    public void electIgnoresContributorDueToHighPmCommission(){
+        final Project project = this.mockProject(
+            "john/test",
+            Provider.Names.GITHUB,
+            BigDecimal.valueOf(15000),
+            BigDecimal.valueOf(600)
+        );
+        final Contributors contributors = new ProjectContributors(
+            project,
+            List.of(this.mockContributor(
+                "mihai", BigDecimal.valueOf(14500), "DEV")
+            )::stream,
+            Mockito.mock(Storage.class)
+        );
+        final Task task = Mockito.mock(Task.class);
+        Mockito.when(task.assignee()).thenReturn(null);
+        Mockito.when(task.role()).thenReturn("DEV");
+        Mockito.when(task.estimation()).thenReturn(60);
+        Mockito.when(task.project()).thenReturn(project);
+        final Contributor elected = contributors.elect(task);
+
+        MatcherAssert.assertThat(
+            elected,
+            Matchers.nullValue()
+        );
+    }
+
+    /**
      * Mock a Contributor.
      *
      * @param username Username.
