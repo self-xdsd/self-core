@@ -277,27 +277,32 @@ public final class ProjectContributorsTestCase {
      */
     @Test
     public void electsNewContributorForAssignedTask() {
-        final Contributor assignee = this.mockContributor(
-            "mihai", BigDecimal.valueOf(10000), "DEV", "REV", "QA"
-        );
         final Project project = this.mockProject(
             "john/test",
             Provider.Names.GITHUB,
             BigDecimal.valueOf(100000),
             BigDecimal.valueOf(1000)
         );
+        final Contributor assignee = this.mockContributor(
+            "mihai", BigDecimal.valueOf(10000),  project,
+            "DEV", "REV", "QA"
+        );
         final Contributors contributors = new ProjectContributors(
             project,
             List.of(
                 assignee,
-                this.mockContributor("vlad", BigDecimal.valueOf(10000), "DEV"),
+                this.mockContributor("vlad", BigDecimal.valueOf(10000),
+                    project, "DEV"),
                 this.mockContributor(
-                    "mary", BigDecimal.valueOf(10000), "REV", "QA"
+                    "mary", BigDecimal.valueOf(10000), project,
+                    "REV", "QA"
                 ),
                 this.mockContributor(
-                    "george", BigDecimal.valueOf(10000), "DEV", "ARCH"
+                    "george", BigDecimal.valueOf(10000), project,
+                    "DEV", "ARCH"
                 ),
-                this.mockContributor("karen", BigDecimal.valueOf(10000), "DEV")
+                this.mockContributor("karen", BigDecimal.valueOf(10000),
+                    project, "DEV")
             )::stream,
             Mockito.mock(Storage.class)
         );
@@ -335,17 +340,16 @@ public final class ProjectContributorsTestCase {
         final Contributors contributors = new ProjectContributors(
             project,
             List.of(
-                this.mockContributor(
-                    "mihai", BigDecimal.valueOf(10000), "DEV", "REV", "QA"
-                ),
-                this.mockContributor("vlad", BigDecimal.valueOf(10000), "DEV"),
-                this.mockContributor(
-                    "mary", BigDecimal.valueOf(10000), "REV", "QA"
-                ),
-                this.mockContributor(
-                    "george", BigDecimal.valueOf(10000), "DEV", "ARCH"
-                ),
-                this.mockContributor("karen", BigDecimal.valueOf(10000), "DEV")
+                this.mockContributor("mihai", BigDecimal.valueOf(10000),
+                    project, "DEV", "REV", "QA"),
+                this.mockContributor("vlad", BigDecimal.valueOf(10000),
+                    project, "DEV"),
+                this.mockContributor("mary", BigDecimal.valueOf(10000),
+                    project, "REV", "QA"),
+                this.mockContributor("george", BigDecimal.valueOf(10000),
+                    project, "DEV", "ARCH"),
+                this.mockContributor("karen", BigDecimal.valueOf(10000),
+                    project, "DEV")
             )::stream,
             Mockito.mock(Storage.class)
         );
@@ -380,17 +384,16 @@ public final class ProjectContributorsTestCase {
         final Contributors contributors = new ProjectContributors(
             project,
             List.of(
-                this.mockContributor(
-                    "mihai", BigDecimal.valueOf(10000), "DEV"
-                ),
-                this.mockContributor("vlad", BigDecimal.valueOf(10000), "DEV"),
-                this.mockContributor(
-                    "mary", BigDecimal.valueOf(150000), "DEV"
-                ),
-                this.mockContributor(
-                    "george", BigDecimal.valueOf(200000), "DEV"
-                ),
-                this.mockContributor("karen", BigDecimal.valueOf(10000), "DEV")
+                this.mockContributor("mihai", BigDecimal.valueOf(10000),
+                    project, "DEV"),
+                this.mockContributor("vlad", BigDecimal.valueOf(10000),
+                    project, "DEV"),
+                this.mockContributor("mary", BigDecimal.valueOf(150000),
+                    project, "DEV"),
+                this.mockContributor("george", BigDecimal.valueOf(200000),
+                    project, "DEV"),
+                this.mockContributor("karen", BigDecimal.valueOf(10000),
+                    project, "DEV")
             )::stream,
             Mockito.mock(Storage.class)
         );
@@ -430,17 +433,16 @@ public final class ProjectContributorsTestCase {
         final Contributors contributors = new ProjectContributors(
             project,
             List.of(
-                this.mockContributor(
-                    "mihai", BigDecimal.valueOf(10000), "DEV"
-                ),
-                this.mockContributor("vlad", BigDecimal.valueOf(10000), "DEV"),
-                this.mockContributor(
-                    "mary", BigDecimal.valueOf(150000), "DEV"
-                ),
-                this.mockContributor(
-                    "george", BigDecimal.valueOf(200000), "DEV"
-                ),
-                this.mockContributor("karen", BigDecimal.valueOf(10000), "DEV")
+                this.mockContributor("mihai", BigDecimal.valueOf(10000),
+                    project, "DEV"),
+                this.mockContributor("vlad", BigDecimal.valueOf(10000),
+                    project, "DEV"),
+                this.mockContributor("mary", BigDecimal.valueOf(150000),
+                    project, "DEV"),
+                this.mockContributor("george", BigDecimal.valueOf(200000),
+                    project, "DEV"),
+                this.mockContributor("karen", BigDecimal.valueOf(10000),
+                    project, "DEV")
             )::stream,
             Mockito.mock(Storage.class)
         );
@@ -471,8 +473,8 @@ public final class ProjectContributorsTestCase {
         );
         final Contributors contributors = new ProjectContributors(
             project,
-            List.of(this.mockContributor(
-                "mihai", BigDecimal.valueOf(14500), "DEV")
+            List.of(this.mockContributor("mihai", BigDecimal.valueOf(14500),
+                project, "DEV")
             )::stream,
             Mockito.mock(Storage.class)
         );
@@ -490,16 +492,56 @@ public final class ProjectContributorsTestCase {
     }
 
     /**
+     * Elect(...) will return null when Task's Project is different than
+     * the Project of ProjectContributors.
+     */
+    @Test
+    public void electIgnoresContributorsWhenTaskProjectIsDifferent(){
+        final Project contributorsProject = this.mockProject(
+            "john/test-other",
+            Provider.Names.GITHUB,
+            BigDecimal.valueOf(15000),
+            BigDecimal.valueOf(100)
+        );
+        final Contributors contributors = new ProjectContributors(
+            contributorsProject,
+            List.of(this.mockContributor("mihai", BigDecimal.valueOf(14500),
+                contributorsProject, "DEV")
+            )::stream,
+            Mockito.mock(Storage.class)
+        );
+        final Task task = Mockito.mock(Task.class);
+        final Project taskProject = this.mockProject(
+            "john/test",
+            Provider.Names.GITHUB,
+            BigDecimal.valueOf(15000),
+            BigDecimal.valueOf(100)
+        );
+        Mockito.when(task.assignee()).thenReturn(null);
+        Mockito.when(task.role()).thenReturn("DEV");
+        Mockito.when(task.estimation()).thenReturn(60);
+        Mockito.when(task.project()).thenReturn(taskProject);
+        final Contributor elected = contributors.elect(task);
+
+        MatcherAssert.assertThat(
+            elected,
+            Matchers.nullValue()
+        );
+    }
+
+    /**
      * Mock a Contributor.
      *
      * @param username Username.
      * @param hourlyRate Hourly rate.
+     * @param project Contributor's Project.
      * @param roles Roles.
      * @return Contributor.
      */
     public Contributor mockContributor(
         final String username,
         final BigDecimal hourlyRate,
+        final Project project,
         final String... roles
     ) {
         final Contributor contributor = Mockito.mock(Contributor.class);
@@ -510,6 +552,7 @@ public final class ProjectContributorsTestCase {
             final Contract mock = Mockito.mock(Contract.class);
             Mockito.when(mock.role()).thenReturn(role);
             Mockito.when(mock.hourlyRate()).thenReturn(hourlyRate);
+            Mockito.when(mock.project()).thenReturn(project);
             contracts.add(mock);
         }
 

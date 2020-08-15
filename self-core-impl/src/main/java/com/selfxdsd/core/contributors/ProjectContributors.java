@@ -40,8 +40,6 @@ import java.util.stream.Stream;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.4
- * @todo #402:30min When electing a contributor for a task, we must make sure
- *  that ProjectContributors's contract Project matches Task's Project.
  */
 public final class ProjectContributors implements Contributors {
 
@@ -154,12 +152,16 @@ public final class ProjectContributors implements Contributors {
      *
      * In the future, we might take more factors into account.
      * @param task Task requiring an assignee.
-     * @return Contributor or null if nobody is found.
+     * @return Contributor or null if nobody is found or Task's Project
+     * not matching ProjectContributors Project.
      * @checkstyle ReturnCount (30 lines)
      * @checkstyle Indentation (30 lines)
      */
     @Override
     public Contributor elect(final Task task) {
+        if (!this.project.equals(task.project())) {
+            return null;
+        }
         final List<Contributor> eligible = this.contributors.get()
             .filter(
                 contributor -> {
