@@ -59,6 +59,11 @@ public final class StoredInvoicedTask implements InvoicedTask {
     private final BigDecimal value;
 
     /**
+     * PM commission.
+     */
+    private final BigDecimal commission;
+
+    /**
      * The finished Task.
      */
     private final Task task;
@@ -72,7 +77,8 @@ public final class StoredInvoicedTask implements InvoicedTask {
      * Constructor.
      * @param invoicedTaskId This task's ID.
      * @param invoiceId Invoice ID.
-     * @param value This invoiced Task's value in gcents.
+     * @param value This invoiced Task's value in cents.
+     * @param commission PM commission in cents.
      * @param task The Task.
      * @param storage Parent storage.
      */
@@ -80,12 +86,14 @@ public final class StoredInvoicedTask implements InvoicedTask {
         final int invoicedTaskId,
         final int invoiceId,
         final BigDecimal value,
+        final BigDecimal commission,
         final Task task,
         final Storage storage
     ) {
         this.invoicedTaskId = invoicedTaskId;
         this.invoiceId = invoiceId;
         this.value = value;
+        this.commission = commission;
         this.task = task;
         this.storage = storage;
     }
@@ -108,5 +116,15 @@ public final class StoredInvoicedTask implements InvoicedTask {
     @Override
     public BigDecimal value() {
         return this.value;
+    }
+
+    @Override
+    public BigDecimal commission() {
+        return this.commission;
+    }
+
+    @Override
+    public BigDecimal totalAmount() {
+        return this.value.add(this.commission);
     }
 }

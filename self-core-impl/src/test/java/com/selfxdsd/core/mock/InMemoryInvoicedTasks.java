@@ -88,6 +88,7 @@ public final class InMemoryInvoicedTasks implements InvoicedTasks {
             this.idGenerator++,
             invoice.invoiceId(),
             finished.value(),
+            commission,
             finished,
             this.storage
         );

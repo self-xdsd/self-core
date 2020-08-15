@@ -51,6 +51,7 @@ public final class StoredInvoicedTaskTestCase {
             12,
             1,
             BigDecimal.valueOf(25000),
+            BigDecimal.valueOf(50),
             Mockito.mock(Task.class),
             Mockito.mock(Storage.class)
         );
@@ -70,6 +71,7 @@ public final class StoredInvoicedTaskTestCase {
             12,
             1,
             BigDecimal.valueOf(25000),
+            BigDecimal.valueOf(50),
             task,
             Mockito.mock(Storage.class)
         );
@@ -88,12 +90,51 @@ public final class StoredInvoicedTaskTestCase {
             12,
             1,
             BigDecimal.valueOf(25000),
+            BigDecimal.valueOf(50),
             Mockito.mock(Task.class),
             Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(
             task.value(),
             Matchers.equalTo(BigDecimal.valueOf(25000))
+        );
+    }
+
+    /**
+     * StoredInvoicedTask can return the PM commission.
+     */
+    @Test
+    public void returnsCommission() {
+        final InvoicedTask task = new StoredInvoicedTask(
+            12,
+            1,
+            BigDecimal.valueOf(25000),
+            BigDecimal.valueOf(50),
+            Mockito.mock(Task.class),
+            Mockito.mock(Storage.class)
+        );
+        MatcherAssert.assertThat(
+            task.commission(),
+            Matchers.equalTo(BigDecimal.valueOf(50))
+        );
+    }
+
+    /**
+     * StoredInvoicedTask can return the is total amount.
+     */
+    @Test
+    public void returnsTotalAmount() {
+        final InvoicedTask task = new StoredInvoicedTask(
+            12,
+            1,
+            BigDecimal.valueOf(25000),
+            BigDecimal.valueOf(50),
+            Mockito.mock(Task.class),
+            Mockito.mock(Storage.class)
+        );
+        MatcherAssert.assertThat(
+            task.totalAmount(),
+            Matchers.equalTo(BigDecimal.valueOf(25050))
         );
     }
 
@@ -112,6 +153,7 @@ public final class StoredInvoicedTaskTestCase {
             12,
             1,
             BigDecimal.valueOf(25000),
+            BigDecimal.valueOf(50),
             Mockito.mock(Task.class),
             storage
         );
