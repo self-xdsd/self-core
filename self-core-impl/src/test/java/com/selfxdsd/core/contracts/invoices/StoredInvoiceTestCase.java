@@ -7,6 +7,7 @@ import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDateTime;
 
@@ -214,7 +215,11 @@ public final class StoredInvoiceTestCase {
         final InvoicedTask registered = Mockito.mock(InvoicedTask.class);
         final InvoicedTasks invoicedTasks = Mockito.mock(InvoicedTasks.class);
         Mockito
-            .when(invoicedTasks.register(invoice, task))
+            .when(
+                invoicedTasks.register(
+                    invoice, task, BigDecimal.valueOf(50)
+                )
+            )
             .thenReturn(registered);
         Mockito.when(storage.invoicedTasks()).thenReturn(invoicedTasks);
 

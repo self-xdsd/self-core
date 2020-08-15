@@ -29,6 +29,7 @@ import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -129,7 +130,7 @@ public final class InvoiceTasksTestCase {
 
         final Invoice two = Mockito.mock(Invoice.class);
         Mockito.when(two.invoiceId()).thenReturn(2);
-        tasks.register(two, Mockito.mock(Task.class));
+        tasks.register(two, Mockito.mock(Task.class), BigDecimal.valueOf(50));
     }
 
     /**
@@ -144,7 +145,9 @@ public final class InvoiceTasksTestCase {
         Mockito.when(one.invoiceId()).thenReturn(1);
 
         final InvoicedTasks all = Mockito.mock(InvoicedTasks.class);
-        Mockito.when(all.register(one, finished)).thenReturn(registered);
+        Mockito.when(
+            all.register(one, finished, BigDecimal.valueOf(50))
+        ).thenReturn(registered);
         final Storage storage = Mockito.mock(Storage.class);
         Mockito.when(storage.invoicedTasks()).thenReturn(all);
 
@@ -160,7 +163,7 @@ public final class InvoiceTasksTestCase {
             storage
         );
         MatcherAssert.assertThat(
-            tasks.register(one, finished),
+            tasks.register(one, finished, BigDecimal.valueOf(50)),
             Matchers.is(registered)
         );
     }

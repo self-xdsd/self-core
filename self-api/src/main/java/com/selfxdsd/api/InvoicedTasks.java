@@ -22,6 +22,8 @@
  */
 package com.selfxdsd.api;
 
+import java.math.BigDecimal;
+
 /**
  * Tasks that have been finished and added to an Invoice.
  * @author Mihai Andronache (amihaiemil@gmail.com)
@@ -41,7 +43,12 @@ public interface InvoicedTasks extends Iterable<InvoicedTask> {
      * Register a finished Task to an Invoice.
      * @param invoice Invoice.
      * @param finished Task to be registered.
+     * @param commission PM's commission for this invoiced task.
      * @return InvoicedTask.
      */
-    InvoicedTask register(final Invoice invoice, final Task finished);
+    InvoicedTask register(
+        final Invoice invoice,
+        final Task finished,
+        final BigDecimal commission
+    );
 }

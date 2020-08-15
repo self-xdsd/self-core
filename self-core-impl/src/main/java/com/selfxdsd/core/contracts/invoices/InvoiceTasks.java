@@ -28,6 +28,7 @@ import com.selfxdsd.api.InvoicedTasks;
 import com.selfxdsd.api.Task;
 import com.selfxdsd.api.storage.Storage;
 
+import java.math.BigDecimal;
 import java.util.Iterator;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
@@ -93,10 +94,13 @@ public final class InvoiceTasks implements InvoicedTasks {
     @Override
     public InvoicedTask register(
         final Invoice invoice,
-        final Task finished
+        final Task finished,
+        final BigDecimal commission
     ) {
         if(this.invoice.invoiceId() == invoice.invoiceId()) {
-            return this.storage.invoicedTasks().register(invoice, finished);
+            return this.storage.invoicedTasks().register(
+                invoice, finished, commission
+            );
         }
         throw new IllegalStateException(
             "These are the tasks registered with Invoice #"

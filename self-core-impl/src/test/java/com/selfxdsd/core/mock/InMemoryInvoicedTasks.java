@@ -30,6 +30,7 @@ import com.selfxdsd.api.storage.Storage;
 import com.selfxdsd.core.contracts.invoices.InvoiceTasks;
 import com.selfxdsd.core.contracts.invoices.StoredInvoicedTask;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -80,7 +81,8 @@ public final class InMemoryInvoicedTasks implements InvoicedTasks {
     @Override
     public InvoicedTask register(
         final Invoice invoice,
-        final Task finished
+        final Task finished,
+        final BigDecimal commission
     ) {
         final InvoicedTask registered = new StoredInvoicedTask(
             this.idGenerator++,
