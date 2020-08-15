@@ -255,18 +255,21 @@ public final class ProjectContributorsTestCase {
      */
     @Test
     public void electsReturnsNullWhenNoContributors() {
+        final Project project = this.mockProject(
+            "john/test",
+            Provider.Names.GITHUB,
+            BigDecimal.valueOf(100000),
+            BigDecimal.valueOf(1000)
+        );
         final Contributors contributors = new ProjectContributors(
-            this.mockProject(
-                "john/test",
-                Provider.Names.GITHUB,
-                BigDecimal.valueOf(100000),
-                BigDecimal.valueOf(1000)
-            ),
+            project,
             Stream::empty,
             Mockito.mock(Storage.class)
         );
+        final Task task = Mockito.mock(Task.class);
+        Mockito.when(task.project()).thenReturn(project);
         MatcherAssert.assertThat(
-            contributors.elect(Mockito.mock(Task.class)),
+            contributors.elect(task),
             Matchers.nullValue()
         );
     }
@@ -492,11 +495,11 @@ public final class ProjectContributorsTestCase {
     }
 
     /**
-     * Elect(...) will return null when Task's Project is different than
+     * Elect(...) will throw ISE when Task's Project is different than
      * the Project of ProjectContributors.
      */
-    @Test
-    public void electIgnoresContributorsWhenTaskProjectIsDifferent(){
+    @Test(expected = IllegalStateException.class)
+    public void electThrowsWhenTaskProjectIsDifferent(){
         final Project contributorsProject = this.mockProject(
             "john/test-other",
             Provider.Names.GITHUB,
@@ -517,16 +520,9 @@ public final class ProjectContributorsTestCase {
             BigDecimal.valueOf(15000),
             BigDecimal.valueOf(100)
         );
-        Mockito.when(task.assignee()).thenReturn(null);
-        Mockito.when(task.role()).thenReturn("DEV");
-        Mockito.when(task.estimation()).thenReturn(60);
         Mockito.when(task.project()).thenReturn(taskProject);
-        final Contributor elected = contributors.elect(task);
 
-        MatcherAssert.assertThat(
-            elected,
-            Matchers.nullValue()
-        );
+        contributors.elect(task);
     }
 
     /**

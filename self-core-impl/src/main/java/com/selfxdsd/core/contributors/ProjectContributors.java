@@ -152,15 +152,17 @@ public final class ProjectContributors implements Contributors {
      *
      * In the future, we might take more factors into account.
      * @param task Task requiring an assignee.
-     * @return Contributor or null if nobody is found or Task's Project
-     * not matching ProjectContributors Project.
+     * @return Contributor or null if nobody is found.
+     * @throws IllegalStateException when Task's Project not matching
+     * ProjectContributors Project.
      * @checkstyle ReturnCount (30 lines)
      * @checkstyle Indentation (30 lines)
      */
     @Override
     public Contributor elect(final Task task) {
         if (!this.project.equals(task.project())) {
-            return null;
+            throw new IllegalStateException("Contributors project must match "
+             + " the task project.");
         }
         final List<Contributor> eligible = this.contributors.get()
             .filter(
