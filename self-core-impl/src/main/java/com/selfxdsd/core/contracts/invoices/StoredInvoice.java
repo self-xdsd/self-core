@@ -56,30 +56,6 @@ public final class StoredInvoice implements Invoice {
      * Ctor.
      * @param id Invoice id.
      * @param contract Contract.
-     * @param createdAt Invoice creation time.
-     * @param storage Self storage context.
-     */
-    public StoredInvoice(
-        final int id,
-        final Contract contract,
-        final LocalDateTime createdAt,
-        final Storage storage
-    ) {
-        this(
-            id,
-            contract,
-            null,
-            createdAt,
-            null,
-            null,
-            storage
-        );
-    }
-
-    /**
-     * Ctor.
-     * @param id Invoice id.
-     * @param contract Contract.
      * @param tasks Tasks registered on this Invoice.
      * @param createdAt Invoice creation time.
      * @param paymentTime Time when this Invoice has been paid.

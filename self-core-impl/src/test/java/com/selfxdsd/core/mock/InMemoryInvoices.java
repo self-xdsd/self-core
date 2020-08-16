@@ -67,8 +67,13 @@ public final class InMemoryInvoices implements Invoices {
     @Override
     public Invoice createNewInvoice(final Contract.Id contractId) {
         final Invoice created = new StoredInvoice(
-            this.idGenerator++, this.storage.contracts().findById(contractId),
-            LocalDateTime.now(), this.storage
+            this.idGenerator++,
+            this.storage.contracts().findById(contractId),
+            null,
+            LocalDateTime.now(),
+            null,
+            null,
+            this.storage
         );
         this.invoices.put(created.invoiceId(), created);
         return created;
