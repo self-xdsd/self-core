@@ -117,6 +117,16 @@ public interface Wallet {
                 }
 
                 @Override
+                public BigDecimal value() {
+                    return invoice.value();
+                }
+
+                @Override
+                public BigDecimal commission() {
+                    return invoice.commission();
+                }
+
+                @Override
                 public BigDecimal totalAmount() {
                     return invoice.totalAmount();
                 }

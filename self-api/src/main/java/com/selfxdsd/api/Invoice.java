@@ -58,8 +58,20 @@ public interface Invoice {
     InvoicedTasks tasks();
 
     /**
-     * Total amount of the invoice. Calculated based on contract hourlyRate
-     * and time spent to finish a task.
+     * Value of this invoice in cents. This is the
+     * value that the Contributor will receive.
+     * @return BigDecimal value.
+     */
+    BigDecimal value();
+
+    /**
+     * Commission that the PM will receive.
+     * @return BigDecimal.
+     */
+    BigDecimal commission();
+
+    /**
+     * Total amount of the invoice, value plus commission.
      * @return BigDecimal.
      */
     BigDecimal totalAmount();
