@@ -8,7 +8,6 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import java.math.BigDecimal;
-import java.time.Duration;
 import java.time.LocalDateTime;
 
 import static org.hamcrest.MatcherAssert.*;
@@ -264,31 +263,4 @@ public final class StoredInvoiceTestCase {
             Matchers.equalTo(invoiceTwo.hashCode()));
     }
 
-    /**
-     * Mocks an {@link InvoiceTask}.
-     *
-     * @param invoiceId Invoice id.
-     * @param duration Duration of task.
-     * @return Mocked {@link InvoiceTask}
-     */
-    private InvoiceTask mockInvoiceTask(
-        final int invoiceId,
-        final Duration duration) {
-        return new InvoiceTask() {
-            @Override
-            public int invoiceId() {
-                return invoiceId;
-            }
-
-            @Override
-            public Duration timeSpent() {
-                return duration;
-            }
-
-            @Override
-            public Task task() {
-                return mock(Task.class);
-            }
-        };
-    }
 }
