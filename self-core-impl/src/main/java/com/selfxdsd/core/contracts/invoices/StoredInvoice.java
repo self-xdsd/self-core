@@ -2,7 +2,6 @@ package com.selfxdsd.core.contracts.invoices;
 
 import com.selfxdsd.api.*;
 import com.selfxdsd.api.storage.Storage;
-
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -11,8 +10,10 @@ import java.time.LocalDateTime;
  * @author criske
  * @version $Id$
  * @since 0.0.3
- * @todo #408:30min StoredInvoice should encapsulate its invoiced tasks,
- *  rather than reading them from the storage every time.
+ * @todo #410:30min Remove the first constructor, since it is not needed.
+ *  When creating an Invoice, we'll make an INSERT via JOOQ, which means
+ *  this constructor is only needed for the InMemoryInvoices (which is just
+ *  present for scaffolding reasons and will be removed later).
  */
 public final class StoredInvoice implements Invoice {
 
@@ -25,6 +26,11 @@ public final class StoredInvoice implements Invoice {
      * Contract.
      */
     private final Contract contract;
+
+    /**
+     * Tasks registered on this Invoice.
+     */
+    private final InvoicedTasks tasks;
 
     /**
      * Creation time.
@@ -59,13 +65,22 @@ public final class StoredInvoice implements Invoice {
         final LocalDateTime createdAt,
         final Storage storage
     ) {
-        this(id, contract, createdAt, null, null, storage);
+        this(
+            id,
+            contract,
+            null,
+            createdAt,
+            null,
+            null,
+            storage
+        );
     }
 
     /**
      * Ctor.
      * @param id Invoice id.
      * @param contract Contract.
+     * @param tasks Tasks registered on this Invoice.
      * @param createdAt Invoice creation time.
      * @param paymentTime Time when this Invoice has been paid.
      * @param transactionId The payment's transaction ID.
@@ -74,6 +89,7 @@ public final class StoredInvoice implements Invoice {
     public StoredInvoice(
         final int id,
         final Contract contract,
+        final InvoicedTasks tasks,
         final LocalDateTime createdAt,
         final LocalDateTime paymentTime,
         final String transactionId,
@@ -81,6 +97,7 @@ public final class StoredInvoice implements Invoice {
     ) {
         this.id = id;
         this.contract = contract;
+        this.tasks = tasks;
         this.createdAt = createdAt;
         this.paymentTime = paymentTime;
         this.transactionId = transactionId;
@@ -141,7 +158,7 @@ public final class StoredInvoice implements Invoice {
 
     @Override
     public InvoicedTasks tasks() {
-        return this.storage.invoicedTasks().ofInvoice(this);
+        return this.tasks;
     }
 
     @Override
