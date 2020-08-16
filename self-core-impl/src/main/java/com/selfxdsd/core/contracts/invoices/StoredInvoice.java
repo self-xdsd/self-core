@@ -10,10 +10,6 @@ import java.time.LocalDateTime;
  * @author criske
  * @version $Id$
  * @since 0.0.3
- * @todo #410:30min Remove the first constructor, since it is not needed.
- *  When creating an Invoice, we'll make an INSERT via JOOQ, which means
- *  this constructor is only needed for the InMemoryInvoices (which is just
- *  present for scaffolding reasons and will be removed later).
  */
 public final class StoredInvoice implements Invoice {
 
@@ -51,30 +47,6 @@ public final class StoredInvoice implements Invoice {
      * Self storage context.
      */
     private final Storage storage;
-
-    /**
-     * Ctor.
-     * @param id Invoice id.
-     * @param contract Contract.
-     * @param createdAt Invoice creation time.
-     * @param storage Self storage context.
-     */
-    public StoredInvoice(
-        final int id,
-        final Contract contract,
-        final LocalDateTime createdAt,
-        final Storage storage
-    ) {
-        this(
-            id,
-            contract,
-            null,
-            createdAt,
-            null,
-            null,
-            storage
-        );
-    }
 
     /**
      * Ctor.
