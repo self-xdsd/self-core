@@ -4,6 +4,8 @@ import com.selfxdsd.api.*;
 import com.selfxdsd.api.storage.Storage;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Iterator;
+import java.util.function.Supplier;
 
 /**
  * An Invoice stored in self.
@@ -22,11 +24,6 @@ public final class StoredInvoice implements Invoice {
      * Contract.
      */
     private final Contract contract;
-
-    /**
-     * Tasks registered on this Invoice.
-     */
-    private final InvoicedTasks tasks;
 
     /**
      * Creation time.
@@ -52,7 +49,6 @@ public final class StoredInvoice implements Invoice {
      * Ctor.
      * @param id Invoice id.
      * @param contract Contract.
-     * @param tasks Tasks registered on this Invoice.
      * @param createdAt Invoice creation time.
      * @param paymentTime Time when this Invoice has been paid.
      * @param transactionId The payment's transaction ID.
@@ -61,7 +57,6 @@ public final class StoredInvoice implements Invoice {
     public StoredInvoice(
         final int id,
         final Contract contract,
-        final InvoicedTasks tasks,
         final LocalDateTime createdAt,
         final LocalDateTime paymentTime,
         final String transactionId,
@@ -69,7 +64,6 @@ public final class StoredInvoice implements Invoice {
     ) {
         this.id = id;
         this.contract = contract;
-        this.tasks = tasks;
         this.createdAt = createdAt;
         this.paymentTime = paymentTime;
         this.transactionId = transactionId;
@@ -130,7 +124,7 @@ public final class StoredInvoice implements Invoice {
 
     @Override
     public InvoicedTasks tasks() {
-        return this.tasks;
+        return this.storage.invoicedTasks().ofInvoice(this);
     }
 
     @Override

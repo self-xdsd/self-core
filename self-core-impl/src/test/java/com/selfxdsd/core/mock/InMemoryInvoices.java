@@ -69,7 +69,6 @@ public final class InMemoryInvoices implements Invoices {
         final Invoice created = new StoredInvoice(
             this.idGenerator++,
             this.storage.contracts().findById(contractId),
-            null,
             LocalDateTime.now(),
             null,
             null,
