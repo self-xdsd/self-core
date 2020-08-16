@@ -24,11 +24,6 @@ public final class StoredInvoice implements Invoice {
     private final Contract contract;
 
     /**
-     * Tasks registered on this Invoice.
-     */
-    private final InvoicedTasks tasks;
-
-    /**
      * Creation time.
      */
     private final LocalDateTime createdAt;
@@ -52,7 +47,6 @@ public final class StoredInvoice implements Invoice {
      * Ctor.
      * @param id Invoice id.
      * @param contract Contract.
-     * @param tasks Tasks registered on this Invoice.
      * @param createdAt Invoice creation time.
      * @param paymentTime Time when this Invoice has been paid.
      * @param transactionId The payment's transaction ID.
@@ -61,7 +55,6 @@ public final class StoredInvoice implements Invoice {
     public StoredInvoice(
         final int id,
         final Contract contract,
-        final InvoicedTasks tasks,
         final LocalDateTime createdAt,
         final LocalDateTime paymentTime,
         final String transactionId,
@@ -69,7 +62,6 @@ public final class StoredInvoice implements Invoice {
     ) {
         this.id = id;
         this.contract = contract;
-        this.tasks = tasks;
         this.createdAt = createdAt;
         this.paymentTime = paymentTime;
         this.transactionId = transactionId;
@@ -130,25 +122,7 @@ public final class StoredInvoice implements Invoice {
 
     @Override
     public InvoicedTasks tasks() {
-        return this.tasks;
-    }
-
-    @Override
-    public BigDecimal value() {
-        BigDecimal value = BigDecimal.valueOf(0);
-        for(final InvoicedTask task : this.tasks()) {
-            value = value.add(task.value());
-        }
-        return value;
-    }
-
-    @Override
-    public BigDecimal commission() {
-        BigDecimal commission = BigDecimal.valueOf(0);
-        for(final InvoicedTask task : this.tasks()) {
-            commission = commission.add(task.commission());
-        }
-        return commission;
+        return this.storage.invoicedTasks().ofInvoice(this);
     }
 
     @Override
