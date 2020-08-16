@@ -11,6 +11,8 @@ import java.time.LocalDateTime;
  * @author criske
  * @version $Id$
  * @since 0.0.3
+ * @todo #408:30min StoredInvoice should encapsulate its invoiced tasks,
+ *  rather than reading them from the storage every time.
  */
 public final class StoredInvoice implements Invoice {
 
