@@ -4,8 +4,6 @@ import com.selfxdsd.api.*;
 import com.selfxdsd.api.storage.Storage;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Iterator;
-import java.util.function.Supplier;
 
 /**
  * An Invoice stored in self.
@@ -125,24 +123,6 @@ public final class StoredInvoice implements Invoice {
     @Override
     public InvoicedTasks tasks() {
         return this.storage.invoicedTasks().ofInvoice(this);
-    }
-
-    @Override
-    public BigDecimal value() {
-        BigDecimal value = BigDecimal.valueOf(0);
-        for(final InvoicedTask task : this.tasks()) {
-            value = value.add(task.value());
-        }
-        return value;
-    }
-
-    @Override
-    public BigDecimal commission() {
-        BigDecimal commission = BigDecimal.valueOf(0);
-        for(final InvoicedTask task : this.tasks()) {
-            commission = commission.add(task.commission());
-        }
-        return commission;
     }
 
     @Override
