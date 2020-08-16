@@ -9,6 +9,8 @@ import org.mockito.Mockito;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.hamcrest.MatcherAssert.*;
 import static org.hamcrest.Matchers.*;
@@ -45,6 +47,151 @@ public final class StoredInvoiceTestCase {
             1, contract, LocalDateTime.now(), mock(Storage.class)
         );
         assertThat(invoice.contract(), is(contract));
+    }
+
+    /**
+     * Invoice can return the invoiced tasks it contains.
+     */
+    @Test
+    public void returnsTasks() {
+        final Storage storage = Mockito.mock(Storage.class);
+        final Invoice invoice = new StoredInvoice(
+            1,
+            Mockito.mock(Contract.class),
+            LocalDateTime.now(),
+            storage
+        );
+        final InvoicedTasks all = Mockito.mock(InvoicedTasks.class);
+        Mockito.when(all.ofInvoice(invoice)).thenReturn(
+            new InvoiceTasks(
+                invoice,
+                () -> {
+                    final List<InvoicedTask> tasks = new ArrayList<>();
+                    tasks.add(Mockito.mock(InvoicedTask.class));
+                    tasks.add(Mockito.mock(InvoicedTask.class));
+                    tasks.add(Mockito.mock(InvoicedTask.class));
+                    return tasks.stream();
+                },
+                storage
+            )
+        );
+        Mockito.when(storage.invoicedTasks()).thenReturn(all);
+
+        MatcherAssert.assertThat(
+            invoice.tasks(),
+            Matchers.iterableWithSize(3)
+        );
+    }
+
+    /**
+     * Invoice can return its value.
+     */
+    @Test
+    public void returnsValue() {
+        final Storage storage = Mockito.mock(Storage.class);
+        final Invoice invoice = new StoredInvoice(
+            1,
+            Mockito.mock(Contract.class),
+            LocalDateTime.now(),
+            storage
+        );
+        final InvoicedTasks all = Mockito.mock(InvoicedTasks.class);
+        Mockito.when(all.ofInvoice(invoice)).thenReturn(
+            new InvoiceTasks(
+                invoice,
+                () -> {
+                    final InvoicedTask task = Mockito.mock(InvoicedTask.class);
+                    Mockito.when(task.value())
+                        .thenReturn(BigDecimal.valueOf(1500));
+                    final List<InvoicedTask> tasks = new ArrayList<>();
+                    tasks.add(task);
+                    tasks.add(task);
+                    tasks.add(task);
+                    return tasks.stream();
+                },
+                storage
+            )
+        );
+        Mockito.when(storage.invoicedTasks()).thenReturn(all);
+
+        MatcherAssert.assertThat(
+            invoice.value(),
+            Matchers.equalTo(BigDecimal.valueOf(4500))
+        );
+    }
+
+    /**
+     * Invoice can return its commission.
+     */
+    @Test
+    public void returnsCommission() {
+        final Storage storage = Mockito.mock(Storage.class);
+        final Invoice invoice = new StoredInvoice(
+            1,
+            Mockito.mock(Contract.class),
+            LocalDateTime.now(),
+            storage
+        );
+        final InvoicedTasks all = Mockito.mock(InvoicedTasks.class);
+        Mockito.when(all.ofInvoice(invoice)).thenReturn(
+            new InvoiceTasks(
+                invoice,
+                () -> {
+                    final InvoicedTask task = Mockito.mock(InvoicedTask.class);
+                    Mockito.when(task.commission())
+                        .thenReturn(BigDecimal.valueOf(25));
+                    final List<InvoicedTask> tasks = new ArrayList<>();
+                    tasks.add(task);
+                    tasks.add(task);
+                    tasks.add(task);
+                    return tasks.stream();
+                },
+                storage
+            )
+        );
+        Mockito.when(storage.invoicedTasks()).thenReturn(all);
+
+        MatcherAssert.assertThat(
+            invoice.commission(),
+            Matchers.equalTo(BigDecimal.valueOf(75))
+        );
+    }
+
+    /**
+     * Invoice can return its total amount.
+     */
+    @Test
+    public void returnsTotalAmount() {
+        final Storage storage = Mockito.mock(Storage.class);
+        final Invoice invoice = new StoredInvoice(
+            1,
+            Mockito.mock(Contract.class),
+            LocalDateTime.now(),
+            storage
+        );
+        final InvoicedTasks all = Mockito.mock(InvoicedTasks.class);
+        Mockito.when(all.ofInvoice(invoice)).thenReturn(
+            new InvoiceTasks(
+                invoice,
+                () -> {
+                    final InvoicedTask task = Mockito.mock(InvoicedTask.class);
+                    Mockito.when(task.totalAmount())
+                        .thenReturn(BigDecimal.valueOf(1525));
+                    final List<InvoicedTask> tasks = new ArrayList<>();
+                    tasks.add(task);
+                    tasks.add(task);
+                    tasks.add(task);
+                    return tasks.stream();
+                },
+                storage
+            )
+        );
+        Mockito.when(storage.invoicedTasks()).thenReturn(all);
+
+        MatcherAssert.assertThat(
+            invoice.totalAmount(),
+            Matchers.equalTo(BigDecimal.valueOf(4575))
+        );
     }
 
     /**
