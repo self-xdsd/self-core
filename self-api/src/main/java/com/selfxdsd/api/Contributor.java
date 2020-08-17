@@ -27,6 +27,8 @@ package com.selfxdsd.api;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
+ * @todo #421:30min Implement and test Contributor.contract(...),
+ *  which should return the contract, if found. If not, then return null.
  */
 public interface Contributor {
 

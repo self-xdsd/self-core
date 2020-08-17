@@ -58,6 +58,13 @@ public interface Task {
     Contributor assignee();
 
     /**
+     * Assign this Task to the given Contributor.
+     * @param contributor Contributor.
+     * @return True or false, whether the operation succeeded or not.
+     */
+    boolean assign(final Contributor contributor);
+
+    /**
      * When was this Task assigned?
      * @return LocalDateTime.
      */
