@@ -25,6 +25,7 @@ import com.selfxdsd.api.*;
 import com.selfxdsd.api.storage.Storage;
 import com.selfxdsd.core.Github;
 import com.selfxdsd.core.mock.InMemory;
+import com.selfxdsd.core.projects.English;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -241,7 +242,6 @@ public final class StoredProjectManagerTestCase {
      */
     @Test
     public void handlesNewIssueEvent() {
-        final Storage storage = new InMemory();
         final ProjectManager manager = new StoredProjectManager(
             1,
             "123",
@@ -249,19 +249,10 @@ public final class StoredProjectManagerTestCase {
             Provider.Names.GITHUB,
             "123token",
             BigDecimal.valueOf(50),
-            storage
+            Mockito.mock(Storage.class)
         );
-        final Project project = storage.projects()
-            .register(
-                this.mockRepo(
-                    "mihai/test",
-                    "github",
-                    Mockito.mock(Issues.class)
-                ),
-                manager,
-                "wh123tk"
-            );
         final Issue issue = Mockito.mock(Issue.class);
+        Mockito.when(issue.issueId()).thenReturn("1");
         Mockito.when(issue.author()).thenReturn("mihai");
         Mockito.when(issue.repoFullName()).thenReturn("mihai/test");
         Mockito.when(issue.provider()).thenReturn("github");
@@ -269,15 +260,15 @@ public final class StoredProjectManagerTestCase {
         Mockito.when(comments.post(Mockito.anyString())).thenReturn(null);
         Mockito.when(issue.comments()).thenReturn(comments);
 
-        MatcherAssert.assertThat(
-            project.tasks(),
-            Matchers.emptyIterable()
-        );
+        final Project project = Mockito.mock(Project.class);
+        final Tasks tasks = Mockito.mock(Tasks.class);
+        Mockito.when(project.tasks()).thenReturn(tasks);
+        Mockito.when(project.language()).thenReturn(new English());
         manager.newIssue(
             new Event() {
                 @Override
                 public String type() {
-                    return "newIssue";
+                    return "reopened";
                 }
 
                 @Override
@@ -301,10 +292,8 @@ public final class StoredProjectManagerTestCase {
                 }
             }
         );
-        MatcherAssert.assertThat(
-            project.tasks(),
-            Matchers.iterableWithSize(1)
-        );
+        Mockito.verify(tasks, Mockito.times(1))
+            .register(issue);
         Mockito.verify(comments, Mockito.times(1))
             .post(
                 "@mihai thank you for reporting this. "
@@ -316,12 +305,9 @@ public final class StoredProjectManagerTestCase {
      * StoredProjectManager can handle a reopened Issue event when the initial
      * Task associated with the Issue has been finished (in this case we
      * register a new task and leave a comment).
-     * @todo #420:30min Rewrite this test, as well as handlesNewIssueEvent, so
-     *  they use only mocks and no real objects.
      */
     @Test
     public void handlesTaskFinishedReopenedIssueEvent() {
-        final Storage storage = new InMemory();
         final ProjectManager manager = new StoredProjectManager(
             1,
             "123",
@@ -329,19 +315,10 @@ public final class StoredProjectManagerTestCase {
             Provider.Names.GITHUB,
             "123token",
             BigDecimal.valueOf(50),
-            storage
+            Mockito.mock(Storage.class)
         );
-        final Project project = storage.projects()
-            .register(
-                this.mockRepo(
-                    "mihai/test",
-                    "github",
-                    Mockito.mock(Issues.class)
-                ),
-                manager,
-                "wh123tk"
-            );
         final Issue issue = Mockito.mock(Issue.class);
+        Mockito.when(issue.issueId()).thenReturn("1");
         Mockito.when(issue.author()).thenReturn("mihai");
         Mockito.when(issue.repoFullName()).thenReturn("mihai/test");
         Mockito.when(issue.provider()).thenReturn("github");
@@ -349,10 +326,13 @@ public final class StoredProjectManagerTestCase {
         Mockito.when(comments.post(Mockito.anyString())).thenReturn(null);
         Mockito.when(issue.comments()).thenReturn(comments);
 
-        MatcherAssert.assertThat(
-            project.tasks(),
-            Matchers.emptyIterable()
-        );
+        final Project project = Mockito.mock(Project.class);
+        final Tasks tasks = Mockito.mock(Tasks.class);
+        Mockito.when(
+            tasks.getById("1", "mihai/test", "github")
+        ).thenReturn(null);
+        Mockito.when(project.tasks()).thenReturn(tasks);
+        Mockito.when(project.language()).thenReturn(new English());
         manager.reopenedIssue(
             new Event() {
                 @Override
@@ -381,10 +361,8 @@ public final class StoredProjectManagerTestCase {
                 }
             }
         );
-        MatcherAssert.assertThat(
-            project.tasks(),
-            Matchers.iterableWithSize(1)
-        );
+        Mockito.verify(tasks, Mockito.times(1))
+            .register(issue);
         Mockito.verify(comments, Mockito.times(1))
             .post(
                 "@mihai thanks for reopening this, "
