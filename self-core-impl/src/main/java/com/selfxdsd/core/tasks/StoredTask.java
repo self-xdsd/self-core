@@ -123,10 +123,15 @@ public final class StoredTask implements Task {
 
     @Override
     public Issue issue() {
-        return this.contract
-            .project()
-            .repo()
-            .issues()
+        final Project project = this.contract.project();
+        final String repoFullName = project.repoFullName();
+        return project
+            .projectManager()
+            .provider()
+            .repo(
+                repoFullName.substring(0, repoFullName.indexOf("/")),
+                repoFullName.substring(repoFullName.indexOf("/") + 1)
+            ).issues()
             .getById(this.issueId);
     }
 

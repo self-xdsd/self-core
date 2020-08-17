@@ -316,6 +316,8 @@ public final class StoredProjectManagerTestCase {
      * StoredProjectManager can handle a reopened Issue event when the initial
      * Task associated with the Issue has been finished (in this case we
      * register a new task and leave a comment).
+     * @todo #420:30min Rewrite this test, as well as handlesNewIssueEvent, so
+     *  they use only mocks and no real objects.
      */
     @Test
     public void handlesTaskFinishedReopenedIssueEvent() {
@@ -398,8 +400,7 @@ public final class StoredProjectManagerTestCase {
      * Task is still ongoing (doesn't do anything, actually).
      */
     @Test
-    public void handlesTaskOngoingReopenedIssueEvent() {
-        final Storage storage = new InMemory();
+    public void handlesReopenedIssueEventTaskOngoing() {
         final ProjectManager manager = new StoredProjectManager(
             1,
             "123",
@@ -407,26 +408,12 @@ public final class StoredProjectManagerTestCase {
             Provider.Names.GITHUB,
             "123token",
             BigDecimal.valueOf(50),
-            storage
+            Mockito.mock(Storage.class)
         );
         final Issue issue = Mockito.mock(Issue.class);
         Mockito.when(issue.issueId()).thenReturn("1");
-        Mockito.when(issue.author()).thenReturn("mihai");
         Mockito.when(issue.repoFullName()).thenReturn("mihai/test");
         Mockito.when(issue.provider()).thenReturn("github");
-        Mockito.when(issue.role()).thenReturn(Contract.Roles.DEV);
-
-        final Issues issues = Mockito.mock(Issues.class);
-        Mockito.when(issues.getById("1")).thenReturn(issue);
-
-        final Project project = storage.projects()
-            .register(
-                this.mockRepo("mihai/test", "github", issues),
-                manager,
-                "wh123tk"
-            );
-        project.tasks().register(issue);
-
         final Comments comments = Mockito.mock(Comments.class);
         Mockito.when(comments.post(Mockito.anyString())).thenThrow(
             new IllegalStateException(
@@ -435,10 +422,18 @@ public final class StoredProjectManagerTestCase {
         );
         Mockito.when(issue.comments()).thenReturn(comments);
 
-        MatcherAssert.assertThat(
-            project.tasks(),
-            Matchers.iterableWithSize(1)
+        final Tasks all = Mockito.mock(Tasks.class);
+        Mockito.when(all.getById("1", "mihai/test", "github"))
+            .thenReturn(Mockito.mock(Task.class));
+        Mockito.when(all.register(issue)).thenThrow(
+            new IllegalStateException(
+                "There already is an ongoing task, "
+              + "no new task should be registered!"
+            )
         );
+        final Project project = Mockito.mock(Project.class);
+        Mockito.when(project.tasks()).thenReturn(all);
+
         manager.reopenedIssue(
             new Event() {
                 @Override
@@ -466,10 +461,6 @@ public final class StoredProjectManagerTestCase {
                     return Provider.Names.GITHUB;
                 }
             }
-        );
-        MatcherAssert.assertThat(
-            project.tasks(),
-            Matchers.iterableWithSize(1)
         );
     }
 

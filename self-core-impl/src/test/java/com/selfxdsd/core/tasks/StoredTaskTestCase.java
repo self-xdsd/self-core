@@ -67,7 +67,14 @@ public final class StoredTaskTestCase {
         final Repo repo = Mockito.mock(Repo.class);
         Mockito.when(repo.issues()).thenReturn(all);
         final Project project = Mockito.mock(Project.class);
-        Mockito.when(project.repo()).thenReturn(repo);
+        Mockito.when(project.repoFullName()).thenReturn("john/test");
+
+        final Provider provider = Mockito.mock(Provider.class);
+        Mockito.when(provider.repo("john", "test")).thenReturn(repo);
+        final ProjectManager manager = Mockito.mock(ProjectManager.class);
+        Mockito.when(manager.provider()).thenReturn(provider);
+
+        Mockito.when(project.projectManager()).thenReturn(manager);
 
         final Task task = new StoredTask(
             project,
@@ -296,33 +303,35 @@ public final class StoredTaskTestCase {
      */
     @Test
     public void comparesStoredTaskObjects() {
-        final Contract contract = Mockito.mock(Contract.class);
-        final Project project = Mockito.mock(Project.class);
-        Mockito.when(project.repoFullName()).thenReturn("john/repo");
-        Mockito.when(project.provider()).thenReturn(Provider.Names.GITHUB);
         final Issue issue = Mockito.mock(Issue.class);
         Mockito.when(issue.issueId()).thenReturn("123");
         final Issues all = Mockito.mock(Issues.class);
         Mockito.when(all.getById("123")).thenReturn(issue);
         final Repo repo = Mockito.mock(Repo.class);
         Mockito.when(repo.issues()).thenReturn(all);
-        Mockito.when(project.repo()).thenReturn(repo);
-        Mockito.when(contract.project()).thenReturn(project);
+        final Project project = Mockito.mock(Project.class);
+        Mockito.when(project.repoFullName()).thenReturn("john/test");
+        Mockito.when(project.provider()).thenReturn("github");
+
+        final Provider provider = Mockito.mock(Provider.class);
+        Mockito.when(provider.repo("john", "test")).thenReturn(repo);
+        final ProjectManager manager = Mockito.mock(ProjectManager.class);
+        Mockito.when(manager.provider()).thenReturn(provider);
+
+        Mockito.when(project.projectManager()).thenReturn(manager);
         final Task task = new StoredTask(
-            contract,
+            project,
             "123",
-            Mockito.mock(Storage.class),
-            LocalDateTime.now(),
-            LocalDateTime.now().plusDays(10),
-            120
+            "DEV",
+            120,
+            Mockito.mock(Storage.class)
         );
         final Task taskTwo = new StoredTask(
-            contract,
+            project,
             "123",
-            Mockito.mock(Storage.class),
-            LocalDateTime.now(),
-            LocalDateTime.now().plusDays(10),
-            120
+            "DEV",
+            120,
+            Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(task, Matchers.equalTo(taskTwo));
     }
