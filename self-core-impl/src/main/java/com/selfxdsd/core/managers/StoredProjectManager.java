@@ -40,8 +40,6 @@ import java.util.UUID;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
- * @todo #418 Finish the unassignedTasks method once we have a way
- *  of assigning a Task to a Contributor.
  */
 public final class StoredProjectManager implements ProjectManager {
 
@@ -215,15 +213,27 @@ public final class StoredProjectManager implements ProjectManager {
     public void unassignedTasks(final Event event) {
         final Project project = event.project();
         for(final Task task : project.tasks().unassigned()) {
+            final Issue issue = task.issue();
             final Contributor contributor = project.contributors().elect(task);
             if(contributor == null) {
-                task.issue().comments().post(
+                issue.comments().post(
                     String.format(
                         project.language().reply("noAssigneeFound.comment"),
                         project.owner().username(),
                         task.role()
                     )
                 );
+            } else {
+                final Task assigned = task.assign(contributor);
+                issue.comments().post(
+                    String.format(
+                        project.language().reply("taskAssigned.comment"),
+                        contributor.username(),
+                        assigned.deadline(),
+                        assigned.estimation()
+                    )
+                );
+
             }
         }
     }
