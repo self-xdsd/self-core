@@ -163,6 +163,17 @@ public final class MockJsonResources implements JsonResources {
         return this.onRequest.apply(request);
     }
 
+    @Override
+    public Resource delete(final URI uri, final JsonValue body) {
+        final MockRequest request = new MockRequest(
+            "DELETE",
+            uri,
+            body,
+            this.accessToken
+        );
+        return this.onRequest.apply(request);
+    }
+
     /**
      * Get the requests history.
      * @return MockRequests.

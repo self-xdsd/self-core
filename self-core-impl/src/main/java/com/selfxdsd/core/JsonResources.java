@@ -101,6 +101,19 @@ public interface JsonResources {
     );
 
     /**
+     * DELETE the specified resource.
+     * @param uri URI.
+     * @param body JSON body of the request.
+     * @return Resource.
+     * @throws IllegalStateException If IOException or InterruptedException
+     *  occur while making the HTTP request.
+     */
+    Resource delete(
+        final URI uri,
+        final JsonValue body
+    );
+
+    /**
      * JSON Resources obtained by making HTTP calls, using
      * the JDK.
      * @author Mihai Andronache (amihaiemil@gmail.com)
@@ -236,6 +249,32 @@ public interface JsonResources {
                 throw new IllegalStateException(
                     "Couldn't PUT " + body.toString()
                   + " at [" + uri.toString() +"]",
+                    ex
+                );
+            }
+        }
+
+        @Override
+        public Resource delete(final URI uri, final JsonValue body) {
+            try {
+                final HttpResponse<String> response = HttpClient.newHttpClient()
+                    .send(
+                        this.request(
+                            uri,
+                            "DELETE",
+                            HttpRequest.BodyPublishers.ofString(
+                                body.toString()
+                            )
+                        ),
+                        HttpResponse.BodyHandlers.ofString()
+                    );
+                return new JsonResponse(
+                    response.statusCode(), response.body()
+                );
+            } catch (final IOException | InterruptedException ex) {
+                throw new IllegalStateException(
+                    "Couldn't DELETE " + body.toString()
+                 + " at [" + uri.toString() +"]",
                     ex
                 );
             }

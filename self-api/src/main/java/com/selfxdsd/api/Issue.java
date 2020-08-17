@@ -73,6 +73,13 @@ public interface Issue {
     boolean assign(final String username);
 
     /**
+     * Unassign this Issue from someone.
+     * @param username Assignee's username.
+     * @return True or false, depending on whether the operation succeeded.
+     */
+    boolean unassign(final String username);
+
+    /**
      * The Issue in JSON format as returned by the provider's API.
      * @return JsonObject.
      */

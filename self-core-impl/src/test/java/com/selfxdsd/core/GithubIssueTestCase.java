@@ -291,4 +291,107 @@ public final class GithubIssueTestCase {
         );
     }
 
+    /**
+     * A user can be unassigned (receives OK).
+     */
+    @Test
+    public void unassignsUserOk() {
+        final MockJsonResources resources = new MockJsonResources(
+            new AccessToken.Github("github123"),
+            req -> new MockJsonResources.MockResource(
+                HttpURLConnection.HTTP_OK,
+                Json.createObjectBuilder().build()
+            )
+        );
+        final Issue issue = new GithubIssue(
+            URI.create("http://localhost/issues/1"),
+            JsonObject.EMPTY_JSON_OBJECT,
+            Mockito.mock(Storage.class),
+            resources
+        );
+        final boolean res = issue.unassign("george");
+        MatcherAssert.assertThat(
+            res, Matchers.is(Boolean.TRUE)
+        );
+        final MockJsonResources.MockRequest assign = resources
+            .requests()
+            .atIndex(0);
+
+        MatcherAssert.assertThat(
+            assign.getAccessToken().value(),
+            Matchers.equalTo("token github123")
+        );
+        MatcherAssert.assertThat(
+            assign.getMethod(),
+            Matchers.equalTo("DELETE")
+        );
+        MatcherAssert.assertThat(
+            assign.getBody(),
+            Matchers.equalTo(
+                Json.createObjectBuilder()
+                    .add(
+                        "assignees",
+                        Json.createArrayBuilder()
+                            .add("george")
+                            .build()
+                    ).build()
+            )
+        );
+        MatcherAssert.assertThat(
+            assign.getUri().toString(),
+            Matchers.equalTo("http://localhost/issues/1/assignees")
+        );
+    }
+
+    /**
+     * We receive NOT FOUND when trying to unassign a user.
+     */
+    @Test
+    public void unassignsUserNotFound() {
+        final MockJsonResources resources = new MockJsonResources(
+            new AccessToken.Github("github123"),
+            req -> new MockJsonResources.MockResource(
+                HttpURLConnection.HTTP_NOT_FOUND,
+                Json.createObjectBuilder().build()
+            )
+        );
+        final Issue issue = new GithubIssue(
+            URI.create("http://localhost/issues/1"),
+            JsonObject.EMPTY_JSON_OBJECT,
+            Mockito.mock(Storage.class),
+            resources
+        );
+        final boolean res = issue.unassign("george");
+        MatcherAssert.assertThat(
+            res, Matchers.is(Boolean.FALSE)
+        );
+        final MockJsonResources.MockRequest assign = resources
+            .requests()
+            .atIndex(0);
+
+        MatcherAssert.assertThat(
+            assign.getAccessToken().value(),
+            Matchers.equalTo("token github123")
+        );
+        MatcherAssert.assertThat(
+            assign.getMethod(),
+            Matchers.equalTo("DELETE")
+        );
+        MatcherAssert.assertThat(
+            assign.getBody(),
+            Matchers.equalTo(
+                Json.createObjectBuilder()
+                    .add(
+                        "assignees",
+                        Json.createArrayBuilder()
+                            .add("george")
+                            .build()
+                    ).build()
+            )
+        );
+        MatcherAssert.assertThat(
+            assign.getUri().toString(),
+            Matchers.equalTo("http://localhost/issues/1/assignees")
+        );
+    }
 }

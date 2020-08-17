@@ -132,7 +132,7 @@ final class GithubIssue implements Issue {
         final boolean assigned;
         LOG.debug(
             "Assigning user " + username + " to Issue ["
-          + this.issueUri.toString() + "]..."
+            + this.issueUri.toString() + "]..."
         );
         final Resource resource = this.resources.post(
             URI.create(this.issueUri + "/assignees"),
@@ -145,16 +145,46 @@ final class GithubIssue implements Issue {
                 ).build()
         );
         if (resource.statusCode() == HttpURLConnection.HTTP_CREATED) {
-            LOG.debug("User " + username + "assigned successfully!");
+            LOG.debug("User " + username + " assigned successfully!");
             assigned = true;
         } else {
             LOG.debug(
                 "Problem while assigning user " + username + ". "
-              + "Expected 201 CREATED, but got " + resource.statusCode()
+                + "Expected 201 CREATED, but got " + resource.statusCode()
             );
             assigned = false;
         }
         return assigned;
+    }
+
+    @Override
+    public boolean unassign(final String username) {
+        final boolean unassigned;
+        LOG.debug(
+            "Unassigning user " + username + " from Issue ["
+            + this.issueUri.toString() + "]..."
+        );
+        final Resource resource = this.resources.delete(
+            URI.create(this.issueUri + "/assignees"),
+            Json.createObjectBuilder()
+                .add(
+                    "assignees",
+                    Json.createArrayBuilder()
+                        .add(username)
+                        .build()
+                ).build()
+        );
+        if (resource.statusCode() == HttpURLConnection.HTTP_OK) {
+            LOG.debug("User " + username + " unassigned successfully!");
+            unassigned = true;
+        } else {
+            LOG.debug(
+                "Problem while unassigning user " + username + ". "
+                + "Expected 200 OK, but got " + resource.statusCode()
+            );
+            unassigned = false;
+        }
+        return unassigned;
     }
 
     @Override
