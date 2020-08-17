@@ -27,8 +27,6 @@ package com.selfxdsd.api;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
- * @todo #421:30min Implement and test Contributor.contract(...),
- *  which should return the contract, if found. If not, then return null.
  */
 public interface Contributor {
 
@@ -49,6 +47,19 @@ public interface Contributor {
      * @return Contracts
      */
     Contracts contracts();
+
+    /**
+     * Get a Contract if this Contributor has it.
+     * @param repoFullName Repo full name.
+     * @param provider Provider.
+     * @param role Role.
+     * @return Contract or null if it doesn't exist.
+     */
+    Contract contract(
+        final String repoFullName,
+        final String provider,
+        final String role
+    );
 
     /**
      * This contributor's tasks.

@@ -22,6 +22,7 @@
  */
 package com.selfxdsd.core.contributors;
 
+import com.selfxdsd.api.Contract;
 import com.selfxdsd.api.Contracts;
 import com.selfxdsd.api.Contributor;
 import com.selfxdsd.api.Tasks;
@@ -116,6 +117,29 @@ public final class StoredContributor implements Contributor {
             assigned = this.contracts;
         }
         return assigned;
+    }
+
+    @Override
+    public Contract contract(
+        final String repoFullName,
+        final String provider,
+        final String role
+    ) {
+        final Contract.Id searched = new Contract.Id(
+            repoFullName,
+            this.username,
+            provider,
+            role
+        );
+        Contract found = null;
+        for(final Contract contract : this.contracts()) {
+            final Contract.Id contractId = contract.contractId();
+            if(contractId.equals(searched)) {
+                found = contract;
+                break;
+            }
+        }
+        return found;
     }
 
     @Override

@@ -22,15 +22,15 @@
  */
 package com.selfxdsd.core.contributors;
 
-import com.selfxdsd.api.Contracts;
-import com.selfxdsd.api.Contributor;
-import com.selfxdsd.api.Provider;
-import com.selfxdsd.api.Tasks;
+import com.selfxdsd.api.*;
 import com.selfxdsd.api.storage.Storage;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.mockito.Mockito;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Unit tests for {@link StoredContributor}.
@@ -161,4 +161,137 @@ public final class StoredContributorTestCase {
         MatcherAssert.assertThat(contributor.hashCode(),
             Matchers.equalTo(contributorTwo.hashCode()));
     };
+
+    /**
+     * Contributor.contract(...) returns the found Contract.
+     */
+    @Test
+    public void returnsFoundContract() {
+        final List<Contract> list = new ArrayList<>();
+        list.add(
+            this.mockContract(
+                new Contract.Id(
+                    "john/test",
+                    "mihai",
+                    "github",
+                    "DEV"
+                )
+            )
+        );
+        list.add(
+            this.mockContract(
+                new Contract.Id(
+                    "john/test2",
+                    "mihai",
+                    "github",
+                    "DEV"
+                )
+            )
+        );
+        list.add(
+            this.mockContract(
+                new Contract.Id(
+                    "john/test2",
+                    "mihai",
+                    "github",
+                    "DEV"
+                )
+            )
+        );
+        final Contracts contracts = Mockito.mock(Contracts.class);
+        Mockito.when(contracts.iterator()).thenReturn(list.iterator());
+        final Contributor contributor = new StoredContributor(
+            "mihai",
+            Provider.Names.GITHUB,
+            contracts,
+            Mockito.mock(Storage.class)
+        );
+        final Contract found = contributor.contract(
+            "john/test2", "github", "DEV"
+        );
+        MatcherAssert.assertThat(
+            found.contractId(),
+            Matchers.equalTo(list.get(1).contractId())
+        );
+    }
+
+    /**
+     * Contributor.contract(...) returns null because the Contract is
+     * not found.
+     */
+    @Test
+    public void returnsNullOnMissingContract() {
+        final List<Contract> list = new ArrayList<>();
+        list.add(
+            this.mockContract(
+                new Contract.Id(
+                    "john/test",
+                    "mihai",
+                    "github",
+                    "REV"
+                )
+            )
+        );
+        list.add(
+            this.mockContract(
+                new Contract.Id(
+                    "john/test2",
+                    "mihai",
+                    "github",
+                    "REV"
+                )
+            )
+        );
+        final Contracts contracts = Mockito.mock(Contracts.class);
+        Mockito.when(contracts.iterator()).thenReturn(list.iterator());
+        final Contributor contributor = new StoredContributor(
+            "mihai",
+            Provider.Names.GITHUB,
+            contracts,
+            Mockito.mock(Storage.class)
+        );
+        final Contract found = contributor.contract(
+            "john/test", "github", "DEV"
+        );
+        MatcherAssert.assertThat(
+            found,
+            Matchers.nullValue()
+        );
+    }
+
+    /**
+     * Contributor.contract(...) returns null, since no Contract
+     * is found because the Contributor has no contracts.
+     */
+    @Test
+    public void returnsNullOnMissingContractNoContracts() {
+        final Contracts contracts = Mockito.mock(Contracts.class);
+        Mockito.when(contracts.iterator()).thenReturn(
+            new ArrayList<Contract>().iterator()
+        );
+        final Contributor contributor = new StoredContributor(
+            "mihai",
+            Provider.Names.GITHUB,
+            contracts,
+            Mockito.mock(Storage.class)
+        );
+        final Contract found = contributor.contract(
+            "john/test2", "github", "DEV"
+        );
+        MatcherAssert.assertThat(
+            found,
+            Matchers.nullValue()
+        );
+    }
+
+    /**
+     * Mock a Contract for test.
+     * @param contractId ID of he contract.
+     * @return Contract mock.
+     */
+    public Contract mockContract(final Contract.Id contractId) {
+        final Contract contract = Mockito.mock(Contract.class);
+        Mockito.when(contract.contractId()).thenReturn(contractId);
+        return contract;
+    }
 }
