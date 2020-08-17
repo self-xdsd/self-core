@@ -35,9 +35,8 @@ import java.util.Objects;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
- * @todo #418:30min Method issue() here should fetch the Issue from the PM's
- *  repository, so that the PMs authentication token is encapsulated and we
- *  can post comments on the PMs behalf.
+ * @todo #421:30min Continue implementing method assign(...) here,
+ *  once we have method Contributor.contract(...).
  */
 public final class StoredTask implements Task {
 
@@ -148,6 +147,17 @@ public final class StoredTask implements Task {
     @Override
     public Contributor assignee() {
         return this.contract.contributor();
+    }
+
+    @Override
+    public boolean assign(final Contributor contributor) {
+        if(this.assignee() != null) {
+            throw new IllegalStateException(
+                "Task is currently assigned, cannot assign someone else. "
+                + "Call #unassign() first."
+            );
+        }
+        return false;
     }
 
     @Override
