@@ -160,6 +160,8 @@ public final class StoredProject implements Project {
             this.projectManager.newIssue(event);
         } else if(event.type().equals("reopened")) {
             this.projectManager.reopenedIssue(event);
+        } else if(Event.Type.UNASSIGNED_TASKS.equals(event.type())) {
+            this.projectManager.unassignedTasks(event);
         }
     }
 

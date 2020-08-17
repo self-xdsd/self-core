@@ -95,4 +95,9 @@ public interface ProjectManager {
      */
     void reopenedIssue(final Event event);
 
+    /**
+     * Handle the "unassinged tasks" event.
+     * @param event Event.
+     */
+    void unassignedTasks(final Event event);
 }
