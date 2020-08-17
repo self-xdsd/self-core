@@ -30,12 +30,12 @@ import com.selfxdsd.api.Language;
  * @version $Id$
  * @since 0.0.8
  */
-class English extends Language {
+public class English extends Language {
 
     /**
      * Ctor.
      */
-    English() {
+    public English() {
         super(
             "commands_en.properties",
             "responses_en.properties"
