@@ -35,8 +35,6 @@ import java.util.Objects;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
- * @todo #421:30min Continue implementing method assign(...) here,
- *  once we have method Contributor.contract(...).
  * @todo #427:30min Implement and test method Task::Task.unassign().
  *  This method should remove the assignee and leave the Task unassigned.
  */
@@ -152,7 +150,7 @@ public final class StoredTask implements Task {
     }
 
     @Override
-    public boolean assign(final Contributor contributor) {
+    public Task assign(final Contributor contributor) {
         if(this.assignee() != null) {
             throw new IllegalStateException(
                 "Task is currently assigned, cannot assign someone else. "
@@ -165,11 +163,11 @@ public final class StoredTask implements Task {
             this.contract.role()
         );
         if(contract == null) {
-            throw new IllegalStateException(
+            throw new IllegalArgumentException(
                 "The given contributor doesn't have the needed contract!"
             );
         }
-        return false;
+        return this.storage.tasks().assign(this, contract, 10);
     }
 
     @Override

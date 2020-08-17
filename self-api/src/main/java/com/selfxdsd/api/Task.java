@@ -60,9 +60,9 @@ public interface Task {
     /**
      * Assign this Task to the given Contributor.
      * @param contributor Contributor.
-     * @return True or false, whether the operation succeeded or not.
+     * @return The assigned task.
      */
-    boolean assign(final Contributor contributor);
+    Task assign(final Contributor contributor);
 
     /**
      * When was this Task assigned?

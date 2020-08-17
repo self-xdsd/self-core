@@ -371,4 +371,85 @@ public final class StoredTaskTestCase {
         MatcherAssert.assertThat(task.hashCode(),
             Matchers.equalTo(taskTwo.hashCode()));
     }
+
+    /**
+     * Method StoredTask.assign(...) should throw an exception if
+     * the task already has an assignee.
+     */
+    @Test (expected = IllegalStateException.class)
+    public void assignComplainsIfTaskHasAssignee() {
+        final Contributor assignee = Mockito.mock(Contributor.class);
+        final Contract contract = Mockito.mock(Contract.class);
+        Mockito.when(contract.contributor()).thenReturn(assignee);
+        final Task task = new StoredTask(
+            contract,
+            "issueId123",
+            Mockito.mock(Storage.class),
+            LocalDateTime.now(),
+            LocalDateTime.now().plusDays(10),
+            60
+        );
+        task.assign(Mockito.mock(Contributor.class));
+    }
+
+    /**
+     * StoredTask.assign(...) complains if the given Contributor
+     * does not have the required contract.
+     */
+    @Test (expected = IllegalArgumentException.class)
+    public void assignComplainsIfContributorMissesContract() {
+        final Contributor assignee = Mockito.mock(Contributor.class);
+
+        final Project project = Mockito.mock(Project.class);
+        Mockito.when(project.repoFullName()).thenReturn("john/test");
+        Mockito.when(project.provider()).thenReturn("github");
+        final Task task = new StoredTask(
+            project,
+            "issueId123",
+            "DEV",
+            60,
+            Mockito.mock(Storage.class)
+        );
+        Mockito.when(assignee.contract("john/test", "github", "DEV"))
+            .thenReturn(null);
+        task.assign(assignee);
+    }
+
+    /**
+     * StoredTask.assign(...) can assign the given Contributor to the Task.
+     */
+    @Test
+    public void assignsContributor() {
+        final Storage storage = Mockito.mock(Storage.class);
+
+        final Task assigned = Mockito.mock(Task.class);
+        final Contributor assignee = Mockito.mock(Contributor.class);
+        final Contract contract = Mockito.mock(Contract.class);
+
+        final Project project = Mockito.mock(Project.class);
+        Mockito.when(project.repoFullName()).thenReturn("john/test");
+        Mockito.when(project.provider()).thenReturn("github");
+        final Task task = new StoredTask(
+            project,
+            "issueId123",
+            "DEV",
+            60,
+            storage
+        );
+        Mockito.when(assignee.contract("john/test", "github", "DEV"))
+            .thenReturn(contract);
+
+        final Tasks all = Mockito.mock(Tasks.class);
+        Mockito.when(all.assign(task, contract, 10)).thenReturn(assigned);
+        Mockito.when(storage.tasks()).thenReturn(all);
+
+        final Task result = task.assign(assignee);
+
+        MatcherAssert.assertThat(
+            result, Matchers.is(assigned)
+        );
+        Mockito.verify(all, Mockito.times(1)).assign(
+            task, contract, 10
+        );
+    }
 }
