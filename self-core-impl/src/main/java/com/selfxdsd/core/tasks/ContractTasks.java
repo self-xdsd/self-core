@@ -114,4 +114,13 @@ public final class ContractTasks implements Tasks {
     public Iterator<Task> iterator() {
         return this.tasks.get().iterator();
     }
+
+    @Override
+    public Task assign(
+        final Task task,
+        final Contract contract,
+        final int days
+    ) {
+        return this.storage.tasks().assign(task, contract, days);
+    }
 }

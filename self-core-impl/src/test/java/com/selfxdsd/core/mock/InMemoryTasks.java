@@ -26,6 +26,7 @@ import com.selfxdsd.api.*;
 import com.selfxdsd.api.storage.Storage;
 import com.selfxdsd.core.tasks.*;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -102,6 +103,30 @@ public final class InMemoryTasks implements Tasks {
             );
             return newTask;
         }
+    }
+
+    @Override
+    public Task assign(
+        final Task task,
+        final Contract contract,
+        final int days
+    ) {
+        final TaskKey key = new TaskKey(
+            task.issue().issueId(),
+            task.project().repoFullName(),
+            task.project().provider()
+        );
+        final LocalDateTime assignmentDate = LocalDateTime.now();
+        final Task assigned = new StoredTask(
+            contract,
+            key.issueId,
+            this.storage,
+            assignmentDate,
+            assignmentDate.plusDays(days),
+            task.estimation()
+        );
+        this.tasks.put(key, assigned);
+        return assigned;
     }
 
     @Override

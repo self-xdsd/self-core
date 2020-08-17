@@ -37,8 +37,6 @@ import java.util.Objects;
  * @since 0.0.1
  * @todo #421:30min Continue implementing method assign(...) here,
  *  once we have method Contributor.contract(...).
- * @todo #427:30min Implement method Tasks.assign(Task, Contract),
- *  to assign a given Task to a given Contract.
  * @todo #427:30min Implement and test method Task::Task.unassign().
  *  This method should remove the assignee and leave the Task unassigned.
  */

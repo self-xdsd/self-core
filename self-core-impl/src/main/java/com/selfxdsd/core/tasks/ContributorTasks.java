@@ -76,6 +76,15 @@ public final class ContributorTasks implements Tasks {
     }
 
     @Override
+    public Task assign(
+        final Task task,
+        final Contract contract,
+        final int days
+    ) {
+        return this.storage.tasks().assign(task, contract, days);
+    }
+
+    @Override
     public Tasks ofProject(final String repoFullName,
                            final String repoProvider) {
         final Supplier<Stream<Task>> ofProject = () -> tasks.get()

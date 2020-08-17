@@ -212,6 +212,33 @@ public final class ContributorTasksTestCase {
     }
 
     /**
+     * Method assign(Task, Contract, days) should be delegated to the
+     * storage Tasks.
+     */
+    @Test
+    public void assignsTaskToContract() {
+        final Storage storage = Mockito.mock(Storage.class);
+        final Task task = Mockito.mock(Task.class);
+        final Contract contract = Mockito.mock(Contract.class);
+        final int days = 10;
+
+        final Task assigned = Mockito.mock(Task.class);
+        final Tasks all = Mockito.mock(Tasks.class);
+        Mockito.when(all.assign(task, contract, days)).thenReturn(assigned);
+
+        Mockito.when(storage.tasks()).thenReturn(all);
+
+        final Tasks tasks = new ContributorTasks(
+            "mihai", Provider.Names.GITHUB,
+            List.of(task)::stream,
+            storage
+        );
+        final Task result = tasks.assign(task, contract, days);
+        MatcherAssert.assertThat(result, Matchers.is(assigned));
+        Mockito.verify(all, Mockito.times(1)).assign(task, contract, days);
+    }
+
+    /**
      * Mock an Issue for test.
      *
      * @param issueId ID.

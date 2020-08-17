@@ -50,6 +50,14 @@ public interface Tasks extends Iterable<Task> {
      */
     Task register(final Issue issue);
 
+    /**
+     * Assign a Task to a given Contract.
+     * @param task Task to be assigned.
+     * @param contract Contract to receive the Task.
+     * @param days Days until deadline.
+     * @return Task.
+     */
+    Task assign(final Task task, final Contract contract, final int days);
 
     /**
      * Get the tasks of a given Project.
