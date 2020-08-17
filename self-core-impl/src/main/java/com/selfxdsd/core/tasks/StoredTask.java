@@ -35,6 +35,9 @@ import java.util.Objects;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
+ * @todo #418:30min Method issue() here should fetch the Issue from the PM's
+ *  repository, so that the PMs authentication token is encapsulated and we
+ *  can post comments on the PMs behalf.
  */
 public final class StoredTask implements Task {
 
