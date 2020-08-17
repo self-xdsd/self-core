@@ -66,6 +66,13 @@ public interface Issue {
     String author();
 
     /**
+     * Assign this Issue to someone.
+     * @param username Assignee's username.
+     * @return True or false, depending on whether the operation succeeded.
+     */
+    boolean assign(final String username);
+
+    /**
      * The Issue in JSON format as returned by the provider's API.
      * @return JsonObject.
      */

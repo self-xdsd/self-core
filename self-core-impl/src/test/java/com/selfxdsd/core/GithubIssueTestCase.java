@@ -22,9 +22,9 @@
  */
 package com.selfxdsd.core;
 
-import com.selfxdsd.api.Contract;
-import com.selfxdsd.api.Issue;
+import com.selfxdsd.api.*;
 import com.selfxdsd.api.storage.Storage;
+import com.selfxdsd.core.mock.MockJsonResources;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -32,6 +32,7 @@ import org.mockito.Mockito;
 
 import javax.json.Json;
 import javax.json.JsonObject;
+import java.net.HttpURLConnection;
 import java.net.URI;
 
 /**
@@ -184,6 +185,110 @@ public final class GithubIssueTestCase {
             Mockito.mock(JsonResources.class)
         ).estimation();
         MatcherAssert.assertThat(estimation, Matchers.is(60));
+    }
+
+    /**
+     * A new user can be assigned ok (receives CREATED).
+     */
+    @Test
+    public void assignsUserSuccessfully() {
+        final MockJsonResources resources = new MockJsonResources(
+            new AccessToken.Github("github123"),
+            req -> new MockJsonResources.MockResource(
+                HttpURLConnection.HTTP_CREATED,
+                Json.createObjectBuilder().build()
+            )
+        );
+        final Issue issue = new GithubIssue(
+            URI.create("http://localhost/issues/1"),
+            JsonObject.EMPTY_JSON_OBJECT,
+            Mockito.mock(Storage.class),
+            resources
+        );
+        final boolean res = issue.assign("george");
+        MatcherAssert.assertThat(
+            res, Matchers.is(Boolean.TRUE)
+        );
+        final MockJsonResources.MockRequest assign = resources
+            .requests()
+            .atIndex(0);
+
+        MatcherAssert.assertThat(
+            assign.getAccessToken().value(),
+            Matchers.equalTo("token github123")
+        );
+        MatcherAssert.assertThat(
+            assign.getMethod(),
+            Matchers.equalTo("POST")
+        );
+        MatcherAssert.assertThat(
+            assign.getBody(),
+            Matchers.equalTo(
+                Json.createObjectBuilder()
+                    .add(
+                        "assignees",
+                        Json.createArrayBuilder()
+                            .add("george")
+                            .build()
+                    ).build()
+            )
+        );
+        MatcherAssert.assertThat(
+            assign.getUri().toString(),
+            Matchers.equalTo("http://localhost/issues/1/assignees")
+        );
+    }
+
+    /**
+     * We receive a NOT FOUND status when trying to assing a user to an Issue.
+     */
+    @Test
+    public void assignsUserNotFound() {
+        final MockJsonResources resources = new MockJsonResources(
+            new AccessToken.Github("github123"),
+            req -> new MockJsonResources.MockResource(
+                HttpURLConnection.HTTP_NOT_FOUND,
+                Json.createObjectBuilder().build()
+            )
+        );
+        final Issue issue = new GithubIssue(
+            URI.create("http://localhost/issues/1"),
+            JsonObject.EMPTY_JSON_OBJECT,
+            Mockito.mock(Storage.class),
+            resources
+        );
+        final boolean res = issue.assign("george");
+        MatcherAssert.assertThat(
+            res, Matchers.is(Boolean.FALSE)
+        );
+        final MockJsonResources.MockRequest assign = resources
+            .requests()
+            .atIndex(0);
+
+        MatcherAssert.assertThat(
+            assign.getAccessToken().value(),
+            Matchers.equalTo("token github123")
+        );
+        MatcherAssert.assertThat(
+            assign.getMethod(),
+            Matchers.equalTo("POST")
+        );
+        MatcherAssert.assertThat(
+            assign.getBody(),
+            Matchers.equalTo(
+                Json.createObjectBuilder()
+                    .add(
+                        "assignees",
+                        Json.createArrayBuilder()
+                            .add("george")
+                            .build()
+                    ).build()
+            )
+        );
+        MatcherAssert.assertThat(
+            assign.getUri().toString(),
+            Matchers.equalTo("http://localhost/issues/1/assignees")
+        );
     }
 
 }

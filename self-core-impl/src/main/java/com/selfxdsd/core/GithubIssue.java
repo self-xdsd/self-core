@@ -26,8 +26,12 @@ import com.selfxdsd.api.Comments;
 import com.selfxdsd.api.Contract;
 import com.selfxdsd.api.Issue;
 import com.selfxdsd.api.storage.Storage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import javax.json.Json;
 import javax.json.JsonObject;
+import java.net.HttpURLConnection;
 import java.net.URI;
 
 /**
@@ -43,6 +47,13 @@ import java.net.URI;
  *  to get its estimation.
  */
 final class GithubIssue implements Issue {
+
+    /**
+     * Logger.
+     */
+    private static final Logger LOG = LoggerFactory.getLogger(
+        GithubIssue.class
+    );
 
     /**
      * Issue base uri.
@@ -114,6 +125,36 @@ final class GithubIssue implements Issue {
     @Override
     public String author() {
         return this.json.getJsonObject("user").getString("login");
+    }
+
+    @Override
+    public boolean assign(final String username) {
+        final boolean assigned;
+        LOG.debug(
+            "Assigning user " + username + " to Issue ["
+          + this.issueUri.toString() + "]..."
+        );
+        final Resource resource = this.resources.post(
+            URI.create(this.issueUri + "/assignees"),
+            Json.createObjectBuilder()
+                .add(
+                    "assignees",
+                    Json.createArrayBuilder()
+                        .add(username)
+                        .build()
+                ).build()
+        );
+        if (resource.statusCode() == HttpURLConnection.HTTP_CREATED) {
+            LOG.debug("User " + username + "assigned successfully!");
+            assigned = true;
+        } else {
+            LOG.debug(
+                "Problem while assigning user " + username + ". "
+              + "Expected 201 CREATED, but got " + resource.statusCode()
+            );
+            assigned = false;
+        }
+        return assigned;
     }
 
     @Override
