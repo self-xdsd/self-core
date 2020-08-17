@@ -76,5 +76,10 @@ public interface Event {
          */
         public static final String ACTIVATE = "activate";
 
+        /**
+         * Event for reviewing and assigning any unassigned tasks.
+         */
+        public static final String UNASSIGNED_TASKS = "unassigned";
+
     }
 }
