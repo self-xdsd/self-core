@@ -218,7 +218,7 @@ public final class StoredProjectManager implements ProjectManager {
         );
         for(final Task task : project.tasks().unassigned()) {
             final Issue issue = task.issue();
-            LOG.debug("Electing assignee for task # " + issue.issueId());
+            LOG.debug("Electing assignee for task #" + issue.issueId());
             final Contributor contributor = project.contributors().elect(task);
             if(contributor == null) {
                 LOG.debug("Couldn't find any assignee, posting comment...");
@@ -242,7 +242,7 @@ public final class StoredProjectManager implements ProjectManager {
                     )
                 );
                 LOG.debug(
-                    "Task #" + issue.issueId() + " assigned to "
+                    "Task #" + issue.issueId() + " assigned to @"
                     + contributor.username() + "."
                 );
             }
