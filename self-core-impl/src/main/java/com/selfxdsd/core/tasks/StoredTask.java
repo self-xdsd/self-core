@@ -135,6 +135,11 @@ public final class StoredTask implements Task {
     }
 
     @Override
+    public String issueId() {
+        return this.issueId;
+    }
+
+    @Override
     public String role() {
         return this.contract.role();
     }

@@ -57,6 +57,21 @@ public final class StoredTaskTestCase {
     }
 
     /**
+     * StoredTask can return its issueId.
+     */
+    @Test
+    public void returnsIssueId() {
+        final Task task = new StoredTask(
+            Mockito.mock(Project.class),
+            "123",
+            Contract.Roles.DEV,
+            60,
+            Mockito.mock(Storage.class)
+        );
+        MatcherAssert.assertThat(task.issueId(), Matchers.equalTo("123"));
+    }
+
+    /**
      * StoredTask can return its Issue.
      */
     @Test

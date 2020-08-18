@@ -34,6 +34,12 @@ import java.time.LocalDateTime;
 public interface Task {
 
     /**
+     * Issue ID.
+     * @return String.
+     */
+    String issueId();
+
+    /**
      * Role that should take this Task.
      * @return String.
      */
