@@ -40,6 +40,8 @@ import java.util.UUID;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
+ * @todo #421:30min When assigning a Task to a Contributor, make sure to
+ *  also assign the Issue as well. Don't forget about updating the tests.
  */
 public final class StoredProjectManager implements ProjectManager {
 
