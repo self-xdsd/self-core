@@ -40,8 +40,6 @@ import java.util.UUID;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
- * @todo #421:30min When assigning a Task to a Contributor, make sure to
- *  also assign the Issue as well. Don't forget about updating the tests.
  */
 public final class StoredProjectManager implements ProjectManager {
 
@@ -235,6 +233,7 @@ public final class StoredProjectManager implements ProjectManager {
             } else {
                 LOG.debug("Elected @" + contributor.username() + ".");
                 final Task assigned = task.assign(contributor);
+                issue.assign(contributor.username());
                 issue.comments().post(
                     String.format(
                         project.language().reply("taskAssigned.comment"),
