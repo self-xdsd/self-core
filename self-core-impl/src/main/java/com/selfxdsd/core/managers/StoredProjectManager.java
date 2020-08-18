@@ -212,10 +212,16 @@ public final class StoredProjectManager implements ProjectManager {
     @Override
     public void unassignedTasks(final Event event) {
         final Project project = event.project();
+        LOG.debug(
+            "Checking the unassigned tasks of project "
+            + project.repoFullName() + " at " + project.provider()
+        );
         for(final Task task : project.tasks().unassigned()) {
             final Issue issue = task.issue();
+            LOG.debug("Electing assignee for task # " + issue.issueId());
             final Contributor contributor = project.contributors().elect(task);
             if(contributor == null) {
+                LOG.debug("Couldn't find any assignee, posting comment...");
                 issue.comments().post(
                     String.format(
                         project.language().reply("noAssigneeFound.comment"),
@@ -223,7 +229,9 @@ public final class StoredProjectManager implements ProjectManager {
                         task.role()
                     )
                 );
+                LOG.debug("Comment for noAssigneeFound posted.");
             } else {
+                LOG.debug("Elected @" + contributor.username() + ".");
                 final Task assigned = task.assign(contributor);
                 issue.comments().post(
                     String.format(
@@ -233,9 +241,16 @@ public final class StoredProjectManager implements ProjectManager {
                         assigned.estimation()
                     )
                 );
-
+                LOG.debug(
+                    "Task #" + issue.issueId() + " assigned to "
+                    + contributor.username() + "."
+                );
             }
         }
+        LOG.debug(
+            "Finished checking the unassigned tasks of project "
+            + project.repoFullName() + " at " + project.provider()
+        );
     }
 
     @Override
