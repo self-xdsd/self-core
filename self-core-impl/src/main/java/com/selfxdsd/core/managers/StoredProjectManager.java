@@ -235,6 +235,7 @@ public final class StoredProjectManager implements ProjectManager {
             } else {
                 LOG.debug("Elected @" + contributor.username() + ".");
                 final Task assigned = task.assign(contributor);
+                issue.assign(contributor.username());
                 issue.comments().post(
                     String.format(
                         project.language().reply("taskAssigned.comment"),

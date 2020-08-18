@@ -595,6 +595,7 @@ public final class StoredProjectManagerTestCase {
         Mockito.verify(ofProject, Mockito.times(1)).unassigned();
         Mockito.verify(contributors, Mockito.times(1)).elect(task);
         Mockito.verify(task, Mockito.times(1)).assign(assignee);
+        Mockito.verify(issue, Mockito.times(1)).assign("mihai");
         Mockito.verify(comments, Mockito.times(1))
             .post(
                 Mockito.startsWith(
