@@ -236,4 +236,40 @@ public final class ContractTasksTestCase {
         Mockito.verify(all, Mockito.times(1)).assign(task, contract, days);
     }
 
+    /**
+     * Throws ISE when unasssigning Task is not part of ContractTasks.
+     */
+    @Test(expected = IllegalStateException.class)
+    public void throwsWhenUnassigningTaskNotPartOfContract(){
+        final Task task = Mockito.mock(Task.class);
+        final Tasks tasks = new ContractTasks(
+            new Contract.Id("foo", "mihai",
+                "github", "dev"),
+            () -> Stream.of(task),
+            Mockito.mock(Storage.class)
+        );
+
+        tasks.unassign(Mockito.mock(Task.class));
+    }
+
+    /**
+     * An assigned Task part of ContractTasks can be unassigned.
+     */
+    @Test
+    public void canBeUnassignedIfPartOfContract(){
+        final Task task = Mockito.mock(Task.class);
+        final Storage storage = Mockito.mock(Storage.class);
+        final Tasks tasks = new ContractTasks(
+            new Contract.Id("foo", "mihai",
+                "github", "dev"),
+            () -> Stream.of(task),
+            storage
+        );
+
+        Mockito.when(storage.tasks()).thenReturn(Mockito.mock(Tasks.class));
+
+        tasks.unassign(task);
+        Mockito.verify(storage.tasks()).unassign(task);
+    }
+
 }

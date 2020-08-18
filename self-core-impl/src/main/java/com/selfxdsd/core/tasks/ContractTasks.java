@@ -123,4 +123,15 @@ public final class ContractTasks implements Tasks {
     ) {
         return this.storage.tasks().assign(task, contract, days);
     }
+
+    @Override
+    public Task unassign(final Task task) {
+        final boolean isOfContract = this.tasks.get()
+            .anyMatch(t -> t.equals(task));
+        if (!isOfContract) {
+            throw new IllegalStateException("This task is not part of"
+                + " contract with id " + this.contractId);
+        }
+        return this.storage.tasks().unassign(task);
+    }
 }

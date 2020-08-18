@@ -121,6 +121,19 @@ public final class ProjectTasks implements Tasks {
     }
 
     @Override
+    public Task unassign(final Task task) {
+        final boolean isOfProject = task.project().repoFullName()
+            .equals(this.repoFullName) && task.project().provider()
+            .equals(this.provider);
+        if (!isOfProject) {
+            throw new IllegalStateException("This task is not part of the"
+                + " project " + this.repoFullName + " with provider "
+                + this.provider);
+        }
+        return this.storage.tasks().unassign(task);
+    }
+
+    @Override
     public Tasks ofProject(
         final String repoFullName,
         final String repoProvider

@@ -452,4 +452,39 @@ public final class StoredTaskTestCase {
             task, contract, 10
         );
     }
+
+    /**
+     * An assigned StoredTask can be unassigned.
+     */
+    @Test
+    public void canBeUnassigned(){
+        final Storage storage = Mockito.mock(Storage.class);
+        final Contributor assignee = Mockito.mock(Contributor.class);
+        final Contract contract = Mockito.mock(Contract.class);
+        final Tasks all = Mockito.mock(Tasks.class);
+        final Task task = new StoredTask(contract, "1", storage,
+            LocalDateTime.now(), LocalDateTime.now().plusDays(2), 60);
+
+        Mockito.when(contract.contributor()).thenReturn(assignee);
+        Mockito.when(storage.tasks()).thenReturn(all);
+        Mockito.when(all.unassign(Mockito.any(Task.class)))
+            .thenReturn(Mockito.mock(Task.class));
+
+        MatcherAssert.assertThat(task.assignee(),
+            Matchers.notNullValue());
+        MatcherAssert.assertThat(task.unassign().assignee(),
+            Matchers.nullValue());
+
+    }
+
+    /**
+     * An unassigned StoredTask returns itself when calling unassign.
+     */
+    @Test
+    public void unassignedTaskReturnsItselfWhenUnassign(){
+        final Task task = new StoredTask(Mockito.mock(Project.class),
+            "1", "DEV", 60, Mockito.mock(Storage.class));
+
+        MatcherAssert.assertThat(task.unassign(), Matchers.equalTo(task));
+    }
 }

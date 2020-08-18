@@ -183,6 +183,16 @@ public final class UnassignedTaskTestCase {
     }
 
     /**
+     * Throws {@link UnsupportedOperationException} when calling unassign.
+     * Tasks here are already unassigned.
+     */
+    @Test(expected = UnsupportedOperationException.class)
+    public void throwsWhenUnassigningTask(){
+        new UnassignedTasks(Stream::empty, Mockito.mock(Storage.class))
+            .unassign(Mockito.mock(Task.class));
+    }
+
+    /**
      * Mock an Issue for test.
      * @param issueId ID.
      * @param repoFullName Repo fullname.

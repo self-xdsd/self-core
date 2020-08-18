@@ -85,6 +85,18 @@ public final class ContributorTasks implements Tasks {
     }
 
     @Override
+    public Task unassign(final Task task) {
+        final boolean isOfContributor = task.assignee() != null
+            && task.assignee().username().equals(this.username)
+            && task.assignee().provider().equals(this.provider);
+        if (!isOfContributor) {
+            throw new IllegalStateException("This task was not assigned to"
+                + " this contributor " + this.username + "/" + this.provider);
+        }
+        return this.storage.tasks().unassign(task);
+    }
+
+    @Override
     public Tasks ofProject(final String repoFullName,
                            final String repoProvider) {
         final Supplier<Stream<Task>> ofProject = () -> tasks.get()
@@ -104,7 +116,7 @@ public final class ContributorTasks implements Tasks {
         }
         throw new IllegalStateException(
             "Already seeing the tasks of a Contributor. "
-          + "You cannot see the tasks of another Contributor here."
+                + "You cannot see the tasks of another Contributor here."
         );
     }
 
@@ -114,9 +126,10 @@ public final class ContributorTasks implements Tasks {
             .get()
             .filter(
                 t -> t.project().repoFullName().equals(id.getRepoFullName())
-            && t.project().provider().equals(id.getProvider())
-            && t.assignee().username().endsWith(id.getContributorUsername())
-            && t.role().equals(id.getRole()));
+                    && t.project().provider().equals(id.getProvider())
+                    && t.assignee().username()
+                    .endsWith(id.getContributorUsername())
+                    && t.role().equals(id.getRole()));
         return new ContractTasks(id, tasksOf, this.storage);
 
     }

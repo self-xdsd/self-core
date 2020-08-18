@@ -65,6 +65,12 @@ public interface Task {
     Task assign(final Contributor contributor);
 
     /**
+     * Unassign this Task.
+     * @return The unassigned task.
+     */
+    Task unassign();
+
+    /**
      * When was this Task assigned?
      * @return LocalDateTime.
      */

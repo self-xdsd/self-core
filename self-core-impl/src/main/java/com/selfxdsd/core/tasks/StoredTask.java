@@ -35,8 +35,6 @@ import java.util.Objects;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
- * @todo #427:30min Implement and test method Task::Task.unassign().
- *  This method should remove the assignee and leave the Task unassigned.
  */
 public final class StoredTask implements Task {
 
@@ -168,6 +166,17 @@ public final class StoredTask implements Task {
             );
         }
         return this.storage.tasks().assign(this, contract, 10);
+    }
+
+    @Override
+    public Task unassign() {
+        final Task task;
+        if(this.assignee() == null){
+            task = this;
+        }else {
+            task = this.storage.tasks().unassign(this);
+        }
+        return task;
     }
 
     @Override
