@@ -130,6 +130,24 @@ public final class InMemoryTasks implements Tasks {
     }
 
     @Override
+    public Task unassign(final Task task) {
+        final TaskKey key = new TaskKey(
+            task.issue().issueId(),
+            task.project().repoFullName(),
+            task.project().provider()
+        );
+        final Task unassigned = new StoredTask(
+            task.project(),
+            key.issueId,
+            task.role(),
+            task.estimation(),
+            this.storage
+        );
+        this.tasks.put(key, unassigned);
+        return unassigned;
+    }
+
+    @Override
     public Tasks ofProject(final String repoFullName,
                            final String repoProvider) {
         final Supplier<Stream<Task>> tasksOf = () -> tasks.values()

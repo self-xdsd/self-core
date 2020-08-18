@@ -69,6 +69,12 @@ public final class UnassignedTasks implements Tasks {
     }
 
     @Override
+    public Task unassign(final Task task) {
+        throw new UnsupportedOperationException("Can't unassign a task from "
+            + "UnassignedTasks. These tasks are already unassigned.");
+    }
+
+    @Override
     public Tasks ofProject(final String repoFullName,
                            final String repoProvider) {
         final Supplier<Stream<Task>> ofProject = () -> tasks.get()

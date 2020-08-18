@@ -60,6 +60,13 @@ public interface Tasks extends Iterable<Task> {
     Task assign(final Task task, final Contract contract, final int days);
 
     /**
+     * Unassign a Task.
+     * @param task Task to be unassigned.
+     * @return Task.
+     */
+    Task unassign(Task task);
+
+    /**
      * Get the tasks of a given Project.
      * @param repoFullName Full name of the Repo that the Project represents.
      * @param repoProvider Provider of the Repo that the Project represents.
@@ -91,5 +98,4 @@ public interface Tasks extends Iterable<Task> {
      * @return Tasks.
      */
     Tasks unassigned();
-
 }

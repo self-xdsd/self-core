@@ -239,6 +239,49 @@ public final class ContributorTasksTestCase {
     }
 
     /**
+     * Throws ISE when unasssigning Task is not part of ContributorTasks.
+     */
+    @Test(expected = IllegalStateException.class)
+    public void throwsWhenUnassigningTaskNotPartOfContributorTasks(){
+        final Task task = Mockito.mock(Task.class);
+        final Contributor contributor = Mockito.mock(Contributor.class);
+        final Tasks tasks = new ContributorTasks(
+            "mihai", "github",
+            () -> Stream.of(task),
+            Mockito.mock(Storage.class)
+        );
+
+        Mockito.when(contributor.username()).thenReturn("mihai");
+        Mockito.when(contributor.provider()).thenReturn("github");
+        Mockito.when(task.assignee()).thenReturn(contributor);
+
+        tasks.unassign(Mockito.mock(Task.class));
+    }
+
+    /**
+     * An assigned Task part of ContributorTasks can be unassigned.
+     */
+    @Test
+    public void canBeUnassignedIfPartOfContributorTasks(){
+        final Storage storage = Mockito.mock(Storage.class);
+        final Task task = Mockito.mock(Task.class);
+        final Contributor contributor = Mockito.mock(Contributor.class);
+        final Tasks tasks = new ContributorTasks(
+            "mihai", "github",
+            () -> Stream.of(task),
+            storage
+        );
+
+        Mockito.when(contributor.username()).thenReturn("mihai");
+        Mockito.when(contributor.provider()).thenReturn("github");
+        Mockito.when(task.assignee()).thenReturn(contributor);
+        Mockito.when(storage.tasks()).thenReturn(Mockito.mock(Tasks.class));
+
+        tasks.unassign(task);
+        Mockito.verify(storage.tasks()).unassign(task);
+    }
+
+    /**
      * Mock an Issue for test.
      *
      * @param issueId ID.

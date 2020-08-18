@@ -37,6 +37,8 @@ import org.mockito.Mockito;
  * @todo #135:30min Finish 'getTasksOfContributor()' test case
  *  when API permits that; as in when a Task can be assigned to a
  *  Contributor.
+ * @todo #439:30min Update InMemoryTasks assign() and unassign()
+ *  to use Task#issueId() then test them.
  */
 public final class InMemoryTasksTestCase {
 

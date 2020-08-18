@@ -323,6 +323,57 @@ public final class ProjectTasksTestCase {
         Mockito.verify(all, Mockito.times(1)).assign(task, contract, days);
     }
 
+
+    /**
+     * Throws ISE when unasssigning Task is not part of ProjectTasks.
+     */
+    @Test(expected = IllegalStateException.class)
+    public void throwsWhenUnassigningTaskNotPartOfProjectTasks(){
+        final Task task = Mockito.mock(Task.class);
+        final Task otherTask = Mockito.mock(Task.class);
+        final Project project = Mockito.mock(Project.class);
+        final Project otherProject = Mockito.mock(Project.class);
+        final Tasks tasks = new ProjectTasks(
+            "john/test", "github",
+            () -> Stream.of(task),
+            Mockito.mock(Storage.class)
+        );
+
+        Mockito.when(project.repoFullName()).thenReturn("john/test");
+        Mockito.when(project.provider()).thenReturn("github");
+        Mockito.when(task.project()).thenReturn(project);
+        Mockito.when(otherProject.repoFullName()).thenReturn("john/test-other");
+        Mockito.when(otherProject.provider()).thenReturn("github");
+        Mockito.when(otherTask.project()).thenReturn(otherProject);
+
+        tasks.unassign(otherTask);
+    }
+
+    /**
+     * An assigned Task part of ProjectTasks can be unassigned.
+     */
+    @Test
+    public void canBeUnassignedIfPartOfProjectTasks(){
+        final Storage storage = Mockito.mock(Storage.class);
+        final Task task = Mockito.mock(Task.class);
+        final Project project = Mockito.mock(Project.class);
+        final Tasks tasks = new ProjectTasks(
+            "john/test", "github",
+            () -> Stream.of(task),
+            storage
+        );
+
+        Mockito.when(project.repoFullName()).thenReturn("john/test");
+        Mockito.when(project.provider()).thenReturn("github");
+        Mockito.when(task.project()).thenReturn(project);
+        Mockito.when(storage.tasks()).thenReturn(Mockito.mock(Tasks.class));
+
+        tasks.unassign(task);
+
+        Mockito.verify(storage.tasks()).unassign(task);
+
+    }
+
     /**
      * Mock an Issue for test.
      *
