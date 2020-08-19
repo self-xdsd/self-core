@@ -20,75 +20,53 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package com.selfxdsd.api;
+package com.selfxdsd.core.managers;
+
+import com.selfxdsd.api.Event;
+import com.selfxdsd.api.pm.Conversation;
+import com.selfxdsd.api.pm.Step;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * Event received from the Provider.
+ * Conversation where a Task's assignee resigns.
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
- * @since 0.0.9
+ * @since 0.0.20
+ * @todo #454:30min We must implement a Step where we should
+ *  validate that the comment's author is indeed the task's assignee.
+ *  After that, we also need a Step to actually unassign the Task.
  */
-public interface Event {
+public final class Resign implements Conversation {
 
     /**
-     * Type of the event.
-     * @return String.
+     * Logger.
      */
-    String type();
+    private static final Logger LOG = LoggerFactory.getLogger(
+        Resign.class
+    );
 
     /**
-     * Issue where the event happened.
-     * @return Issue.
+     * Next conversation.
      */
-    Issue issue();
+    private final Conversation next;
 
     /**
-     * Comment, present if this event is
-     * related to the Issue's comments (created, deleted etc).
-     * @return Comment.
+     * Ctor.
+     * @param next Next in the conversation chain.
      */
-    Comment comment();
+    public Resign(final Conversation next) {
+        this.next = next;
+    }
 
-    /**
-     * Project where this event occured.
-     * @return Project.
-     */
-    Project project();
-
-    /**
-     * Event types.
-     */
-    final class Type {
-
-        /**
-         * Hidden ctor.
-         */
-        private Type(){}
-
-        /**
-         * Activate repo event.
-         */
-        public static final String ACTIVATE = "activate";
-
-        /**
-         * Event for reviewing and assigning any unassigned tasks.
-         */
-        public static final String UNASSIGNED_TASKS = "unassigned";
-
-        /**
-         * Hello comment event.
-         */
-        public static final String HELLO = "hello";
-
-        /**
-         * Confused comment event.
-         */
-        public static final String CONFUSED = "confused";
-
-        /**
-         * Resign comment event.
-         */
-        public static final String RESIGN = "resign";
-
+    @Override
+    public Step start(final Event event) {
+        final Step steps;
+        if(Event.Type.RESIGN.equals(event.type())) {
+            steps = null;
+        } else {
+            steps = this.next.start(event);
+        }
+        return steps;
     }
 }

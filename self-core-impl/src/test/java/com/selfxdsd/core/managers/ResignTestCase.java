@@ -20,75 +20,42 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package com.selfxdsd.api;
+package com.selfxdsd.core.managers;
+
+import com.selfxdsd.api.Event;
+import com.selfxdsd.api.pm.Conversation;
+import com.selfxdsd.api.pm.Step;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.Test;
+import org.mockito.Mockito;
 
 /**
- * Event received from the Provider.
+ * Unit tests for {@link Resign}.
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
- * @since 0.0.9
+ * @since 0.0.20
  */
-public interface Event {
+public final class ResignTestCase {
 
     /**
-     * Type of the event.
-     * @return String.
+     * Resign.start(...) should call the next conversation if the
+     * given Event is not 'resign'.
      */
-    String type();
-
-    /**
-     * Issue where the event happened.
-     * @return Issue.
-     */
-    Issue issue();
-
-    /**
-     * Comment, present if this event is
-     * related to the Issue's comments (created, deleted etc).
-     * @return Comment.
-     */
-    Comment comment();
-
-    /**
-     * Project where this event occured.
-     * @return Project.
-     */
-    Project project();
-
-    /**
-     * Event types.
-     */
-    final class Type {
-
-        /**
-         * Hidden ctor.
-         */
-        private Type(){}
-
-        /**
-         * Activate repo event.
-         */
-        public static final String ACTIVATE = "activate";
-
-        /**
-         * Event for reviewing and assigning any unassigned tasks.
-         */
-        public static final String UNASSIGNED_TASKS = "unassigned";
-
-        /**
-         * Hello comment event.
-         */
-        public static final String HELLO = "hello";
-
-        /**
-         * Confused comment event.
-         */
-        public static final String CONFUSED = "confused";
-
-        /**
-         * Resign comment event.
-         */
-        public static final String RESIGN = "resign";
-
+    @Test
+    public void goesFurtherIfNotResign() {
+        final Step resolved = Mockito.mock(Step.class);
+        final Event event = Mockito.mock(Event.class);
+        Mockito.when(event.type()).thenReturn("notResign");
+        final Conversation ressign = new Resign(
+            next -> {
+                MatcherAssert.assertThat(event, Matchers.is(next));
+                return resolved;
+            }
+        );
+        MatcherAssert.assertThat(
+            ressign.start(event),
+            Matchers.is(resolved)
+        );
     }
 }
