@@ -29,10 +29,6 @@ import com.selfxdsd.api.Event;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.20
- * @todo #441:60min Add the first implementation of Conversation,
- *  which should be named Understand and should use the project's
- *  Language to understand the comment and set the event's type
- *  accordingly.
  */
 public interface Conversation {
 
