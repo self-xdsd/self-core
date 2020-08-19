@@ -64,7 +64,7 @@ public final class SendReplyTestCase {
             .toString();
 
         final Step step = new SendReply(
-            "I'm fine, thank you!",
+            "@mihai I'm fine, thank you!",
             next -> MatcherAssert.assertThat(next, Matchers.is(event))
         );
 

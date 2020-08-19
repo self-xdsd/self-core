@@ -74,7 +74,6 @@ public final class SendReply extends Intermediary {
         final StringBuilder withPreview = new StringBuilder();
         withPreview
             .append("> ").append(body).append("\n\n")
-            .append("@" + author + " ")
             .append(this.reply);
         issue.comments().post(
             withPreview.toString()
