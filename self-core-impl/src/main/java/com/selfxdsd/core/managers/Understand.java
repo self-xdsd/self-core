@@ -32,8 +32,6 @@ import com.selfxdsd.api.pm.Step;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.20
- * @todo #446:30min Add an implementation of Step which sends
- *  a reply to the event comment.
  * @todo #446:30min Add the next implementation of Conversation,
  *  called Hello, which will send a reply if the event type is "hello".
  * @todo #446:30min Add the Confused implementation of Conversation,
