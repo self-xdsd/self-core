@@ -31,6 +31,11 @@ final class GithubComment implements Comment {
     }
 
     @Override
+    public String author() {
+        return this.json.getJsonObject("user").getString("login");
+    }
+
+    @Override
     public String body() {
         return this.json.getString("body");
     }

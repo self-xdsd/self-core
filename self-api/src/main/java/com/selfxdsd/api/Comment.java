@@ -17,6 +17,12 @@ public interface Comment {
     String commentId();
 
     /**
+     * Author's username.
+     * @return String.
+     */
+    String author();
+
+    /**
      * Comment's content.
      * @return String
      */

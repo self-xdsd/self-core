@@ -29,6 +29,23 @@ public final class GithubCommentTestCase {
     }
 
     /**
+     * Github Comment can return its author.
+     */
+    @Test
+    public void returnsAuthor() {
+        final Comment comment = new GithubComment(
+            Json.createObjectBuilder()
+                .add("id", 1)
+                .add("user", Json.createObjectBuilder().add("login", "mihai"))
+                .build()
+        );
+        MatcherAssert.assertThat(
+            comment.author(),
+            Matchers.equalTo("mihai")
+        );
+    }
+
+    /**
      * Github Comment can return its body.
      */
     @Test
