@@ -289,10 +289,6 @@ public final class StoredProjectManagerTestCase {
                     return project;
                 }
 
-                @Override
-                public String provider() {
-                    return Provider.Names.GITHUB;
-                }
             }
         );
         Mockito.verify(tasks, Mockito.times(1))
@@ -358,10 +354,6 @@ public final class StoredProjectManagerTestCase {
                     return project;
                 }
 
-                @Override
-                public String provider() {
-                    return Provider.Names.GITHUB;
-                }
             }
         );
         Mockito.verify(tasks, Mockito.times(1))
@@ -437,10 +429,6 @@ public final class StoredProjectManagerTestCase {
                     return project;
                 }
 
-                @Override
-                public String provider() {
-                    return Provider.Names.GITHUB;
-                }
             }
         );
     }

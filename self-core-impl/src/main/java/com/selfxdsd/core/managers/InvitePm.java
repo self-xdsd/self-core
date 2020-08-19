@@ -22,10 +22,7 @@
  */
 package com.selfxdsd.core.managers;
 
-import com.selfxdsd.api.Event;
-import com.selfxdsd.api.ProjectManager;
-import com.selfxdsd.api.Provider;
-import com.selfxdsd.api.Repo;
+import com.selfxdsd.api.*;
 import com.selfxdsd.api.pm.Intermediary;
 import com.selfxdsd.api.pm.Step;
 import com.selfxdsd.core.Github;
@@ -59,9 +56,10 @@ public final class InvitePm extends Intermediary {
 
     @Override
     public void perform(final Event event) {
-        final Repo repo = event.project().repo();
-        final String provider = event.provider();
-        final ProjectManager manager = event.project().projectManager();
+        final Project project = event.project();
+        final Repo repo = project.repo();
+        final String provider = project.provider();
+        final ProjectManager manager = project.projectManager();
         LOG.debug(
             "Inviting PM to repo " + repo.fullName() + " at " + provider
         );

@@ -52,7 +52,7 @@ public final class InvitePmTestCase {
 
         final Event event = Mockito.mock(Event.class);
         Mockito.when(event.project()).thenReturn(project);
-        Mockito.when(event.provider()).thenReturn("unknown");
+        Mockito.when(event.project().provider()).thenReturn("unknown");
         invitePm.perform(event);
     }
 
@@ -82,7 +82,8 @@ public final class InvitePmTestCase {
 
         final Event event = Mockito.mock(Event.class);
         Mockito.when(event.project()).thenReturn(project);
-        Mockito.when(event.provider()).thenReturn(Provider.Names.GITLAB);
+        Mockito.when(event.project().provider())
+            .thenReturn(Provider.Names.GITLAB);
 
         invitePm.perform(event);
 
@@ -122,7 +123,8 @@ public final class InvitePmTestCase {
 
         final Event event = Mockito.mock(Event.class);
         Mockito.when(event.project()).thenReturn(project);
-        Mockito.when(event.provider()).thenReturn(Provider.Names.GITHUB);
+        Mockito.when(event.project().provider())
+            .thenReturn(Provider.Names.GITHUB);
 
         invitePm.perform(event);
 

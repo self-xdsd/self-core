@@ -56,12 +56,6 @@ public interface Event {
     Project project();
 
     /**
-     * The Provider which sent this event.
-     * @return String.
-     */
-    String provider();
-
-    /**
      * Event types.
      */
     final class Type {

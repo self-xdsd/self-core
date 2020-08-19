@@ -81,10 +81,6 @@ final class GithubRepo extends BaseRepo {
                     return project;
                 }
 
-                @Override
-                public String provider() {
-                    return Provider.Names.GITHUB;
-                }
             }
         );
         return project;

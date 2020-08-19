@@ -165,11 +165,14 @@ public final class StoredProjectManager implements ProjectManager {
     public void newProject(final Event event) {
         final Step steps = new InvitePm(
             new SetupWebhook(
-                lastly -> LOG.debug(
-                    "Finished setting up project "
-                    + event.project().repoFullName() + " at "
-                    + event.provider()
-                )
+                lastly -> {
+                    final Project project = event.project();
+                    LOG.debug(
+                        "Finished setting up project "
+                        + project.repoFullName() + " at "
+                        + project.provider()
+                    );
+                }
             )
         );
         steps.perform(event);

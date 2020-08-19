@@ -57,7 +57,7 @@ public final class SetupWebhook extends Intermediary {
         final Project project = event.project();
         LOG.debug(
             "Setting up webhook for project "
-            + project.repoFullName() + " at " + event.provider()
+            + project.repoFullName() + " at " + project.provider()
         );
         final boolean result = project.repo().webhooks().add(project);
         if(result) {

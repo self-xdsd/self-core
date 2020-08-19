@@ -103,10 +103,6 @@ final class GitlabRepo extends BaseRepo {
                     return project;
                 }
 
-                @Override
-                public String provider() {
-                    return Provider.Names.GITLAB;
-                }
             }
         );
         return project;
