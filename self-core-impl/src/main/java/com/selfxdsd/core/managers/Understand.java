@@ -32,9 +32,6 @@ import com.selfxdsd.api.pm.Step;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.20
- * @todo #446:30min Add the Confused implementation of Conversation,
- *  which will send a "didn't understand" reply, if the event type is
- *  "confused".
  */
 public final class Understand implements Conversation {
 

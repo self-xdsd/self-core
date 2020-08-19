@@ -80,5 +80,10 @@ public interface Event {
          */
         public static final String HELLO = "hello";
 
+        /**
+         * Confused comment event.
+         */
+        public static final String CONFUSED = "confused";
+
     }
 }
