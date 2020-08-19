@@ -59,7 +59,7 @@ public final class EnglishTestCase {
         final Language english = new English();
         MatcherAssert.assertThat(
             english.categorize("@zoeself Can you help me?"),
-            Matchers.equalTo("unknown")
+            Matchers.equalTo("confused")
         );
     }
 

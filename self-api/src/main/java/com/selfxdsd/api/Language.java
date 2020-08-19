@@ -95,7 +95,7 @@ public abstract class Language {
                 return keyString.split("\\.")[0];
             }
         }
-        return "unknown";
+        return "confused";
     }
 
     /**
