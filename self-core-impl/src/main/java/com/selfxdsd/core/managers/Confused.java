@@ -26,7 +26,10 @@ public final class Confused implements Conversation {
         final Step steps;
         if (Event.Type.CONFUSED.equals(event.type())) {
             steps = new SendReply(
-                event.project().language().reply("misunderstand.comment"),
+                String.format(
+                    event.project().language().reply("misunderstand.comment"),
+                    event.comment().author()
+                ),
                 lastly -> LOG.debug("Finished conversation.")
             );
         } else {
