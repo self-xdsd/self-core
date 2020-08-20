@@ -33,10 +33,7 @@ import org.slf4j.LoggerFactory;
  * Conversation where a Task's assignee resigns.
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
- * @since 0.0.20
- * @todo #457:30min Implement and test an Intermediary step
- *  which unassigns the event's task. Once that is ready,
- *  complete the composition in method start(...) here.
+ * @since 0.0.20g
  */
 public final class Resign implements Conversation {
 
