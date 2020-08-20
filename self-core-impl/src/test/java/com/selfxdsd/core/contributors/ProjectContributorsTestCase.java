@@ -78,7 +78,7 @@ public final class ProjectContributorsTestCase {
                 BigDecimal.valueOf(1000)
             ),
             () -> IntStream.rangeClosed(1, 50)
-                .mapToObj( i -> Mockito.mock(Contributor.class)),
+                .mapToObj(i -> Mockito.mock(Contributor.class)),
             Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(contributors, Matchers.iterableWithSize(50));
