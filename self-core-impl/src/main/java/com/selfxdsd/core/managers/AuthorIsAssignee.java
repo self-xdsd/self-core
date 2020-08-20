@@ -27,6 +27,8 @@ import com.selfxdsd.api.Project;
 import com.selfxdsd.api.Task;
 import com.selfxdsd.api.pm.PreconditionCheck;
 import com.selfxdsd.api.pm.Step;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Check if the comment's author is the task's assignee or not.
@@ -35,6 +37,13 @@ import com.selfxdsd.api.pm.Step;
  * @since 0.0.20
  */
 public final class AuthorIsAssignee extends PreconditionCheck {
+
+    /**
+     * Logger.
+     */
+    private static final Logger LOG = LoggerFactory.getLogger(
+        AuthorIsAssignee.class
+    );
 
     /**
      * Ctor.
@@ -55,10 +64,15 @@ public final class AuthorIsAssignee extends PreconditionCheck {
             project.provider()
         );
         if(task == null || task.assignee() == null) {
+            LOG.debug("There is no task or no assignee.");
             this.onFalse().perform(event);
         } else if(task.assignee().username().equals(author)) {
+            LOG.debug("Author is indeed the task assignee. Resigning...");
             this.onTrue().perform(event);
         } else {
+            LOG.debug(
+                "Author is not the assignee, no resignation to perform."
+            );
             this.onFalse().perform(event);
         }
     }
