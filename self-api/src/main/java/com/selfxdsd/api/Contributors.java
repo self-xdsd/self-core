@@ -62,7 +62,7 @@ public interface Contributors extends Iterable<Contributor>, Paged {
     /**
      * Get the Contributors at the provided Page.
      * @param page Page number.
-     * @return Projects in a page.
+     * @return Contributors in a page.
      */
     Contributors page(final Paged.Page page);
 
