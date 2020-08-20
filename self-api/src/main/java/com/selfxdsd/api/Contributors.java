@@ -22,13 +22,15 @@
  */
 package com.selfxdsd.api;
 
+import com.selfxdsd.api.storage.Paged;
+
 /**
  * Contributors in Self.
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
  */
-public interface Contributors extends Iterable<Contributor> {
+public interface Contributors extends Iterable<Contributor>, Paged {
 
     /**
      * Register a new contributor in Self.
@@ -56,6 +58,13 @@ public interface Contributors extends Iterable<Contributor> {
         final String repoFullName,
         final String repoProvider
     );
+
+    /**
+     * Get the Contributors at the provided Page.
+     * @param page Page number.
+     * @return Projects in a page.
+     */
+    Contributors page(final Paged.Page page);
 
     /**
      * Elect a Contributor for the given task.

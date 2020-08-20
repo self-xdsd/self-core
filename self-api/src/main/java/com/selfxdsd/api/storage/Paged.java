@@ -6,8 +6,8 @@ package com.selfxdsd.api.storage;
  * @author criske
  * @version $Id$
  * @since 0.0.13
- * @todo #366:30min Provide paging implementation for other Self entities:
- *  Contributors, Contracts, Invoices, InvoicedTasks, Tasks.
+ * @todo #462:30min Provide paging implementation for other Self entities:
+ *  Contracts, Invoices, InvoicedTasks, Tasks.
  *  As guidance use implementation for Projects: Pm/User/InMemoryProjects.
  */
 public interface Paged {
@@ -47,6 +47,14 @@ public interface Paged {
         public Page(final int number, final int size) {
             this.number = number;
             this.size = size;
+        }
+
+        /**
+         * Represents all records in a single page.
+         * @return Page.
+         */
+        public static Page all(){
+            return new Page(1, Integer.MAX_VALUE);
         }
 
         /**

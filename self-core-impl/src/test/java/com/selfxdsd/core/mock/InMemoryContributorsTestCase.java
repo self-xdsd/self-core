@@ -1,6 +1,7 @@
 package com.selfxdsd.core.mock;
 
 import com.selfxdsd.api.*;
+import com.selfxdsd.api.storage.Paged;
 import com.selfxdsd.api.storage.Storage;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -110,6 +111,45 @@ public final class InMemoryContributorsTestCase {
         MatcherAssert.assertThat(
             storage.contributors(),
             Matchers.iterableWithSize(1));
+    }
+
+    /**
+     * Check if iterator is working properly.
+     */
+    @Test
+    public void iteratorWorksByPage() {
+        final Storage storage = new InMemory();
+        for (int i = 1; i <= 50; i++) {
+            storage.contributors()
+                .register("horea".repeat(i), "github");
+        }
+        MatcherAssert.assertThat(
+            storage.contributors(),
+            Matchers.iterableWithSize(50));
+
+        final Contributors pageOne = storage.contributors()
+            .page(new Paged.Page(1, 20));
+        MatcherAssert.assertThat(
+            pageOne,
+            Matchers.iterableWithSize(20));
+        MatcherAssert.assertThat(pageOne.iterator().next().username(),
+            Matchers.equalTo("horea".repeat(1)));
+
+        final Contributors pageTwo = storage.contributors()
+            .page(new Paged.Page(2, 20));
+        MatcherAssert.assertThat(
+            pageTwo,
+            Matchers.iterableWithSize(20));
+        MatcherAssert.assertThat(pageTwo.iterator().next().username(),
+            Matchers.equalTo("horea".repeat(21)));
+
+        final Contributors pageThree = storage.contributors()
+            .page(new Paged.Page(3, 20));
+        MatcherAssert.assertThat(
+            pageThree,
+            Matchers.iterableWithSize(10));
+        MatcherAssert.assertThat(pageThree.iterator().next().username(),
+            Matchers.equalTo("horea".repeat(41)));
     }
 
     /**

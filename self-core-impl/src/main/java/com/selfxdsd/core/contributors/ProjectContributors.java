@@ -24,6 +24,7 @@ package com.selfxdsd.core.contributors;
 
 import com.selfxdsd.api.*;
 import com.selfxdsd.api.storage.Storage;
+import com.selfxdsd.core.BasePaged;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -41,7 +42,8 @@ import java.util.stream.Stream;
  * @version $Id$
  * @since 0.0.4
  */
-public final class ProjectContributors implements Contributors {
+public final class ProjectContributors extends BasePaged
+    implements Contributors {
 
     /**
      * The Project.
@@ -79,6 +81,23 @@ public final class ProjectContributors implements Contributors {
         final Supplier<Stream<Contributor>> contributors,
         final Storage storage
     ) {
+        this(project, contributors, storage, Page.all());
+    }
+
+
+    /**
+     * Constructor.
+     * @param project The project.
+     * @param contributors Project's contributors.
+     * @param storage Self's storage, to save new contracts.
+     * @param page Current Page.
+     * @checkstyle LineLength (5 lines)
+     */
+    private ProjectContributors(final Project project,
+                                final Supplier<Stream<Contributor>> contributors,
+                                final Storage storage,
+                                final Page page){
+        super(page, () -> (int) contributors.get().count());
         this.project = project;
         this.repoFullName = project.repoFullName();
         this.provider = project.owner().provider().name();
@@ -123,7 +142,10 @@ public final class ProjectContributors implements Contributors {
         final String username,
         final String provider
     ) {
+        final Page page = super.current();
         return this.contributors.get()
+            .skip((page.getNumber() - 1) * page.getSize())
+            .limit(page.getSize())
             .filter(c -> c.username().equals(username)
                 && c.provider().equals(provider))
             .findFirst()
@@ -142,6 +164,15 @@ public final class ProjectContributors implements Contributors {
         throw new IllegalStateException(
             "Already seeing the contributors of Project " + this.repoFullName
           + ", operating at " + this.provider + "."
+        );
+    }
+
+    @Override
+    public Contributors page(final Page page) {
+        return new ProjectContributors(this.project,
+            this.contributors,
+            this.storage,
+            page
         );
     }
 
@@ -164,7 +195,10 @@ public final class ProjectContributors implements Contributors {
             throw new IllegalStateException("Contributors project must match "
              + " the task project.");
         }
+        final Page page = super.current();
         final List<Contributor> eligible = this.contributors.get()
+            .skip((page.getNumber() - 1) * page.getSize())
+            .limit(page.getSize())
             .filter(
                 contributor -> {
                     if(task.assignee() != null) {
@@ -206,6 +240,10 @@ public final class ProjectContributors implements Contributors {
 
     @Override
     public Iterator<Contributor> iterator() {
-        return this.contributors.get().iterator();
+        final Page page = super.current();
+        return this.contributors.get()
+            .skip((page.getNumber() - 1) * page.getSize())
+            .limit(page.getSize())
+            .iterator();
     }
 }

@@ -24,20 +24,23 @@ package com.selfxdsd.core.mock;
 
 import com.selfxdsd.api.*;
 import com.selfxdsd.api.storage.Storage;
+import com.selfxdsd.core.BasePaged;
 import com.selfxdsd.core.contributors.ProjectContributors;
 import com.selfxdsd.core.contributors.StoredContributor;
 
 import java.util.*;
-import java.util.stream.Collectors;
+import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 /**
  * In-memory contributors for test purposes.
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
- * @since 0.0.1
  * @checkstyle ReturnCount (400 lines)
+ * @since 0.0.1
  */
-public final class InMemoryContributors implements Contributors {
+public final class InMemoryContributors extends BasePaged
+    implements Contributors {
 
     /**
      * Parent storage.
@@ -47,13 +50,30 @@ public final class InMemoryContributors implements Contributors {
     /**
      * Contributors "table".
      */
-    private final Map<ContributorKey, Contributor> table = new HashMap<>();
+    private final Map<ContributorKey, Contributor> table;
 
     /**
      * Ctor.
+     *
      * @param storage Parent storage.
      */
     public InMemoryContributors(final Storage storage) {
+        this(new TreeMap<>(Comparator.comparing(ContributorKey::toString)),
+            storage,
+            Page.all());
+    }
+
+    /**
+     * Ctor.
+     * @param table Contributors "table".
+     * @param storage Parent storage.
+     * @param page Current Page.
+     */
+    private InMemoryContributors(final Map<ContributorKey, Contributor> table,
+                                 final Storage storage,
+                                 final Page page) {
+        super(page, table::size);
+        this.table = table;
         this.storage = storage;
     }
 
@@ -80,28 +100,37 @@ public final class InMemoryContributors implements Contributors {
     }
 
     @Override
+    public Contributors page(final Page page) {
+        return new InMemoryContributors(this.table, this.storage, page);
+    }
+
+    @Override
     public Contributors ofProject(
         final String repoFullName,
         final String repoProvider
     ) {
-        final List<Contributor> found = this.table.values().stream().filter(
-            contributor -> {
-                for(final Contract ctc : contributor.contracts()) {
+        final Page page = super.current();
+        final Supplier<Stream<Contributor>> found = () -> this.table
+            .values()
+            .stream()
+            .skip((page.getNumber() - 1) * page.getSize())
+            .limit(page.getSize())
+            .filter(contributor -> {
+                for (final Contract ctc : contributor.contracts()) {
                     final Project prj = ctc.project();
-                    if(prj.repoFullName().equals(repoFullName)
+                    if (prj.repoFullName().equals(repoFullName)
                         && prj.provider().equals(repoProvider)) {
                         return true;
                     }
                 }
                 return false;
-            }
-        ).collect(Collectors.toList());
+            });
         return new ProjectContributors(
             this.storage.projects().getProjectById(
                 repoFullName,
                 repoProvider
             ),
-            found::stream, this.storage
+            found, this.storage
         );
     }
 
@@ -109,13 +138,18 @@ public final class InMemoryContributors implements Contributors {
     public Contributor elect(final Task task) {
         throw new UnsupportedOperationException(
             "You can only elect a Contributor out of a Project's contributors."
-          + " Call #ofProject(...) first."
+                + " Call #ofProject(...) first."
         );
     }
 
     @Override
     public Iterator<Contributor> iterator() {
-        return this.table.values().iterator();
+        final Page page = super.current();
+        return this.table.values()
+            .stream()
+            .skip((page.getNumber() - 1) * page.getSize())
+            .limit(page.getSize())
+            .iterator();
     }
 
     /**
@@ -140,7 +174,7 @@ public final class InMemoryContributors implements Contributors {
          *
          * @param contributorUsername Contributor's username.
          * @param contributorProvider Contributor's provider.
-         * */
+         */
         ContributorKey(
             final String contributorUsername,
             final String contributorProvider
@@ -170,6 +204,11 @@ public final class InMemoryContributors implements Contributors {
                 this.contributorUsername,
                 this.contributorProvider
             );
+        }
+
+        @Override
+        public String toString() {
+            return contributorUsername + "-" + contributorProvider;
         }
     }
 }

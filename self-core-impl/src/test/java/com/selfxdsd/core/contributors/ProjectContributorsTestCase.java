@@ -22,6 +22,7 @@
 package com.selfxdsd.core.contributors;
 
 import com.selfxdsd.api.*;
+import com.selfxdsd.api.storage.Paged;
 import com.selfxdsd.api.storage.Storage;
 import com.selfxdsd.core.contracts.ContributorContracts;
 import org.hamcrest.MatcherAssert;
@@ -32,6 +33,7 @@ import org.mockito.Mockito;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 /**
@@ -61,6 +63,34 @@ public final class ProjectContributorsTestCase {
             Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(contributors, Matchers.iterableWithSize(3));
+    }
+
+    /**
+     * ProjectContributors should be iterable by Page.
+     */
+    @Test
+    public void canBeIteratedByPage() {
+        final Contributors contributors = new ProjectContributors(
+            this.mockProject(
+                "john/test",
+                Provider.Names.GITHUB,
+                BigDecimal.valueOf(100000),
+                BigDecimal.valueOf(1000)
+            ),
+            () -> IntStream.rangeClosed(1, 50)
+                .mapToObj( i -> Mockito.mock(Contributor.class)),
+            Mockito.mock(Storage.class)
+        );
+        MatcherAssert.assertThat(contributors, Matchers.iterableWithSize(50));
+        final Contributors pageOne = contributors
+            .page(new Paged.Page(1, 20));
+        MatcherAssert.assertThat(pageOne, Matchers.iterableWithSize(20));
+        final Contributors pageTwo = contributors
+            .page(new Paged.Page(2, 20));
+        MatcherAssert.assertThat(pageTwo, Matchers.iterableWithSize(20));
+        final Contributors pageThree = contributors
+            .page(new Paged.Page(3, 20));
+        MatcherAssert.assertThat(pageThree, Matchers.iterableWithSize(10));
     }
 
     /**
