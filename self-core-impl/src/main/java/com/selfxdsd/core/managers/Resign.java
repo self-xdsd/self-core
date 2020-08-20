@@ -33,9 +33,9 @@ import org.slf4j.LoggerFactory;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.20
- * @todo #454:30min We must implement a Step where we should
- *  validate that the comment's author is indeed the task's assignee.
- *  After that, we also need a Step to actually unassign the Task.
+ * @todo #457:30min Implement and test an Intermediary step
+ *  which unassigns the event's task. Once that is ready,
+ *  complete the composition in method start(...) here.
  */
 public final class Resign implements Conversation {
 
@@ -63,7 +63,10 @@ public final class Resign implements Conversation {
     public Step start(final Event event) {
         final Step steps;
         if(Event.Type.RESIGN.equals(event.type())) {
-            steps = null;
+            steps = new AuthorIsAssignee(
+                isAssignee -> LOG.debug("Author is assignee..."),
+                isNotAssignee -> LOG.debug("Author is NOT assignee...")
+            );
         } else {
             steps = this.next.start(event);
         }
