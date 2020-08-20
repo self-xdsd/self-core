@@ -23,70 +23,64 @@
 package com.selfxdsd.core.managers;
 
 import com.selfxdsd.api.Event;
-import com.selfxdsd.api.Language;
-import com.selfxdsd.api.pm.Conversation;
+import com.selfxdsd.api.Project;
+import com.selfxdsd.api.Task;
+import com.selfxdsd.api.pm.Intermediary;
 import com.selfxdsd.api.pm.Step;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Conversation where a Task's assignee resigns.
+ * Step which unassigns a task.
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
- * @since 0.0.20g
+ * @since 0.0.20
  */
-public final class Resign implements Conversation {
+public final class UnassignTask extends Intermediary {
 
     /**
      * Logger.
      */
     private static final Logger LOG = LoggerFactory.getLogger(
-        Resign.class
+        UnassignTask.class
     );
 
     /**
-     * Next conversation, if the event type is not "resign".
-     */
-    private final Conversation notResign;
-
-    /**
      * Ctor.
-     * @param notResign Next in the conversation chain, if the
-     *  event type is not resign.
+     *
+     * @param next The next step to perform.
      */
-    public Resign(final Conversation notResign) {
-        this.notResign = notResign;
+    public UnassignTask(final Step next) {
+        super(next);
     }
 
     @Override
-    public Step start(final Event event) {
-        final Step steps;
-        if(Event.Type.RESIGN.equals(event.type())) {
-            final Language language = event.project().language();
-            final String author = event.comment().author();
-            steps = new AuthorIsAssignee(
-                new UnassignTask(
-                    new SendReply(
-                        String.format(
-                            language.reply("resigned.comment"),
-                            author
-                        ),
-                        lastly -> LOG.debug("User resigned successfully.")
-                    )
-                ),
-                new SendReply(
-                    String.format(
-                        language.reply("cannotResign.comment"),
-                        author
-                    ),
-                    lastly -> LOG.debug(
-                        "User is not assignee, no resignation possible."
-                    )
-                )
-            );
+    public void perform(final Event event) {
+        final String issueId = event.issue().issueId();
+        final Project project = event.project();
+        final Task task = project.tasks().getById(
+            issueId, project.repoFullName(), project.provider()
+        );
+        if(task == null || task.assignee() == null) {
+            LOG.debug(
+                "Task #" + issueId + " is not register or it is not assigned, "
+                + "nothing to do.");
         } else {
-            steps = this.notResign.start(event);
+            LOG.debug(
+                "Resigning @" + task.assignee().username() + " from task "
+                + "#" + issueId + " of project " + project.repoFullName()
+                + " at " + project.provider()
+            );
+            final Task unassigned = task.unassign();
+            if(unassigned.assignee() == null) {
+                LOG.debug("Resignation successful!");
+            } else {
+                LOG.debug(
+                    "Something went wrong, the task is still assigned to "
+                    + unassigned.assignee().username()
+                );
+            }
         }
-        return steps;
+        this.next().perform(event);
     }
 }
