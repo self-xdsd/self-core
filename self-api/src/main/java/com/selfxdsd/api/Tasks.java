@@ -27,6 +27,8 @@ package com.selfxdsd.api;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
+ * @todo #471:60min. Implement Task::Tasks#remove(Task) which will remove
+ *  a Task from db and provide unit tests.
  */
 public interface Tasks extends Iterable<Task> {
 

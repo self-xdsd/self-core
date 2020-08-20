@@ -90,5 +90,10 @@ public interface Event {
          */
         public static final String RESIGN = "resign";
 
+        /**
+         * Deregister comment event.
+         */
+        public static final String DEREGISTER = "deregister";
+
     }
 }
