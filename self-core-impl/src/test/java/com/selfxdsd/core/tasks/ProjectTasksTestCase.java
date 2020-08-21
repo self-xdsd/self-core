@@ -40,6 +40,7 @@ import java.util.stream.StreamSupport;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
+ * @checkstyle ExecutableStatementCount (1000 lines)
  */
 public final class ProjectTasksTestCase {
 
@@ -82,6 +83,7 @@ public final class ProjectTasksTestCase {
     @Test
     public void getByIdFindReturnsFound() {
         final Task first = Mockito.mock(Task.class);
+        final Project projectOne = Mockito.mock(Project.class);
         final Issue issueOne = this.mockIssue(
             "123",
             "john/test",
@@ -89,7 +91,14 @@ public final class ProjectTasksTestCase {
             Contract.Roles.DEV
         );
         Mockito.when(first.issue()).thenReturn(issueOne);
+        Mockito.when(projectOne.repoFullName()).thenReturn("john/test");
+        Mockito.when(projectOne.provider()).thenReturn("github");
+        Mockito.when(first.issue()).thenReturn(issueOne);
+        Mockito.when(first.project()).thenReturn(projectOne);
+        Mockito.when(first.issueId()).thenReturn("123");
+
         final Task second = Mockito.mock(Task.class);
+        final Project projectTwo = Mockito.mock(Project.class);
         final Issue issueTwo = this.mockIssue(
             "123",
             "john/test",
@@ -97,6 +106,11 @@ public final class ProjectTasksTestCase {
             Contract.Roles.DEV
         );
         Mockito.when(second.issue()).thenReturn(issueTwo);
+        Mockito.when(projectTwo.repoFullName()).thenReturn("john/test");
+        Mockito.when(projectTwo.provider()).thenReturn("gitlab");
+        Mockito.when(second.issue()).thenReturn(issueOne);
+        Mockito.when(second.project()).thenReturn(projectOne);
+        Mockito.when(second.issueId()).thenReturn("123");
         final Tasks tasks = new ProjectTasks(
             "john/test", "github",
             () -> Stream.of(first, second),
@@ -155,13 +169,18 @@ public final class ProjectTasksTestCase {
     @Test
     public void registersNewIssue() {
         final Task registered = Mockito.mock(Task.class);
+        final Project project = Mockito.mock(Project.class);
         final Issue issue = this.mockIssue(
             "123",
             "john/test",
             "github",
             Contract.Roles.DEV
         );
+        Mockito.when(project.repoFullName()).thenReturn("john/test");
+        Mockito.when(project.provider()).thenReturn("github");
         Mockito.when(registered.issue()).thenReturn(issue);
+        Mockito.when(registered.project()).thenReturn(project);
+        Mockito.when(registered.issueId()).thenReturn("123");
 
         final List<Task> source = new ArrayList<>();
         final Tasks all = Mockito.mock(Tasks.class);

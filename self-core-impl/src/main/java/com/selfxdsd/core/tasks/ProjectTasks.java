@@ -88,12 +88,9 @@ public final class ProjectTasks implements Tasks {
         final String provider
     ) {
         return this.tasks.get().filter(
-            task -> {
-                final Issue issue = task.issue();
-                return issue.issueId().equals(issueId)
-                    && issue.repoFullName().equals(repoFullName)
-                    && issue.provider().equals(provider);
-            }
+            task -> task.issueId().equals(issueId)
+                && task.project().repoFullName().equals(repoFullName)
+                && task.project().provider().equals(provider)
         ).findFirst().orElse(null);
     }
 

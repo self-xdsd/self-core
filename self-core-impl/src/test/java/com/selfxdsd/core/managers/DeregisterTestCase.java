@@ -22,19 +22,23 @@
  */
 package com.selfxdsd.core.managers;
 
-import com.selfxdsd.api.Issue;
-import com.selfxdsd.api.Provider;
-import com.selfxdsd.api.Repo;
-import com.selfxdsd.api.User;
+import com.selfxdsd.api.*;
+import com.selfxdsd.api.pm.Step;
+import com.selfxdsd.api.storage.Storage;
+import com.selfxdsd.core.mock.InMemory;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.mockito.Mockito;
+
+import java.math.BigDecimal;
 
 /**
  * Unit tests for {@link Deregister}.
  * @author criske
  * @version $Id$
  * @since 0.0.20
- * @checkstyle ExecutableStatementCount (500 lines)
+ * @checkstyle ExecutableStatementCount (1000 lines)
  */
 public final class DeregisterTestCase {
 
@@ -43,6 +47,60 @@ public final class DeregisterTestCase {
      */
     @Test
     public void authorCanDeregisterTask(){
+        final Storage storage = new InMemory();
+        storage.contributors()
+            .register("john-arch", "github");
+        final Contributor markDev = storage
+            .contributors()
+            .register("mark", "github");
+        final Project project = storage.projects().register(
+            this.mockRepo("john/test", "github"),
+            storage.projectManagers().pick("github"),
+            "token");
+        storage.contracts()
+            .addContract("john/test", "john-arch", "github",
+                BigDecimal.TEN, "ARCH");
+        storage.contracts()
+            .addContract("john/test", "mark", "github",
+                BigDecimal.TEN, "DEV");
+        final Issue issue = this.mockIssue("1", "john/test", "github", "DEV");
+        storage.tasks().register(issue).assign(markDev);
+
+        final Event event = Mockito.mock(Event.class);
+        final Comment comment = Mockito.mock(Comment.class);
+        Mockito.when(comment.author()).thenReturn("john-arch");
+        Mockito.when(comment.body()).thenReturn("Deregister please!");
+        Mockito.when(event.type()).thenReturn(Event.Type.DEREGISTER);
+        Mockito.when(event.issue()).thenReturn(issue);
+        Mockito.when(event.project()).thenReturn(project);
+        Mockito.when(event.comment()).thenReturn(comment);
+
+        final Step step = new Deregister(e -> Mockito.mock(Step.class))
+            .start(event);
+
+        MatcherAssert.assertThat(
+            step,
+            Matchers.allOf(
+                Matchers.notNullValue(),
+                Matchers.instanceOf(AuthorHasRoles.class)
+            )
+        );
+        MatcherAssert.assertThat(markDev.tasks(), Matchers.iterableWithSize(1));
+
+        step.perform(event);
+
+        MatcherAssert.assertThat(
+            "Mark should not a have the task assigned to him anymore",
+            markDev.tasks(), Matchers.emptyIterable());
+        MatcherAssert.assertThat(
+            "Task should be removed from storage",
+            storage.tasks()
+                .getById("1", "john/test", "github"),
+            Matchers.nullValue());
+        Mockito.verify(issue.comments(), Mockito.times(1))
+            .post("> Deregister please!\n\n"
+                + "@john-arch task successfully removed.");
+
     }
 
     /**
@@ -50,6 +108,51 @@ public final class DeregisterTestCase {
      */
     @Test
     public void authorCanNotDeregisterTask(){
+        final Storage storage = new InMemory();
+        storage.contributors()
+            .register("john-dev", "github");
+        final Project project = storage.projects().register(
+            this.mockRepo("john/test", "github"),
+            storage.projectManagers().pick("github"),
+            "token");
+        storage.contracts()
+            .addContract("john/test", "john-dev", "github",
+                BigDecimal.TEN, "DEV");
+        final Issue issue = this.mockIssue("1", "john/test", "github", "DEV");
+        storage.tasks().register(issue);
+
+        final Event event = Mockito.mock(Event.class);
+        final Comment comment = Mockito.mock(Comment.class);
+        Mockito.when(comment.author()).thenReturn("john-dev");
+        Mockito.when(comment.body()).thenReturn("Deregister please!");
+        Mockito.when(event.type()).thenReturn(Event.Type.DEREGISTER);
+        Mockito.when(event.issue()).thenReturn(issue);
+        Mockito.when(event.project()).thenReturn(project);
+        Mockito.when(event.comment()).thenReturn(comment);
+
+        final Step step = new Deregister(e -> Mockito.mock(Step.class))
+            .start(event);
+
+        MatcherAssert.assertThat(
+            step,
+            Matchers.allOf(
+                Matchers.notNullValue(),
+                Matchers.instanceOf(AuthorHasRoles.class)
+            )
+        );
+
+        step.perform(event);
+
+        MatcherAssert.assertThat(
+            "Task should not be removed from storage",
+            storage.tasks()
+                .getById("1", "john/test", "github"),
+            Matchers.notNullValue());
+        Mockito.verify(issue.comments(), Mockito.times(1))
+            .post("> Deregister please!\n\n"
+                + "@john-dev you don't have the appropriate role "
+                + "to remove this task.\n\n"
+                + "Only users with PO or ARCH roles are allowed.");
     }
 
     /**
@@ -88,6 +191,7 @@ public final class DeregisterTestCase {
         Mockito.when(issue.repoFullName()).thenReturn(repoFullName);
         Mockito.when(issue.provider()).thenReturn(provider);
         Mockito.when(issue.role()).thenReturn(role);
+        Mockito.when(issue.comments()).thenReturn(Mockito.mock(Comments.class));
         return issue;
     }
 

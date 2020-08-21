@@ -27,6 +27,9 @@ package com.selfxdsd.api;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
+ * @todo #476:30min Update filter implementations of Tasks#getById to not use
+ *  issue() when doing queries (like getById), but use Task#project()
+ *  and Task#issueId() instead. ProjectTasks is already updated.
  */
 public interface Tasks extends Iterable<Task> {
 

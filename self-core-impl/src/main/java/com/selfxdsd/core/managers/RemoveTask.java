@@ -35,8 +35,6 @@ import org.slf4j.LoggerFactory;
  * @author criske
  * @version $Id$
  * @since 0.0.20
- * @todo #470:60min Finish implementing RemoveTask when Tasks api allows to
- *  remove a Task. Then write tests for it and Deregister.
  */
 public final class RemoveTask extends Intermediary {
 
@@ -72,8 +70,13 @@ public final class RemoveTask extends Intermediary {
                 + "#" + issueId + " of project " + project.repoFullName()
                 + " at " + project.provider()
             );
-            throw new UnsupportedOperationException("Removing a task from "
-                + " database not implemented yet - Tasks#remove(Task)!");
+            final boolean removed = project.tasks().remove(task);
+            if (!removed) {
+                LOG.debug("Removing task " + "#" + issueId
+                    + " of project " + project.repoFullName()
+                    + " at " + project.provider() + " failed."
+                );
+            }
         }
         this.next().perform(event);
     }
