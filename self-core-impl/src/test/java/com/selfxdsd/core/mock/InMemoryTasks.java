@@ -189,6 +189,16 @@ public final class InMemoryTasks implements Tasks {
         return new UnassignedTasks(unassigned, storage);
     }
 
+    @Override
+    public boolean remove(final Task task) {
+        final TaskKey key = new TaskKey(
+            task.issueId(),
+            task.project().repoFullName(),
+            task.project().provider()
+        );
+        return tasks.remove(key) != null;
+    }
+
     /**
      * A Task's primary key.
      */

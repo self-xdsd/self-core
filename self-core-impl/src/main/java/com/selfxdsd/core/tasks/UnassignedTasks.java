@@ -103,6 +103,19 @@ public final class UnassignedTasks implements Tasks {
     }
 
     @Override
+    public boolean remove(final Task task) {
+        boolean contains = this.getById(
+            task.issueId(),
+            task.project().repoFullName(),
+            task.project().provider()) != null;
+        if (!contains) {
+            throw new IllegalStateException("Task is not part of"
+                + " UnassignedTasks.");
+        }
+        return this.storage.tasks().remove(task);
+    }
+
+    @Override
     public Iterator<Task> iterator() {
         return this.tasks.get().iterator();
     }

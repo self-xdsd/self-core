@@ -282,6 +282,61 @@ public final class ContributorTasksTestCase {
     }
 
     /**
+     * Can remove a task from storage if task is part of ContributorTasks.
+     */
+    @Test
+    public void removesTask() {
+        final Task task = Mockito.mock(Task.class);
+        final Project project = Mockito.mock(Project.class);
+        final Issue issue = Mockito.mock(Issue.class);
+        final Storage storage = Mockito.mock(Storage.class);
+        final Tasks all = Mockito.mock(Tasks.class);
+        final Tasks tasks = new ContributorTasks(
+            "mihai", "github",
+            () -> Stream.of(task),
+            storage
+        );
+
+        Mockito.when(project.repoFullName()).thenReturn("john/test");
+        Mockito.when(project.provider()).thenReturn("github");
+        Mockito.when(task.project()).thenReturn(project);
+        Mockito.when(issue.issueId()).thenReturn("1");
+        Mockito.when(task.issueId()).thenReturn("1");
+        Mockito.when(task.issue()).thenReturn(issue);
+        Mockito.when(storage.tasks()).thenReturn(all);
+
+        tasks.remove(task);
+        Mockito.verify(storage.tasks(), Mockito.times(1)).remove(task);
+    }
+
+    /**
+     * Throws ISE when task is not part of ContributorTasks.
+     */
+    @Test(expected = IllegalStateException.class)
+    public void throwsWhenRemovingTaskNotPartOf() {
+        final Task task = Mockito.mock(Task.class);
+        final Project project = Mockito.mock(Project.class);
+        final Issue issue = Mockito.mock(Issue.class);
+        final Storage storage = Mockito.mock(Storage.class);
+        final Tasks all = Mockito.mock(Tasks.class);
+        final Tasks tasks = new ContributorTasks(
+            "mihai", "github",
+            Stream::empty,
+            storage
+        );
+
+        Mockito.when(project.repoFullName()).thenReturn("john/test");
+        Mockito.when(project.provider()).thenReturn("github");
+        Mockito.when(task.project()).thenReturn(project);
+        Mockito.when(issue.issueId()).thenReturn("1");
+        Mockito.when(task.issueId()).thenReturn("1");
+        Mockito.when(task.issue()).thenReturn(issue);
+        Mockito.when(storage.tasks()).thenReturn(all);
+
+        tasks.remove(task);
+    }
+
+    /**
      * Mock an Issue for test.
      *
      * @param issueId ID.

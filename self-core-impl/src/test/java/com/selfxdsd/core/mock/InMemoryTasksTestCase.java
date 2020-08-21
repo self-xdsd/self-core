@@ -202,6 +202,39 @@ public final class InMemoryTasksTestCase {
     }
 
     /**
+     * Can remove a task from storage.
+     */
+    @Test
+    public void removesTask(){
+        final Storage storage = new InMemory();
+        final Contributor contributor = storage.contributors()
+            .register("john", "github");
+        final Project project = storage.projects().register(
+            mockRepo("john/test", "github"),
+            storage.projectManagers().pick("github"),
+            "token");
+        project.contracts()
+            .addContract("john/test",
+                "john",
+                "github",
+                BigDecimal.TEN,
+                "DEV");
+        final Issue issue = this.mockIssue(
+            "123",
+            "john/test",
+            "github",
+            Contract.Roles.DEV
+        );
+        final Task task = storage.tasks().register(issue);
+        MatcherAssert.assertThat(storage.tasks().remove(task),
+            Matchers.is(Boolean.TRUE));
+        MatcherAssert.assertThat(storage.tasks().getById(
+            task.issueId(),
+            task.project().repoFullName(),
+            task.project().provider()), Matchers.nullValue());
+    }
+
+    /**
      * Mock a Repo for test.
      * @param fullName Full name.
      * @param provider Provider.
