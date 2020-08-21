@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
  * Conversation where a Task's assignee resigns.
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
- * @since 0.0.20g
+ * @since 0.0.20
  */
 public final class Resign implements Conversation {
 
