@@ -90,5 +90,10 @@ public interface Event {
          */
         public static final String RESIGN = "resign";
 
+        /**
+         * Status comment event.
+         */
+        public static final String STATUS = "status";
+
     }
 }
