@@ -67,8 +67,7 @@ public final class RemoveTaskTestCase {
     }
 
     /**
-     * There is a Task registered for the event's Issue, but it is not
-     * assigned to anyone.
+     * Task is removed from storage when the event issue occurs.
      */
     @Test
     public void taskIsRemoved() {
