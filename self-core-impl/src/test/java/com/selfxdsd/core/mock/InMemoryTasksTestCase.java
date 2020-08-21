@@ -29,6 +29,8 @@ import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import java.math.BigDecimal;
+
 /**
  * Unit tests for {@link InMemoryTasks}.
  * @author Mihai Andronache (amihaiemil@gmail.com)
@@ -37,8 +39,6 @@ import org.mockito.Mockito;
  * @todo #135:30min Finish 'getTasksOfContributor()' test case
  *  when API permits that; as in when a Task can be assigned to a
  *  Contributor.
- * @todo #439:30min Update InMemoryTasks assign() and unassign()
- *  to use Task#issueId() then test them.
  */
 public final class InMemoryTasksTestCase {
 
@@ -166,6 +166,39 @@ public final class InMemoryTasksTestCase {
 
         MatcherAssert.assertThat(storage.tasks().unassigned(),
             Matchers.iterableWithSize(1));
+    }
+
+    /**
+     * Assign and unassign a Task.
+     */
+    @Test
+    public void assignAndUnassignTask(){
+        final Storage storage = new InMemory();
+        final Contributor contributor = storage.contributors()
+            .register("john", "github");
+        final Project project = storage.projects().register(
+            mockRepo("john/test", "github"),
+            storage.projectManagers().pick("github"),
+            "token");
+        project.contracts()
+            .addContract("john/test",
+                "john",
+                "github",
+                BigDecimal.TEN,
+                "DEV");
+        final Issue issue = this.mockIssue(
+            "123",
+            "john/test",
+            "github",
+            Contract.Roles.DEV
+        );
+        final Task task = storage.tasks().register(issue);
+        final Task assigned = task.assign(contributor);
+        MatcherAssert.assertThat(
+            assigned.assignee(), Matchers.notNullValue());
+        final Task unassigned = assigned.unassign();
+        MatcherAssert.assertThat(
+            unassigned.assignee(), Matchers.nullValue());
     }
 
     /**
