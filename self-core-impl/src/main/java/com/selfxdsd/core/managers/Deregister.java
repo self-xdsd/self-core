@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
  * Conversation where a PM will unassign the Task and remove it from DB.
  * @author criske
  * @version $Id$
- * @since 0.0.20g
+ * @since 0.0.20
  */
 public final class Deregister implements Conversation {
 
