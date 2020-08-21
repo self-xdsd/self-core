@@ -112,7 +112,7 @@ public final class InMemoryTasks implements Tasks {
         final int days
     ) {
         final TaskKey key = new TaskKey(
-            task.issue().issueId(),
+            task.issueId(),
             task.project().repoFullName(),
             task.project().provider()
         );
@@ -132,7 +132,7 @@ public final class InMemoryTasks implements Tasks {
     @Override
     public Task unassign(final Task task) {
         final TaskKey key = new TaskKey(
-            task.issue().issueId(),
+            task.issueId(),
             task.project().repoFullName(),
             task.project().provider()
         );
