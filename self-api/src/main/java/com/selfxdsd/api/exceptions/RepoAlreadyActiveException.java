@@ -15,7 +15,7 @@ public final class RepoAlreadyActiveException extends RuntimeException {
      * @param repo Repo in question.
      */
     public RepoAlreadyActiveException(final Repo repo){
-        super("Rep \"" + repo.fullName() + "\" is already active.");
+        super("Repo \"" + repo.fullName() + "\" is already active.");
     }
 
 }
