@@ -166,11 +166,8 @@ public final class ContributorTasksTestCase {
         Mockito.when(project.provider()).thenReturn(Provider.Names.GITHUB);
         Mockito.when(project.repoFullName()).thenReturn("mihai/repo");
 
-        final Issue issue = Mockito.mock(Issue.class);
-        Mockito.when(issue.issueId()).thenReturn("1");
-
         final Task task = Mockito.mock(Task.class);
-        Mockito.when(task.issue()).thenReturn(issue);
+        Mockito.when(task.issueId()).thenReturn("1");
 
         Mockito.when(task.project()).thenReturn(project);
 
@@ -193,11 +190,8 @@ public final class ContributorTasksTestCase {
         Mockito.when(project.provider()).thenReturn(Provider.Names.GITHUB);
         Mockito.when(project.repoFullName()).thenReturn("mihai/repo");
 
-        final Issue issue = Mockito.mock(Issue.class);
-        Mockito.when(issue.issueId()).thenReturn("1");
-
         final Task task = Mockito.mock(Task.class);
-        Mockito.when(task.issue()).thenReturn(issue);
+        Mockito.when(task.issueId()).thenReturn("1");
 
         Mockito.when(task.project()).thenReturn(project);
 

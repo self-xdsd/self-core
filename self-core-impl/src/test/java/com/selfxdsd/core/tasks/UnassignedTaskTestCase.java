@@ -57,27 +57,25 @@ public final class UnassignedTaskTestCase {
     @Test
     public void getByIdFindReturnsFound() {
         final Task first = Mockito.mock(Task.class);
-        final Issue issueOne = this.mockIssue(
-            "123",
-            "john/test",
-            "github",
-            Contract.Roles.DEV
-        );
-        Mockito.when(first.issue()).thenReturn(issueOne);
+        final Project projectFirst = Mockito.mock(Project.class);
+        Mockito.when(projectFirst.repoFullName()).thenReturn("john/test");
+        Mockito.when(projectFirst.provider()).thenReturn("github");
+        Mockito.when(first.project()).thenReturn(projectFirst);
+        Mockito.when(first.issueId()).thenReturn("123first");
+
         final Task second = Mockito.mock(Task.class);
-        final Issue issueTwo = this.mockIssue(
-            "123",
-            "john/test",
-            "gitlab",
-            Contract.Roles.DEV
-        );
-        Mockito.when(second.issue()).thenReturn(issueTwo);
+        final Project projectSecond = Mockito.mock(Project.class);
+        Mockito.when(projectSecond.repoFullName()).thenReturn("john/test2");
+        Mockito.when(projectSecond.provider()).thenReturn("github");
+        Mockito.when(second.project()).thenReturn(projectSecond);
+        Mockito.when(second.issueId()).thenReturn("123second");
+
         final Tasks tasks = new UnassignedTasks(
             List.of(first, second)::stream,
             Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(
-            tasks.getById("123", "john/test", "github"),
+            tasks.getById("123first", "john/test", "github"),
             Matchers.is(first)
         );
     }

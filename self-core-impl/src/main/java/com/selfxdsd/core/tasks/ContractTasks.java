@@ -53,7 +53,7 @@ public final class ContractTasks implements Tasks {
                         final String repoFullName,
                         final String provider) {
         return this.tasks.get()
-            .filter(t -> t.issue().issueId().equals(issueId)
+            .filter(t -> t.issueId().equals(issueId)
                 && t.project().repoFullName().equals(repoFullName)
                 && t.project().provider().equals(provider))
             .findFirst()

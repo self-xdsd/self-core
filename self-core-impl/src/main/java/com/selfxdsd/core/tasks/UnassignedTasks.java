@@ -47,9 +47,9 @@ public final class UnassignedTasks implements Tasks {
                         final String provider) {
         return this.tasks
             .get()
-            .filter(t -> t.issue().issueId().equals(issueId)
-                && t.issue().repoFullName().equals(repoFullName)
-                && t.issue().provider().equals(provider))
+            .filter(t -> t.issueId().equals(issueId)
+                && t.project().repoFullName().equals(repoFullName)
+                && t.project().provider().equals(provider))
             .findFirst()
             .orElse(null);
     }

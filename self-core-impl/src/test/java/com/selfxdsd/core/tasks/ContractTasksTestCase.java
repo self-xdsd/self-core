@@ -174,7 +174,6 @@ public final class ContractTasksTestCase {
     public void returnsTaskById(){
         final Task task = Mockito.mock(Task.class);
         final Project project = Mockito.mock(Project.class);
-        final Issue issue = Mockito.mock(Issue.class);
         final ContractTasks tasks = new ContractTasks(
             new Contract.Id("foo", "mihai",
                 "github", "dev"),
@@ -182,8 +181,7 @@ public final class ContractTasksTestCase {
             Mockito.mock(Storage.class)
         );
 
-        Mockito.when(issue.issueId()).thenReturn("123");
-        Mockito.when(task.issue()).thenReturn(issue);
+        Mockito.when(task.issueId()).thenReturn("123");
         Mockito.when(project.provider()).thenReturn("github");
         Mockito.when(project.repoFullName()).thenReturn("john/repo");
         Mockito.when(task.project()).thenReturn(project);
