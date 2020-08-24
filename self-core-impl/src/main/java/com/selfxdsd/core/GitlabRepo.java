@@ -110,7 +110,7 @@ final class GitlabRepo extends BaseRepo {
 
     @Override
     public String fullName() {
-        throw new UnsupportedOperationException("Not yet implemented.");
+        return this.json().getString("path_with_namespace");
     }
 
     @Override

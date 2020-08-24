@@ -24,8 +24,10 @@ package com.selfxdsd.core;
 
 import com.selfxdsd.api.Project;
 import com.selfxdsd.api.Repo;
-import com.selfxdsd.api.storage.Storage;
 import com.selfxdsd.api.User;
+import com.selfxdsd.api.exceptions.RepoAlreadyActiveException;
+import com.selfxdsd.api.storage.Storage;
+
 import javax.json.JsonObject;
 import java.net.HttpURLConnection;
 import java.net.URI;
@@ -129,6 +131,11 @@ abstract class BaseRepo implements Repo {
 
     @Override
     public Project activate() {
+        final boolean isActive = this.storage().projects()
+            .getProjectById(this.fullName(), this.provider()) != null;
+        if (isActive) {
+            throw new RepoAlreadyActiveException(this);
+        }
         return this.storage()
             .projectManagers()
             .pick(provider())

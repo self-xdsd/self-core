@@ -23,11 +23,16 @@
 package com.selfxdsd.core;
 
 import com.selfxdsd.api.*;
+import com.selfxdsd.api.exceptions.RepoAlreadyActiveException;
 import com.selfxdsd.api.storage.Storage;
+import com.selfxdsd.core.mock.InMemory;
+import com.selfxdsd.core.mock.MockJsonResources;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.mockito.Mockito;
+
+import javax.json.Json;
 import java.net.URI;
 
 /**
@@ -101,18 +106,26 @@ public final class GithubRepoTestCase {
         final Project activated = Mockito.mock(Project.class);
 
         final ProjectManager manager = Mockito.mock(ProjectManager.class);
-        final ProjectManagers all = Mockito.mock(ProjectManagers.class);
-        Mockito.when(all.pick(Provider.Names.GITHUB)).thenReturn(manager);
+        final ProjectManagers managers = Mockito.mock(ProjectManagers.class);
+        Mockito.when(managers.pick(Provider.Names.GITHUB)).thenReturn(manager);
         final Storage storage = Mockito.mock(Storage.class);
-        Mockito.when(storage.projectManagers()).thenReturn(all);
+        Mockito.when(storage.projectManagers()).thenReturn(managers);
+        Mockito.when(storage.projects())
+            .thenReturn(Mockito.mock(Projects.class));
 
         final User owner = Mockito.mock(User.class);
         final Provider provider = Mockito.mock(Provider.class);
         Mockito.when(provider.name()).thenReturn(Provider.Names.GITHUB);
         Mockito.when(owner.provider()).thenReturn(provider);
 
+        final JsonResources res = new MockJsonResources(request -> {
+            return new MockJsonResources
+                .MockResource(200, Json.createObjectBuilder()
+                .add("full_name", "john/test")
+                .build());
+        });
         final Repo repo = new GithubRepo(
-            Mockito.mock(JsonResources.class),
+            res,
             URI.create("http://localhost:8080/repos/mihai/test/"),
             owner,
             storage
@@ -124,5 +137,30 @@ public final class GithubRepoTestCase {
 
         MatcherAssert.assertThat(project, Matchers.is(activated));
         Mockito.verify(project, Mockito.times(1)).resolve(Mockito.any());
+    }
+
+    /**
+     * Throws {@link RepoAlreadyActiveException} if {@link GithubRepo} is
+     * already active.
+     */
+    @Test(expected = RepoAlreadyActiveException.class)
+    public void throwsRepoAlreadyActiveExceptionIfActive(){
+        final Storage storage = new InMemory();
+        final User owner = Mockito.mock(User.class);
+        final Provider provider = Mockito.mock(Provider.class);
+        Mockito.when(owner.provider()).thenReturn(provider);
+        Mockito.when(provider.name()).thenReturn(Provider.Names.GITHUB);
+        final JsonResources res = new MockJsonResources(request -> {
+            return new MockJsonResources
+                .MockResource(200, Json.createObjectBuilder()
+                .add("full_name", "john/test")
+                .build());
+        });
+        final Repo repo = new GithubRepo(res, URI.create("/"), owner, storage);
+        storage.projects().register(repo,
+            storage.projectManagers().pick(Provider.Names.GITHUB),
+            "token");
+
+        repo.activate();
     }
 }
