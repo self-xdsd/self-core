@@ -22,7 +22,9 @@
  */
 package com.selfxdsd.core.managers;
 
+import com.selfxdsd.api.Contract;
 import com.selfxdsd.api.Event;
+import com.selfxdsd.api.Language;
 import com.selfxdsd.api.pm.Conversation;
 import com.selfxdsd.api.pm.Step;
 import org.slf4j.Logger;
@@ -34,9 +36,9 @@ import org.slf4j.LoggerFactory;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.20
- * @todo #470:30min Implement an intermediary step which checks if the
- *  Issue in question is already registered or not. Then, use it
- *  together with AuthorHasRoles (any) to build and return the steps.
+ * @todo #478:30min Implement an intermediary step where the event's
+ *  Issue is registered as a Task and finish the composition of the
+ *  register steps here.
  */
 public final class Register implements Conversation {
 
@@ -65,7 +67,32 @@ public final class Register implements Conversation {
     public Step start(final Event event) {
         final Step steps;
         if(Event.Type.REGISTER.equals(event.type())) {
-            steps = null;
+            final Language language = event.project().language();
+            final String author = event.comment().author();
+            steps = new AuthorHasRoles(
+                new TaskIsRegistered(
+                    new SendReply(
+                        String.format(
+                            language.reply("taskAlreadyRegistered.comment"),
+                            author
+                        ),
+                        lastly -> LOG.debug(
+                            "Task is already registered, not doing anything."
+                        )
+                    ),
+                    null
+                ),
+                new SendReply(
+                    String.format(
+                        language.reply("mustBeContributor.comment"),
+                        author
+                    ),
+                    lastly -> LOG.debug(
+                        "Task not registered, author is not a contributor."
+                    )
+                ),
+                Contract.Roles.ANY
+            );
         } else {
             steps = this.notRegister.start(event);
         }

@@ -22,9 +22,12 @@
  */
 package com.selfxdsd.core.managers;
 
+import com.selfxdsd.api.Comment;
 import com.selfxdsd.api.Event;
+import com.selfxdsd.api.Project;
 import com.selfxdsd.api.pm.Conversation;
 import com.selfxdsd.api.pm.Step;
+import com.selfxdsd.core.projects.English;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -37,6 +40,38 @@ import org.mockito.Mockito;
  * @since 0.0.20
  */
 public final class RegisterTestCase {
+
+    /**
+     * Register.start(...) returns the steps for the
+     * "register" event.
+     */
+    @Test
+    public void returnsRegisterSteps() {
+        final Project project = Mockito.mock(Project.class);
+        Mockito.when(project.language()).thenReturn(new English());
+        final Comment comment = Mockito.mock(Comment.class);
+        Mockito.when(comment.author()).thenReturn("mihai");
+
+        final Event event = Mockito.mock(Event.class);
+        Mockito.when(event.type()).thenReturn("register");
+        Mockito.when(event.project()).thenReturn(project);
+        Mockito.when(event.comment()).thenReturn(comment);
+
+        final Conversation register = new Register(
+            next -> {
+                throw new IllegalStateException(
+                    "Should not be called."
+                );
+            }
+        );
+        MatcherAssert.assertThat(
+            register.start(event),
+            Matchers.allOf(
+                Matchers.notNullValue(),
+                Matchers.instanceOf(AuthorHasRoles.class)
+            )
+        );
+    }
 
     /**
      * Register.start(...) should call the next conversation if the
