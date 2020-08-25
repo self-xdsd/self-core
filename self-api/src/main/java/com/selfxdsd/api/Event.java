@@ -98,7 +98,7 @@ public interface Event {
         /**
          * Register comment event.
          */
-        public static final String REGISTER = "deregister";
+        public static final String REGISTER = "register";
 
         /**
          * Status comment event.
