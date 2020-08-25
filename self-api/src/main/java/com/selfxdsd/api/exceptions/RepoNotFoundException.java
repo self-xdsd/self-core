@@ -22,22 +22,25 @@
  */
 package com.selfxdsd.api.exceptions;
 
-import com.selfxdsd.api.Repo;
+import java.net.URI;
 
 /**
- * Exception thrown if we try to activate an already active Repo.
- * @author criske
+ * Exception thrown when a repo cannot be fetched.
+ * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.20
  */
-public final class RepoAlreadyActiveException extends RuntimeException {
+public final class RepoNotFoundException extends RuntimeException {
 
     /**
      * Ctor.
-     * @param repo Repo in question.
+     * @param repo URI of the repo.
+     * @param status Response status code.
      */
-    public RepoAlreadyActiveException(final Repo repo){
-        super("Repo \"" + repo.fullName() + "\" is already active.");
+    public RepoNotFoundException(final URI repo, final int status) {
+        super(
+            "Repo [" + repo.toString() + "] not found. "
+            + "Expected 200 OK, but got " + status + ". "
+        );
     }
-
 }

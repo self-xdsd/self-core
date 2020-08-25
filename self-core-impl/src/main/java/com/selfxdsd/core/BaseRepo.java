@@ -26,6 +26,7 @@ import com.selfxdsd.api.Project;
 import com.selfxdsd.api.Repo;
 import com.selfxdsd.api.User;
 import com.selfxdsd.api.exceptions.RepoAlreadyActiveException;
+import com.selfxdsd.api.exceptions.RepoNotFoundException;
 import com.selfxdsd.api.storage.Storage;
 
 import javax.json.JsonObject;
@@ -96,10 +97,7 @@ abstract class BaseRepo implements Repo {
             if(repo.statusCode() == HttpURLConnection.HTTP_OK) {
                 this.json = repo.asJsonObject();
             } else {
-                throw new IllegalStateException(
-                    "Unexpected response when fetching [" + this.uri +"]. "
-                  + "Expected 200 OK, but got " + repo.statusCode() + "."
-                );
+                throw new RepoNotFoundException(this.uri, repo.statusCode());
             }
         }
         return this.json;

@@ -24,6 +24,7 @@ package com.selfxdsd.core;
 
 import com.selfxdsd.api.Provider;
 import com.selfxdsd.api.User;
+import com.selfxdsd.api.exceptions.RepoNotFoundException;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
@@ -63,6 +64,7 @@ public final class GithubITCase {
 
     /**
      * IllegalStateException is thrown because the repo is not found.
+     * @checkstyle LineLength (100 lines).
      */
     @Test
     public void fetchesRepoNotFound() {
@@ -70,12 +72,15 @@ public final class GithubITCase {
         Mockito.when(user.username()).thenReturn("amihaiemil");
         final Provider github = new Github(user, null);
         try {
-            github.repo("amihaiemil", "docker-java-apsi").json();
+            github.repo("amihaiemil", "missing-test").json();
             Assert.fail("IllegalStateException was expected.");
-        } catch (final IllegalStateException ex) {
+        } catch (final RepoNotFoundException ex) {
             MatcherAssert.assertThat(
                 ex.getMessage(),
-                Matchers.startsWith("Unexpected response when fetching")
+                Matchers.equalTo(
+                    "Repo [https://api.github.com/repos/amihaiemil/missing-test] not found. "
+                    + "Expected 200 OK, but got 404. "
+                )
             );
         }
     }
