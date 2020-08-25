@@ -22,68 +22,56 @@
  */
 package com.selfxdsd.core.managers;
 
-import com.selfxdsd.api.Comment;
 import com.selfxdsd.api.Event;
 import com.selfxdsd.api.Issue;
+import com.selfxdsd.api.Project;
+import com.selfxdsd.api.Task;
 import com.selfxdsd.api.pm.Intermediary;
 import com.selfxdsd.api.pm.Step;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Step where a reply is sent to the event's comment.
+ * Step where the event's Issue is registered as a new Task in the
+ * Project.
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.20
- * @todo #489:30min Add a simple constructor which only takes
- *  the String reply and sets a Final next step which only logs
- *  "Conversation ended". Usually, SendReply is the last step
- *  in any Conversation, so this will simplify the code a lot
- *  in most places where SendReply is used.
  */
-public final class SendReply extends Intermediary {
+public final class RegisterIssue extends Intermediary {
 
     /**
      * Logger.
      */
     private static final Logger LOG = LoggerFactory.getLogger(
-        SendReply.class
+        RegisterIssue.class
     );
 
     /**
-     * Reply text.
-     */
-    private final String reply;
-
-    /**
      * Ctor.
-     *
-     * @param reply Reply text.
      * @param next The next step to perform.
      */
-    public SendReply(final String reply, final Step next) {
+    public RegisterIssue(final Step next) {
         super(next);
-        this.reply = reply;
     }
 
     @Override
     public void perform(final Event event) {
         final Issue issue = event.issue();
-        final Comment comment = event.comment();
-        final String author = comment.author();
-        final String body = comment.body();
+        final Project project = event.project();
         LOG.debug(
-            "Sending reply \"" + this.reply + "\" "
-            + "to @" + author + " for \"" + body + "\"."
+            "Registering Issue #" + issue.issueId() + " as a Task in Project "
+            + project.repoFullName() + " at " + project.provider() + "... "
         );
-        final StringBuilder withPreview = new StringBuilder();
-        withPreview
-            .append("> ").append(body).append("\n\n")
-            .append(this.reply);
-        issue.comments().post(
-            withPreview.toString()
-        );
-        LOG.debug("Reply sent successfully!");
-        this.next().perform(event);
+        final Task task = project.tasks().register(issue);
+        if(task != null) {
+            LOG.debug("Issue #" + issue.issueId() + " registered.");
+        } else {
+            LOG.debug(
+                "Oops, something went wrong, Issue #" + issue.issueId()
+                + " was not registered as a Task."
+            );
+        }
+        super.next().perform(event);
     }
 }

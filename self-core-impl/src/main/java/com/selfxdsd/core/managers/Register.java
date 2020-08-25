@@ -36,9 +36,6 @@ import org.slf4j.LoggerFactory;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.20
- * @todo #478:30min Implement an intermediary step where the event's
- *  Issue is registered as a Task and finish the composition of the
- *  register steps here.
  */
 public final class Register implements Conversation {
 
@@ -80,7 +77,17 @@ public final class Register implements Conversation {
                             "Task is already registered, not doing anything."
                         )
                     ),
-                    null
+                    new RegisterIssue(
+                        new SendReply(
+                            String.format(
+                                language.reply("taskRegistered.comment"),
+                                author
+                            ),
+                            lastly -> LOG.debug(
+                                "Register conversation ended."
+                            )
+                        )
+                    )
                 ),
                 new SendReply(
                     String.format(
