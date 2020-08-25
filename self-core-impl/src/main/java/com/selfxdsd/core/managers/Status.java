@@ -94,10 +94,7 @@ public final class Status implements Conversation {
                     task.estimation()
                 );
             }
-            steps = new SendReply(
-                reply,
-                lastly -> LOG.debug("Task status sent successfully.")
-            );
+            steps = new SendReply(reply);
         } else {
             steps = this.notStatus.start(event);
         }

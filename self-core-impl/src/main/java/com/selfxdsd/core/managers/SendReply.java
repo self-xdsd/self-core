@@ -35,11 +35,6 @@ import org.slf4j.LoggerFactory;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.20
- * @todo #489:30min Add a simple constructor which only takes
- *  the String reply and sets a Final next step which only logs
- *  "Conversation ended". Usually, SendReply is the last step
- *  in any Conversation, so this will simplify the code a lot
- *  in most places where SendReply is used.
  */
 public final class SendReply extends Intermediary {
 
@@ -54,6 +49,17 @@ public final class SendReply extends Intermediary {
      * Reply text.
      */
     private final String reply;
+
+    /**
+     * Ctor.
+     * @param reply Reply text.
+     */
+    public SendReply(final String reply) {
+        this(
+            reply,
+            lastly -> LOG.debug("Coversation ended.")
+        );
+    }
 
     /**
      * Ctor.

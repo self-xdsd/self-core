@@ -72,9 +72,7 @@ public final class Deregister implements Conversation {
                             String.format(
                                 language.reply("deregister.comment"),
                                 author
-                            ),
-                            lastly -> LOG
-                                .debug("Task removed successfully.")
+                            )
                         )
                     )
                 ),
@@ -82,10 +80,6 @@ public final class Deregister implements Conversation {
                     String.format(
                         language.reply("cannotDeregister.comment"),
                         author
-                    ),
-                    lastly -> LOG.debug(
-                        "User " + author + " doesn't have the role to"
-                            + " remove the task."
                     )
                 ), Contract.Roles.PO, Contract.Roles.ARCH
             );

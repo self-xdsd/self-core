@@ -64,8 +64,7 @@ public final class Hello implements Conversation {
                 String.format(
                     event.project().language().reply("hello.comment"),
                     event.comment().author()
-                ),
-                lastly -> LOG.debug("Finished conversation.")
+                )
             );
         } else {
             steps = this.next.start(event);

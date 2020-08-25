@@ -29,8 +29,7 @@ public final class Confused implements Conversation {
                 String.format(
                     event.project().language().reply("misunderstand.comment"),
                     event.comment().author()
-                ),
-                lastly -> LOG.debug("Finished conversation.")
+                )
             );
         } else {
             throw new IllegalStateException("Invalid event type: "

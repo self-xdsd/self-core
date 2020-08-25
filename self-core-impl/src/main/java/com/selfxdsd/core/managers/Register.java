@@ -72,9 +72,6 @@ public final class Register implements Conversation {
                         String.format(
                             language.reply("taskAlreadyRegistered.comment"),
                             author
-                        ),
-                        lastly -> LOG.debug(
-                            "Task is already registered, not doing anything."
                         )
                     ),
                     new RegisterIssue(
@@ -82,9 +79,6 @@ public final class Register implements Conversation {
                             String.format(
                                 language.reply("taskRegistered.comment"),
                                 author
-                            ),
-                            lastly -> LOG.debug(
-                                "Register conversation ended."
                             )
                         )
                     )
@@ -93,9 +87,6 @@ public final class Register implements Conversation {
                     String.format(
                         language.reply("mustBeContributor.comment"),
                         author
-                    ),
-                    lastly -> LOG.debug(
-                        "Task not registered, author is not a contributor."
                     )
                 ),
                 Contract.Roles.ANY
