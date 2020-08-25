@@ -137,7 +137,7 @@ public final class Gitlab implements Provider {
     @Override
     public Provider withToken(final String accessToken) {
         return new Gitlab(
-            this.user,
+            new BaseSelf.Authenticated(this.user, accessToken),
             this.storage,
             this.resources,
             accessToken

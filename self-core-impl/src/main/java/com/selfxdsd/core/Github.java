@@ -138,7 +138,10 @@ public final class Github implements Provider {
     @Override
     public Provider withToken(final String accessToken) {
         return new Github(
-            this.user, this.storage, this.resources, accessToken
+            new BaseSelf.Authenticated(this.user, accessToken),
+            this.storage,
+            this.resources,
+            accessToken
         );
     }
 
