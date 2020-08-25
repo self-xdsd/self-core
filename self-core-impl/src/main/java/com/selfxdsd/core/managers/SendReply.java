@@ -57,7 +57,7 @@ public final class SendReply extends Intermediary {
     public SendReply(final String reply) {
         this(
             reply,
-            lastly -> LOG.debug("Coversation ended.")
+            lastly -> LOG.debug("Conversation ended.")
         );
     }
 
