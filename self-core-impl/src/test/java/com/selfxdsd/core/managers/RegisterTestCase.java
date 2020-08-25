@@ -22,75 +22,41 @@
  */
 package com.selfxdsd.core.managers;
 
-import com.selfxdsd.api.Comment;
 import com.selfxdsd.api.Event;
-import com.selfxdsd.api.Project;
 import com.selfxdsd.api.pm.Conversation;
 import com.selfxdsd.api.pm.Step;
-import com.selfxdsd.core.projects.English;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.mockito.Mockito;
 
 /**
- * Unit tests for {@link Resign}.
+ * Unit tests for {@link Register}.
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.20
  */
-public final class ResignTestCase {
+public final class RegisterTestCase {
 
     /**
-     * Resign.start(...) returns the steps for the
-     * "resign" event.
+     * Register.start(...) should call the next conversation if the
+     * given Event is not 'register'.
      */
     @Test
-    public void returnsResignSteps() {
-        final Project project = Mockito.mock(Project.class);
-        Mockito.when(project.language()).thenReturn(new English());
-        final Comment comment = Mockito.mock(Comment.class);
-        Mockito.when(comment.author()).thenReturn("mihai");
-
-        final Event event = Mockito.mock(Event.class);
-        Mockito.when(event.type()).thenReturn("resign");
-        Mockito.when(event.project()).thenReturn(project);
-        Mockito.when(event.comment()).thenReturn(comment);
-
-        final Conversation ressign = new Resign(
-            next -> {
-                throw new IllegalStateException(
-                    "Should not be called."
-                );
-            }
-        );
-        MatcherAssert.assertThat(
-            ressign.start(event),
-            Matchers.allOf(
-                Matchers.notNullValue(),
-                Matchers.instanceOf(AuthorIsAssignee.class)
-            )
-        );
-    }
-
-    /**
-     * Resign.start(...) should call the next conversation if the
-     * given Event is not 'resign'.
-     */
-    @Test
-    public void goesFurtherIfNotResign() {
+    public void goesFurtherIfNotRegister() {
         final Step resolved = Mockito.mock(Step.class);
         final Event event = Mockito.mock(Event.class);
-        Mockito.when(event.type()).thenReturn("notResign");
-        final Conversation ressign = new Resign(
+        Mockito.when(event.type()).thenReturn("notRegister");
+        final Conversation register = new Register(
             next -> {
                 MatcherAssert.assertThat(event, Matchers.is(next));
                 return resolved;
             }
         );
         MatcherAssert.assertThat(
-            ressign.start(event),
+            register.start(event),
             Matchers.is(resolved)
         );
     }
+
 }

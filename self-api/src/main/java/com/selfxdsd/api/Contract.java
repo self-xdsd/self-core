@@ -129,6 +129,11 @@ public interface Contract {
          * Constant for the Project Owner role.
          */
         public static final String PO = "PO";
+
+        /**
+         * Any role.
+         */
+        public static final String ANY = "ANY";
     }
 
     /**

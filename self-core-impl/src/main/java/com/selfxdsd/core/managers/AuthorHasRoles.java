@@ -28,7 +28,6 @@ import com.selfxdsd.api.pm.Step;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -63,7 +62,7 @@ public final class AuthorHasRoles extends PreconditionCheck {
                           final Step onFalse,
                           final String...roles) {
         super(onTrue, onFalse);
-        this.acceptedRoles = new ArrayList<>(Arrays.asList(roles));
+        this.acceptedRoles = Arrays.asList(roles);
     }
 
     @Override
@@ -78,13 +77,17 @@ public final class AuthorHasRoles extends PreconditionCheck {
                 + " of this project.");
             this.onFalse().perform(event);
         } else {
-            final Contracts contracts = project.contracts()
-                .ofContributor(contributor);
             boolean hasRole = false;
-            for (final Contract contract : contracts) {
-                if (acceptedRoles.contains(contract.role())) {
-                    hasRole = true;
-                    break;
+            if(this.acceptedRoles.contains(Contract.Roles.ANY)) {
+                hasRole = true;
+            } else {
+                final Contracts contracts = project.contracts()
+                    .ofContributor(contributor);
+                for (final Contract contract : contracts) {
+                    if (this.acceptedRoles.contains(contract.role())) {
+                        hasRole = true;
+                        break;
+                    }
                 }
             }
             if (hasRole) {

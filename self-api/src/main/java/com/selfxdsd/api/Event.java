@@ -96,6 +96,11 @@ public interface Event {
         public static final String DEREGISTER = "deregister";
 
         /**
+         * Register comment event.
+         */
+        public static final String REGISTER = "deregister";
+
+        /**
          * Status comment event.
          */
         public static final String STATUS = "status";

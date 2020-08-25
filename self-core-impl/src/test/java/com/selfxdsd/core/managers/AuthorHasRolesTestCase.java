@@ -119,6 +119,45 @@ public final class AuthorHasRolesTestCase {
     }
 
     /**
+     * It will work with ANY role.
+     */
+    @Test
+    public void authorHasAnyRole() {
+        final Storage storage = new InMemory();
+        storage.contributors().register("john", "github");
+        final Project project = storage
+            .projects()
+            .register(
+                mockRepo("john/test", "github"),
+                storage.projectManagers().pick("github"),
+                "wbtoken123"
+            );
+        project.contracts()
+            .addContract("john/test",
+                "john", "github", BigDecimal.TEN, "PO");
+
+        final Comment comment = Mockito.mock(Comment.class);
+        Mockito.when(comment.author()).thenReturn("john");
+
+        final Event event = Mockito.mock(Event.class);
+        Mockito.when(event.project()).thenReturn(project);
+        Mockito.when(event.comment()).thenReturn(comment);
+
+        final Step onTrue = Mockito.mock(Step.class);
+        final Step step = new AuthorHasRoles(
+            onTrue,
+            onFalse -> {
+                throw new IllegalStateException(
+                    "Should not be called!"
+                );
+            },
+            Contract.Roles.ANY
+        );
+        step.perform(event);
+        Mockito.verify(onTrue, Mockito.times(1)).perform(event);
+    }
+
+    /**
      * Mock a Repo for test.
      * @param fullName Full name.
      * @param provider Provider.
