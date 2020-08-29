@@ -67,6 +67,11 @@ public final class InMemory implements Storage {
     private Tasks tasks = new InMemoryTasks(this);
 
     /**
+     * In-memory resignations.
+     */
+    private Resignations resignations = new InMemoryResignations(this);
+
+    /**
      * In-memory invoices.
      */
     private Invoices invoices = new InMemoryInvoices(this);
@@ -114,6 +119,11 @@ public final class InMemory implements Storage {
     @Override
     public Tasks tasks() {
         return this.tasks;
+    }
+
+    @Override
+    public Resignations resignations() {
+        return this.resignations;
     }
 
     /**
