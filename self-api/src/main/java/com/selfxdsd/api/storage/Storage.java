@@ -79,4 +79,10 @@ public interface Storage extends AutoCloseable {
      * @return Tasks.
      */
     Tasks tasks();
+
+    /**
+     * Get the resignations Storage API.
+     * @return Resignations.
+     */
+    Resignations resignations();
 }
