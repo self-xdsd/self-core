@@ -26,20 +26,20 @@ import com.selfxdsd.api.Resignation;
 import com.selfxdsd.api.Resignations;
 import com.selfxdsd.api.Task;
 import com.selfxdsd.api.storage.Storage;
+import com.selfxdsd.core.tasks.TaskResignations;
 
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 /**
  * In-memory Resignations.
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.21
- * @todo #462:30min Implement and write tests for a Task's resignations.
- *  It will be a class named TaskResignations implementing interface
- *  Resignations.
  */
 public final class InMemoryResignations implements Resignations {
 
@@ -65,7 +65,15 @@ public final class InMemoryResignations implements Resignations {
 
     @Override
     public Resignations ofTask(final Task task) {
-        return null;
+        final Supplier<Stream<Resignation>> ofTask = () -> this.resignations
+            .values()
+            .stream()
+            .filter(r -> r.task().equals(task));
+        return new TaskResignations(
+            task,
+            ofTask,
+            this.storage
+        );
     }
 
     @Override
