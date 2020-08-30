@@ -33,6 +33,12 @@ import java.util.UUID;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.15
+ * @todo #499:30min Add methods cash() which should return all the
+ *  available cash in the wallet (what available() is doing now).
+ *  Add also the method debt() which should return all the debt
+ *  the project still has (the current value of all the contracts).
+ *  Change method available() to return the difference between the
+ *  cash and the debt.
  */
 public interface Wallet {
 
