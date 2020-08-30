@@ -85,6 +85,19 @@ public final class TaskResignations implements Resignations {
     }
 
     @Override
+    public Resignation register(final Task task, final String reason) {
+        if(!this.task.equals(task)) {
+            throw new IllegalStateException(
+                "Trying to resign a task different than #"
+                    + this.task.issueId() + " from project "
+                    + this.task.project().repoFullName() + " at "
+                    + this.task.project().provider() + "."
+            );
+        }
+        return this.storage.resignations().register(task, reason);
+    }
+
+    @Override
     public Iterator<Resignation> iterator() {
         return this.resignations.get().iterator();
     }

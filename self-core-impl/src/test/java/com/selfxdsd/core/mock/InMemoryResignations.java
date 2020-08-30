@@ -22,12 +22,13 @@
  */
 package com.selfxdsd.core.mock;
 
-import com.selfxdsd.api.Resignation;
-import com.selfxdsd.api.Resignations;
-import com.selfxdsd.api.Task;
+import com.selfxdsd.api.*;
 import com.selfxdsd.api.storage.Storage;
+import com.selfxdsd.core.tasks.StoredResignation;
+import com.selfxdsd.core.tasks.StoredTask;
 import com.selfxdsd.core.tasks.TaskResignations;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -37,6 +38,7 @@ import java.util.stream.Stream;
 
 /**
  * In-memory Resignations.
+ *
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.21
@@ -74,6 +76,35 @@ public final class InMemoryResignations implements Resignations {
             ofTask,
             this.storage
         );
+    }
+
+    @Override
+    public Resignation register(final Task task, final String reason) {
+        final Contributor assignee = task.assignee();
+        if (assignee == null) {
+            throw new IllegalStateException("Can't resign from "
+                + "an unassigned Task.");
+        }
+        final Project project = task.project();
+        final ResignationKey key = new ResignationKey(
+            project.repoFullName(),
+            assignee.username(),
+            project.provider(),
+            task.issueId()
+        );
+        final StoredResignation resignation = new StoredResignation(
+            new StoredTask(project,
+                task.issueId(),
+                task.role(),
+                task.estimation(),
+                this.storage
+            ),
+            assignee,
+            LocalDateTime.now(),
+            reason
+        );
+        resignations.put(key, resignation);
+        return resignation;
     }
 
     @Override

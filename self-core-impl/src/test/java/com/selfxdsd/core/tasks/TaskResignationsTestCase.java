@@ -34,6 +34,7 @@ import org.mockito.Mockito;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * Unit tests for {@link TaskResignations}.
@@ -113,5 +114,61 @@ public final class TaskResignationsTestCase {
             resignations.ofTask(other),
             Matchers.nullValue()
         );
+    }
+
+    /**
+     * An assigned task can register a resignation.
+     */
+    @Test
+    public void canRegisterResignation(){
+        final Task task = Mockito.mock(Task.class);
+        final Storage storage = Mockito.mock(Storage.class);
+        final Resignations all = Mockito.mock(Resignations.class);
+        Mockito.when(storage.resignations()).thenReturn(all);
+
+        final Resignations resignations = new TaskResignations(
+            task,
+            Stream::empty,
+            storage
+        );
+
+        resignations.register(task, Resignations.Reason.ASKED);
+        Mockito.verify(all).register(task, Resignations.Reason.ASKED);
+
+    }
+
+    /**
+     * Throws if trying to register a resignation of task different than
+     * the one of TaskResignations.
+     */
+    @Test(expected = IllegalStateException.class)
+    public void throwsIfTaskIsDifferent(){
+        final Task task = Mockito.mock(Task.class);
+        final Project project = Mockito.mock(Project.class);
+        Mockito.when(project.provider()).thenReturn("github");
+        Mockito.when(project.repoFullName()).thenReturn("john/test");
+        Mockito.when(task.project()).thenReturn(project);
+        Mockito.when(task.issueId()).thenReturn("1223");
+
+
+        final Task other = Mockito.mock(Task.class);
+        final Project otherProject = Mockito.mock(Project.class);
+        Mockito.when(otherProject.provider()).thenReturn("gitlab");
+        Mockito.when(otherProject.repoFullName()).thenReturn("john/test");
+        Mockito.when(other.project()).thenReturn(project);
+        Mockito.when(other.issueId()).thenReturn("12235");
+
+        final Storage storage = Mockito.mock(Storage.class);
+        final Resignations all = Mockito.mock(Resignations.class);
+        Mockito.when(storage.resignations()).thenReturn(all);
+
+        final Resignations resignations = new TaskResignations(
+            task,
+            Stream::empty,
+            storage
+        );
+
+        resignations.register(other, Resignations.Reason.ASKED);
+
     }
 }
