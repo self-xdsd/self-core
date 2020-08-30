@@ -56,9 +56,30 @@ public interface Wallet {
     final class Missing implements Wallet {
 
         /**
+         * Project to which this wallet belongs.
+         */
+        private final Project project;
+
+        /**
          * Cash in the wallet.
          */
-        private final BigDecimal cash = BigDecimal.valueOf(Integer.MAX_VALUE);
+        private final BigDecimal cash;
+
+        /**
+         * Type of the wallet.
+         */
+        private final String type;
+
+        /**
+         * Ctor.
+         * @param project Project to which this wallet belongs.
+         * @param cash Cash in the wallet.
+         */
+        public Missing(final Project project, final BigDecimal cash) {
+            this.project = project;
+            this.cash = cash;
+            this.type = Type.FAKE;
+        }
 
         @Override
         public BigDecimal available() {
@@ -127,5 +148,26 @@ public interface Wallet {
                 }
             };
         }
+    }
+
+    /**
+     * Possible wallet types.
+     */
+    class Type {
+
+        /**
+         * Hidden ctor.
+         */
+        private Type(){ }
+
+        /**
+         * The fake wallet.
+         */
+        public static final String FAKE = "FAKE";
+
+        /**
+         * The Stripe wallet.
+         */
+        public static final String STRIPE = "STRIPE";
     }
 }

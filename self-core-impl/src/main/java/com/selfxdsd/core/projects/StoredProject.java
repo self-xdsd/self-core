@@ -25,6 +25,7 @@ package com.selfxdsd.core.projects;
 import com.selfxdsd.api.*;
 import com.selfxdsd.api.storage.Storage;
 
+import java.math.BigDecimal;
 import java.util.Objects;
 
 /**
@@ -110,7 +111,9 @@ public final class StoredProject implements Project {
 
     @Override
     public Wallet wallet() {
-        return new Wallet.Missing();
+        return new Wallet.Missing(
+            this, BigDecimal.valueOf(100_000_000)
+        );
     }
 
     @Override

@@ -38,6 +38,9 @@ import java.util.Objects;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.21
+ * @todo #499:30min As soon as we have the Stripe wallet implemented,
+ *  modify the register(...) method here to take it into accound, according
+ *  to the given type (at the moment, it always registers the Missing wallet).
  */
 public final class InMemoryWallets implements Wallets {
 
@@ -67,7 +70,19 @@ public final class InMemoryWallets implements Wallets {
         final String type,
         final BigDecimal cash
     ) {
-        return null;
+        final Wallet wallet = new Wallet.Missing(
+            project,
+            BigDecimal.valueOf(100_000_000)
+        );
+        this.wallets.put(
+            new WalletKey(
+                project.repoFullName(),
+                project.provider(),
+                type
+            ),
+            wallet
+        );
+        return wallet;
     }
 
     @Override
