@@ -109,6 +109,11 @@ public final class InMemoryWallets implements Wallets {
     }
 
     @Override
+    public Wallet activate(final Wallet wallet) {
+        throw new UnsupportedOperationException("Not yet implemented.");
+    }
+
+    @Override
     public Iterator<Wallet> iterator() {
         throw new UnsupportedOperationException(
             "You cannot iterate over all wallets in Self. "

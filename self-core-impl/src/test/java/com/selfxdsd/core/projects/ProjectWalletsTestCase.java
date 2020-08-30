@@ -202,4 +202,56 @@ public final class ProjectWalletsTestCase {
             Matchers.iterableWithSize(2)
         );
     }
+
+    /**
+     * ProjectWallets.activate(Wallet) complains if the given Wallet
+     * belongs to another project.
+     */
+    @Test(expected = IllegalStateException.class)
+    public void activateWalletComplainsOnDifferentProject() {
+        final Project project = Mockito.mock(Project.class);
+        final Project other = Mockito.mock(Project.class);
+        final Wallets wallets = new ProjectWallets(
+            project,
+            Arrays.asList(
+                Mockito.mock(Wallet.class),
+                Mockito.mock(Wallet.class),
+                Mockito.mock(Wallet.class)
+            ),
+            Mockito.mock(Storage.class)
+        );
+        final Wallet wallet = Mockito.mock(Wallet.class);
+        Mockito.when(wallet.project()).thenReturn(other);
+        wallets.activate(wallet);
+    }
+
+    /**
+     * We can activate a Wallet belonging to the project.
+     */
+    @Test
+    public void activateWalletWorks() {
+        final Wallet active = Mockito.mock(Wallet.class);
+        final Wallets all = Mockito.mock(Wallets.class);
+        final Storage storage = Mockito.mock(Storage.class);
+        Mockito.when(storage.wallets()).thenReturn(all);
+
+        final Project project = Mockito.mock(Project.class);
+        final Wallets wallets = new ProjectWallets(
+            project,
+            Arrays.asList(
+                Mockito.mock(Wallet.class),
+                Mockito.mock(Wallet.class),
+                Mockito.mock(Wallet.class)
+            ),
+            storage
+        );
+        final Wallet wallet = Mockito.mock(Wallet.class);
+        Mockito.when(wallet.project()).thenReturn(project);
+        Mockito.when(all.activate(wallet)).thenReturn(active);
+
+        MatcherAssert.assertThat(
+            wallets.activate(wallet),
+            Matchers.is(active)
+        );
+    }
 }

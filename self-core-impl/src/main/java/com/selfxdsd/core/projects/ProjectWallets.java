@@ -129,6 +129,18 @@ public final class ProjectWallets implements Wallets {
     }
 
     @Override
+    public Wallet activate(final Wallet wallet) {
+        if(this.project.equals(wallet.project())) {
+            return this.storage.wallets().activate(wallet);
+        }
+        throw new IllegalStateException(
+            "These are the wallets of Project " + project.repoFullName()
+            + " at " + project.provider() + ". You cannot activate a Wallet "
+            + "belonging to another Project here."
+        );
+    }
+
+    @Override
     public Iterator<Wallet> iterator() {
         return this.wallets.iterator();
     }

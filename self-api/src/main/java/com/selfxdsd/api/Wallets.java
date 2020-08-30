@@ -58,4 +58,13 @@ public interface Wallets extends Iterable<Wallet> {
      */
     Wallet active();
 
+    /**
+     * Activate the given wallet. All the other wallets
+     * of the same Project should be deactivated (only one active
+     * Wallet per Project is allowed).
+     * @param wallet Wallet to be activated.
+     * @return Activated wallet.
+     */
+    Wallet activate(final Wallet wallet);
+
 }
