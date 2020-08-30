@@ -22,9 +22,7 @@
  */
 package com.selfxdsd.core;
 
-import com.selfxdsd.api.Invoice;
-import com.selfxdsd.api.Project;
-import com.selfxdsd.api.Wallet;
+import com.selfxdsd.api.*;
 import com.selfxdsd.api.exceptions.InvoiceAlreadyPaidExeption;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -32,6 +30,8 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Unit tests for {@link com.selfxdsd.api.Wallet.Missing}.
@@ -42,20 +42,75 @@ import java.math.BigDecimal;
 public final class MissingWalletTestCase {
 
     /**
-     * The Missing Wallet returns its available cash.
+     * The Missing Wallet returns its cash.
      */
     @Test
-    public void maxValueCash() {
+    public void returnsCash() {
         final Wallet wallet = new Wallet.Missing(
             Mockito.mock(Project.class),
             BigDecimal.valueOf(100_000_000),
             Boolean.TRUE
         );
         MatcherAssert.assertThat(
-            wallet.available(),
+            wallet.cash(),
             Matchers.equalTo(BigDecimal.valueOf(100_000_000))
         );
     }
+
+    /**
+     * The Missing Wallet can return its debt.
+     */
+    @Test
+    public void returnsDebt() {
+        final List<Contract> list = new ArrayList<>();
+        list.add(this.mockContract(BigDecimal.valueOf(1500)));
+        list.add(this.mockContract(BigDecimal.valueOf(2000)));
+        list.add(this.mockContract(BigDecimal.valueOf(3000)));
+        final Contracts contracts = Mockito.mock(Contracts.class);
+        Mockito.when(contracts.iterator()).thenReturn(list.iterator());
+
+        final Project project = Mockito.mock(Project.class);
+        Mockito.when(project.contracts()).thenReturn(contracts);
+
+        final Wallet wallet = new Wallet.Missing(
+            project,
+            BigDecimal.valueOf(100_000_000),
+            Boolean.TRUE
+        );
+
+        MatcherAssert.assertThat(
+            wallet.debt(),
+            Matchers.equalTo(BigDecimal.valueOf(6500))
+        );
+    }
+
+    /**
+     * The Missing Wallet can return its available cash..
+     */
+    @Test
+    public void returnsAvailableCash() {
+        final List<Contract> list = new ArrayList<>();
+        list.add(this.mockContract(BigDecimal.valueOf(1500)));
+        list.add(this.mockContract(BigDecimal.valueOf(2000)));
+        list.add(this.mockContract(BigDecimal.valueOf(3000)));
+        final Contracts contracts = Mockito.mock(Contracts.class);
+        Mockito.when(contracts.iterator()).thenReturn(list.iterator());
+
+        final Project project = Mockito.mock(Project.class);
+        Mockito.when(project.contracts()).thenReturn(contracts);
+
+        final Wallet wallet = new Wallet.Missing(
+            project,
+            BigDecimal.valueOf(10000),
+            Boolean.TRUE
+        );
+
+        MatcherAssert.assertThat(
+            wallet.available(),
+            Matchers.equalTo(BigDecimal.valueOf(3500))
+        );
+    }
+
 
     /**
      * The Missing wallet can pay an Invoice.
@@ -99,4 +154,14 @@ public final class MissingWalletTestCase {
         wallet.pay(paid);
     }
 
+    /**
+     * Mock a Contract.
+     * @param value Value of the contract.
+     * @return Contract.
+     */
+    private Contract mockContract(final BigDecimal value) {
+        final Contract contract = Mockito.mock(Contract.class);
+        Mockito.when(contract.value()).thenReturn(value);
+        return contract;
+    }
 }

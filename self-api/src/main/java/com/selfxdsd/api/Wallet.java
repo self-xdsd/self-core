@@ -33,21 +33,34 @@ import java.util.UUID;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.15
- * @todo #499:30min Add methods cash() which should return all the
- *  available cash in the wallet (what available() is doing now).
- *  Add also the method debt() which should return all the debt
- *  the project still has (the current value of all the contracts).
- *  Change method available() to return the difference between the
- *  cash and the debt.
  */
 public interface Wallet {
 
     /**
-     * Available cash.
+     * Total cash in the wallet.
      * @return BigDecimal.
      */
-    BigDecimal available();
+    BigDecimal cash();
 
+    /**
+     * Available cash after substracting the debt.
+     * @return BigDecimal.
+     */
+    default BigDecimal available() {
+        return this.cash().subtract(this.debt());
+    }
+
+    /**
+     * Debt. How much the project still has to pay.
+     * @return BigDecimal.
+     */
+    default BigDecimal debt() {
+        BigDecimal debt = BigDecimal.valueOf(0);
+        for(final Contract contract : this.project().contracts()) {
+            debt = debt.add(contract.value());
+        }
+        return debt;
+    }
     /**
      * Pay an invoice.
      * @param invoice The Invoice to be paid.
@@ -117,7 +130,7 @@ public interface Wallet {
         }
 
         @Override
-        public BigDecimal available() {
+        public BigDecimal cash() {
             return this.cash;
         }
 
