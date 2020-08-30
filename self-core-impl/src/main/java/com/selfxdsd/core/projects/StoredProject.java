@@ -112,7 +112,7 @@ public final class StoredProject implements Project {
     @Override
     public Wallet wallet() {
         return new Wallet.Missing(
-            this, BigDecimal.valueOf(100_000_000)
+            this, BigDecimal.valueOf(100_000_000), Boolean.TRUE
         );
     }
 

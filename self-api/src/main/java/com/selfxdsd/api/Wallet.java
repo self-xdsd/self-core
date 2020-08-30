@@ -51,6 +51,18 @@ public interface Wallet {
     Invoice pay(final Invoice invoice);
 
     /**
+     * Type of this wallet.
+     * @return String type.
+     */
+    String type();
+
+    /**
+     * Is this wallet active or not?
+     * @return Boolean.
+     */
+    boolean active();
+
+    /**
      * Missing wallet. Used when a Project has no wallet set up.
      */
     final class Missing implements Wallet {
@@ -71,14 +83,25 @@ public interface Wallet {
         private final String type;
 
         /**
+         * Is it active or not?
+         */
+        private final boolean active;
+
+        /**
          * Ctor.
          * @param project Project to which this wallet belongs.
          * @param cash Cash in the wallet.
+         * @param active Is it active or not?
          */
-        public Missing(final Project project, final BigDecimal cash) {
+        public Missing(
+            final Project project,
+            final BigDecimal cash,
+            final boolean active
+        ) {
             this.project = project;
             this.cash = cash;
             this.type = Type.FAKE;
+            this.active = active;
         }
 
         @Override
@@ -147,6 +170,16 @@ public interface Wallet {
                     return true;
                 }
             };
+        }
+
+        @Override
+        public String type() {
+            return this.type;
+        }
+
+        @Override
+        public boolean active() {
+            return this.active;
         }
     }
 
