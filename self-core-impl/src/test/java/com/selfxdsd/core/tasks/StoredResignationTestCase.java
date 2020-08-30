@@ -28,6 +28,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 /**
  * Unit tests for {@link StoredResignation}.
@@ -54,7 +55,8 @@ public final class StoredResignationTestCase {
         MatcherAssert.assertThat(resignation.task(), Matchers.equalTo(task));
         MatcherAssert.assertThat(resignation.contributor(),
             Matchers.equalTo(contributor));
-        MatcherAssert.assertThat(timestamp, Matchers.equalTo(timestamp));
+        MatcherAssert.assertThat(resignation.timestamp(),
+            Matchers.equalTo(timestamp));
         MatcherAssert.assertThat(resignation.reason(),
             Matchers.equalTo(Resignations.Reason.ASKED));
     }
@@ -80,12 +82,39 @@ public final class StoredResignationTestCase {
         final Resignation other = new StoredResignation(task, otherContrib,
             LocalDateTime.now(), Resignations.Reason.ASKED);
 
+
+        MatcherAssert.assertThat(resignation.equals(resignation),
+            Matchers.is(true));
+
         MatcherAssert.assertThat(resignation.equals(other),
             Matchers.is(true));
 
         MatcherAssert.assertThat(resignation.equals(new Object()),
             Matchers.is(false));
 
+    }
+
+
+    /**
+     * {@link StoredResignation} respects hash contract.
+     */
+    @Test
+    public void respectsHashContract(){
+        final Task task = Mockito.mock(Task.class);
+        final Project project = Mockito.mock(Project.class);
+        final Contributor contributor = Mockito.mock(Contributor.class);
+        Mockito.when(project.provider()).thenReturn("github");
+        Mockito.when(project.repoFullName()).thenReturn("john/test");
+        Mockito.when(task.project()).thenReturn(project);
+        Mockito.when(task.issueId()).thenReturn("1223");
+        Mockito.when(contributor.username()).thenReturn("mike");
+
+        final Resignation resignation = new StoredResignation(task, contributor,
+            LocalDateTime.now(), Resignations.Reason.ASKED);
+
+        MatcherAssert.assertThat(resignation.hashCode(),
+            Matchers.is(Objects.hash("1223", "john/test",
+                "github", "mike")));
     }
 
 }

@@ -96,7 +96,10 @@ public final class StoredResignation implements Resignation {
 
     @Override
     public int hashCode() {
-        return Objects.hash(task, contributor.username());
+        return Objects.hash(task.issueId(),
+            task.project().repoFullName(),
+            task.project().provider(),
+            contributor.username());
     }
 
     @Override
