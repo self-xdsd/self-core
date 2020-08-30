@@ -38,6 +38,14 @@ public interface Resignations extends Iterable<Resignation> {
     Resignations ofTask(final Task task);
 
     /**
+     * Registers a task resignation.
+     * @param task Task.
+     * @param reason Given {@link Resignations.Reason}.
+     * @return Created Resignation of the given Task.
+     */
+    Resignation register(final Task task, final String reason);
+
+    /**
      * Possible reasons for resignation.
      */
     class Reason {

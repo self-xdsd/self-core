@@ -30,6 +30,9 @@ import java.time.LocalDateTime;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
+ * @todo #502:30min. Task api should expose resignations(), for easier access
+ *  in ProjectContributors#elect(Task) algorithm, in order to filter out
+ *  previously resigned contributors from Task.
  */
 public interface Task {
 
