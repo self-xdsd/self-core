@@ -52,6 +52,11 @@ public final class InMemory implements Storage {
     private Projects projects = new InMemoryProjects(this);
 
     /**
+     * In-memory wallets.
+     */
+    private Wallets wallets = new InMemoryWallets(this);
+
+    /**
      * In-memory contracts.
      */
     private Contracts contracts = new InMemoryContracts(this);
@@ -94,6 +99,11 @@ public final class InMemory implements Storage {
     @Override
     public Projects projects() {
         return this.projects;
+    }
+
+    @Override
+    public Wallets wallets() {
+        return this.wallets;
     }
 
     @Override
