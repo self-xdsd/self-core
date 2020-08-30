@@ -63,6 +63,12 @@ public interface Wallet {
     boolean active();
 
     /**
+     * Project to which this Wallet belongs.
+     * @return Project.
+     */
+    Project project();
+
+    /**
      * Missing wallet. Used when a Project has no wallet set up.
      */
     final class Missing implements Wallet {
@@ -180,6 +186,11 @@ public interface Wallet {
         @Override
         public boolean active() {
             return this.active;
+        }
+
+        @Override
+        public Project project() {
+            return this.project;
         }
     }
 

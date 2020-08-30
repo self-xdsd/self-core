@@ -26,12 +26,11 @@ import com.selfxdsd.api.Project;
 import com.selfxdsd.api.Wallet;
 import com.selfxdsd.api.Wallets;
 import com.selfxdsd.api.storage.Storage;
+import com.selfxdsd.core.projects.ProjectWallets;
 
 import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * In-memory Wallets.
@@ -88,7 +87,17 @@ public final class InMemoryWallets implements Wallets {
 
     @Override
     public Wallets ofProject(final Project project) {
-        return null;
+        final List<Wallet> ofProject = this.wallets
+            .values()
+            .stream()
+            .filter(
+                w -> w.project().equals(project)
+            ).collect(Collectors.toList());
+        return new ProjectWallets(
+            project,
+            ofProject,
+            this.storage
+        );
     }
 
     @Override
