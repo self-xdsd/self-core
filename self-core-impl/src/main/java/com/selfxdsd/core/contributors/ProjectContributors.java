@@ -34,6 +34,7 @@ import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 /**
  * Contributors of a Project. This class <b>just represents</b>
@@ -196,6 +197,9 @@ public final class ProjectContributors extends BasePaged
              + " the task project.");
         }
         final Page page = super.current();
+        final List<Resignation> resignations = StreamSupport
+            .stream(task.resignations().spliterator(), false)
+            .collect(Collectors.toList());
         final List<Contributor> eligible = this.contributors.get()
             .skip((page.getNumber() - 1) * page.getSize())
             .limit(page.getSize())
@@ -208,7 +212,11 @@ public final class ProjectContributors extends BasePaged
                     }
                     return true;
                 }
-            ).filter(
+            )
+            .filter(contributor -> resignations
+                .stream()
+                .noneMatch(r -> r.contributor().equals(contributor)))
+            .filter(
                 contributor -> {
                     for(final Contract contract : contributor.contracts()) {
                         if(contract.role().equals(task.role())) {

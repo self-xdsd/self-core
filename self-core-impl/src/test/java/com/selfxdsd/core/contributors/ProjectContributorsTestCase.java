@@ -298,6 +298,10 @@ public final class ProjectContributorsTestCase {
         );
         final Task task = Mockito.mock(Task.class);
         Mockito.when(task.project()).thenReturn(project);
+        final Resignations resignations = Mockito.mock(Resignations.class);
+        Mockito.when(task.resignations()).thenReturn(resignations);
+        Mockito.when(resignations.spliterator())
+            .thenReturn(List.<Resignation>of().spliterator());
         MatcherAssert.assertThat(
             contributors.elect(task),
             Matchers.nullValue()
@@ -343,6 +347,10 @@ public final class ProjectContributorsTestCase {
         Mockito.when(task.assignee()).thenReturn(assignee);
         Mockito.when(task.role()).thenReturn("DEV");
         Mockito.when(task.project()).thenReturn(project);
+        final Resignations resignations = Mockito.mock(Resignations.class);
+        Mockito.when(task.resignations()).thenReturn(resignations);
+        Mockito.when(resignations.spliterator())
+            .thenReturn(List.<Resignation>of().spliterator());
         final Contributor elected = contributors.elect(task);
 
         MatcherAssert.assertThat(
@@ -390,6 +398,10 @@ public final class ProjectContributorsTestCase {
         Mockito.when(task.assignee()).thenReturn(null);
         Mockito.when(task.role()).thenReturn("DEV");
         Mockito.when(task.project()).thenReturn(project);
+        final Resignations resignations = Mockito.mock(Resignations.class);
+        Mockito.when(task.resignations()).thenReturn(resignations);
+        Mockito.when(resignations.spliterator())
+            .thenReturn(List.<Resignation>of().spliterator());
         final Contributor elected = contributors.elect(task);
 
         MatcherAssert.assertThat(
@@ -435,6 +447,10 @@ public final class ProjectContributorsTestCase {
         Mockito.when(task.role()).thenReturn("DEV");
         Mockito.when(task.estimation()).thenReturn(60);
         Mockito.when(task.project()).thenReturn(project);
+        final Resignations resignations = Mockito.mock(Resignations.class);
+        Mockito.when(task.resignations()).thenReturn(resignations);
+        Mockito.when(resignations.spliterator())
+            .thenReturn(List.<Resignation>of().spliterator());
         final Contributor elected = contributors.elect(task);
 
         MatcherAssert.assertThat(
@@ -484,6 +500,10 @@ public final class ProjectContributorsTestCase {
         Mockito.when(task.role()).thenReturn("DEV");
         Mockito.when(task.estimation()).thenReturn(60);
         Mockito.when(task.project()).thenReturn(project);
+        final Resignations resignations = Mockito.mock(Resignations.class);
+        Mockito.when(task.resignations()).thenReturn(resignations);
+        Mockito.when(resignations.spliterator())
+            .thenReturn(List.<Resignation>of().spliterator());
         final Contributor elected = contributors.elect(task);
 
         MatcherAssert.assertThat(
@@ -516,6 +536,10 @@ public final class ProjectContributorsTestCase {
         Mockito.when(task.role()).thenReturn("DEV");
         Mockito.when(task.estimation()).thenReturn(60);
         Mockito.when(task.project()).thenReturn(project);
+        final Resignations resignations = Mockito.mock(Resignations.class);
+        Mockito.when(task.resignations()).thenReturn(resignations);
+        Mockito.when(resignations.spliterator())
+            .thenReturn(List.<Resignation>of().spliterator());
         final Contributor elected = contributors.elect(task);
 
         MatcherAssert.assertThat(
@@ -553,6 +577,46 @@ public final class ProjectContributorsTestCase {
         Mockito.when(task.project()).thenReturn(taskProject);
 
         contributors.elect(task);
+    }
+
+    /**
+     * Elect(...) will return null because contributor was resigned from
+     * Task before.
+     */
+    @Test
+    public void electIgnoresContributorIfTheyWereResigned(){
+        final Project project = this.mockProject(
+            "john/test",
+            Provider.Names.GITHUB,
+            BigDecimal.valueOf(100000),
+            BigDecimal.valueOf(1000)
+        );
+        final Contributor contributor = this
+            .mockContributor("mihai", BigDecimal.valueOf(10000),
+            project, "DEV", "REV", "QA");
+        final Contributors contributors = new ProjectContributors(
+            project,
+            List.of(contributor)::stream,
+            Mockito.mock(Storage.class)
+        );
+
+        final Resignations resignations = Mockito.mock(Resignations.class);
+        final Resignation resignation = Mockito.mock(Resignation.class);
+
+        final Task task = Mockito.mock(Task.class);
+        Mockito.when(task.assignee()).thenReturn(null);
+        Mockito.when(task.role()).thenReturn("DEV");
+        Mockito.when(task.project()).thenReturn(project);
+        Mockito.when(task.resignations()).thenReturn(resignations);
+        Mockito.when(resignations.spliterator())
+            .thenReturn(List.of(resignation).spliterator());
+        Mockito.when(resignation.contributor()).thenReturn(contributor);
+        final Contributor elected = contributors.elect(task);
+
+        MatcherAssert.assertThat(
+            elected,
+            Matchers.nullValue()
+        );
     }
 
     /**

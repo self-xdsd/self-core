@@ -502,4 +502,22 @@ public final class StoredTaskTestCase {
 
         MatcherAssert.assertThat(task.unassign(), Matchers.equalTo(task));
     }
+
+    /**
+     * Task can return its Resignations.
+     */
+    @Test
+    public void returnsResignations(){
+        final Storage storage = Mockito.mock(Storage.class);
+        final Resignations all = Mockito.mock(Resignations.class);
+        final Resignations ofTask = Mockito.mock(Resignations.class);
+        final Task task = new StoredTask(Mockito.mock(Contract.class),
+            "1", storage, LocalDateTime.now(),
+            LocalDateTime.now().plusDays(2), 60);
+
+        Mockito.when(storage.resignations()).thenReturn(all);
+        Mockito.when(all.ofTask(task)).thenReturn(ofTask);
+
+        MatcherAssert.assertThat(task.resignations(), Matchers.equalTo(ofTask));
+    }
 }

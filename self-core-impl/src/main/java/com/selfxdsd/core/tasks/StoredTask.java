@@ -185,6 +185,11 @@ public final class StoredTask implements Task {
     }
 
     @Override
+    public Resignations resignations() {
+        return this.storage.resignations().ofTask(this);
+    }
+
+    @Override
     public LocalDateTime assignmentDate() {
         return this.assignmentDate;
     }
