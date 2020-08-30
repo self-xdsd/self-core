@@ -25,7 +25,6 @@ package com.selfxdsd.core.projects;
 import com.selfxdsd.api.*;
 import com.selfxdsd.api.storage.Storage;
 
-import java.math.BigDecimal;
 import java.util.Objects;
 
 /**
@@ -40,9 +39,6 @@ import java.util.Objects;
  *  It should decide what kind of event has occurred and delegate it
  *  further to the ProjectManager who will deal with it. We still need
  *  the Issue Assigned case and Comment Created case.
- * @todo #499:60min At the moment the wallet() method always returns the
- *  Missing wallet. Implement the reading of the project's active Wallet
- *  from the storage.
  */
 public final class StoredProject implements Project {
 
@@ -110,10 +106,13 @@ public final class StoredProject implements Project {
     }
 
     @Override
+    public Wallets wallets() {
+        return this.storage.wallets().ofProject(this);
+    }
+
+    @Override
     public Wallet wallet() {
-        return new Wallet.Missing(
-            this, BigDecimal.valueOf(100_000_000), Boolean.TRUE
-        );
+        return this.wallets().active();
     }
 
     @Override

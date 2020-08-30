@@ -62,18 +62,29 @@ public final class StoredProjectTestCase {
      */
     @Test
     public void returnsWallet() {
+        final Wallet active = Mockito.mock(Wallet.class);
+
+        final Wallets all = Mockito.mock(Wallets.class);
+        final Storage storage = Mockito.mock(Storage.class);
+        Mockito.when(storage.wallets()).thenReturn(all);
+
+        final Wallets ofProject = Mockito.mock(Wallets.class);
+        Mockito.when(ofProject.active()).thenReturn(active);
+
         final Project project = new StoredProject(
             Mockito.mock(User.class),
             "john/test",
             "wh123token",
             Mockito.mock(ProjectManager.class),
-            Mockito.mock(Storage.class)
+            storage
         );
+        Mockito.when(all.ofProject(project)).thenReturn(ofProject);
+
         MatcherAssert.assertThat(
             project.wallet(),
             Matchers.allOf(
                 Matchers.notNullValue(),
-                Matchers.instanceOf(Wallet.Missing.class)
+                Matchers.is(active)
             )
         );
     }

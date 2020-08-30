@@ -53,7 +53,13 @@ public interface Project {
     User owner();
 
     /**
-     * The Project's Wallet.
+     * The Project's wallets.
+     * @return Wallets.
+     */
+    Wallets wallets();
+
+    /**
+     * The Project's active Wallet.
      * @return Wallet.
      */
     Wallet wallet();
