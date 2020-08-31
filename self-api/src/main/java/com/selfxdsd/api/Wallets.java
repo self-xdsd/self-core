@@ -37,12 +37,14 @@ public interface Wallets extends Iterable<Wallet> {
      * @param project Project which owns the Wallet.
      * @param type Type of the waller (fake, stripe etc).
      * @param cash How much cash does the wallet initially hold, in cents?
+     * @param identifier Identifier of the wallet.
      * @return The registered Wallet.
      */
     Wallet register(
         final Project project,
         final String type,
-        final BigDecimal cash
+        final BigDecimal cash,
+        final String identifier
     );
 
     /**

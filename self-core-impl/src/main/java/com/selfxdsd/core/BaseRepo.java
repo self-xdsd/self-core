@@ -31,6 +31,7 @@ import javax.json.JsonObject;
 import java.math.BigDecimal;
 import java.net.HttpURLConnection;
 import java.net.URI;
+import java.util.UUID;
 
 /**
  * Base implementation of {@link com.selfxdsd.api.Repo}.
@@ -139,7 +140,13 @@ abstract class BaseRepo implements Repo {
             .assign(this);
         final Wallets wallets = project.wallets();
         final Wallet wallet = wallets.register(
-            project, Wallet.Type.FAKE, BigDecimal.valueOf(1_000_000_000)
+            project,
+            Wallet.Type.FAKE,
+            BigDecimal.valueOf(1_000_000_000),
+            "fake-" + UUID
+                .randomUUID()
+                .toString()
+                .replace("-", "")
         );
         wallets.activate(wallet);
         return project;

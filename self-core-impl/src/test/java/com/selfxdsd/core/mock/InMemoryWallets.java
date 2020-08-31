@@ -67,12 +67,14 @@ public final class InMemoryWallets implements Wallets {
     public Wallet register(
         final Project project,
         final String type,
-        final BigDecimal cash
+        final BigDecimal cash,
+        final String identifier
     ) {
         final Wallet wallet = new Wallet.Missing(
             project,
             cash,
-            Boolean.FALSE
+            Boolean.FALSE,
+            identifier
         );
         this.wallets.put(
             new WalletKey(

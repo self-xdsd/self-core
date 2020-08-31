@@ -113,20 +113,28 @@ public interface Wallet {
         private final boolean active;
 
         /**
+         * Wallet ID.
+         */
+        private final String identifier;
+
+        /**
          * Ctor.
          * @param project Project to which this wallet belongs.
          * @param cash Cash in the wallet.
          * @param active Is it active or not?
+         * @param identifier Wallet identifier.
          */
         public Missing(
             final Project project,
             final BigDecimal cash,
-            final boolean active
+            final boolean active,
+            final String identifier
         ) {
             this.project = project;
             this.cash = cash;
             this.type = Type.FAKE;
             this.active = active;
+            this.identifier = identifier;
         }
 
         @Override

@@ -33,7 +33,6 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import javax.json.Json;
-import java.math.BigDecimal;
 import java.net.URI;
 
 /**
@@ -141,9 +140,6 @@ public final class GithubRepoTestCase {
 
         MatcherAssert.assertThat(project, Matchers.is(activated));
         Mockito.verify(project, Mockito.times(1)).resolve(Mockito.any());
-        Mockito.verify(wallets, Mockito.times(1)).register(
-            activated, Wallet.Type.FAKE, BigDecimal.valueOf(1_000_000_000)
-        );
     }
 
     /**

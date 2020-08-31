@@ -49,7 +49,8 @@ public final class MissingWalletTestCase {
         final Wallet wallet = new Wallet.Missing(
             Mockito.mock(Project.class),
             BigDecimal.valueOf(100_000_000),
-            Boolean.TRUE
+            Boolean.TRUE,
+            "fake-123w"
         );
         MatcherAssert.assertThat(
             wallet.cash(),
@@ -75,7 +76,8 @@ public final class MissingWalletTestCase {
         final Wallet wallet = new Wallet.Missing(
             project,
             BigDecimal.valueOf(100_000_000),
-            Boolean.TRUE
+            Boolean.TRUE,
+            "fake-123w"
         );
 
         MatcherAssert.assertThat(
@@ -102,7 +104,8 @@ public final class MissingWalletTestCase {
         final Wallet wallet = new Wallet.Missing(
             project,
             BigDecimal.valueOf(10000),
-            Boolean.TRUE
+            Boolean.TRUE,
+            "fake-123w"
         );
 
         MatcherAssert.assertThat(
@@ -120,7 +123,8 @@ public final class MissingWalletTestCase {
         final Wallet wallet = new Wallet.Missing(
             Mockito.mock(Project.class),
             BigDecimal.valueOf(100_000_000),
-            Boolean.TRUE
+            Boolean.TRUE,
+            "fake-123w"
         );
         final Invoice invoice = Mockito.mock(Invoice.class);
         Mockito.when(invoice.isPaid()).thenReturn(Boolean.FALSE);
@@ -147,7 +151,8 @@ public final class MissingWalletTestCase {
         final Wallet wallet = new Wallet.Missing(
             Mockito.mock(Project.class),
             BigDecimal.valueOf(100_000_000),
-            Boolean.TRUE
+            Boolean.TRUE,
+            "fake-123w"
         );
         final Invoice paid = Mockito.mock(Invoice.class);
         Mockito.when(paid.isPaid()).thenReturn(Boolean.TRUE);

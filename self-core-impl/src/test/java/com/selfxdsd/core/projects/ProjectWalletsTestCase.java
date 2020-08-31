@@ -142,7 +142,12 @@ public final class ProjectWalletsTestCase {
             ),
             Mockito.mock(Storage.class)
         );
-        wallets.register(other, Wallet.Type.STRIPE, BigDecimal.valueOf(10000));
+        wallets.register(
+            other,
+            Wallet.Type.STRIPE,
+            BigDecimal.valueOf(10000),
+            "stripe-123w"
+        );
     }
 
     /**
@@ -159,7 +164,7 @@ public final class ProjectWalletsTestCase {
             Mockito.mock(Storage.class)
         );
         wallets.register(
-            project, Wallet.Type.STRIPE, BigDecimal.valueOf(10000)
+            project, Wallet.Type.STRIPE, BigDecimal.valueOf(10000), "fk-123w"
         );
     }
 
@@ -176,7 +181,12 @@ public final class ProjectWalletsTestCase {
 
         final Wallets all = Mockito.mock(Wallets.class);
         Mockito.when(
-            all.register(project, Wallet.Type.STRIPE, BigDecimal.valueOf(1000))
+            all.register(
+                project,
+                Wallet.Type.STRIPE,
+                BigDecimal.valueOf(1000),
+                "stripe-123w"
+            )
         ).thenReturn(registered);
         final Storage storage = Mockito.mock(Storage.class);
         Mockito.when(storage.wallets()).thenReturn(all);
@@ -191,7 +201,10 @@ public final class ProjectWalletsTestCase {
             Matchers.iterableWithSize(1)
         );
         final Wallet wallet = wallets.register(
-            project, Wallet.Type.STRIPE, BigDecimal.valueOf(1000)
+            project,
+            Wallet.Type.STRIPE,
+            BigDecimal.valueOf(1000),
+            "stripe-123w"
         );
         MatcherAssert.assertThat(
             wallet,

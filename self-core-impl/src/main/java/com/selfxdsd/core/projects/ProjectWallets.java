@@ -76,7 +76,8 @@ public final class ProjectWallets implements Wallets {
     public Wallet register(
         final Project project,
         final String type,
-        final BigDecimal cash
+        final BigDecimal cash,
+        final String identifier
     ) {
         if(this.project.equals(project)) {
             for(final Wallet wallet : this.wallets) {
@@ -91,7 +92,8 @@ public final class ProjectWallets implements Wallets {
             final Wallet registered = this.storage.wallets().register(
                 this.project,
                 type,
-                cash
+                cash,
+                identifier
             );
             this.wallets.add(registered);
             return registered;
