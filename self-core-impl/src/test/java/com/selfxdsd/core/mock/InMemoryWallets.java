@@ -71,7 +71,7 @@ public final class InMemoryWallets implements Wallets {
     ) {
         final Wallet wallet = new Wallet.Missing(
             project,
-            BigDecimal.valueOf(100_000_000),
+            cash,
             Boolean.FALSE
         );
         this.wallets.put(

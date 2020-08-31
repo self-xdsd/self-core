@@ -22,14 +22,13 @@
  */
 package com.selfxdsd.core;
 
-import com.selfxdsd.api.Project;
-import com.selfxdsd.api.Repo;
-import com.selfxdsd.api.User;
+import com.selfxdsd.api.*;
 import com.selfxdsd.api.exceptions.RepoAlreadyActiveException;
 import com.selfxdsd.api.exceptions.RepoNotFoundException;
 import com.selfxdsd.api.storage.Storage;
 
 import javax.json.JsonObject;
+import java.math.BigDecimal;
 import java.net.HttpURLConnection;
 import java.net.URI;
 
@@ -134,10 +133,16 @@ abstract class BaseRepo implements Repo {
         if (isActive) {
             throw new RepoAlreadyActiveException(this);
         }
-        return this.storage()
+        final Project project = this.storage()
             .projectManagers()
             .pick(provider())
             .assign(this);
+        final Wallets wallets = project.wallets();
+        final Wallet wallet = wallets.register(
+            project, Wallet.Type.FAKE, BigDecimal.valueOf(1_000_000_000)
+        );
+        wallets.activate(wallet);
+        return project;
     }
 
     @Override
