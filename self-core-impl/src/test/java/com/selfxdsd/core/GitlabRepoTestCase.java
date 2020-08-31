@@ -11,6 +11,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import javax.json.Json;
+import java.math.BigDecimal;
 import java.net.URI;
 
 /**
@@ -19,6 +20,7 @@ import java.net.URI;
  * @author criske
  * @version $Id$
  * @since 0.0.1
+ * @checkstyle ExecutableStatementCount (500 lines)
  */
 public final class GitlabRepoTestCase {
 
@@ -43,6 +45,8 @@ public final class GitlabRepoTestCase {
     @Test
     public void canBeActivated() {
         final Project activated = Mockito.mock(Project.class);
+        final Wallets wallets = Mockito.mock(Wallets.class);
+        Mockito.when(activated.wallets()).thenReturn(wallets);
 
         final ProjectManager manager = Mockito.mock(ProjectManager.class);
         final ProjectManagers managers = Mockito.mock(ProjectManagers.class);
@@ -76,6 +80,9 @@ public final class GitlabRepoTestCase {
 
         MatcherAssert.assertThat(project, Matchers.is(activated));
         Mockito.verify(project, Mockito.times(1)).resolve(Mockito.any());
+        Mockito.verify(wallets, Mockito.times(1)).register(
+            activated, Wallet.Type.FAKE, BigDecimal.valueOf(1_000_000_000)
+        );
     }
 
     /**
