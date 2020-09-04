@@ -79,21 +79,15 @@ final class GithubCollaborators implements Collaborators {
     }
 
     @Override
-    public boolean invite(
-        final String username,
-        final String permission
-    ) {
+    public boolean invite(final String username) {
         final boolean result;
         LOG.debug(
-            "Inviting user " + username + " with permission ["
-            + permission + "]" + " to ["
-            + this.collaboratorsUri.toString() + "]."
+            "Inviting Collaborator " + username + " with permission "
+            + "to [" + this.collaboratorsUri.toString() + "]."
         );
         final Resource response = this.resources.put(
             URI.create(this.collaboratorsUri.toString() + "/" + username),
-            Json.createObjectBuilder()
-                .add("permission", permission.toLowerCase())
-                .build()
+            Json.createObjectBuilder().build()
         );
         if(response.statusCode() == HttpURLConnection.HTTP_CREATED) {
             result = true;

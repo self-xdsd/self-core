@@ -24,8 +24,6 @@ package com.selfxdsd.core.managers;
 
 import com.selfxdsd.api.*;
 import com.selfxdsd.api.pm.Step;
-import com.selfxdsd.core.Github;
-import com.selfxdsd.core.Gitlab;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -67,10 +65,7 @@ public final class InvitePmTestCase {
 
         final Collaborators collaborators = Mockito.mock(Collaborators.class);
         Mockito.when(
-            collaborators.invite(
-                Mockito.anyString(),
-                Mockito.anyString()
-            )
+            collaborators.invite(Mockito.anyString())
         ).thenReturn(true);
         final Repo repo = Mockito.mock(Repo.class);
         Mockito.when(repo.collaborators()).thenReturn(collaborators);
@@ -90,7 +85,7 @@ public final class InvitePmTestCase {
         Mockito.verify(
             collaborators,
             Mockito.times(1)
-        ).invite("123", Gitlab.Permissions.MAINTAINER);
+        ).invite("123");
         Mockito.verify(
             next,
             Mockito.times(1)
@@ -108,10 +103,7 @@ public final class InvitePmTestCase {
 
         final Collaborators collaborators = Mockito.mock(Collaborators.class);
         Mockito.when(
-            collaborators.invite(
-                Mockito.anyString(),
-                Mockito.anyString()
-            )
+            collaborators.invite(Mockito.anyString())
         ).thenReturn(true);
         final Repo repo = Mockito.mock(Repo.class);
         Mockito.when(repo.collaborators()).thenReturn(collaborators);
@@ -131,7 +123,7 @@ public final class InvitePmTestCase {
         Mockito.verify(
             collaborators,
             Mockito.times(1)
-        ).invite("zoeself", Github.Permissions.MAINTAIN);
+        ).invite("zoeself");
         Mockito.verify(
             next,
             Mockito.times(1)

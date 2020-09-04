@@ -64,16 +64,14 @@ public final class GitlabCollaborators implements Collaborators {
      * <a href="https://docs.gitlab.com/ee/api/members.html#valid-access-levels">
      * values </a>
      * @param username User ID.
-     * @param permission Access level the user will have in the repo.
      * @return True or false, whether the invitations was successful or not.
      */
     @Override
-    public boolean invite(final String username, final String permission) {
+    public boolean invite(final String username) {
         final boolean result;
         LOG.debug(
-            "Inviting user " + username + " with access level ["
-                + permission + "]" + " to ["
-                + this.collaboratorsUri.toString() + "]."
+            "Inviting user " + username
+            + " to [" + this.collaboratorsUri.toString() + "]."
         );
         final Resource response = this.resources.post(
                 this.collaboratorsUri,

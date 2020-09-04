@@ -25,8 +25,6 @@ package com.selfxdsd.core.managers;
 import com.selfxdsd.api.*;
 import com.selfxdsd.api.pm.Intermediary;
 import com.selfxdsd.api.pm.Step;
-import com.selfxdsd.core.Github;
-import com.selfxdsd.core.Gitlab;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,19 +62,16 @@ public final class InvitePm extends Intermediary {
             "Inviting PM to repo " + repo.fullName() + " at " + provider
         );
         final String user;
-        final String permission;
         if(Provider.Names.GITHUB.equals(provider)) {
             user = manager.username();
-            permission = Github.Permissions.MAINTAIN;
         } else if (Provider.Names.GITLAB.equals(provider)) {
             user = manager.userId();
-            permission = Gitlab.Permissions.MAINTAINER;
         } else {
             throw new IllegalStateException(
                 "Unknown Provider: [" + provider + "]."
             );
         }
-        final boolean response = repo.collaborators().invite(user, permission);
+        final boolean response = repo.collaborators().invite(user);
         if(response) {
             LOG.debug("PM invited successfully!");
         } else {

@@ -67,7 +67,6 @@ public final class GithubCollaboratorsTestCase {
                         req.getBody(),
                         Matchers.equalTo(
                             Json.createObjectBuilder()
-                                .add("permission", "manage")
                                 .build()
                         )
                     );
@@ -88,7 +87,7 @@ public final class GithubCollaboratorsTestCase {
         final boolean res = provider
             .repo("amihaiemil", "repo")
             .collaborators()
-            .invite("mihai", "manage");
+            .invite("mihai");
         MatcherAssert.assertThat(
             res, Matchers.is(Boolean.TRUE)
         );
@@ -120,7 +119,6 @@ public final class GithubCollaboratorsTestCase {
                         req.getBody(),
                         Matchers.equalTo(
                             Json.createObjectBuilder()
-                                .add("permission", "manage")
                                 .build()
                         )
                     );
@@ -141,7 +139,7 @@ public final class GithubCollaboratorsTestCase {
         final boolean res = provider
             .repo("amihaiemil", "repo")
             .collaborators()
-            .invite("mihai", "manage");
+            .invite("mihai");
         MatcherAssert.assertThat(
             res, Matchers.is(Boolean.TRUE)
         );
@@ -173,7 +171,6 @@ public final class GithubCollaboratorsTestCase {
                         req.getBody(),
                         Matchers.equalTo(
                             Json.createObjectBuilder()
-                                .add("permission", "manage")
                                 .build()
                         )
                     );
@@ -194,7 +191,7 @@ public final class GithubCollaboratorsTestCase {
         final boolean res = provider
             .repo("amihaiemil", "repo")
             .collaborators()
-            .invite("mihai", "manage");
+            .invite("mihai");
         MatcherAssert.assertThat(
             res, Matchers.is(Boolean.FALSE)
         );
