@@ -132,6 +132,11 @@ abstract class BaseSelf implements Self {
             return this.user.projects();
         }
 
+        @Override
+        public Contracts contracts() {
+            return this.user.contracts();
+        }
+
     }
 
 }

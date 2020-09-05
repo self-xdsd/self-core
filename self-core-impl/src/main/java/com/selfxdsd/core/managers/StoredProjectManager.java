@@ -313,5 +313,12 @@ public final class StoredProjectManager implements ProjectManager {
         public Projects projects() {
             return this.manager.projects();
         }
+
+        @Override
+        public Contracts contracts() {
+            throw new UnsupportedOperationException(
+                "The PM cannot have any contract."
+            );
+        }
     }
 }

@@ -22,6 +22,7 @@
  */
 package com.selfxdsd.core;
 
+import com.selfxdsd.api.Contracts;
 import com.selfxdsd.api.Projects;
 import com.selfxdsd.api.Provider;
 import com.selfxdsd.api.User;
@@ -116,6 +117,23 @@ public final class AuthenticatedTestCase {
         MatcherAssert.assertThat(
             authenticated.projects(),
             Matchers.equalTo(all)
+        );
+    }
+
+    /**
+     * Should returns the contracts.
+     */
+    @Test
+    public void returnsContracts() {
+        final User user = Mockito.mock(User.class);
+        final Contracts contracts = Mockito.mock(Contracts.class);
+        Mockito.when(user.contracts()).thenReturn(contracts);
+        final BaseSelf.Authenticated authenticated =
+            new BaseSelf.Authenticated(user, "tok3n");
+
+        MatcherAssert.assertThat(
+            authenticated.contracts(),
+            Matchers.equalTo(contracts)
         );
     }
 }
