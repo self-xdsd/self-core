@@ -60,4 +60,10 @@ public interface User {
      * @return Projects.
      */
     Projects projects();
+
+    /**
+     * Contracts the user has with projects managed by Self.
+     * @return Contracts.
+     */
+    Contracts contracts();
 }

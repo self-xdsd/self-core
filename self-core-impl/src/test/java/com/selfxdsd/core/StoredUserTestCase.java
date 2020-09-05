@@ -21,9 +21,7 @@
  */
 package com.selfxdsd.core;
 
-import com.selfxdsd.api.Projects;
-import com.selfxdsd.api.Provider;
-import com.selfxdsd.api.User;
+import com.selfxdsd.api.*;
 import com.selfxdsd.api.storage.Storage;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -144,6 +142,31 @@ public final class StoredUserTestCase {
 
         MatcherAssert.assertThat(
             ghUser.projects(),
+            Matchers.is(owned)
+        );
+    }
+
+    /**
+     * StoredUser can return its Contracts.
+     */
+    @Test
+    public void returnsContracts() {
+        final Storage storage = Mockito.mock(Storage.class);
+        final User ghUser = new StoredUser(
+            "amihaiemil",
+            "amihaiemil@gmail.com",
+            "user",
+            Provider.Names.GITHUB,
+            storage
+        );
+
+        final Contracts owned = Mockito.mock(Contracts.class);
+        final Contracts all = Mockito.mock(Contracts.class);
+        Mockito.when(all.ofContributor(Mockito.any())).thenReturn(owned);
+        Mockito.when(storage.contracts()).thenReturn(all);
+
+        MatcherAssert.assertThat(
+            ghUser.contracts(),
             Matchers.is(owned)
         );
     }
