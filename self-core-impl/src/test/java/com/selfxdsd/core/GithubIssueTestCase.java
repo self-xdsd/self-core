@@ -394,4 +394,89 @@ public final class GithubIssueTestCase {
             Matchers.equalTo("http://localhost/issues/1/assignees")
         );
     }
+
+    /**
+     * Issue.close() works if the received status is 200 OK.
+     */
+    @Test
+    public void closesOk() {
+        final Issue issue = new GithubIssue(
+            URI.create("http://localhost/issues/1"),
+            JsonObject.EMPTY_JSON_OBJECT,
+            Mockito.mock(Storage.class),
+            new MockJsonResources(
+                new AccessToken.Github("github123"),
+                req -> {
+                    MatcherAssert.assertThat(
+                        req.getAccessToken().value(),
+                        Matchers.equalTo("token github123")
+                    );
+                    MatcherAssert.assertThat(
+                        req.getMethod(),
+                        Matchers.equalTo("PATCH")
+                    );
+                    MatcherAssert.assertThat(
+                        req.getBody(),
+                        Matchers.equalTo(
+                            Json.createObjectBuilder()
+                                .add("state", "closed")
+                                .build()
+                        )
+                    );
+                    MatcherAssert.assertThat(
+                        req.getUri().toString(),
+                        Matchers.equalTo("http://localhost/issues/1")
+                    );
+                    return new MockJsonResources.MockResource(
+                        HttpURLConnection.HTTP_OK,
+                        Json.createObjectBuilder().build()
+                    );
+                }
+            )
+        );
+        issue.close();
+    }
+
+    /**
+     * Issue.close() doesn't throw an exception if
+     * the response status != 200 OK.
+     */
+    @Test
+    public void closesNotFound() {
+        final Issue issue = new GithubIssue(
+            URI.create("http://localhost/issues/1"),
+            JsonObject.EMPTY_JSON_OBJECT,
+            Mockito.mock(Storage.class),
+            new MockJsonResources(
+                new AccessToken.Github("github123"),
+                req -> {
+                    MatcherAssert.assertThat(
+                        req.getAccessToken().value(),
+                        Matchers.equalTo("token github123")
+                    );
+                    MatcherAssert.assertThat(
+                        req.getMethod(),
+                        Matchers.equalTo("PATCH")
+                    );
+                    MatcherAssert.assertThat(
+                        req.getBody(),
+                        Matchers.equalTo(
+                            Json.createObjectBuilder()
+                                .add("state", "closed")
+                                .build()
+                        )
+                    );
+                    MatcherAssert.assertThat(
+                        req.getUri().toString(),
+                        Matchers.equalTo("http://localhost/issues/1")
+                    );
+                    return new MockJsonResources.MockResource(
+                        HttpURLConnection.HTTP_NOT_FOUND,
+                        Json.createObjectBuilder().build()
+                    );
+                }
+            )
+        );
+        issue.close();
+    }
 }

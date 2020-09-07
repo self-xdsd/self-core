@@ -200,6 +200,30 @@ final class GithubIssue implements Issue {
     }
 
     @Override
+    public void close() {
+        LOG.debug(
+            "Cosing Issue [" + this.issueUri.toString() + "]..."
+        );
+        final Resource resource = this.resources.patch(
+            this.issueUri,
+            Json.createObjectBuilder()
+                .add("state", "closed")
+                .build()
+        );
+        if (resource.statusCode() == HttpURLConnection.HTTP_OK) {
+            LOG.debug(
+                "Issue [" + this.issueUri.toString() + "] "
+                + "successfully closed."
+            );
+        } else {
+            LOG.error(
+                "Problem while closing Issue [" + this.issueUri.toString()
+                + "]. Expected 200 OK, received " + resource.statusCode()
+            );
+        }
+    }
+
+    @Override
     public int estimation() {
         return 60;
     }

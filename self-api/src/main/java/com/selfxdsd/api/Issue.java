@@ -29,8 +29,6 @@ import javax.json.JsonObject;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
- * @todo #525:30min Implement method Issue.close() which should
- *  use the "Update Issue" endpoint to close it.
  */
 public interface Issue {
 
@@ -89,6 +87,11 @@ public interface Issue {
      * @return Comments.
      */
     Comments comments();
+
+    /**
+     * Close the Issue.
+     */
+    void close();
 
     /**
      * The estimation in minutes for the given issue.
