@@ -24,13 +24,18 @@ package com.selfxdsd.core;
 
 import com.selfxdsd.api.Issue;
 import com.selfxdsd.api.Issues;
+import com.selfxdsd.api.Provider;
+import com.selfxdsd.api.User;
 import com.selfxdsd.api.storage.Storage;
+import com.selfxdsd.core.mock.MockJsonResources;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 import javax.json.Json;
 import javax.json.JsonObject;
+import java.net.HttpURLConnection;
 import java.net.URI;
 
 import static org.mockito.Mockito.mock;
@@ -65,4 +70,177 @@ public final class GithubIssuesTestCase {
         MatcherAssert.assertThat(issue.json(), Matchers.equalTo(json));
     }
 
+    /**
+     * GithubIssues.open(...) works if the received response is 201 CREATED.
+     */
+    @Test
+    public void opensIssueCreated() {
+        final User user = Mockito.mock(User.class);
+        Mockito.when(user.username()).thenReturn("amihaiemil");
+        final Provider provider = new Github(
+            user,
+            Mockito.mock(Storage.class),
+            new MockJsonResources(
+                new AccessToken.Github("github123"),
+                req -> {
+                    MatcherAssert.assertThat(
+                        req.getAccessToken().value(),
+                        Matchers.equalTo("token github123")
+                    );
+                    MatcherAssert.assertThat(
+                        req.getMethod(),
+                        Matchers.equalTo("POST")
+                    );
+                    MatcherAssert.assertThat(
+                        req.getBody(),
+                        Matchers.equalTo(
+                            Json.createObjectBuilder()
+                                .add("title", "Issue for test")
+                                .add("body", "Body of the test Issue...")
+                                .add("labels", Json.createArrayBuilder())
+                                .build()
+                        )
+                    );
+                    MatcherAssert.assertThat(
+                        req.getUri().toString(),
+                        Matchers.equalTo(
+                            "https://api.github.com/repos/amihaiemil/repo"
+                                + "/issues"
+                        )
+                    );
+                    return new MockJsonResources.MockResource(
+                        HttpURLConnection.HTTP_CREATED,
+                        Json.createObjectBuilder().add("number", 123).build()
+                    );
+                }
+            )
+        );
+        final Issue created = provider
+            .repo("amihaiemil", "repo")
+            .issues()
+            .open("Issue for test", "Body of the test Issue...");
+        MatcherAssert.assertThat(
+            created, Matchers.notNullValue()
+        );
+        MatcherAssert.assertThat(
+            created.issueId(), Matchers.equalTo("123")
+        );
+    }
+
+    /**
+     * GithubIssues.open(...) works if the received response is 200 OK.
+     */
+    @Test
+    public void opensIssueOk() {
+        final User user = Mockito.mock(User.class);
+        Mockito.when(user.username()).thenReturn("amihaiemil");
+        final Provider provider = new Github(
+            user,
+            Mockito.mock(Storage.class),
+            new MockJsonResources(
+                new AccessToken.Github("github123"),
+                req -> {
+                    MatcherAssert.assertThat(
+                        req.getAccessToken().value(),
+                        Matchers.equalTo("token github123")
+                    );
+                    MatcherAssert.assertThat(
+                        req.getMethod(),
+                        Matchers.equalTo("POST")
+                    );
+                    MatcherAssert.assertThat(
+                        req.getBody(),
+                        Matchers.equalTo(
+                            Json.createObjectBuilder()
+                                .add("title", "Issue for test")
+                                .add("body", "Body of the test Issue...")
+                                .add(
+                                    "labels",
+                                    Json.createArrayBuilder()
+                                        .add("label1")
+                                        .add("label2")
+                                ).build()
+                        )
+                    );
+                    MatcherAssert.assertThat(
+                        req.getUri().toString(),
+                        Matchers.equalTo(
+                            "https://api.github.com/repos/amihaiemil/repo"
+                                + "/issues"
+                        )
+                    );
+                    return new MockJsonResources.MockResource(
+                        HttpURLConnection.HTTP_OK,
+                        Json.createObjectBuilder().add("number", 123).build()
+                    );
+                }
+            )
+        );
+        final Issue created = provider
+            .repo("amihaiemil", "repo")
+            .issues()
+            .open(
+                "Issue for test",
+                "Body of the test Issue...",
+                "label1", "label2"
+            );
+        MatcherAssert.assertThat(
+            created, Matchers.notNullValue()
+        );
+        MatcherAssert.assertThat(
+            created.issueId(), Matchers.equalTo("123")
+        );
+    }
+
+    /**
+     * GithubIssues.open(...) should throw an ISE if the received status
+     * is not 201 CREATED or 200 OK.
+     */
+    @Test(expected = IllegalStateException.class)
+    public void openIssueComplainsOnNotFound() {
+        final User user = Mockito.mock(User.class);
+        Mockito.when(user.username()).thenReturn("amihaiemil");
+        final Provider provider = new Github(
+            user,
+            Mockito.mock(Storage.class),
+            new MockJsonResources(
+                new AccessToken.Github("github123"),
+                req -> {
+                    MatcherAssert.assertThat(
+                        req.getAccessToken().value(),
+                        Matchers.equalTo("token github123")
+                    );
+                    MatcherAssert.assertThat(
+                        req.getMethod(),
+                        Matchers.equalTo("POST")
+                    );
+                    MatcherAssert.assertThat(
+                        req.getBody(),
+                        Matchers.equalTo(
+                            Json.createObjectBuilder()
+                                .add("title", "Issue for test")
+                                .add("body", "Body of the test Issue...")
+                                .add("labels", Json.createArrayBuilder())
+                                .build()
+                        )
+                    );
+                    MatcherAssert.assertThat(
+                        req.getUri().toString(),
+                        Matchers.equalTo(
+                            "https://api.github.com/repos/amihaiemil/repo"
+                                + "/issues"
+                        )
+                    );
+                    return new MockJsonResources.MockResource(
+                        HttpURLConnection.HTTP_NOT_FOUND,
+                        Json.createObjectBuilder().build()
+                    );
+                }
+            )
+        );
+        provider
+            .repo("amihaiemil", "repo")
+            .issues()
+            .open("Issue for test", "Body of the test Issue...");
+    }
 }

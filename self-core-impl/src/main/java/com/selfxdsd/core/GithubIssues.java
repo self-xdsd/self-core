@@ -25,6 +25,9 @@ package com.selfxdsd.core;
 import com.selfxdsd.api.Issue;
 import com.selfxdsd.api.Issues;
 import com.selfxdsd.api.storage.Storage;
+
+import javax.json.Json;
+import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 import java.net.HttpURLConnection;
 import java.net.URI;
@@ -114,6 +117,52 @@ final class GithubIssues implements Issues {
             this.storage,
             this.resources
         );
+    }
+
+    @Override
+    public Issue open(
+        final String title,
+        final String body,
+        final String... labels
+    ) {
+        final JsonArrayBuilder labelsArray = Json.createArrayBuilder();
+        for(final String label : labels) {
+            labelsArray.add(label);
+        }
+        final Resource resource = this.resources.post(
+            this.issuesUri,
+            Json.createObjectBuilder()
+                .add("title", title)
+                .add("body", body)
+                .add("labels", labelsArray.build())
+                .build()
+        );
+        JsonObject jsonObject;
+        switch (resource.statusCode()) {
+            case HttpURLConnection.HTTP_CREATED:
+            case HttpURLConnection.HTTP_OK:
+                jsonObject = resource.asJsonObject();
+                break;
+            default:
+                throw new IllegalStateException(
+                    "Could not create Issue at [" + this.issuesUri + "]. "
+                    + "Expected status 201 CREATED or 200 OK, but received "
+                    + "status code: " + resource.statusCode()
+                );
+        }
+        Issue issue = null;
+        if(jsonObject != null){
+            issue = new GithubIssue(
+                URI.create(
+                    this.issuesUri.toString() + "/"
+                    + jsonObject.getInt("number")
+                ),
+                jsonObject,
+                this.storage,
+                this.resources
+            );
+        }
+        return issue;
     }
 
     @Override

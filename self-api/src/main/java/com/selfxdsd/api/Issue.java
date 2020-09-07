@@ -29,9 +29,8 @@ import javax.json.JsonObject;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
- * @todo #97:30min Implement Comments::Issue.comments(). This method
- *  should be the entry point to an Issue's comments and have methods for
- *  both listing and posting new comments.
+ * @todo #525:30min Implement method Issue.close() which should
+ *  use the "Update Issue" endpoint to close it.
  */
 public interface Issue {
 

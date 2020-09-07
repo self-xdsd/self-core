@@ -47,4 +47,17 @@ public interface Issues extends Iterable<Issue> {
      * @return Issue.
      */
     Issue received(final JsonObject issue);
+
+    /**
+     * Open a new Issue.
+     * @param title Title of the Issue.
+     * @param body Text body.
+     * @param labels Labels to attach to the Issue.
+     * @return The opened Issue.
+     */
+    Issue open(
+        final String title,
+        final String body,
+        final String... labels
+    );
 }
