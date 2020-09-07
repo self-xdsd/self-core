@@ -224,6 +224,30 @@ final class GithubIssue implements Issue {
     }
 
     @Override
+    public void reopen() {
+        LOG.debug(
+            "Reopening Issue [" + this.issueUri.toString() + "]..."
+        );
+        final Resource resource = this.resources.patch(
+            this.issueUri,
+            Json.createObjectBuilder()
+                .add("state", "open")
+                .build()
+        );
+        if (resource.statusCode() == HttpURLConnection.HTTP_OK) {
+            LOG.debug(
+                "Issue [" + this.issueUri.toString() + "] "
+                + "successfully reopened."
+            );
+        } else {
+            LOG.error(
+                "Problem while reopening Issue [" + this.issueUri.toString()
+                + "]. Expected 200 OK, received " + resource.statusCode()
+            );
+        }
+    }
+
+    @Override
     public int estimation() {
         return 60;
     }

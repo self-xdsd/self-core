@@ -94,6 +94,11 @@ public interface Issue {
     void close();
 
     /**
+     * Reopen the Issue.
+     */
+    void reopen();
+
+    /**
      * The estimation in minutes for the given issue.
      *
      * @return Integer.
