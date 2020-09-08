@@ -29,9 +29,6 @@ import com.selfxdsd.api.storage.Paged;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
- * @todo #526:30min. Write custom SelfExceptions for Contributors
- *  (NotFound, Duplicate, etc...), and replace
- *  the existent IllegalStateExceptions with them.
  */
 public interface Contributors extends Iterable<Contributor>, Paged {
 
