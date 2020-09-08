@@ -24,7 +24,7 @@ package com.selfxdsd.core;
 
 import com.selfxdsd.api.Provider;
 import com.selfxdsd.api.User;
-import com.selfxdsd.api.exceptions.RepoNotFoundException;
+import com.selfxdsd.api.exceptions.RepoException;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
@@ -74,7 +74,7 @@ public final class GithubITCase {
         try {
             github.repo("amihaiemil", "missing-test").json();
             Assert.fail("IllegalStateException was expected.");
-        } catch (final RepoNotFoundException ex) {
+        } catch (final RepoException.NotFound ex) {
             MatcherAssert.assertThat(
                 ex.getMessage(),
                 Matchers.equalTo(

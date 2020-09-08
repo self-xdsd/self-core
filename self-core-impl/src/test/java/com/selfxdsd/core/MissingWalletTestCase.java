@@ -23,7 +23,7 @@
 package com.selfxdsd.core;
 
 import com.selfxdsd.api.*;
-import com.selfxdsd.api.exceptions.InvoiceAlreadyPaidExeption;
+import com.selfxdsd.api.exceptions.InvoiceException;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -146,7 +146,7 @@ public final class MissingWalletTestCase {
      * The Missing wallet should throw an exception if we try to pay
      * an Invoice which is already paid.
      */
-    @Test(expected = InvoiceAlreadyPaidExeption.class)
+    @Test(expected = InvoiceException.AlreadyPaid.class)
     public void complainsDoublePayment() {
         final Wallet wallet = new Wallet.Missing(
             Mockito.mock(Project.class),

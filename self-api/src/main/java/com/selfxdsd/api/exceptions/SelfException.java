@@ -31,9 +31,6 @@ import javax.json.JsonObject;
  * @version $Id$
  * @since 0.0.22
  * @checkstyle DesignForExtension (500 lines).
- * @todo #524:30min. Replace old custom exceptions
- *  InvoiceAlreadyPaidExeption, RepoAlreadyActiveException,
- *  RepoNotFoundException with Self exceptions (Repo and Invoice).
  */
 public abstract class SelfException extends RuntimeException {
 
@@ -55,14 +52,12 @@ public abstract class SelfException extends RuntimeException {
 
     @Override
     public final String getMessage() {
-        throw new UnsupportedOperationException("Use getSelfMessage() to "
-            + "show the exception message");
+        return this.getSelfMessage();
     }
 
     @Override
     public final String getLocalizedMessage() {
-        throw new UnsupportedOperationException("Use getSelfMessage() to "
-            + "show the exception message");
+        return this.getSelfMessage();
     }
 
     @Override

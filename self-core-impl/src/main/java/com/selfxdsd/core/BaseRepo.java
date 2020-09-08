@@ -23,8 +23,7 @@
 package com.selfxdsd.core;
 
 import com.selfxdsd.api.*;
-import com.selfxdsd.api.exceptions.RepoAlreadyActiveException;
-import com.selfxdsd.api.exceptions.RepoNotFoundException;
+import com.selfxdsd.api.exceptions.RepoException;
 import com.selfxdsd.api.storage.Storage;
 
 import javax.json.JsonObject;
@@ -97,7 +96,7 @@ abstract class BaseRepo implements Repo {
             if(repo.statusCode() == HttpURLConnection.HTTP_OK) {
                 this.json = repo.asJsonObject();
             } else {
-                throw new RepoNotFoundException(this.uri, repo.statusCode());
+                throw new RepoException.NotFound(this.uri, repo.statusCode());
             }
         }
         return this.json;
@@ -132,7 +131,7 @@ abstract class BaseRepo implements Repo {
         final boolean isActive = this.storage().projects()
             .getProjectById(this.fullName(), this.provider()) != null;
         if (isActive) {
-            throw new RepoAlreadyActiveException(this);
+            throw new RepoException.AlreadyActive(this.fullName());
         }
         final Project project = this.storage()
             .projectManagers()

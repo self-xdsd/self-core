@@ -22,7 +22,7 @@
  */
 package com.selfxdsd.api;
 
-import com.selfxdsd.api.exceptions.InvoiceAlreadyPaidExeption;
+import com.selfxdsd.api.exceptions.InvoiceException;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -65,7 +65,7 @@ public interface Wallet {
      * Pay an invoice.
      * @param invoice The Invoice to be paid.
      * @return The paid Invoice containing the payment time and transaction ID.
-     * @throws InvoiceAlreadyPaidExeption If the Invoice is already paid.
+     * @throws InvoiceException.AlreadyPaid If the Invoice is already paid.
      */
     Invoice pay(final Invoice invoice);
 
@@ -145,7 +145,7 @@ public interface Wallet {
         @Override
         public Invoice pay(final Invoice invoice) {
             if(invoice.isPaid()) {
-                throw new InvoiceAlreadyPaidExeption(invoice);
+                throw new InvoiceException.AlreadyPaid(invoice);
             }
             final LocalDateTime paymentTime = LocalDateTime.now();
             final String transactionId = "fk-" + UUID

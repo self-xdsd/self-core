@@ -1,7 +1,7 @@
 package com.selfxdsd.core;
 
 import com.selfxdsd.api.*;
-import com.selfxdsd.api.exceptions.RepoAlreadyActiveException;
+import com.selfxdsd.api.exceptions.RepoException;
 import com.selfxdsd.api.storage.Storage;
 import com.selfxdsd.core.mock.InMemory;
 import com.selfxdsd.core.mock.MockJsonResources;
@@ -82,10 +82,10 @@ public final class GitlabRepoTestCase {
     }
 
     /**
-     * Throws {@link RepoAlreadyActiveException} if {@link GitlabRepo}  is
+     * Throws {@link RepoException.AlreadyActive} if {@link GitlabRepo}  is
      * already active.
      */
-    @Test(expected = RepoAlreadyActiveException.class)
+    @Test(expected = RepoException.AlreadyActive.class)
     public void throwsRepoAlreadyActiveExceptionIfActive(){
         final Storage storage = new InMemory();
         final User owner = Mockito.mock(User.class);

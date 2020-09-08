@@ -3,7 +3,7 @@ package com.selfxdsd.core;
 import com.selfxdsd.api.Organizations;
 import com.selfxdsd.api.Provider;
 import com.selfxdsd.api.User;
-import com.selfxdsd.api.exceptions.RepoNotFoundException;
+import com.selfxdsd.api.exceptions.RepoException;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -38,7 +38,7 @@ public final class GitlabITCase {
     /**
      * IllegalStateException is thrown because the repo is not found.
      */
-    @Test(expected = RepoNotFoundException.class)
+    @Test(expected = RepoException.NotFound.class)
     public void fetchesRepoNotFound() {
         createGitlab("criske").repo("criske", "1231312123").json();
     }
