@@ -32,9 +32,6 @@ import java.util.Iterator;
  * @version $Id$
  * @since 0.0.1
  * @checkstyle ParameterNumber (200 lines)
- * @todo #526:30min. Write custom SelfExceptions for Contracts
- *  (NotFound, Duplicate, etc...), and replace
- *  the existent IllegalStateExceptions with them.
  */
 public interface Contracts extends Iterable<Contract> {
 
