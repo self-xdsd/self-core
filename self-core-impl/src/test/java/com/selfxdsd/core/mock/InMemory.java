@@ -86,6 +86,11 @@ public final class InMemory implements Storage {
      */
     private InvoicedTasks invoicedTasks = new InMemoryInvoicedTasks(this);
 
+    /**
+     * In-memory payout methods.
+     */
+    private PayoutMethods payoutMethods = new InMemoryPayoutMethods(this);
+
     @Override
     public Users users() {
         return this.users;
@@ -134,6 +139,11 @@ public final class InMemory implements Storage {
     @Override
     public Resignations resignations() {
         return this.resignations;
+    }
+
+    @Override
+    public PayoutMethods payoutMethods() {
+        return this.payoutMethods;
     }
 
     /**

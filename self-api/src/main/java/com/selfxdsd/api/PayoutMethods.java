@@ -1,13 +1,13 @@
 /**
  * Copyright (c) 2020, Self XDSD Contributors
  * All rights reserved.
- *
+ * <p>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"),
  * to read the Software only. Permission is hereby NOT GRANTED to use, copy,
  * modify, merge, publish, distribute, sublicense, and/or sell copies of
  * the Software.
- *
+ * <p>
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -20,81 +20,50 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package com.selfxdsd.api.storage;
-
-import com.selfxdsd.api.*;
+package com.selfxdsd.api;
 
 /**
- * Storage of Self.
+ * Payout methods of contributors working in Self.
+ * How is Self going to send money to them?
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
- * @since 0.0.1
+ * @since 0.0.22
  */
-public interface Storage extends AutoCloseable {
+public interface PayoutMethods extends Iterable<PayoutMethod> {
 
     /**
-     * Get the users Storage API.
-     * @return Users.
+     * Register a new PayoutMethod for a Contributor.
+     * @param contributor Contributor in question.
+     * @param type Type of the payout (e.g. stripe).
+     * @param identifier Identifier of the payout method.
+     * @return PayoutMethod.
      */
-    Users users();
+    PayoutMethod register(
+        final Contributor contributor,
+        final String type,
+        final String identifier
+    );
 
     /**
-     * Get the project managers Storage API.
-     * @return ProjectManagers.
-     */
-    ProjectManagers projectManagers();
-
-    /**
-     * Get the projects Storage API.
-     * @return Projects.
-     */
-    Projects projects();
-
-    /**
-     * Get the wallets Storage API.
-     * @return Wallets.
-     */
-    Wallets wallets();
-
-    /**
-     * Get the contracts Storage API.
-     * @return Contracts.
-     */
-    Contracts contracts();
-
-    /**
-     * Get the invoices Storage API.
-     * @return Invoices.
-     */
-    Invoices invoices();
-
-    /**
-     * The the invoiced tasks Storage API.
-     * @return InvoicedTasks.
-     */
-    InvoicedTasks invoicedTasks();
-
-    /**
-     * Get the contributors Storage API.
-     * @return Contributors.
-     */
-    Contributors contributors();
-
-    /**
-     * Get the tasks Storage API.
-     * @return Tasks.
-     */
-    Tasks tasks();
-
-    /**
-     * Get the resignations Storage API.
-     * @return Resignations.
-     */
-    Resignations resignations();
-
-    /**
-     * Get the payout methods Storage API.
+     * Get a Contributor's PayoutMethods.
+     * @param contributor Contributor.
      * @return PayoutMethods.
      */
-    PayoutMethods payoutMethods();
+    PayoutMethods ofContributor(final Contributor contributor);
+
+    /**
+     * Get the active PayoutMethod.
+     * @return PayoutMethod or null if there isn't any.
+     */
+    PayoutMethod active();
+
+    /**
+     * Activate the given PayoutMethod. All the other payout methods
+     * of the same Contributor should be deactivated (only one active
+     * PayoutMethod per Contributor is allowed).
+     * @param payoutMethod PayoutMethod to be activated.
+     * @return Activated payout method.
+     */
+    PayoutMethod activate(final PayoutMethod payoutMethod);
+
 }
