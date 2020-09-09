@@ -23,6 +23,7 @@
 package com.selfxdsd.core.contracts;
 
 import com.selfxdsd.api.*;
+import com.selfxdsd.api.exceptions.ContractsException;
 import com.selfxdsd.api.storage.Storage;
 import com.selfxdsd.core.contributors.StoredContributor;
 import org.hamcrest.MatcherAssert;
@@ -127,7 +128,7 @@ public final class ContributorContractsTestCase {
      * Method ofContributor throws an exception if a different contributorId
      * is specified.
      */
-    @Test(expected = IllegalStateException.class)
+    @Test(expected = ContractsException.OfContributor.List.class)
     public void ofContributorComplainsWhenDifferentId() {
         final Contracts contracts = new ContributorContracts(
             new StoredContributor(
@@ -225,7 +226,7 @@ public final class ContributorContractsTestCase {
      * Method addContract should throw ISE if a different Contributor is
      * specified.
      */
-    @Test (expected = IllegalArgumentException.class)
+    @Test (expected = ContractsException.OfContributor.Add.class)
     public void doesNotAddContractForDifferentContributor(){
         final Storage storage = Mockito.mock(Storage.class);
         final Contributor mihai = new StoredContributor(

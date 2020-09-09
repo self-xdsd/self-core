@@ -25,6 +25,7 @@ package com.selfxdsd.core.contracts;
 import com.selfxdsd.api.Contract;
 import com.selfxdsd.api.Contracts;
 import com.selfxdsd.api.Contributor;
+import com.selfxdsd.api.exceptions.ContractsException;
 import com.selfxdsd.api.storage.Storage;
 
 import java.math.BigDecimal;
@@ -94,10 +95,8 @@ public final class ProjectContracts implements Contracts {
         ) {
             return this;
         }
-        throw new IllegalStateException(
-            "Already seeing the contracts of Project " + this.repoFullName
-                +", operating at " + this.provider
-        );
+        throw new ContractsException.OfProject.List(this.repoFullName,
+            this.provider);
     }
 
     @Override
@@ -129,11 +128,8 @@ public final class ProjectContracts implements Contracts {
         if(!this.repoFullName.equals(repoFullName)
             || !this.provider.equals(provider)
         ) {
-            throw new IllegalArgumentException(
-                "These are the Contracts of Project " + this.repoFullName
-                    + " from " + this.provider + ". "
-                    + "You cannot register another Project's contracts here."
-            );
+            throw new ContractsException.OfProject.Add(this.repoFullName,
+                this.provider);
         } else {
             final Contract registered = this.storage.contracts().addContract(
                 this.repoFullName,
