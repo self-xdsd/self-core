@@ -23,6 +23,7 @@
 package com.selfxdsd.core.contributors;
 
 import com.selfxdsd.api.*;
+import com.selfxdsd.api.exceptions.ContributorsException;
 import com.selfxdsd.api.storage.Storage;
 import com.selfxdsd.core.BasePaged;
 
@@ -120,10 +121,8 @@ public final class ProjectContributors extends BasePaged
         final String provider
     ) {
         if(!provider.equals(this.provider)) {
-            throw new IllegalArgumentException(
-                "You can only register contributors working at "
-              + this.provider + " here."
-            );
+            throw new ContributorsException.OfProject
+                .Add(this.repoFullName, this.provider);
         }
         Contributor found = this.getById(
             username, provider
@@ -162,10 +161,8 @@ public final class ProjectContributors extends BasePaged
             && this.provider.equals(repoProvider)) {
             return this;
         }
-        throw new IllegalStateException(
-            "Already seeing the contributors of Project " + this.repoFullName
-          + ", operating at " + this.provider + "."
-        );
+        throw new ContributorsException.OfProject
+            .List(repoFullName, repoProvider);
     }
 
     @Override
@@ -185,16 +182,17 @@ public final class ProjectContributors extends BasePaged
      * In the future, we might take more factors into account.
      * @param task Task requiring an assignee.
      * @return Contributor or null if nobody is found.
-     * @throws IllegalStateException when Task's Project not matching
-     * ProjectContributors Project.
-     * @checkstyle ReturnCount (30 lines)
+     * @throws ContributorsException.OfProject.Election When Task's Project not
+     * matching ProjectContributors Project.
+     * @checkstyle ReturnCount (40 lines)
      * @checkstyle Indentation (30 lines)
      */
     @Override
     public Contributor elect(final Task task) {
-        if (!this.project.equals(task.project())) {
-            throw new IllegalStateException("Contributors project must match "
-             + " the task project.");
+        final Project project = task.project();
+        if (!this.project.equals(project)) {
+            throw new ContributorsException.OfProject
+                .Election(project.repoFullName(), project.provider());
         }
         final Page page = super.current();
         final List<Resignation> resignations = StreamSupport

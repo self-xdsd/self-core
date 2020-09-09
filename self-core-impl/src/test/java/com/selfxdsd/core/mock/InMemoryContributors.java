@@ -23,6 +23,7 @@
 package com.selfxdsd.core.mock;
 
 import com.selfxdsd.api.*;
+import com.selfxdsd.api.exceptions.ContributorsException;
 import com.selfxdsd.api.storage.Storage;
 import com.selfxdsd.core.BasePaged;
 import com.selfxdsd.core.contributors.ProjectContributors;
@@ -82,7 +83,8 @@ public final class InMemoryContributors extends BasePaged
         final ContributorKey key = new ContributorKey(username, provider);
         final Contributor contributor = this.table.get(key);
         if(contributor != null) {
-            throw new IllegalArgumentException("Contributor already exists.");
+            throw new ContributorsException
+                .Single.Add(contributor.username(), contributor.provider());
         } else {
             final Contributor newContributor = new StoredContributor(
                 username, provider, this.storage
@@ -136,10 +138,7 @@ public final class InMemoryContributors extends BasePaged
 
     @Override
     public Contributor elect(final Task task) {
-        throw new UnsupportedOperationException(
-            "You can only elect a Contributor out of a Project's contributors."
-                + " Call #ofProject(...) first."
-        );
+        throw new ContributorsException.Election();
     }
 
     @Override
