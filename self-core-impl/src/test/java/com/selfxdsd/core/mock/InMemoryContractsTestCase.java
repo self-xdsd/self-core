@@ -1,14 +1,15 @@
 package com.selfxdsd.core.mock;
 
 import com.selfxdsd.api.*;
+import com.selfxdsd.api.exceptions.ContractsException;
 import com.selfxdsd.api.storage.Storage;
 import org.junit.Test;
 import org.mockito.Mockito;
 
 import java.math.BigDecimal;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-import static org.mockito.Mockito.*;
 
 /**
  * Units tests for In-Memory Contracts.
@@ -61,7 +62,7 @@ public final class InMemoryContractsTestCase {
     /**
      * A Contributor can only have one contract/role with a Project.
      */
-    @Test (expected = IllegalStateException.class)
+    @Test (expected = ContractsException.Single.Add.class)
     public void shouldNotCreateAnExistingContract() {
         final Storage storage = new InMemory();
         final ProjectManager projectManager = storage.projectManagers()
@@ -142,7 +143,7 @@ public final class InMemoryContractsTestCase {
      * Method addContract(...) throws ISE if the specified Project
      * does not exist.
      */
-    @Test(expected = IllegalStateException.class)
+    @Test(expected = ContractsException.Single.Add.class)
     public void addThrowsExceptionWhenProjectNotFound() {
         final Storage storage = new InMemory();
         final Contributor contributor = storage.contributors()
@@ -160,7 +161,7 @@ public final class InMemoryContractsTestCase {
      * Method addContract(...) throws ISE if the specified Contributor
      * does not exist.
      */
-    @Test(expected = IllegalStateException.class)
+    @Test(expected = ContractsException.Single.Add.class)
     public void addThrowsExceptionWhenContributorNotFound() {
         final Storage storage = new InMemory();
         final Repo repo = Mockito.mock(Repo.class);

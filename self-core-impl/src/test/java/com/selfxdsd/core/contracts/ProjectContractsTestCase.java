@@ -23,6 +23,7 @@
 package com.selfxdsd.core.contracts;
 
 import com.selfxdsd.api.*;
+import com.selfxdsd.api.exceptions.ContractsException;
 import com.selfxdsd.api.storage.Storage;
 import com.selfxdsd.core.contributors.StoredContributor;
 import org.hamcrest.MatcherAssert;
@@ -127,7 +128,7 @@ public final class ProjectContractsTestCase {
      * Method ofProject throws an exception if a different projectId
      * is specified.
      */
-    @Test (expected = IllegalStateException.class)
+    @Test (expected = ContractsException.OfProject.List.class)
     public void ofProjectComplainsWhenDifferentId() {
         final Contracts contracts = new ProjectContracts(
             "john/test", "github",
@@ -182,7 +183,7 @@ public final class ProjectContractsTestCase {
      * Method addContract should throw ISE if the id of a different Project is
      * specified.
      */
-    @Test (expected = IllegalArgumentException.class)
+    @Test (expected = ContractsException.OfProject.Add.class)
     public void doesNotAddContractForDifferentProject() {
         new ProjectContracts(
             "john/test1", "github",

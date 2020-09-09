@@ -22,7 +22,11 @@
  */
 package com.selfxdsd.core.mock;
 
-import com.selfxdsd.api.*;
+import com.selfxdsd.api.Contract;
+import com.selfxdsd.api.Contracts;
+import com.selfxdsd.api.Contributor;
+import com.selfxdsd.api.Project;
+import com.selfxdsd.api.exceptions.ContractsException;
 import com.selfxdsd.api.storage.Storage;
 import com.selfxdsd.core.contracts.ContributorContracts;
 import com.selfxdsd.core.contracts.ProjectContracts;
@@ -88,22 +92,29 @@ public final class InMemoryContracts implements Contracts {
                 this.contracts.put(key, contract);
             } else {
                 if(project == null) {
-                    throw new IllegalStateException(
-                        "Contract was not created:"
-                      + " project was not found in storage"
-                    );
+                    throw new ContractsException.Single.Add(
+                        new Contract.Id(key.repoFullName,
+                            key.contributorUsername,
+                            key.provider,
+                            key.role),
+                        "project was not found in storage.");
                 }
                 if(contributor == null) {
-                    throw new IllegalStateException(
-                        "Contract was not created:"
-                      + " contributor was not found in storage"
-                    );
+                    throw new ContractsException.Single.Add(
+                        new Contract.Id(key.repoFullName,
+                            key.contributorUsername,
+                            key.provider,
+                            key.role),
+                        "contributor was not found in storage.");
                 }
             }
         } else {
-            throw new IllegalStateException(
-                "The specified Contract is already registered."
-            );
+            throw new ContractsException.Single.Add(
+                new Contract.Id(key.repoFullName,
+                    key.contributorUsername,
+                    key.provider,
+                    key.role),
+                "is already registered.");
         }
         return contract;
     }
