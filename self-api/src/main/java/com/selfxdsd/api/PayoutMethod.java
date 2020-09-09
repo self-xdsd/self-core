@@ -23,9 +23,27 @@
 package com.selfxdsd.api;
 
 /**
+ * A Contributor's payout method, how Self is going to
+ * send them money.
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
- * @since
+ * @since 0.0.22
  */
 public interface PayoutMethod {
+
+    /**
+     * Possible payout methods.
+     */
+    class Type {
+
+        /**
+         * Hidden ctor.
+         */
+        private Type(){ }
+
+        /**
+         * Stripe.
+         */
+        public static final String STRIPE = "STRIPE";
+    }
 }

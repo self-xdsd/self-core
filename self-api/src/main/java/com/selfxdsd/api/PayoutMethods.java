@@ -23,9 +23,47 @@
 package com.selfxdsd.api;
 
 /**
+ * Payout methods of contributors working in Self.
+ * How is Self going to send money to them?
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
- * @since
+ * @since 0.0.22
  */
-public class PayoutMethods {
+public interface PayoutMethods extends Iterable<PayoutMethod> {
+
+    /**
+     * Register a new PayoutMethod for a Contributor.
+     * @param contributor Contributor in question.
+     * @param type Type of the payout (e.g. stripe).
+     * @param identifier Identifier of the payout method.
+     * @return PayoutMethod.
+     */
+    PayoutMethod register(
+        final Contributor contributor,
+        final String type,
+        final String identifier
+    );
+
+    /**
+     * Get a Contributor's PayoutMethods.
+     * @param contributor Contributor.
+     * @return PayoutMethods.
+     */
+    PayoutMethods ofContributor(final Contributor contributor);
+
+    /**
+     * Get the active PayoutMethod.
+     * @return PayoutMethod or null if there isn't any.
+     */
+    PayoutMethod active();
+
+    /**
+     * Activate the given PayoutMethod. All the other payout methods
+     * of the same Contributor should be deactivated (only one active
+     * PayoutMethod per Contributor is allowed).
+     * @param payoutMethod PayoutMethod to be activated.
+     * @return Activated payout method.
+     */
+    PayoutMethod activate(final PayoutMethod payoutMethod);
+
 }
