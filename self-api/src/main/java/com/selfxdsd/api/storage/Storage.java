@@ -91,4 +91,10 @@ public interface Storage extends AutoCloseable {
      * @return Resignations.
      */
     Resignations resignations();
+
+    /**
+     * Get the payout methods Storage API.
+     * @return PayoutMethods.
+     */
+    PayoutMethods payoutMethods();
 }
