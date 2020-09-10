@@ -32,7 +32,8 @@ package com.selfxdsd.api;
 public interface PayoutMethods extends Iterable<PayoutMethod> {
 
     /**
-     * Register a new PayoutMethod for a Contributor.
+     * Register a new PayoutMethod for a Contributor. It will be
+     * inactive by default.
      * @param contributor Contributor in question.
      * @param type Type of the payout (e.g. stripe).
      * @param identifier Identifier of the payout method.

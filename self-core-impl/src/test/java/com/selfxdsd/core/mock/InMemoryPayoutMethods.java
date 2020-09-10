@@ -27,6 +27,7 @@ import com.selfxdsd.api.PayoutMethod;
 import com.selfxdsd.api.PayoutMethods;
 import com.selfxdsd.api.storage.Storage;
 import com.selfxdsd.core.contributors.ContributorPayoutMethods;
+import com.selfxdsd.core.contributors.StripePayoutMethod;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -36,9 +37,6 @@ import java.util.stream.Collectors;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.22
- * @todo #535:30min Implement methods register of this class,
- *  once we have an implementation of PayoutMethod (we will start
- *  with the Stripe payment method).
  */
 public final class InMemoryPayoutMethods implements PayoutMethods {
 
@@ -69,7 +67,18 @@ public final class InMemoryPayoutMethods implements PayoutMethods {
         final String type,
         final String identifier
     ) {
-        return null;
+        final PayoutMethod method = new StripePayoutMethod(
+            contributor,
+            identifier,
+            false
+        );
+        this.payoutMethods.put(
+            new PayoutMethodKey(
+                contributor.username(), contributor.provider(), type
+            ),
+            method
+        );
+        return method;
     }
 
     @Override
