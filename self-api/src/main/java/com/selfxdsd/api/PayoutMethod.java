@@ -32,6 +32,24 @@ package com.selfxdsd.api;
 public interface PayoutMethod {
 
     /**
+     * Contributor to whom this payout method belongs.
+     * @return Contributor.
+     */
+    Contributor contributor();
+
+    /**
+     * Type of this payout method.
+     * @return String.
+     */
+    String type();
+
+    /**
+     * Is this payout method active or not?
+     * @return True or false.
+     */
+    boolean active();
+
+    /**
      * Possible payout methods.
      */
     class Type {
@@ -45,5 +63,10 @@ public interface PayoutMethod {
          * Stripe.
          */
         public static final String STRIPE = "STRIPE";
+
+        /**
+         * Paypal.
+         */
+        public static final String PAYPAL = "PayPal";
     }
 }
