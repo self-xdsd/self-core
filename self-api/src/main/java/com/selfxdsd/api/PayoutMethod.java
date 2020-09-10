@@ -50,6 +50,12 @@ public interface PayoutMethod {
     boolean active();
 
     /**
+     * Identifier.
+     * @return String.
+     */
+    String identifier();
+
+    /**
      * Possible payout methods.
      */
     class Type {
