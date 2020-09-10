@@ -26,6 +26,7 @@ import com.selfxdsd.api.Contributor;
 import com.selfxdsd.api.PayoutMethod;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
+import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -100,5 +101,30 @@ public final class StripePayoutMethodTestCase {
             method.identifier(),
             Matchers.equalTo("acct_001")
         );
+    }
+
+    /**
+     * StoredContributor.json() should throw an ISE
+     * if the stripe.api.token env variable is not set.
+     */
+    @Test
+    public void jsonComplainsOnMissingApiKey() {
+        final PayoutMethod method = new StripePayoutMethod(
+            Mockito.mock(Contributor.class),
+            "acct_001",
+            Boolean.TRUE
+        );
+
+        try {
+            method.json();
+            Assert.fail("IllegalStateException was expected.");
+        } catch (final IllegalStateException ex) {
+            MatcherAssert.assertThat(
+                ex.getMessage(),
+                Matchers.equalTo(
+                    "Please specify the stripe.api.token Environment Variable!"
+                )
+            );
+        }
     }
 }

@@ -24,16 +24,19 @@ package com.selfxdsd.core.contributors;
 
 import com.selfxdsd.api.Contributor;
 import com.selfxdsd.api.PayoutMethod;
+import com.stripe.Stripe;
+import com.stripe.exception.StripeException;
+import com.stripe.model.Account;
+
+import javax.json.Json;
+import javax.json.JsonObject;
+import java.io.StringReader;
 
 /**
  * A Contributor's Stripe PayoutMethod.
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.22
- * @todo #538:30min Implement Stripe API call to check if the contributor
- *  has finished the onboarding process for this payout method. Then, implement
- *  an API call to see if there are any more actions that the Contributor needs
- *  to take in order for the account to be fully active.
  */
 public final class StripePayoutMethod implements PayoutMethod {
 
@@ -86,5 +89,32 @@ public final class StripePayoutMethod implements PayoutMethod {
     @Override
     public String identifier() {
         return this.identifier;
+    }
+
+    @Override
+    public JsonObject json() {
+        final String apiToken = System.getenv("stripe.api.token");
+        if(apiToken == null || apiToken.trim().isEmpty()) {
+            throw new IllegalStateException(
+                "Please specify the stripe.api.token Environment Variable!"
+            );
+        }
+        Stripe.apiKey = apiToken;
+        try {
+            final Account account = Account.retrieve(this.identifier);
+            return Json.createReader(
+                new StringReader(
+                    account.getRawJsonObject().toString()
+                )
+            ).readObject();
+        } catch (final StripeException ex) {
+            throw new IllegalStateException(
+                "Stripe threw an exception when trying to fetch the "
+                + "Stripe Connect Account of Contributor "
+                + this.contributor.username() + "/"
+                + this.contributor.provider() + ". ",
+                ex
+            );
+        }
     }
 }
