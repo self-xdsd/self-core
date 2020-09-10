@@ -133,8 +133,8 @@ abstract class BaseSelf implements Self {
         }
 
         @Override
-        public Contracts contracts() {
-            return this.user.contracts();
+        public Contributor asContributor() {
+            return this.user.asContributor();
         }
 
     }

@@ -147,10 +147,10 @@ public final class StoredUserTestCase {
     }
 
     /**
-     * StoredUser can return its Contracts.
+     * StoredUser can return the Contributor.
      */
     @Test
-    public void returnsContracts() {
+    public void returnsContributor() {
         final Storage storage = Mockito.mock(Storage.class);
         final User ghUser = new StoredUser(
             "amihaiemil",
@@ -160,14 +160,16 @@ public final class StoredUserTestCase {
             storage
         );
 
-        final Contracts owned = Mockito.mock(Contracts.class);
-        final Contracts all = Mockito.mock(Contracts.class);
-        Mockito.when(all.ofContributor(Mockito.any())).thenReturn(owned);
-        Mockito.when(storage.contracts()).thenReturn(all);
+        final Contributor contributor = Mockito.mock(Contributor.class);
+        final Contributors all = Mockito.mock(Contributors.class);
+        Mockito.when(
+            all.getById("amihaiemil", Provider.Names.GITHUB)
+        ).thenReturn(contributor);
+        Mockito.when(storage.contributors()).thenReturn(all);
 
         MatcherAssert.assertThat(
-            ghUser.contracts(),
-            Matchers.is(owned)
+            ghUser.asContributor(),
+            Matchers.is(contributor)
         );
     }
 

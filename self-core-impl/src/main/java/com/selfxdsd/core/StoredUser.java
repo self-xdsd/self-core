@@ -22,12 +22,8 @@
  */
 package com.selfxdsd.core;
 
-import com.selfxdsd.api.Contracts;
-import com.selfxdsd.api.Projects;
-import com.selfxdsd.api.Provider;
-import com.selfxdsd.api.User;
+import com.selfxdsd.api.*;
 import com.selfxdsd.api.storage.Storage;
-import com.selfxdsd.core.contributors.StoredContributor;
 
 import java.util.Objects;
 
@@ -118,10 +114,10 @@ public final class StoredUser implements User {
     }
 
     @Override
-    public Contracts contracts() {
-        return this.storage.contracts().ofContributor(
-            new StoredContributor(this.username, this.provider, this.storage)
-        );
+    public Contributor asContributor() {
+        return this.storage
+            .contributors()
+            .getById(this.username, this.provider);
     }
 
     @Override

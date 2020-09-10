@@ -22,10 +22,7 @@
  */
 package com.selfxdsd.core;
 
-import com.selfxdsd.api.Contracts;
-import com.selfxdsd.api.Projects;
-import com.selfxdsd.api.Provider;
-import com.selfxdsd.api.User;
+import com.selfxdsd.api.*;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -121,19 +118,19 @@ public final class AuthenticatedTestCase {
     }
 
     /**
-     * Should returns the contracts.
+     * Should returns the corresponding Contributor.
      */
     @Test
-    public void returnsContracts() {
+    public void returnsContributor() {
         final User user = Mockito.mock(User.class);
-        final Contracts contracts = Mockito.mock(Contracts.class);
-        Mockito.when(user.contracts()).thenReturn(contracts);
+        final Contributor contributor = Mockito.mock(Contributor.class);
+        Mockito.when(user.asContributor()).thenReturn(contributor);
         final BaseSelf.Authenticated authenticated =
             new BaseSelf.Authenticated(user, "tok3n");
 
         MatcherAssert.assertThat(
-            authenticated.contracts(),
-            Matchers.equalTo(contracts)
+            authenticated.asContributor(),
+            Matchers.is(contributor)
         );
     }
 }

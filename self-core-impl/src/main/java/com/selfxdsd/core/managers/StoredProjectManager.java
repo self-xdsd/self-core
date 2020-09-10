@@ -315,9 +315,9 @@ public final class StoredProjectManager implements ProjectManager {
         }
 
         @Override
-        public Contracts contracts() {
+        public Contributor asContributor() {
             throw new UnsupportedOperationException(
-                "The PM cannot have any contract."
+                "The PM is never a Contributor."
             );
         }
     }
