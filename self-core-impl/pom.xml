@@ -34,6 +34,15 @@
             <artifactId>stripe-java</artifactId>
             <version>20.3.2</version>
         </dependency>
+        <!--
+            Required because stripe-java only declares it with runtime scope
+            and we need it with compile scope so we can use the returned gson JsonObjects
+        -->
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.8.6</version>
+        </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>

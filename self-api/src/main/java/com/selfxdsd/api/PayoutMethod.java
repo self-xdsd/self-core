@@ -22,6 +22,8 @@
  */
 package com.selfxdsd.api;
 
+import javax.json.JsonObject;
+
 /**
  * A Contributor's payout method, how Self is going to
  * send them money.
@@ -54,6 +56,13 @@ public interface PayoutMethod {
      * @return String.
      */
     String identifier();
+
+    /**
+     * The whole PayoutMethod in JSON.
+     * This usually comes from the API of the payment processor.
+     * @return The PayoutMethod in JSON format.
+     */
+    JsonObject json();
 
     /**
      * Possible payout methods.
