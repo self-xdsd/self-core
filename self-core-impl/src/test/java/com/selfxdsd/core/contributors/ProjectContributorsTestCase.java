@@ -22,6 +22,7 @@
 package com.selfxdsd.core.contributors;
 
 import com.selfxdsd.api.*;
+import com.selfxdsd.api.exceptions.ContributorsException;
 import com.selfxdsd.api.storage.Paged;
 import com.selfxdsd.api.storage.Storage;
 import com.selfxdsd.core.contracts.ContributorContracts;
@@ -169,7 +170,7 @@ public final class ProjectContributorsTestCase {
      * Method ofProject should complain if the ID of another project is given as
      * input.
      */
-    @Test(expected = IllegalStateException.class)
+    @Test(expected = ContributorsException.OfProject.List.class)
     public void ofProjectComplainsIfDifferentId() {
         final Contributors contributors = new ProjectContributors(
             this.mockProject(
@@ -192,7 +193,7 @@ public final class ProjectContributorsTestCase {
     /**
      * We should only be able to register contributors from the same provider.
      */
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = ContributorsException.OfProject.Add.class)
     public void registerComplainsWhenDiffProvider() {
         final Contributors contributors = new ProjectContributors(
             this.mockProject(
@@ -549,10 +550,10 @@ public final class ProjectContributorsTestCase {
     }
 
     /**
-     * Elect(...) will throw ISE when Task's Project is different than
-     * the Project of ProjectContributors.
+     * Elect(...) will throw Self Exception when Task's Project is different
+     * than the Project of ProjectContributors.
      */
-    @Test(expected = IllegalStateException.class)
+    @Test(expected = ContributorsException.OfProject.Election.class)
     public void electThrowsWhenTaskProjectIsDifferent(){
         final Project contributorsProject = this.mockProject(
             "john/test-other",
