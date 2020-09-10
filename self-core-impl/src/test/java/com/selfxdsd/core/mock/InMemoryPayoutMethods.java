@@ -26,20 +26,19 @@ import com.selfxdsd.api.Contributor;
 import com.selfxdsd.api.PayoutMethod;
 import com.selfxdsd.api.PayoutMethods;
 import com.selfxdsd.api.storage.Storage;
+import com.selfxdsd.core.contributors.ContributorPayoutMethods;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * In-memory PayoutMethods.
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.22
- * @todo #531:30min Implement methods register and ofProject(...) of this
- *  class, once we have an implementation of PayoutMethod (we will start
- *  with the Stripe payment method) and class ContributorPayoutMethods.
+ * @todo #535:30min Implement methods register of this class,
+ *  once we have an implementation of PayoutMethod (we will start
+ *  with the Stripe payment method).
  */
 public final class InMemoryPayoutMethods implements PayoutMethods {
 
@@ -75,7 +74,17 @@ public final class InMemoryPayoutMethods implements PayoutMethods {
 
     @Override
     public PayoutMethods ofContributor(final Contributor contributor) {
-        return null;
+        final List<PayoutMethod> ofContributor = this.payoutMethods
+            .values()
+            .stream()
+            .filter(
+                method -> method.contributor().equals(contributor)
+            ).collect(Collectors.toList());
+        return new ContributorPayoutMethods(
+            contributor,
+            ofContributor,
+            this.storage
+        );
     }
 
     @Override
