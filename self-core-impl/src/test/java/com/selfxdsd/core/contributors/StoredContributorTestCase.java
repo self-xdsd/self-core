@@ -26,6 +26,7 @@ import com.selfxdsd.api.*;
 import com.selfxdsd.api.storage.Storage;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
+import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -282,6 +283,81 @@ public final class StoredContributorTestCase {
             found,
             Matchers.nullValue()
         );
+    }
+
+    /**
+     * StoredContributor.createStripeAccount(...) should throw an ISE
+     * if the Contributor already has a PayoutMethod of type "STRIPE".
+     */
+    @Test
+    public void complainsOnDuplicateStripeAccount() {
+        final List<PayoutMethod> list = new ArrayList<>();
+        final PayoutMethod stripe = Mockito.mock(PayoutMethod.class);
+        Mockito.when(stripe.type()).thenReturn(PayoutMethod.Type.STRIPE);
+        list.add(stripe);
+
+        final PayoutMethods ofContributor = Mockito.mock(PayoutMethods.class);
+        Mockito.when(ofContributor.iterator()).thenReturn(list.iterator());
+
+        final PayoutMethods all = Mockito.mock(PayoutMethods.class);
+        final Storage storage = Mockito.mock(Storage.class);
+        Mockito.when(storage.payoutMethods()).thenReturn(all);
+
+        final Contributor contributor = new StoredContributor(
+            "amihaiemil", Provider.Names.GITHUB, storage
+        );
+        Mockito.when(all.ofContributor(contributor)).thenReturn(ofContributor);
+
+        try {
+            contributor.createStripeAccount();
+            Assert.fail("IllegalStateException was expected.");
+        } catch (final IllegalStateException ex) {
+            Mockito.verify(ofContributor, Mockito.times(0)).register(
+                Mockito.any(), Mockito.anyString(), Mockito.anyString()
+            );
+            MatcherAssert.assertThat(
+                ex.getMessage(),
+                Matchers.equalTo(
+                    "Contributor amihaiemil at github "
+                    + "already has a Stripe Connect Account."
+                )
+            );
+        }
+    }
+
+    /**
+     * StoredContributor.createStripeAccount(...) should throw an ISE
+     * if the stripe.api.token env variable is not set.
+     */
+    @Test
+    public void complainsOnMissingApiKey() {
+        final PayoutMethods ofContributor = Mockito.mock(PayoutMethods.class);
+        Mockito.when(ofContributor.iterator())
+            .thenReturn(new ArrayList<PayoutMethod>().iterator());
+
+        final PayoutMethods all = Mockito.mock(PayoutMethods.class);
+        final Storage storage = Mockito.mock(Storage.class);
+        Mockito.when(storage.payoutMethods()).thenReturn(all);
+
+        final Contributor contributor = new StoredContributor(
+            "amihaiemil", Provider.Names.GITHUB, storage
+        );
+        Mockito.when(all.ofContributor(contributor)).thenReturn(ofContributor);
+
+        try {
+            contributor.createStripeAccount();
+            Assert.fail("IllegalStateException was expected.");
+        } catch (final IllegalStateException ex) {
+            Mockito.verify(ofContributor, Mockito.times(0)).register(
+                Mockito.any(), Mockito.anyString(), Mockito.anyString()
+            );
+            MatcherAssert.assertThat(
+                ex.getMessage(),
+                Matchers.equalTo(
+                    "Please specify the stripe.api.token Environment Variable!"
+                )
+            );
+        }
     }
 
     /**

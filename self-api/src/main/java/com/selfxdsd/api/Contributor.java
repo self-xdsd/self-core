@@ -27,10 +27,6 @@ package com.selfxdsd.api;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
- * @todo #538:30min Implement method PayoutMethod::createStripeAccount()
- *  which will first check if the contributor doesn't already have a Stripe
- *  PayoutMethod, then use Stripe's API cu create an account and finally
- *  register the PayoutMethod.
  */
 public interface Contributor {
 
@@ -71,4 +67,13 @@ public interface Contributor {
      */
     Tasks tasks();
 
+    /**
+     * Create a Stripe Connect Account for this Contributor,
+     * so we can pay them. The Connect Account will be linked
+     * to the Self's Platform Accoung on Stripe.
+     * @return PayoutMethod.
+     * @throws IllegalStateException If the Contributor alredy has
+     *  a Stripe Account/PayoutMethod.
+     */
+    PayoutMethod createStripeAccount();
 }

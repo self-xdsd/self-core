@@ -22,11 +22,12 @@
  */
 package com.selfxdsd.core.contributors;
 
-import com.selfxdsd.api.Contract;
-import com.selfxdsd.api.Contracts;
-import com.selfxdsd.api.Contributor;
-import com.selfxdsd.api.Tasks;
+import com.selfxdsd.api.*;
 import com.selfxdsd.api.storage.Storage;
+import com.stripe.Stripe;
+import com.stripe.exception.StripeException;
+import com.stripe.model.Account;
+import com.stripe.param.AccountCreateParams;
 
 import java.util.Objects;
 
@@ -145,6 +146,46 @@ public final class StoredContributor implements Contributor {
     @Override
     public Tasks tasks() {
         return this.storage.tasks().ofContributor(this.username, this.provider);
+    }
+
+    @Override
+    public PayoutMethod createStripeAccount() {
+        final PayoutMethods methods = this.storage
+            .payoutMethods()
+            .ofContributor(this);
+        for(final PayoutMethod method : methods) {
+            if(method.type().equals(PayoutMethod.Type.STRIPE)) {
+                throw new IllegalStateException(
+                    "Contributor " + this.username + " at " + this.provider
+                    + " already has a Stripe Connect Account."
+                );
+            }
+        }
+        final String apiToken = System.getenv("stripe.api.token");
+        if(apiToken == null || apiToken.trim().isEmpty()) {
+            throw new IllegalStateException(
+                "Please specify the stripe.api.token Environment Variable!"
+            );
+        }
+        Stripe.apiKey = apiToken;
+        try {
+            final Account account = Account.create(
+                AccountCreateParams.builder()
+                    .setType(AccountCreateParams.Type.EXPRESS)
+                    .build()
+            );
+            return methods.register(
+                this,
+                PayoutMethod.Type.STRIPE,
+                account.getId()
+            );
+        } catch (final StripeException ex) {
+            throw new IllegalStateException(
+                "Stripe threw an exception when trying to create SCA for "
+                + "Contributor " + this.username + "/" + this.provider + ". ",
+                ex
+            );
+        }
     }
 
     @Override
