@@ -64,6 +64,11 @@ public interface User {
     /**
      * Contracts the user has with projects managed by Self.
      * @return Contracts.
+     * @todo #519:30min Replace this method with method
+     *  Contributor::User.asContributor(). This way, we
+     *  will have access to all of the user's stuff
+     *  (contracts, tasks, payout methods etc). If the User is
+     *  not a Contributor, the method should return null.
      */
     Contracts contracts();
 }
