@@ -50,4 +50,11 @@ public interface Self extends AutoCloseable {
      * @return Projects.
      */
     Projects projects();
+
+    /**
+     * Contributors in Self.
+     * @return Contributors.
+     */
+    Contributors contributors();
+
 }

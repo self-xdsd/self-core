@@ -137,6 +137,11 @@ public final class InMemoryContributors extends BasePaged
     }
 
     @Override
+    public Contributors ofProvider(final String provider) {
+        throw new UnsupportedOperationException("Not implemented yet");
+    }
+
+    @Override
     public Contributor elect(final Task task) {
         throw new ContributorsException.Election();
     }

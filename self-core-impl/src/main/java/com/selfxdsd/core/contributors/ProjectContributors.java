@@ -166,6 +166,11 @@ public final class ProjectContributors extends BasePaged
     }
 
     @Override
+    public Contributors ofProvider(final String provider) {
+        throw new UnsupportedOperationException("Not implemented yet!");
+    }
+
+    @Override
     public Contributors page(final Page page) {
         return new ProjectContributors(this.project,
             this.contributors,
