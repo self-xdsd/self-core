@@ -23,10 +23,11 @@
 package com.selfxdsd.core.mock;
 
 import com.selfxdsd.api.*;
+import com.selfxdsd.api.exceptions.ProjectsException;
 import com.selfxdsd.api.storage.Paged;
 import com.selfxdsd.api.storage.Storage;
-import com.selfxdsd.core.projects.PmProjects;
 import com.selfxdsd.core.BasePaged;
+import com.selfxdsd.core.projects.PmProjects;
 import com.selfxdsd.core.projects.StoredProject;
 import com.selfxdsd.core.projects.UserProjects;
 
@@ -86,7 +87,9 @@ public final class InMemoryProjects extends BasePaged implements Projects{
     ){
         if(manager == null
             || this.storage.projectManagers().getById(manager.id()) == null) {
-            throw new IllegalArgumentException(
+            throw new ProjectsException.Single.Add(
+                repo.fullName(),
+                repo.provider(),
                 "PM is missing or not registered!"
             );
         } else {
@@ -94,7 +97,11 @@ public final class InMemoryProjects extends BasePaged implements Projects{
                 repo.fullName(), repo.provider()
             );
             if(this.projects.get(key) != null) {
-                throw new IllegalArgumentException("Project already exists.");
+                throw new ProjectsException.Single.Add(
+                    repo.fullName(),
+                    repo.provider(),
+                    "already exists."
+                );
             }
             final Project project = new StoredProject(
                 repo.owner(), repo.fullName(), webHookToken,
