@@ -78,6 +78,12 @@ abstract class BaseSelf implements Self {
         return this.storage.projects();
     }
 
+
+    @Override
+    public Contributors contributors() {
+        return this.storage.contributors();
+    }
+
     @Override
     public void close() throws Exception {
         this.storage.close();
