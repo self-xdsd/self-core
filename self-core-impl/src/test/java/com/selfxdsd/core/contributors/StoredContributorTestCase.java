@@ -361,6 +361,29 @@ public final class StoredContributorTestCase {
     }
 
     /**
+     * StoredContributor.payoutMethods can return the contributor's
+     * payout methods.
+     */
+    @Test
+    public void returnsPayoutMethods() {
+        final PayoutMethods ofContributor = Mockito.mock(PayoutMethods.class);
+
+        final PayoutMethods all = Mockito.mock(PayoutMethods.class);
+        final Storage storage = Mockito.mock(Storage.class);
+        Mockito.when(storage.payoutMethods()).thenReturn(all);
+
+        final Contributor contributor = new StoredContributor(
+            "amihaiemil", Provider.Names.GITHUB, storage
+        );
+        Mockito.when(all.ofContributor(contributor)).thenReturn(ofContributor);
+
+        MatcherAssert.assertThat(
+            contributor.payoutMethods(),
+            Matchers.is(ofContributor)
+        );
+    }
+
+    /**
      * Mock a Contract for test.
      * @param contractId ID of he contract.
      * @return Contract mock.

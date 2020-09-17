@@ -121,6 +121,11 @@ public final class StoredContributor implements Contributor {
     }
 
     @Override
+    public PayoutMethods payoutMethods() {
+        return this.storage.payoutMethods().ofContributor(this);
+    }
+
+    @Override
     public Contract contract(
         final String repoFullName,
         final String provider,
@@ -150,9 +155,7 @@ public final class StoredContributor implements Contributor {
 
     @Override
     public PayoutMethod createStripeAccount() {
-        final PayoutMethods methods = this.storage
-            .payoutMethods()
-            .ofContributor(this);
+        final PayoutMethods methods = this.payoutMethods();
         for(final PayoutMethod method : methods) {
             if(method.type().equals(PayoutMethod.Type.STRIPE)) {
                 throw new IllegalStateException(
