@@ -1,6 +1,7 @@
 package com.selfxdsd.core.tasks;
 
 import com.selfxdsd.api.*;
+import com.selfxdsd.api.exceptions.TasksException;
 import com.selfxdsd.api.storage.Storage;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -54,9 +55,9 @@ public final class ContractTasksTestCase {
     }
 
     /**
-     * Throws IllegalStateException when getting tasks for other contract.
+     * Throws Self Exception when getting tasks for other contract.
      */
-    @Test(expected = IllegalStateException.class)
+    @Test(expected = TasksException.OfContract.List.class)
     public void throwsWhenGettingTasksForOtherContract() {
         final Tasks contractTasks = new ContractTasks(
             new Contract.Id("foo", "mihai",
@@ -121,7 +122,7 @@ public final class ContractTasksTestCase {
     /**
      * Throws when already seeing the Project Tasks of Contract's Contributor.
      */
-    @Test(expected = IllegalStateException.class)
+    @Test(expected = TasksException.OfProject.List.class)
     public void throwsWhenProjectTasksAlreadySeen() {
         new ContractTasks(
             new Contract.Id("foo", "mihai",
@@ -156,7 +157,7 @@ public final class ContractTasksTestCase {
     /**
      * Throws when already seeing the Project Tasks of Contract's Contributor.
      */
-    @Test(expected = IllegalStateException.class)
+    @Test(expected = TasksException.OfContributor.List.class)
     public void throwsWhenContributorTasksAlreadySeen() {
         new ContractTasks(
             new Contract.Id("foo", "mihai",
@@ -235,19 +236,25 @@ public final class ContractTasksTestCase {
     }
 
     /**
-     * Throws ISE when unasssigning Task is not part of ContractTasks.
+     * Throws Self Exception when unasssigning Task is not part
+     * of ContractTasks.
      */
-    @Test(expected = IllegalStateException.class)
+    @Test(expected = TasksException.OfContract.NotFound.class)
     public void throwsWhenUnassigningTaskNotPartOfContract(){
         final Task task = Mockito.mock(Task.class);
+        final Project project = Mockito.mock(Project.class);
+        Mockito.when(task.issueId()).thenReturn("123");
+        Mockito.when(project.provider()).thenReturn("gitlab");
+        Mockito.when(project.repoFullName()).thenReturn("john/repo");
+        Mockito.when(task.project()).thenReturn(project);
+
         final Tasks tasks = new ContractTasks(
             new Contract.Id("foo", "mihai",
                 "github", "dev"),
-            () -> Stream.of(task),
+            Stream::empty,
             Mockito.mock(Storage.class)
         );
-
-        tasks.unassign(Mockito.mock(Task.class));
+        tasks.unassign(task);
     }
 
     /**
@@ -300,9 +307,9 @@ public final class ContractTasksTestCase {
     }
 
     /**
-     * Throws ISE when task is not part of ContractTasks.
+     * Throws Self Exception when task is not part of ContractTasks.
      */
-    @Test(expected = IllegalStateException.class)
+    @Test(expected = TasksException.OfContract.NotFound.class)
     public void throwsWhenRemovingTaskNotPartOf() {
         final Task task = Mockito.mock(Task.class);
         final Project project = Mockito.mock(Project.class);

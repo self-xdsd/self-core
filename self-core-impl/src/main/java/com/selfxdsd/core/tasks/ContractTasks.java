@@ -4,6 +4,7 @@ import com.selfxdsd.api.Contract;
 import com.selfxdsd.api.Issue;
 import com.selfxdsd.api.Task;
 import com.selfxdsd.api.Tasks;
+import com.selfxdsd.api.exceptions.TasksException;
 import com.selfxdsd.api.storage.Storage;
 
 import java.util.Iterator;
@@ -73,9 +74,10 @@ public final class ContractTasks implements Tasks {
             && this.contractId.getProvider().equals(repoProvider)) {
             return this;
         } else {
-            throw new IllegalStateException("Already seeing the Tasks of "
-                + "Contributor " + this.contractId.getContributorUsername()
-                + ", can't find other Tasks here");
+            throw new TasksException.OfProject.List(
+                this.contractId.getRepoFullName(),
+                this.contractId.getProvider()
+            );
         }
     }
 
@@ -86,9 +88,10 @@ public final class ContractTasks implements Tasks {
             && this.contractId.getProvider().equals(provider)) {
             return this;
         } else {
-            throw new IllegalStateException("Already seeing the Tasks of "
-                + "Contributor " + this.contractId.getContributorUsername()
-                + ", can't find other Tasks here");
+            throw new TasksException.OfContributor.List(
+                this.contractId.getContributorUsername(),
+                this.contractId.getProvider()
+            );
         }
     }
 
@@ -97,9 +100,7 @@ public final class ContractTasks implements Tasks {
         if (this.contractId.equals(id)) {
             return this;
         } else {
-            throw new IllegalStateException("These are the tasks of Contract: "
-                + this.contractId + ". You cannot see other "
-                + "Contract's tasks here.");
+            throw new TasksException.OfContract.List(this.contractId);
         }
     }
 
@@ -117,8 +118,18 @@ public final class ContractTasks implements Tasks {
             task.project().repoFullName(),
             task.project().provider()) != null;
         if (!contains) {
-            throw new IllegalStateException("Task is not part of"
-                + " ContractTasks.");
+            final String assignee;
+            if (task.assignee() != null) {
+                assignee = task.assignee().username();
+            } else {
+                assignee = "No assignee";
+            }
+            throw new TasksException.OfContract.NotFound(new Contract.Id(
+                task.project().repoFullName(),
+                assignee,
+                task.project().provider(),
+                task.role()
+            ));
         }
         return this.storage.tasks().remove(task);
     }
@@ -142,8 +153,18 @@ public final class ContractTasks implements Tasks {
         final boolean isOfContract = this.tasks.get()
             .anyMatch(t -> t.equals(task));
         if (!isOfContract) {
-            throw new IllegalStateException("This task is not part of"
-                + " contract with id " + this.contractId);
+            final String assignee;
+            if (task.assignee() != null) {
+                assignee = task.assignee().username();
+            } else {
+                assignee = "No assignee";
+            }
+            throw new TasksException.OfContract.NotFound(new Contract.Id(
+                task.project().repoFullName(),
+                assignee,
+                task.project().provider(),
+                task.role()
+            ));
         }
         return this.storage.tasks().unassign(task);
     }

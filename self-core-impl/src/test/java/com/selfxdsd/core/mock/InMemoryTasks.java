@@ -23,6 +23,7 @@
 package com.selfxdsd.core.mock;
 
 import com.selfxdsd.api.*;
+import com.selfxdsd.api.exceptions.ProjectsException;
 import com.selfxdsd.api.storage.Storage;
 import com.selfxdsd.core.tasks.*;
 
@@ -82,8 +83,9 @@ public final class InMemoryTasks implements Tasks {
             issue.repoFullName(), issue.provider()
         );
         if (project == null) {
-            throw new IllegalStateException(
-                "Project not found, can't register Issue."
+            throw new ProjectsException.Single.NotFound(
+                issue.repoFullName(),
+                issue.provider()
             );
         } else {
             final Task newTask = new StoredTask(

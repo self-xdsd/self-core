@@ -22,6 +22,7 @@
 package com.selfxdsd.core.tasks;
 
 import com.selfxdsd.api.*;
+import com.selfxdsd.api.exceptions.TasksException;
 import com.selfxdsd.api.storage.Storage;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -391,7 +392,7 @@ public final class StoredTaskTestCase {
      * Method StoredTask.assign(...) should throw an exception if
      * the task already has an assignee.
      */
-    @Test (expected = IllegalStateException.class)
+    @Test (expected = TasksException.Single.Assign.class)
     public void assignComplainsIfTaskHasAssignee() {
         final Contributor assignee = Mockito.mock(Contributor.class);
         final Contract contract = Mockito.mock(Contract.class);
@@ -411,7 +412,7 @@ public final class StoredTaskTestCase {
      * StoredTask.assign(...) complains if the given Contributor
      * does not have the required contract.
      */
-    @Test (expected = IllegalArgumentException.class)
+    @Test (expected = TasksException.Single.Assign.class)
     public void assignComplainsIfContributorMissesContract() {
         final Contributor assignee = Mockito.mock(Contributor.class);
 

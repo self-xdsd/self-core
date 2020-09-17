@@ -1,6 +1,7 @@
 package com.selfxdsd.core.tasks;
 
 import com.selfxdsd.api.*;
+import com.selfxdsd.api.exceptions.TasksException;
 import com.selfxdsd.api.storage.Storage;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -73,7 +74,7 @@ public final class ContributorTasksTestCase {
      * ContributorTasks.ofContributor should complain if the ID of a different
      * contributor is specified.
      */
-    @Test(expected = IllegalStateException.class)
+    @Test(expected = TasksException.OfContributor.List.class)
     public void ofContributorComplainsOnDifferentId() {
         final Tasks tasks = new ContributorTasks(
             "foo", "gitlab", Stream::empty,
@@ -145,10 +146,10 @@ public final class ContributorTasksTestCase {
     }
 
     /**
-     * Throws UnsupportedOperationException. Contributor should not have
+     * Throws Self Exception. Contributor should not have
      * unassigned tasks.
      */
-    @Test(expected = UnsupportedOperationException.class)
+    @Test(expected = TasksException.OfContributor.Unassigned.class)
     public void throwsWhenReturnsUnassignedTasks() {
         new ContributorTasks(
             "mihai", Provider.Names.GITHUB,
@@ -233,9 +234,10 @@ public final class ContributorTasksTestCase {
     }
 
     /**
-     * Throws ISE when unasssigning Task is not part of ContributorTasks.
+     * Throws Self Exception when unasssigning Task is not part
+     * of ContributorTasks.
      */
-    @Test(expected = IllegalStateException.class)
+    @Test(expected = TasksException.OfContributor.NotFound.class)
     public void throwsWhenUnassigningTaskNotPartOfContributorTasks(){
         final Task task = Mockito.mock(Task.class);
         final Contributor contributor = Mockito.mock(Contributor.class);
@@ -304,9 +306,9 @@ public final class ContributorTasksTestCase {
     }
 
     /**
-     * Throws ISE when task is not part of ContributorTasks.
+     * Throws Self Exception when task is not part of ContributorTasks.
      */
-    @Test(expected = IllegalStateException.class)
+    @Test(expected = TasksException.OfContributor.NotFound.class)
     public void throwsWhenRemovingTaskNotPartOf() {
         final Task task = Mockito.mock(Task.class);
         final Project project = Mockito.mock(Project.class);

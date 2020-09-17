@@ -26,6 +26,7 @@ import com.selfxdsd.api.Contract;
 import com.selfxdsd.api.Issue;
 import com.selfxdsd.api.Task;
 import com.selfxdsd.api.Tasks;
+import com.selfxdsd.api.exceptions.TasksException;
 import com.selfxdsd.api.storage.Storage;
 
 import java.util.Iterator;
@@ -98,10 +99,9 @@ public final class ProjectTasks implements Tasks {
     public Task register(final Issue issue) {
         if(!this.repoFullName.equals(issue.repoFullName())
             || !this.provider.equals(issue.provider())) {
-            throw new IllegalArgumentException(
-                "The given Issue does not belong to the Repo"
-              + " represented by Project " + this.repoFullName
-              + " at " + this.provider + "."
+            throw new TasksException.OfProject.Add(
+                this.repoFullName,
+                this.provider
             );
         } else {
             return this.storage.tasks().register(issue);
@@ -123,9 +123,10 @@ public final class ProjectTasks implements Tasks {
             .equals(this.repoFullName) && task.project().provider()
             .equals(this.provider);
         if (!isOfProject) {
-            throw new IllegalStateException("This task is not part of the"
-                + " project " + this.repoFullName + " with provider "
-                + this.provider);
+            throw new TasksException.OfProject.NotFound(
+                this.repoFullName,
+                this.provider
+            );
         }
         return this.storage.tasks().unassign(task);
     }
@@ -139,10 +140,7 @@ public final class ProjectTasks implements Tasks {
             && this.provider.equals(repoProvider)) {
             return this;
         }
-        throw new IllegalStateException(
-            "Already seeing the tasks of Project " + this.repoFullName
-          + ", operating at " + this.provider + "."
-        );
+        throw new TasksException.OfProject.List(repoFullName, repoProvider);
     }
 
     @Override
@@ -182,8 +180,10 @@ public final class ProjectTasks implements Tasks {
             task.project().repoFullName(),
             task.project().provider()) != null;
         if (!contains) {
-            throw new IllegalStateException("Task is not part of"
-                + " ProjectTasks.");
+            throw new TasksException.OfProject.NotFound(
+                this.repoFullName,
+                this.provider
+            );
         }
         return this.storage.tasks().remove(task);
     }
