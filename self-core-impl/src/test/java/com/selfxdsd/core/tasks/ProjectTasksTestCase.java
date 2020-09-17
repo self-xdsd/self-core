@@ -23,6 +23,7 @@ package com.selfxdsd.core.tasks;
 
 import com.selfxdsd.api.*;
 import com.selfxdsd.api.Contract.Roles;
+import com.selfxdsd.api.exceptions.TasksException;
 import com.selfxdsd.api.storage.Storage;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -146,7 +147,7 @@ public final class ProjectTasksTestCase {
      * Method ofProject should complain if the ID of another project is given as
      * input.
      */
-    @Test(expected = IllegalStateException.class)
+    @Test(expected = TasksException.OfProject.List.class)
     public void ofProjectComplainsIfDifferentId() {
         final Tasks tasks = new ProjectTasks(
             "john/test", "github",
@@ -208,7 +209,7 @@ public final class ProjectTasksTestCase {
      * If the given Issue is not part of the Repo that the project represents,
      * registering should fail.
      */
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = TasksException.OfProject.Add.class)
     public void registerComplainsOnIssueFromDiffRepo() {
         final Issue issue = this.mockIssue(
             "123",
@@ -344,9 +345,9 @@ public final class ProjectTasksTestCase {
 
 
     /**
-     * Throws ISE when unasssigning Task is not part of ProjectTasks.
+     * Throws Self Exception when unasssigning Task is not part of ProjectTasks.
      */
-    @Test(expected = IllegalStateException.class)
+    @Test(expected = TasksException.OfProject.NotFound.class)
     public void throwsWhenUnassigningTaskNotPartOfProjectTasks(){
         final Task task = Mockito.mock(Task.class);
         final Task otherTask = Mockito.mock(Task.class);
@@ -424,9 +425,9 @@ public final class ProjectTasksTestCase {
     }
 
     /**
-     * Throws ISE when task is not part of ProjectTasks.
+     * Throws Self Exception when task is not part of ProjectTasks.
      */
-    @Test(expected = IllegalStateException.class)
+    @Test(expected = TasksException.OfProject.NotFound.class)
     public void throwsWhenRemovingTaskNotPartOf() {
         final Task task = Mockito.mock(Task.class);
         final Project project = Mockito.mock(Project.class);

@@ -23,6 +23,7 @@
 package com.selfxdsd.core.tasks;
 
 import com.selfxdsd.api.*;
+import com.selfxdsd.api.exceptions.TasksException;
 import com.selfxdsd.api.storage.Storage;
 
 import java.math.BigDecimal;
@@ -155,9 +156,10 @@ public final class StoredTask implements Task {
     @Override
     public Task assign(final Contributor contributor) {
         if(this.assignee() != null) {
-            throw new IllegalStateException(
+            throw new TasksException.Single.Assign(
+                this.issueId,
                 "Task is currently assigned, cannot assign someone else. "
-                + "Call #unassign() first."
+                    + "Call #unassign() first."
             );
         }
         final Contract contract = contributor.contract(
@@ -166,7 +168,8 @@ public final class StoredTask implements Task {
             this.contract.role()
         );
         if(contract == null) {
-            throw new IllegalArgumentException(
+            throw new TasksException.Single.Assign(
+                this.issueId,
                 "The given contributor doesn't have the needed contract!"
             );
         }

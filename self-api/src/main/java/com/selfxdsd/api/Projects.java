@@ -29,8 +29,6 @@ import com.selfxdsd.api.storage.Paged;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
- * @todo #536:30min. Write custom SelfExceptions for Projects
- *  and replace the existent IllegalStateExceptions with them.
  */
 public interface Projects extends Iterable<Project>, Paged {
 

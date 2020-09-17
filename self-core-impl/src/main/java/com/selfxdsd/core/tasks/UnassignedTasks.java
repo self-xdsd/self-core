@@ -4,6 +4,7 @@ import com.selfxdsd.api.Contract;
 import com.selfxdsd.api.Issue;
 import com.selfxdsd.api.Task;
 import com.selfxdsd.api.Tasks;
+import com.selfxdsd.api.exceptions.TasksException;
 import com.selfxdsd.api.storage.Storage;
 
 import java.util.Iterator;
@@ -70,7 +71,7 @@ public final class UnassignedTasks implements Tasks {
 
     @Override
     public Task unassign(final Task task) {
-        throw new UnsupportedOperationException("Can't unassign a task from "
+        throw new TasksException.OfUnassigned("Can't unassign a task from "
             + "UnassignedTasks. These tasks are already unassigned.");
     }
 
@@ -87,13 +88,13 @@ public final class UnassignedTasks implements Tasks {
     @Override
     public Tasks ofContributor(final String username,
                                final String provider) {
-        throw new UnsupportedOperationException("Contributors can't have "
+        throw new TasksException.OfUnassigned("Contributors can't have "
             + " unassigned tasks");
     }
 
     @Override
     public Tasks ofContract(final Contract.Id id) {
-        throw new UnsupportedOperationException("Contracts can't have "
+        throw new TasksException.OfUnassigned("Contracts can't have "
             + " unassigned tasks");
     }
 
@@ -109,7 +110,7 @@ public final class UnassignedTasks implements Tasks {
             task.project().repoFullName(),
             task.project().provider()) != null;
         if (!contains) {
-            throw new IllegalStateException("Task is not part of"
+            throw new TasksException.OfUnassigned("Task is not part of"
                 + " UnassignedTasks.");
         }
         return this.storage.tasks().remove(task);

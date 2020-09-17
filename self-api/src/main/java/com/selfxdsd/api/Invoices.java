@@ -5,6 +5,9 @@ package com.selfxdsd.api;
  * @author criske
  * @version $Id$
  * @since 0.0.3
+ * @todo #552:45min. Finish writing custom Self Exception for Invoices
+ *  (InvoicesException). Also include the already written InvoiceException
+ *  into InvoicesExceptions as InvoicesException.Single.
  */
 public interface Invoices extends Iterable<Invoice> {
 

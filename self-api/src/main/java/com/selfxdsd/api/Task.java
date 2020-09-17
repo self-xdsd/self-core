@@ -30,8 +30,6 @@ import java.time.LocalDateTime;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
- * @todo #550:30min. Write custom SelfExceptions for Tasks
- *  and replace the existent IllegalStateExceptions with them.
  */
 public interface Task {
 

@@ -1,6 +1,7 @@
 package com.selfxdsd.core.tasks;
 
 import com.selfxdsd.api.*;
+import com.selfxdsd.api.exceptions.TasksException;
 import com.selfxdsd.api.storage.Storage;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -117,10 +118,10 @@ public final class UnassignedTaskTestCase {
 
 
     /**
-     * Throws {@link UnsupportedOperationException} when calling OfContributor.
+     * Throws Self Exception when calling OfContributor.
      * Contributor should not have unassigned tasks.
      */
-    @Test(expected = UnsupportedOperationException.class)
+    @Test(expected = TasksException.OfUnassigned.class)
     public void throwsWhenGetTasksOfContributor(){
         new UnassignedTasks(Stream::empty, Mockito.mock(Storage.class))
             .ofContributor("foo", Provider.Names.GITHUB);
@@ -170,10 +171,10 @@ public final class UnassignedTaskTestCase {
     }
 
     /**
-     * Throws {@link UnsupportedOperationException} when calling ofContract.
+     * Throws Self Exception when calling ofContract.
      * Contracts should not have unassigned tasks.
      */
-    @Test(expected = UnsupportedOperationException.class)
+    @Test(expected = TasksException.OfUnassigned.class)
     public void throwsWhenGetTasksOfContract(){
         new UnassignedTasks(Stream::empty, Mockito.mock(Storage.class))
             .ofContract(new Contract.Id("john/repo", "mihai",
@@ -181,10 +182,10 @@ public final class UnassignedTaskTestCase {
     }
 
     /**
-     * Throws {@link UnsupportedOperationException} when calling unassign.
+     * Throws Self Exception when calling unassign.
      * Tasks here are already unassigned.
      */
-    @Test(expected = UnsupportedOperationException.class)
+    @Test(expected = TasksException.OfUnassigned.class)
     public void throwsWhenUnassigningTask(){
         new UnassignedTasks(Stream::empty, Mockito.mock(Storage.class))
             .unassign(Mockito.mock(Task.class));
@@ -220,9 +221,9 @@ public final class UnassignedTaskTestCase {
     }
 
     /**
-     * Throws ISE when task is not part of UnassignedTasks.
+     * Throws Self Exception when task is not part of UnassignedTasks.
      */
-    @Test(expected = IllegalStateException.class)
+    @Test(expected = TasksException.OfUnassigned.class)
     public void throwsWhenRemovingTaskNotPartOf() {
         final Task task = Mockito.mock(Task.class);
         final Project project = Mockito.mock(Project.class);

@@ -4,6 +4,7 @@ import com.selfxdsd.api.Contract;
 import com.selfxdsd.api.Issue;
 import com.selfxdsd.api.Task;
 import com.selfxdsd.api.Tasks;
+import com.selfxdsd.api.exceptions.TasksException;
 import com.selfxdsd.api.storage.Storage;
 
 import java.util.Iterator;
@@ -90,8 +91,8 @@ public final class ContributorTasks implements Tasks {
             && task.assignee().username().equals(this.username)
             && task.assignee().provider().equals(this.provider);
         if (!isOfContributor) {
-            throw new IllegalStateException("This task was not assigned to"
-                + " this contributor " + this.username + "/" + this.provider);
+            throw new TasksException.OfContributor
+                .NotFound(this.username, this.provider);
         }
         return this.storage.tasks().unassign(task);
     }
@@ -114,10 +115,7 @@ public final class ContributorTasks implements Tasks {
             && this.provider.equals(provider)) {
             return this;
         }
-        throw new IllegalStateException(
-            "Already seeing the tasks of a Contributor. "
-                + "You cannot see the tasks of another Contributor here."
-        );
+        throw new TasksException.OfContributor.List(username, provider);
     }
 
     @Override
@@ -136,9 +134,10 @@ public final class ContributorTasks implements Tasks {
 
     @Override
     public Tasks unassigned() {
-        throw new UnsupportedOperationException("These are the tasks "
-            + "of contributor " + username + " from provider" + provider
-            + ", no unassigned tasks here.");
+        throw new TasksException.OfContributor.Unassigned(
+            this.username,
+            this.provider
+        );
     }
 
     @Override
@@ -148,8 +147,10 @@ public final class ContributorTasks implements Tasks {
             task.project().repoFullName(),
             task.project().provider()) != null;
         if (!contains) {
-            throw new IllegalStateException("Task is not part of"
-                + " ContributorTasks.");
+            throw new TasksException.OfContributor.NotFound(
+                this.username,
+                this.provider
+            );
         }
         return this.storage.tasks().remove(task);
     }
