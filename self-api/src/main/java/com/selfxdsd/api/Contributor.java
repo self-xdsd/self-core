@@ -49,6 +49,12 @@ public interface Contributor {
     Contracts contracts();
 
     /**
+     * This contributor's PayoutMethods.
+     * @return PayoutMethods.
+     */
+    PayoutMethods payoutMethods();
+
+    /**
      * Get a Contract if this Contributor has it.
      * @param repoFullName Repo full name.
      * @param provider Provider.
