@@ -131,7 +131,7 @@ public final class ProviderContributorsTestCase {
             Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(
-            contributors.ofProject("george/test", Provider.Names.GITLAB),
+            contributors.ofProvider(Provider.Names.GITLAB),
             Matchers.is(contributors)
         );
     }
