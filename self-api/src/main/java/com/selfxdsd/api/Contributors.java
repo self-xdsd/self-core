@@ -29,10 +29,6 @@ import com.selfxdsd.api.storage.Paged;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
- * @todo #548:30min. Implement and test
- *  Contributors::Contributors#ofProvider(String). Also iterating over all
- *  contributors should be restricted in favor of ofProvider() (throwing
- *  SelfException).
  */
 public interface Contributors extends Iterable<Contributor>, Paged {
 

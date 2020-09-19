@@ -138,6 +138,73 @@ public abstract class ContributorsException extends SelfException {
 
     }
 
+
+    /**
+     * Self Exceptions for Contributors Provider.
+     */
+    public abstract static class OfProvider extends ContributorsException {
+
+        /**
+         * Provider.
+         */
+        private final String provider;
+
+        /**
+         * Ctor.
+         * @param provider Provider.
+         */
+        protected OfProvider(final String provider) {
+            this.provider = provider;
+        }
+
+        @Override
+        String getSelfMessage() {
+            return "Provider[" + this.provider + "]";
+        }
+
+        /**
+         * Add Provider Contributor Self exception.
+         */
+        public static class Add extends OfProvider {
+
+            /**
+             * Ctor.
+             * @param provider Provider.
+             */
+            public Add(final String provider) {
+                super(provider);
+            }
+
+            @Override
+            String getSelfMessage() {
+                return "You can only register contributors of "
+                    + super.getSelfMessage();
+            }
+        }
+
+        /**
+         * Iterating Provider's Contributors Self exception.
+         */
+        public static class List extends OfProvider {
+
+            /**
+             * Ctor.
+             * @param provider Provider.
+             */
+            public List(final String provider) {
+                super(provider);
+            }
+
+            @Override
+            String getSelfMessage() {
+                return "Already visited ProviderContributors of "
+                    + super.getSelfMessage();
+            }
+        }
+
+
+    }
+
     /**
      * Self exception for a single Contributor.
      */
@@ -230,4 +297,15 @@ public abstract class ContributorsException extends SelfException {
         }
     }
 
+    /**
+     * Iterating all Contributors Self exception.
+     */
+    public static class List extends ContributorsException {
+
+        @Override
+        String getSelfMessage() {
+            return "You can't iterate over all contributors. Use"
+                + " ProviderContributors instead.";
+        }
+    }
 }

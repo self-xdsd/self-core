@@ -624,7 +624,7 @@ public final class ProjectContributorsTestCase {
      * ProjectContributors.ofProvider(...) can be iterated by provider.
      * If provider matches, it's ProjectContributors itself.
      */
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void canBeIteratedByProvider(){
         final Project project = this.mockProject(
             "john/test",
@@ -640,7 +640,31 @@ public final class ProjectContributorsTestCase {
             List.of(contributor)::stream,
             Mockito.mock(Storage.class)
         );
-        contributors.ofProvider(Provider.Names.GITHUB);
+        MatcherAssert.assertThat(contributors.ofProvider(Provider.Names.GITHUB),
+            Matchers.equalTo(contributors));
+    }
+
+    /**
+     * ProjectContributors.ofProvider(...) throws if by provider is other than
+     * Project's provider.
+     */
+    @Test(expected = ContributorsException.OfProject.List.class)
+    public void ofProviderComplainsIfProviderIsDifferent(){
+        final Project project = this.mockProject(
+            "john/test",
+            Provider.Names.GITHUB,
+            BigDecimal.valueOf(100000),
+            BigDecimal.valueOf(1000)
+        );
+        final Contributor contributor = this
+            .mockContributor("mihai", BigDecimal.valueOf(10000),
+                project, "DEV", "REV", "QA");
+        final Contributors contributors = new ProjectContributors(
+            project,
+            List.of(contributor)::stream,
+            Mockito.mock(Storage.class)
+        );
+        contributors.ofProvider(Provider.Names.GITLAB);
     }
 
     /**

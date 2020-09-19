@@ -167,7 +167,11 @@ public final class ProjectContributors extends BasePaged
 
     @Override
     public Contributors ofProvider(final String provider) {
-        throw new UnsupportedOperationException("Not implemented yet!");
+        if(this.provider.equals(provider)) {
+            return this;
+        }
+        throw new ContributorsException.OfProject
+            .List(repoFullName, provider);
     }
 
     @Override

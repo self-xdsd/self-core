@@ -27,6 +27,7 @@ import com.selfxdsd.api.exceptions.ContributorsException;
 import com.selfxdsd.api.storage.Storage;
 import com.selfxdsd.core.BasePaged;
 import com.selfxdsd.core.contributors.ProjectContributors;
+import com.selfxdsd.core.contributors.ProviderContributors;
 import com.selfxdsd.core.contributors.StoredContributor;
 
 import java.util.*;
@@ -138,7 +139,14 @@ public final class InMemoryContributors extends BasePaged
 
     @Override
     public Contributors ofProvider(final String provider) {
-        throw new UnsupportedOperationException("Not implemented yet");
+        final Page page = super.current();
+        final Supplier<Stream<Contributor>> ofProvider = () -> this.table
+            .values()
+            .stream()
+            .filter(c -> c.provider().equals(provider))
+            .skip((page.getNumber() - 1) * page.getSize())
+            .limit(page.getSize());
+        return new ProviderContributors(provider, ofProvider, this.storage);
     }
 
     @Override
@@ -148,12 +156,7 @@ public final class InMemoryContributors extends BasePaged
 
     @Override
     public Iterator<Contributor> iterator() {
-        final Page page = super.current();
-        return this.table.values()
-            .stream()
-            .skip((page.getNumber() - 1) * page.getSize())
-            .limit(page.getSize())
-            .iterator();
+        throw new ContributorsException.List();
     }
 
     /**

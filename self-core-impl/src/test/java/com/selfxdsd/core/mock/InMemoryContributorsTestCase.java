@@ -1,6 +1,7 @@
 package com.selfxdsd.core.mock;
 
 import com.selfxdsd.api.*;
+import com.selfxdsd.api.exceptions.ContributorsException;
 import com.selfxdsd.api.storage.Paged;
 import com.selfxdsd.api.storage.Storage;
 import org.hamcrest.MatcherAssert;
@@ -30,7 +31,7 @@ public final class InMemoryContributorsTestCase {
         final Storage storage = new InMemory();
         Contributor registered = storage.contributors().register("horea",
                 "github");
-        assertThat(storage.contributors(),
+        assertThat(storage.contributors().ofProvider("github"),
                 contains(registered));
     }
 
@@ -67,10 +68,6 @@ public final class InMemoryContributorsTestCase {
             .register("george", "github");
 
         MatcherAssert.assertThat(
-            storage.contributors(),
-            Matchers.iterableWithSize(3)
-        );
-        MatcherAssert.assertThat(
             storage.contributors()
                 .ofProject("john/test", "github"),
             Matchers.iterableWithSize(0)
@@ -101,16 +98,12 @@ public final class InMemoryContributorsTestCase {
     }
 
     /**
-     * Check if iterator is working properly.
+     * Iterating over all contributors throws SelfException.
+     * Should iterate by provider.
      */
-    @Test
-    public void iteratorWorks() {
-        final Storage storage = new InMemory();
-        Contributor registered = storage.contributors()
-            .register("horea", "github");
-        MatcherAssert.assertThat(
-            storage.contributors(),
-            Matchers.iterableWithSize(1));
+    @Test(expected = ContributorsException.List.class)
+    public void iteratorThrowsSelfException() {
+        new InMemory().contributors().iterator();
     }
 
     /**
@@ -124,10 +117,11 @@ public final class InMemoryContributorsTestCase {
                 .register("horea".repeat(i), "github");
         }
         MatcherAssert.assertThat(
-            storage.contributors(),
+            storage.contributors().ofProvider("github"),
             Matchers.iterableWithSize(50));
 
         final Contributors pageOne = storage.contributors()
+            .ofProvider("github")
             .page(new Paged.Page(1, 20));
         MatcherAssert.assertThat(
             pageOne,
@@ -136,6 +130,7 @@ public final class InMemoryContributorsTestCase {
             Matchers.equalTo("horea".repeat(1)));
 
         final Contributors pageTwo = storage.contributors()
+            .ofProvider("github")
             .page(new Paged.Page(2, 20));
         MatcherAssert.assertThat(
             pageTwo,
@@ -144,6 +139,7 @@ public final class InMemoryContributorsTestCase {
             Matchers.equalTo("horea".repeat(21)));
 
         final Contributors pageThree = storage.contributors()
+            .ofProvider("github")
             .page(new Paged.Page(3, 20));
         MatcherAssert.assertThat(
             pageThree,
