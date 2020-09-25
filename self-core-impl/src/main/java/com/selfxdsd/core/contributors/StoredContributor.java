@@ -164,7 +164,7 @@ public final class StoredContributor implements Contributor {
                 );
             }
         }
-        final String apiToken = System.getenv("stripe.api.token");
+        final String apiToken = System.getenv("self_stripe_token");
         if(apiToken == null || apiToken.trim().isEmpty()) {
             throw new IllegalStateException(
                 "Please specify the stripe.api.token Environment Variable!"
