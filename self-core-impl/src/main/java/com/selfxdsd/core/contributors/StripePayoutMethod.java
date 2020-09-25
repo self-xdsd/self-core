@@ -24,6 +24,7 @@ package com.selfxdsd.core.contributors;
 
 import com.selfxdsd.api.Contributor;
 import com.selfxdsd.api.PayoutMethod;
+import com.selfxdsd.core.Env;
 import com.stripe.Stripe;
 import com.stripe.exception.StripeException;
 import com.stripe.model.Account;
@@ -93,7 +94,7 @@ public final class StripePayoutMethod implements PayoutMethod {
 
     @Override
     public JsonObject json() {
-        final String apiToken = System.getenv("self_stripe_token");
+        final String apiToken = System.getenv(Env.STRIPE_API_TOKEN);
         if(apiToken == null || apiToken.trim().isEmpty()) {
             throw new IllegalStateException(
                 "Please specify the stripe.api.token Environment Variable!"
