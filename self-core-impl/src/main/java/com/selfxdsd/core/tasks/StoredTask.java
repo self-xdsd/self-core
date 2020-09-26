@@ -154,6 +154,11 @@ public final class StoredTask implements Task {
     }
 
     @Override
+    public Contract contract() {
+        return this.contract;
+    }
+
+    @Override
     public Task assign(final Contributor contributor) {
         if(this.assignee() != null) {
             throw new TasksException.Single.Assign(

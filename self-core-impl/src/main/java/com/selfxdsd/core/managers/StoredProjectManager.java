@@ -31,6 +31,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.time.Period;
 import java.util.UUID;
 
 /**
@@ -253,6 +255,60 @@ public final class StoredProjectManager implements ProjectManager {
         }
         LOG.debug(
             "Finished checking the unassigned tasks of project "
+            + project.repoFullName() + " at " + project.provider()
+        );
+    }
+
+    @Override
+    public void assignedTasks(final Event event) {
+        final Project project = event.project();
+        LOG.debug(
+            "Checking the assigned tasks of project "
+            + project.repoFullName() + " at " + project.provider()
+        );
+        for(final Task task : project.tasks()) {
+            final Contributor assignee = task.assignee();
+            if(assignee != null) {
+                final Issue issue = task.issue();
+                if(issue.isClosed()) {
+                    final InvoicedTask invoiced = task.contract()
+                        .invoices()
+                        .active()
+                        .register(task, this.commission);
+                    if(invoiced != null) {
+                        issue.comments().post(
+                            String.format(
+                                project.language().reply(
+                                    "taskInvoiced.comment"
+                                ),
+                                assignee.username()
+                            )
+                        );
+                        this.storage.tasks().remove(task);
+                    }
+                } else {
+                    final int time = Period.between(
+                        task.assignmentDate().toLocalDate(),
+                        task.deadline().toLocalDate()
+                    ).getDays();
+                    final int left = Period.between(
+                        LocalDateTime.now().toLocalDate(),
+                        task.deadline().toLocalDate()
+                    ).getDays();
+                    if(left <= time/2) {
+                        issue.comments().post(
+                            String.format(
+                                project.language().reply("taskDeadlineReminder.comment"),
+                                assignee.username(),
+                                task.deadline()
+                            )
+                        );
+                    }
+                }
+            }
+        }
+        LOG.debug(
+            "Finished checking the assigned tasks of project "
             + project.repoFullName() + " at " + project.provider()
         );
     }

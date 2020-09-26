@@ -248,6 +248,11 @@ final class GithubIssue implements Issue {
     }
 
     @Override
+    public boolean isClosed() {
+        return "closed".equalsIgnoreCase(this.json.getString("state"));
+    }
+
+    @Override
     public int estimation() {
         return 60;
     }

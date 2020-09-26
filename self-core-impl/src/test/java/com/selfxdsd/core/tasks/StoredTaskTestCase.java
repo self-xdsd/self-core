@@ -58,6 +58,47 @@ public final class StoredTaskTestCase {
     }
 
     /**
+     * StoredTask can return its Unassigned Contract.
+     */
+    @Test
+    public void returnsUnassignedContract() {
+        final Task task = new StoredTask(
+            Mockito.mock(Project.class),
+            "issueId123",
+            Contract.Roles.DEV,
+            60,
+            Mockito.mock(Storage.class)
+        );
+        MatcherAssert.assertThat(
+            task.contract(),
+            Matchers.allOf(
+                Matchers.notNullValue(),
+                Matchers.instanceOf(Contract.class)
+            )
+        );
+    }
+
+    /**
+     * StoredTask can return its Contract.
+     */
+    @Test
+    public void returnsContract() {
+        final Contract contract = Mockito.mock(Contract.class);
+        final Task task = new StoredTask(
+            contract,
+            "issueId123",
+            Mockito.mock(Storage.class),
+            LocalDateTime.now(),
+            LocalDateTime.now().plusDays(10),
+            60
+        );
+        MatcherAssert.assertThat(
+            task.contract(),
+            Matchers.is(contract)
+        );
+    }
+
+    /**
      * StoredTask can return its issueId.
      */
     @Test

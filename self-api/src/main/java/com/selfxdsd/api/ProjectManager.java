@@ -100,4 +100,10 @@ public interface ProjectManager {
      * @param event Event.
      */
     void unassignedTasks(final Event event);
+
+    /**
+     * Handle the "assigned tasks" event.
+     * @param event Event.
+     */
+    void assignedTasks(final Event event);
 }

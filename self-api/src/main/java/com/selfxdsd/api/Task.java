@@ -64,6 +64,12 @@ public interface Task {
     Contributor assignee();
 
     /**
+     * Get the Contract.
+     * @return Contract.
+     */
+    Contract contract();
+
+    /**
      * Assign this Task to the given Contributor.
      * @param contributor Contributor.
      * @return The assigned task.

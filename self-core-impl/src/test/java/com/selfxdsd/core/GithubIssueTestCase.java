@@ -564,4 +564,38 @@ public final class GithubIssueTestCase {
         );
         issue.reopen();
     }
+
+    /**
+     * GithubIssue can return its state flag.
+     */
+    @Test
+    public void returnsIsClosedTrue() {
+        final Issue issue = new GithubIssue(
+            URI.create("http://localhost/issues/1"),
+            Json.createObjectBuilder().add("state", "closed").build(),
+            Mockito.mock(Storage.class),
+            Mockito.mock(JsonResources.class)
+        );
+        MatcherAssert.assertThat(
+            issue.isClosed(),
+            Matchers.is(Boolean.TRUE)
+        );
+    }
+
+    /**
+     * GithubIssue can return its state flag.
+     */
+    @Test
+    public void returnsIsClosedFalse() {
+        final Issue issue = new GithubIssue(
+            URI.create("http://localhost/issues/1"),
+            Json.createObjectBuilder().add("state", "open").build(),
+            Mockito.mock(Storage.class),
+            Mockito.mock(JsonResources.class)
+        );
+        MatcherAssert.assertThat(
+            issue.isClosed(),
+            Matchers.is(Boolean.FALSE)
+        );
+    }
 }

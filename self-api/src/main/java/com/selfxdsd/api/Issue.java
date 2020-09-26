@@ -99,6 +99,12 @@ public interface Issue {
     void reopen();
 
     /**
+     * Is this Issue closed or not?
+     * @return True or false.
+     */
+    boolean isClosed();
+
+    /**
      * The estimation in minutes for the given issue.
      *
      * @return Integer.
