@@ -34,6 +34,7 @@ import org.mockito.Mockito;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * Unit tests for {@link StoredProjectManager}.
@@ -644,6 +645,143 @@ public final class StoredProjectManagerTestCase {
         );
         MatcherAssert.assertThat(manager.hashCode(),
             Matchers.equalTo(managerTwo.hashCode()));
+    }
+
+    /**
+     * PM can handle the "assignedTasks" Event when there are no
+     * tasks in the Project.
+     */
+    @Test
+    public void handlesAssignedTasksEventNoTasks() {
+        final Project project = Mockito.mock(Project.class);
+        final Tasks tasks = Mockito.mock(Tasks.class);
+        Mockito.when(tasks.iterator()).thenReturn(
+            new ArrayList<Task>().iterator()
+        );
+        Mockito.when(project.tasks()).thenReturn(tasks);
+        final Event event = Mockito.mock(Event.class);
+        Mockito.when(event.project()).thenReturn(project);
+
+        final ProjectManager manager = new StoredProjectManager(
+            1,
+            "123",
+            "zoeself",
+            Provider.Names.GITHUB,
+            "123token",
+            BigDecimal.valueOf(50),
+            Mockito.mock(Storage.class)
+        );
+        manager.assignedTasks(event);
+        Mockito.verify(project, Mockito.times(0)).language();
+    }
+
+    /**
+     * PM can handle the "assignedTasks" Event when there are no
+     * assigned tasks in the Project.
+     */
+    @Test
+    public void handlesAssignedTasksEventNoAssignedTasks() {
+        final List<Task> mocks = new ArrayList<>();
+        for(int idx = 0; idx<3; idx++) {
+            final Task task = Mockito.mock(Task.class);
+            Mockito.when(task.assignee()).thenReturn(null);
+            mocks.add(task);
+        }
+        final Project project = Mockito.mock(Project.class);
+        final Tasks tasks = Mockito.mock(Tasks.class);
+        Mockito.when(tasks.iterator()).thenReturn(mocks.iterator());
+        Mockito.when(project.tasks()).thenReturn(tasks);
+        final Event event = Mockito.mock(Event.class);
+        Mockito.when(event.project()).thenReturn(project);
+
+        final ProjectManager manager = new StoredProjectManager(
+            1,
+            "123",
+            "zoeself",
+            Provider.Names.GITHUB,
+            "123token",
+            BigDecimal.valueOf(50),
+            Mockito.mock(Storage.class)
+        );
+        manager.assignedTasks(event);
+        Mockito.verify(project, Mockito.times(0)).language();
+        for(int idx = 0; idx<3; idx++) {
+            final Task task = mocks.get(idx);
+            Mockito.verify(task, Mockito.times(1)).assignee();
+            Mockito.verify(task, Mockito.times(0)).issue();
+        }
+    }
+
+    /**
+     * PM can handle the "assignedTasks" Event when there is an
+     * assigned Task whose corresponding Issue is closed.
+     */
+    @Test
+    public void handlesAssignedTasksEventClosedIssue() {
+        final List<Task> mocks = new ArrayList<>();
+        final Task task = Mockito.mock(Task.class);
+        final Contributor assignee = Mockito.mock(Contributor.class);
+        Mockito.when(assignee.username()).thenReturn("mihai");
+
+        final Issue issue = Mockito.mock(Issue.class);
+        Mockito.when(issue.isClosed()).thenReturn(Boolean.TRUE);
+
+        Mockito.when(task.assignee()).thenReturn(assignee);
+        Mockito.when(task.issue()).thenReturn(issue);
+
+        mocks.add(task);
+
+        final InvoicedTask invoiced = Mockito.mock(InvoicedTask.class);
+        final Invoice active = Mockito.mock(Invoice.class);
+        Mockito.when(
+            active.register(task, BigDecimal.valueOf(50))
+        ).thenReturn(invoiced);
+        final Invoices invoices = Mockito.mock(Invoices.class);
+        Mockito.when(invoices.active()).thenReturn(active);
+        final Contract contract = Mockito.mock(Contract.class);
+        Mockito.when(contract.invoices()).thenReturn(invoices);
+
+        Mockito.when(task.contract()).thenReturn(contract);
+
+        final Comments comments = Mockito.mock(Comments.class);
+        Mockito.when(issue.comments()).thenReturn(comments);
+        Mockito.when(
+            comments.post(Mockito.anyString())
+        ).thenReturn(Mockito.mock(Comment.class));
+
+        final Project project = Mockito.mock(Project.class);
+        Mockito.when(project.language()).thenReturn(new English());
+
+        final Tasks tasks = Mockito.mock(Tasks.class);
+        Mockito.when(tasks.iterator()).thenReturn(mocks.iterator());
+        Mockito.when(project.tasks()).thenReturn(tasks);
+
+        final Tasks all = Mockito.mock(Tasks.class);
+        Mockito.when(all.remove(task)).thenReturn(true);
+        final Storage storage = Mockito.mock(Storage.class);
+        Mockito.when(storage.tasks()).thenReturn(all);
+
+        final Event event = Mockito.mock(Event.class);
+        Mockito.when(event.project()).thenReturn(project);
+
+        final ProjectManager manager = new StoredProjectManager(
+            1,
+            "123",
+            "zoeself",
+            Provider.Names.GITHUB,
+            "123token",
+            BigDecimal.valueOf(50),
+            storage
+        );
+        manager.assignedTasks(event);
+        Mockito.verify(project, Mockito.times(1)).language();
+        Mockito.verify(task, Mockito.times(1)).contract();
+        Mockito.verify(contract, Mockito.times(1)).invoices();
+        Mockito.verify(invoices, Mockito.times(1)).active();
+        Mockito.verify(active, Mockito.times(1))
+            .register(task, BigDecimal.valueOf(50));
+        Mockito.verify(all, Mockito.times(1)).remove(task);
+        Mockito.verify(comments, Mockito.times(1)).post(Mockito.anyString());
     }
 
     /**

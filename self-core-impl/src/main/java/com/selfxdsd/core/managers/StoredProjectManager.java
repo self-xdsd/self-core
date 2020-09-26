@@ -271,6 +271,11 @@ public final class StoredProjectManager implements ProjectManager {
             if(assignee != null) {
                 final Issue issue = task.issue();
                 if(issue.isClosed()) {
+                    LOG.debug(
+                        "Task #" + issue.issueId()
+                        + " of Contributor " + assignee.username()
+                        + " is closed. Invoicing... "
+                    );
                     final InvoicedTask invoiced = task.contract()
                         .invoices()
                         .active()
@@ -285,6 +290,10 @@ public final class StoredProjectManager implements ProjectManager {
                             )
                         );
                         this.storage.tasks().remove(task);
+                        LOG.debug(
+                            "Task #" + issue.issueId()
+                            + " successfully invoiced and taken out of scope."
+                        );
                     }
                 } else {
                     final int time = Period.between(
@@ -298,7 +307,9 @@ public final class StoredProjectManager implements ProjectManager {
                     if(left <= time/2) {
                         issue.comments().post(
                             String.format(
-                                project.language().reply("taskDeadlineReminder.comment"),
+                                project.language().reply(
+                                    "taskDeadlineReminder.comment"
+                                ),
                                 assignee.username(),
                                 task.deadline()
                             )

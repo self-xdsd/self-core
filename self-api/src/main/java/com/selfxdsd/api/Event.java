@@ -76,6 +76,11 @@ public interface Event {
         public static final String UNASSIGNED_TASKS = "unassigned";
 
         /**
+         * Event for reviewing the assigned tasks.
+         */
+        public static final String ASSIGNED_TASKS = "assigned";
+
+        /**
          * Hello comment event.
          */
         public static final String HELLO = "hello";
