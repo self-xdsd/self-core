@@ -42,6 +42,9 @@ import java.util.UUID;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
+ * @todo #562:30min When reviewing the assigned tasks (assignedTasks(Event)),
+ *  if the deadline of the task has expired, we should resign the Contributor
+ *  and inform them about it via an Issue comment.
  */
 public final class StoredProjectManager implements ProjectManager {
 
