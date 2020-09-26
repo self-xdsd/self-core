@@ -81,6 +81,16 @@ public interface Event {
         public static final String ASSIGNED_TASKS = "assigned";
 
         /**
+         * Event for a newly opened Issue.
+         */
+        public static final String NEW_ISSUE = "newIssue";
+
+        /**
+         * Event for a reopened Issue.
+         */
+        public static final String REOPENED_ISSUE = "reopened";
+
+        /**
          * Hello comment event.
          */
         public static final String HELLO = "hello";

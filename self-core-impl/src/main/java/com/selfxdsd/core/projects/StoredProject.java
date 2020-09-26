@@ -156,14 +156,25 @@ public final class StoredProject implements Project {
 
     @Override
     public void resolve(final Event event) {
-        if(Event.Type.ACTIVATE.equals(event.type())) {
-            this.projectManager.newProject(event);
-        } else if(event.type().equals("newIssue")) {
-            this.projectManager.newIssue(event);
-        } else if(event.type().equals("reopened")) {
-            this.projectManager.reopenedIssue(event);
-        } else if(Event.Type.UNASSIGNED_TASKS.equals(event.type())) {
-            this.projectManager.unassignedTasks(event);
+        final String type = event.type();
+        switch (type) {
+            case Event.Type.ACTIVATE:
+                this.projectManager.newProject(event);
+                break;
+            case Event.Type.NEW_ISSUE:
+                this.projectManager.newIssue(event);
+                break;
+            case Event.Type.REOPENED_ISSUE:
+                this.projectManager.reopenedIssue(event);
+                break;
+            case Event.Type.UNASSIGNED_TASKS:
+                this.projectManager.unassignedTasks(event);
+                break;
+            case Event.Type.ASSIGNED_TASKS:
+                this.projectManager.assignedTasks(event);
+                break;
+            default:
+                break;
         }
     }
 
