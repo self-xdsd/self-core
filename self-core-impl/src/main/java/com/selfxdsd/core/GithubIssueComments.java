@@ -2,6 +2,8 @@ package com.selfxdsd.core;
 
 import com.selfxdsd.api.Comment;
 import com.selfxdsd.api.Comments;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.json.Json;
 import javax.json.JsonObject;
@@ -22,6 +24,13 @@ import java.util.stream.Collectors;
  *  response headers (issue #241).
  */
 final class GithubIssueComments implements Comments {
+
+    /**
+     * Logger.
+     */
+    private static final Logger LOG = LoggerFactory.getLogger(
+        GithubIssueComments.class
+    );
 
     /**
      * Base Comments uri.
@@ -48,12 +57,13 @@ final class GithubIssueComments implements Comments {
         if(issueUriStr.endsWith("/")){
             slash = "";
         }
-        this.commentsUri = URI.create(issueUriStr + slash + "comments/");
+        this.commentsUri = URI.create(issueUriStr + slash + "comments");
         this.resources = resources;
     }
 
     @Override
     public Comment post(final String body) {
+        LOG.debug("Posting Comment to: [" + this.commentsUri + "].");
         final Resource resource = resources.post(
             this.commentsUri,
             Json.createObjectBuilder().add("body", body).build()
@@ -61,6 +71,10 @@ final class GithubIssueComments implements Comments {
         if (resource.statusCode() == HttpURLConnection.HTTP_CREATED) {
             return new GithubComment(resource.asJsonObject());
         } else {
+            LOG.error(
+                "Expected status 201 CREATED, but got: ["
+                + resource.statusCode() + "]."
+            );
             throw new IllegalStateException(
                 "Github Issue Comment was not created. Status is "
               + resource.statusCode()
