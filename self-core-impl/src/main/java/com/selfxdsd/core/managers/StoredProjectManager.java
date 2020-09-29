@@ -34,6 +34,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.Period;
 import java.util.UUID;
+import java.util.function.Supplier;
 
 /**
  * A Project Manager stored in Self. Use this class when implementing
@@ -42,9 +43,7 @@ import java.util.UUID;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
- * @todo #562:30min When reviewing the assigned tasks (assignedTasks(Event)),
- *  if the deadline of the task has expired, we should resign the Contributor
- *  and inform them about it via an Issue comment.
+ * @checkstyle ExecutableStatementCount (500 lines)
  */
 public final class StoredProjectManager implements ProjectManager {
 
@@ -91,6 +90,11 @@ public final class StoredProjectManager implements ProjectManager {
     private final Storage storage;
 
     /**
+     * Current date time supplier. Used in testing task deadlines.
+     */
+    private final Supplier<LocalDateTime> dateTimeSupplier;
+
+    /**
      * Constructor.
      * @param id PM's id.
      * @param userId PM's user ID.
@@ -110,6 +114,38 @@ public final class StoredProjectManager implements ProjectManager {
         final BigDecimal commission,
         final Storage storage
     ) {
+        this(id,
+            userId,
+            username,
+            provider,
+            accessToken,
+            commission,
+            storage,
+            LocalDateTime::now);
+    }
+
+    /**
+     * Constructor.
+     * @param id PM's id.
+     * @param userId PM's user ID.
+     * @param username PM's username.
+     * @param provider The provider's name (Gitlab, Github etc).
+     * @param accessToken API Access token.
+     * @param commission Commission in cents.
+     * @param storage Self's storage.
+     * @param dateTimeSupplier Current date time. Used in testing deadlines.
+     * @checkstyle ParameterNumber (10 lines)
+     */
+    StoredProjectManager(
+        final int id,
+        final String userId,
+        final String username,
+        final String provider,
+        final String accessToken,
+        final BigDecimal commission,
+        final Storage storage,
+        final Supplier<LocalDateTime> dateTimeSupplier
+    ) {
         this.id = id;
         this.userId = userId;
         this.username = username;
@@ -117,6 +153,7 @@ public final class StoredProjectManager implements ProjectManager {
         this.accessToken = accessToken;
         this.commission = commission;
         this.storage = storage;
+        this.dateTimeSupplier = dateTimeSupplier;
     }
 
     @Override
@@ -304,10 +341,23 @@ public final class StoredProjectManager implements ProjectManager {
                         task.deadline().toLocalDate()
                     ).getDays();
                     final int left = Period.between(
-                        LocalDateTime.now().toLocalDate(),
+                        this.dateTimeSupplier.get().toLocalDate(),
                         task.deadline().toLocalDate()
                     ).getDays();
-                    if(left <= time/2) {
+                    if (left < 0) {
+                        task.unassign();
+                        task.resignations()
+                            .register(task, Resignations.Reason.DEADLINE);
+                        issue.comments().post(
+                            String.format(
+                                project.language().reply(
+                                    "taskDeadlineMissed.comment"
+                                ),
+                                assignee.username(),
+                                task.deadline()
+                            )
+                        );
+                    } else if (left <= time / 2) {
                         issue.comments().post(
                             String.format(
                                 project.language().reply(

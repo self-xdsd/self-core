@@ -32,9 +32,11 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Supplier;
 
 /**
  * Unit tests for {@link StoredProjectManager}.
@@ -782,6 +784,121 @@ public final class StoredProjectManagerTestCase {
             .register(task, BigDecimal.valueOf(50));
         Mockito.verify(all, Mockito.times(1)).remove(task);
         Mockito.verify(comments, Mockito.times(1)).post(Mockito.anyString());
+    }
+
+    /**
+     * PM can handle the "assignedTasks" Event when there is an
+     * assigned Task whose deadline is closing (time passed is less than half).
+     */
+    @Test
+    public void handlesAssignedTasksEventDeadlineClosingReminder() {
+
+        final Project project = Mockito.mock(Project.class);
+        Mockito.when(project.language()).thenReturn(new English());
+
+        final Task task = Mockito.mock(Task.class);
+
+        final Tasks tasks = Mockito.mock(Tasks.class);
+        Mockito.when(tasks.iterator()).thenReturn(List.of(task).iterator());
+        Mockito.when(project.tasks()).thenReturn(tasks);
+
+        final Resignations resignations = Mockito.mock(Resignations.class);
+        Mockito.when(task.resignations()).thenReturn(resignations);
+
+        final Contributor assignee = Mockito.mock(Contributor.class);
+        Mockito.when(assignee.username()).thenReturn("mihai");
+        Mockito.when(task.assignee()).thenReturn(assignee);
+
+        final Issue issue = Mockito.mock(Issue.class);
+        Mockito.when(issue.isClosed()).thenReturn(Boolean.FALSE);
+        Mockito.when(task.issue()).thenReturn(issue);
+
+        final Comments comments = Mockito.mock(Comments.class);
+        Mockito.when(issue.comments()).thenReturn(comments);
+
+        final LocalDateTime assignmentDate = LocalDateTime.now();
+        final LocalDateTime deadlineDate = LocalDateTime.now().plusDays(10);
+        final Supplier<LocalDateTime> now = ()-> assignmentDate.plusDays(6);
+        Mockito.when(task.assignmentDate()).thenReturn(assignmentDate);
+        Mockito.when(task.deadline()).thenReturn(deadlineDate);
+
+        final Event event = Mockito.mock(Event.class);
+        Mockito.when(event.project()).thenReturn(project);
+
+        final ProjectManager manager = new StoredProjectManager(
+            1,
+            "123",
+            "zoeself",
+            Provider.Names.GITHUB,
+            "123token",
+            BigDecimal.valueOf(50),
+            Mockito.mock(Storage.class),
+            now
+        );
+        manager.assignedTasks(event);
+        Mockito.verify(comments, Mockito.times(1))
+            .post("@mihai Don't forget to close this ticket before the"
+                + " deadline (" + deadlineDate.toString() + "). "
+                + "You are past the first half of the allowed period.");
+    }
+
+    /**
+     * PM can handle the "assignedTasks" Event when there is an
+     * assigned Task whose deadline is missed.
+     */
+    @Test
+    public void handlesAssignedTasksEventMissedDeadline() {
+
+        final Project project = Mockito.mock(Project.class);
+        Mockito.when(project.language()).thenReturn(new English());
+
+        final Task task = Mockito.mock(Task.class);
+
+        final Tasks tasks = Mockito.mock(Tasks.class);
+        Mockito.when(tasks.iterator()).thenReturn(List.of(task).iterator());
+        Mockito.when(project.tasks()).thenReturn(tasks);
+
+        final Resignations resignations = Mockito.mock(Resignations.class);
+        Mockito.when(task.resignations()).thenReturn(resignations);
+
+        final Contributor assignee = Mockito.mock(Contributor.class);
+        Mockito.when(assignee.username()).thenReturn("mihai");
+        Mockito.when(task.assignee()).thenReturn(assignee);
+
+        final Issue issue = Mockito.mock(Issue.class);
+        Mockito.when(issue.isClosed()).thenReturn(Boolean.FALSE);
+        Mockito.when(task.issue()).thenReturn(issue);
+
+        final Comments comments = Mockito.mock(Comments.class);
+        Mockito.when(issue.comments()).thenReturn(comments);
+
+        final LocalDateTime assignmentDate = LocalDateTime.now();
+        final LocalDateTime deadlineDate = LocalDateTime.now().plusDays(10);
+        final Supplier<LocalDateTime> now = ()-> deadlineDate.plusDays(1);
+        Mockito.when(task.assignmentDate()).thenReturn(assignmentDate);
+        Mockito.when(task.deadline()).thenReturn(deadlineDate);
+
+        final Event event = Mockito.mock(Event.class);
+        Mockito.when(event.project()).thenReturn(project);
+
+        final ProjectManager manager = new StoredProjectManager(
+            1,
+            "123",
+            "zoeself",
+            Provider.Names.GITHUB,
+            "123token",
+            BigDecimal.valueOf(50),
+            Mockito.mock(Storage.class),
+            now
+        );
+        manager.assignedTasks(event);
+        Mockito.verify(task, Mockito.times(1)).unassign();
+        Mockito.verify(task.resignations(), Mockito.times(1))
+            .register(task, Resignations.Reason.DEADLINE);
+        Mockito.verify(comments, Mockito.times(1))
+            .post("@mihai Looks like you've missed the task deadline ("
+                + deadlineDate.toString() + "). "
+                + "You are now resigned from this task.");
     }
 
     /**

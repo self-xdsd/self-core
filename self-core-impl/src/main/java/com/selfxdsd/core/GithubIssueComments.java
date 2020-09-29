@@ -57,7 +57,7 @@ final class GithubIssueComments implements Comments {
         if(issueUriStr.endsWith("/")){
             slash = "";
         }
-        this.commentsUri = URI.create(issueUriStr + slash + "comments");
+        this.commentsUri = URI.create(issueUriStr + slash + "comments/");
         this.resources = resources;
     }
 
