@@ -17,6 +17,8 @@ import java.net.URI;
  * @author criske
  * @version $Id$
  * @since 0.0.8
+ * @todo #572:15min Fix failing GithubIssueComments tests due to trailing "/"
+ *  of issue comments uri.
  */
 public final class GithubIssueCommentsITCase {
 

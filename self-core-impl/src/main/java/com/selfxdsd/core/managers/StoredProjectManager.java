@@ -43,6 +43,9 @@ import java.util.function.Supplier;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
+ * @todo #571:30min When checking if task deadline is missed in
+ *  assignedTasks(...), we should take into account the hours and minutes
+ *  as well. Right now we checking it against days left.
  * @checkstyle ExecutableStatementCount (500 lines)
  */
 public final class StoredProjectManager implements ProjectManager {

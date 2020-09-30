@@ -898,7 +898,9 @@ public final class StoredProjectManagerTestCase {
         Mockito.verify(comments, Mockito.times(1))
             .post("@mihai Looks like you've missed the task deadline ("
                 + deadlineDate.toString() + "). "
-                + "You are now resigned from this task.");
+                + "You are now resigned from this task.\n\n"
+                + "Please stop working on it, you will not be paid. "
+                + "I will assign it to someone else soon.");
     }
 
     /**
