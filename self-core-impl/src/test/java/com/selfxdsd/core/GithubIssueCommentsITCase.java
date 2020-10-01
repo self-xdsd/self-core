@@ -17,8 +17,6 @@ import java.net.URI;
  * @author criske
  * @version $Id$
  * @since 0.0.8
- * @todo #572:15min Fix failing GithubIssueComments tests due to trailing "/"
- *  of issue comments uri.
  */
 public final class GithubIssueCommentsITCase {
 
@@ -29,7 +27,7 @@ public final class GithubIssueCommentsITCase {
     @Test
     public void iteratesIssueComments(){
         final URI issueUri = URI.create(
-            "https://api.github.com/repos/octocat/Hello-World/issues/1/"
+            "https://api.github.com/repos/octocat/Hello-World/issues/1"
         );
         final JsonResources resources = Mockito.mock(JsonResources.class);
 
@@ -40,12 +38,12 @@ public final class GithubIssueCommentsITCase {
                 final JsonArray array = Json.createArrayBuilder()
                     .add(Json.createObjectBuilder()
                         .add("id", 1)
-                        .add("url", uri.resolve("1").toString())
+                        .add("url", uri.toString() + "/1")
                         .add("body", "Comment issue #1")
                         .build())
                     .add(Json.createObjectBuilder()
                         .add("id", 2)
-                        .add("url", uri.resolve("2").toString())
+                        .add("url", uri.toString() + "/2")
                         .add("body", "Comment issue #2")
                         .build())
                     .build();
@@ -64,7 +62,7 @@ public final class GithubIssueCommentsITCase {
         MatcherAssert.assertThat(firstComment.body(),
             Matchers.equalTo("Comment issue #1"));
         MatcherAssert.assertThat(firstComment.json().getString("url"),
-            Matchers.equalTo(issueUri.resolve("comments/1").toString()));
+            Matchers.equalTo(issueUri.toString() + "/comments/1"));
     }
 
     /**
@@ -73,7 +71,7 @@ public final class GithubIssueCommentsITCase {
     @Test
     public void iteratesNothingIfIssueCommentsNotFound(){
         final URI issueUri = URI.create(
-            "https://api.github.com/repos/octocat/Hello-World/issues/1/"
+            "https://api.github.com/repos/octocat/Hello-World/issues/1"
         );
         final JsonResources resources = Mockito.mock(JsonResources.class);
         final Resource resource = buildResource(404, null, null);
@@ -92,7 +90,7 @@ public final class GithubIssueCommentsITCase {
     @Test
     public void postsIssueCommentOk() {
         final URI issueUri = URI.create(
-            "https://api.github.com/repos/octocat/Hello-World/issues/1/"
+            "https://api.github.com/repos/octocat/Hello-World/issues/1"
         );
         final JsonResources resources = Mockito.mock(JsonResources.class);
         final Comments issueComments =
@@ -104,8 +102,8 @@ public final class GithubIssueCommentsITCase {
                 Mockito.any(JsonObject.class)
             ))
             .thenAnswer(invocation -> {
-                final URI uri = ((URI) invocation.getArguments()[0])
-                    .resolve("1");
+                final URI uri = URI.create(invocation.getArguments()[0]
+                    .toString() + "/1");
                 final String body = ((JsonObject) invocation
                     .getArguments()[1]).getString("body");
                 final JsonObject object = Json.createObjectBuilder()
@@ -124,7 +122,7 @@ public final class GithubIssueCommentsITCase {
         MatcherAssert.assertThat(comment.body(),
             Matchers.equalTo("Comment issue #1"));
         MatcherAssert.assertThat(comment.json().getString("url"),
-            Matchers.equalTo(issueUri.resolve("comments/1").toString()));
+            Matchers.equalTo(issueUri.toString() +"/comments/1"));
     }
 
     /**
@@ -134,7 +132,7 @@ public final class GithubIssueCommentsITCase {
     @Test(expected = IllegalStateException.class)
     public void throwsIfCommentNotCreated() {
         final URI issueUri = URI.create(
-            "https://api.github.com/repos/octocat/Hello-World/issues/1/"
+            "https://api.github.com/repos/octocat/Hello-World/issues/1"
         );
         final JsonResources resources = Mockito.mock(JsonResources.class);
         final Comments issueComments =
