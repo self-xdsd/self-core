@@ -33,6 +33,7 @@ import org.slf4j.LoggerFactory;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.Period;
+import java.time.temporal.ChronoUnit;
 import java.util.UUID;
 import java.util.function.Supplier;
 
@@ -43,9 +44,6 @@ import java.util.function.Supplier;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
- * @todo #571:30min When checking if task deadline is missed in
- *  assignedTasks(...), we should take into account the hours and minutes
- *  as well. Right now we checking it against days left.
  * @checkstyle ExecutableStatementCount (500 lines)
  */
 public final class StoredProjectManager implements ProjectManager {
@@ -339,15 +337,8 @@ public final class StoredProjectManager implements ProjectManager {
                         );
                     }
                 } else {
-                    final int time = Period.between(
-                        task.assignmentDate().toLocalDate(),
-                        task.deadline().toLocalDate()
-                    ).getDays();
-                    final int left = Period.between(
-                        this.dateTimeSupplier.get().toLocalDate(),
-                        task.deadline().toLocalDate()
-                    ).getDays();
-                    if (left < 0) {
+                    final LocalDateTime now = this.dateTimeSupplier.get();
+                    if (now.until(task.deadline(), ChronoUnit.MINUTES) < 0) {
                         task.unassign();
                         task.resignations()
                             .register(task, Resignations.Reason.DEADLINE);
@@ -360,16 +351,26 @@ public final class StoredProjectManager implements ProjectManager {
                                 task.deadline()
                             )
                         );
-                    } else if (left <= time / 2) {
-                        issue.comments().post(
-                            String.format(
-                                project.language().reply(
-                                    "taskDeadlineReminder.comment"
-                                ),
-                                assignee.username(),
-                                task.deadline()
-                            )
-                        );
+                    } else {
+                        final int time = Period.between(
+                            task.assignmentDate().toLocalDate(),
+                            task.deadline().toLocalDate()
+                        ).getDays();
+                        final int left = Period.between(
+                            now.toLocalDate(),
+                            task.deadline().toLocalDate()
+                        ).getDays();
+                        if (left <= time / 2) {
+                            issue.comments().post(
+                                String.format(
+                                    project.language().reply(
+                                        "taskDeadlineReminder.comment"
+                                    ),
+                                    assignee.username(),
+                                    task.deadline()
+                                )
+                            );
+                        }
                     }
                 }
             }
