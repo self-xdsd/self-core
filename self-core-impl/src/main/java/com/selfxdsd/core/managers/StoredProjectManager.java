@@ -264,8 +264,15 @@ public final class StoredProjectManager implements ProjectManager {
             "Checking the unassigned tasks of project "
             + project.repoFullName() + " at " + project.provider()
         );
-        for(final Task task : project.tasks().unassigned()) {
+        final Tasks projectTasks = project.tasks();
+        for(final Task task : projectTasks.unassigned()) {
             final Issue issue = task.issue();
+            if (issue.isClosed()) {
+                LOG.debug("Issue associated with task #" + issue.issueId()
+                    + " is closed. Removing task...");
+                projectTasks.remove(task);
+                continue;
+            }
             LOG.debug("Electing assignee for task #" + issue.issueId());
             final Contributor contributor = project.contributors().elect(task);
             if(contributor == null) {

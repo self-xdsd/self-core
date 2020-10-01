@@ -597,6 +597,43 @@ public final class StoredProjectManagerTestCase {
     }
 
     /**
+     * StoredProjectManager.unassignedTasks(Event) removes the task if the
+     * issue associated with it was closed in the meantime.
+     */
+    @Test
+    public void handlesUnassignedTasksEventRemoveTaskOnClosedIssue() {
+        final Tasks tasks = Mockito.mock(Tasks.class);
+        final Tasks unassigned = Mockito.mock(Tasks.class);
+        final Task task = Mockito.mock(Task.class);
+        final Issue issue = Mockito.mock(Issue.class);
+        final Project project = Mockito.mock(Project.class);
+        final Event event = Mockito.mock(Event.class);
+        final ProjectManager manager = new StoredProjectManager(
+            1,
+            "123",
+            "zoeself",
+            Provider.Names.GITHUB,
+            "123token",
+            BigDecimal.valueOf(50),
+            Mockito.mock(Storage.class)
+        );
+
+        Mockito.when(event.project()).thenReturn(project);
+        Mockito.when(project.repoFullName()).thenReturn("john/test");
+        Mockito.when(project.provider()).thenReturn(Provider.Names.GITHUB);
+        Mockito.when(project.tasks()).thenReturn(tasks);
+        Mockito.when(tasks.unassigned()).thenReturn(unassigned);
+        Mockito.when(unassigned.iterator())
+            .thenReturn(List.of(task).iterator());
+        Mockito.when(issue.isClosed()).thenReturn(Boolean.TRUE);
+        Mockito.when(task.issue()).thenReturn(issue);
+
+        manager.unassignedTasks(event);
+
+        Mockito.verify(tasks, Mockito.times(1)).remove(task);
+    }
+
+    /**
      * Can compare two StoredProjectManager objects.
      */
     @Test
