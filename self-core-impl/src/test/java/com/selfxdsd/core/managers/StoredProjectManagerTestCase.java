@@ -911,7 +911,7 @@ public final class StoredProjectManagerTestCase {
 
         final LocalDateTime assignmentDate = LocalDateTime.now();
         final LocalDateTime deadlineDate = LocalDateTime.now().plusDays(10);
-        final Supplier<LocalDateTime> now = ()-> deadlineDate.plusDays(1);
+        final Supplier<LocalDateTime> now = ()-> deadlineDate.plusMinutes(1);
         Mockito.when(task.assignmentDate()).thenReturn(assignmentDate);
         Mockito.when(task.deadline()).thenReturn(deadlineDate);
 
