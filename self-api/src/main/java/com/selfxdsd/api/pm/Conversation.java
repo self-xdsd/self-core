@@ -29,6 +29,10 @@ import com.selfxdsd.api.Event;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.20
+ * @todo #570:30min Add a Conversation implementation where we should ignore
+ *  the comment if it comes from any other PMs. We should not allow the PMs
+ *  to talk to each other because they will most likely end up in an infinite
+ *  loop of "Sorry, I don't understand that".
  */
 public interface Conversation {
 

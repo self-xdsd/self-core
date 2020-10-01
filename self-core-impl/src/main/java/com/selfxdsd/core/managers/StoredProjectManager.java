@@ -23,6 +23,7 @@
 package com.selfxdsd.core.managers;
 
 import com.selfxdsd.api.*;
+import com.selfxdsd.api.pm.Conversation;
 import com.selfxdsd.api.pm.Step;
 import com.selfxdsd.api.storage.Storage;
 import com.selfxdsd.core.Github;
@@ -44,7 +45,8 @@ import java.util.function.Supplier;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
- * @checkstyle ExecutableStatementCount (500 lines)
+ * @checkstyle ExecutableStatementCount (1000 lines)
+ * @checkstyle ClassFanOutComplexity (1000 lines)
  */
 public final class StoredProjectManager implements ProjectManager {
 
@@ -386,6 +388,35 @@ public final class StoredProjectManager implements ProjectManager {
             "Finished checking the assigned tasks of project "
             + project.repoFullName() + " at " + project.provider()
         );
+    }
+
+    @Override
+    public void comment(final Event event) {
+        final Comment comment = event.comment();
+        if(this.username.equalsIgnoreCase(comment.author())) {
+            return;
+        }
+        LOG.debug(
+            "Received comment [" + comment.body()
+            + "] from @" + comment.author() + ". Starting conversation..."
+        );
+        final Conversation conversation = new Understand(
+            new Hello(
+                new Status(
+                    new Resign(
+                        new Deregister(
+                            new Register(
+                                new Confused()
+                            )
+                        )
+                    )
+                )
+            )
+        );
+        final Step steps = conversation.start(event);
+        LOG.debug("Executing steps...");
+        steps.perform(event);
+        LOG.debug("Conversation ended.");
     }
 
     @Override

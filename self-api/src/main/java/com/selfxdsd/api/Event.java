@@ -91,6 +91,11 @@ public interface Event {
         public static final String REOPENED_ISSUE = "reopened";
 
         /**
+         * Event for a comment.
+         */
+        public static final String ISSUE_COMMENT = "issue_comment";
+
+        /**
          * Hello comment event.
          */
         public static final String HELLO = "hello";

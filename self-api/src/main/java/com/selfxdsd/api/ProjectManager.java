@@ -106,4 +106,10 @@ public interface ProjectManager {
      * @param event Event.
      */
     void assignedTasks(final Event event);
+
+    /**
+     * Handle a comment.
+     * @param event Event.
+     */
+    void comment(final Event event);
 }
