@@ -348,9 +348,9 @@ public final class StoredProjectManager implements ProjectManager {
                 } else {
                     final LocalDateTime now = this.dateTimeSupplier.get();
                     if (now.until(task.deadline(), ChronoUnit.MINUTES) < 0) {
-                        task.unassign();
                         task.resignations()
                             .register(task, Resignations.Reason.DEADLINE);
+                        task.unassign();
                         issue.comments().post(
                             String.format(
                                 project.language().reply(
