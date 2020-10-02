@@ -22,6 +22,8 @@
  */
 package com.selfxdsd.api;
 
+import com.selfxdsd.api.storage.Storage;
+
 /**
  * A Project is a User's Repository which has been
  * registered (activated) on the Self platform.
@@ -118,4 +120,10 @@ public interface Project {
      * @return This project's repository.
      */
     Repo deactivate();
+
+    /**
+     * Self Storage.
+     * @return Storage.
+     */
+    Storage storage();
 }

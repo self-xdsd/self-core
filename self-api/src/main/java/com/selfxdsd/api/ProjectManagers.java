@@ -40,6 +40,14 @@ public interface ProjectManagers extends Iterable<ProjectManager> {
     ProjectManager getById(final int id);
 
     /**
+     * Get a PM by username and provider.
+     * @param username Username.
+     * @param provider Provider.
+     * @return ProjectManager of null if it's not found.
+     */
+    ProjectManager getByUsername(final String username, final String provider);
+
+    /**
      * Pick a ProjectManager from a specific repository.
      * @param provider Provider name of the repository.
      * @return ProjectManager or null if it's not found.

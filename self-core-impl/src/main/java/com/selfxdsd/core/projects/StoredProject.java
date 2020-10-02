@@ -192,6 +192,11 @@ public final class StoredProject implements Project {
     }
 
     @Override
+    public Storage storage() {
+        return this.storage;
+    }
+
+    @Override
     public int hashCode() {
         return Objects.hash(this.repoFullName, this.provider());
     }

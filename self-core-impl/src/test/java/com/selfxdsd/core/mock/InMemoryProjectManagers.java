@@ -89,6 +89,22 @@ public final class InMemoryProjectManagers implements ProjectManagers {
     }
 
     @Override
+    public ProjectManager getByUsername(
+        final String username,
+        final String provider
+    ) {
+        ProjectManager found = null;
+        for(final ProjectManager manager : this.pms.values()) {
+            if(manager.username().equalsIgnoreCase(username)
+                && manager.provider().name().equalsIgnoreCase(provider)) {
+                found = manager;
+                break;
+            }
+        }
+        return found;
+    }
+
+    @Override
     public ProjectManager pick(final String provider) {
         return pms.values().stream()
             .filter(pm -> pm.provider().name().equals(provider))
