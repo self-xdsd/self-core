@@ -396,29 +396,31 @@ public final class StoredProjectManager implements ProjectManager {
         if(this.username.equalsIgnoreCase(comment.author())) {
             return;
         }
-        LOG.debug(
-            "Received comment [" + comment.body()
-            + "] from @" + comment.author() + ". Starting conversation..."
-        );
-        final Conversation conversation = new IgnoreBots(
-            new Understand(
-                new Hello(
-                    new Status(
-                        new Resign(
-                            new Deregister(
-                                new Register(
-                                    new Confused()
+        if(comment.body().startsWith("@" + this.username)) {
+            LOG.debug(
+                "Received comment [" + comment.body()
+                + "] from @" + comment.author() + ". Starting conversation..."
+            );
+            final Conversation conversation = new IgnoreBots(
+                new Understand(
+                    new Hello(
+                        new Status(
+                            new Resign(
+                                new Deregister(
+                                    new Register(
+                                        new Confused()
+                                    )
                                 )
                             )
                         )
                     )
                 )
-            )
-        );
-        final Step steps = conversation.start(event);
-        LOG.debug("Executing steps...");
-        steps.perform(event);
-        LOG.debug("Conversation ended.");
+            );
+            final Step steps = conversation.start(event);
+            LOG.debug("Executing steps...");
+            steps.perform(event);
+            LOG.debug("Conversation ended.");
+        }
     }
 
     @Override
