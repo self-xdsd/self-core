@@ -400,13 +400,15 @@ public final class StoredProjectManager implements ProjectManager {
             "Received comment [" + comment.body()
             + "] from @" + comment.author() + ". Starting conversation..."
         );
-        final Conversation conversation = new Understand(
-            new Hello(
-                new Status(
-                    new Resign(
-                        new Deregister(
-                            new Register(
-                                new Confused()
+        final Conversation conversation = new IgnoreBots(
+            new Understand(
+                new Hello(
+                    new Status(
+                        new Resign(
+                            new Deregister(
+                                new Register(
+                                    new Confused()
+                                )
                             )
                         )
                     )
