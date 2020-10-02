@@ -56,7 +56,8 @@ public final class IgnoreBots implements Conversation {
         new KnownBot("rultor"),
         new KnownBot("0pdd"),
         new KnownBot("0crat"),
-        new KnownBot("dependabot")
+        new KnownBot("dependabot"),
+        new KnownBot("coveralls")
     );
 
     /**
