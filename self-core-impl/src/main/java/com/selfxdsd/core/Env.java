@@ -69,4 +69,9 @@ public final class Env {
      * API Token for Stripe.
      */
     public static final String STRIPE_API_TOKEN = "self_stripe_token";
+
+    /**
+     * Webhook Base URL. E.g. http://self-xdsd.go.ro/pm
+     */
+    public static final String WEBHOOK_BASE_URL = "self_webhook_base_url";
 }

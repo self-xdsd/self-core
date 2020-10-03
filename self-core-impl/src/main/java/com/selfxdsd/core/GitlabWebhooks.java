@@ -95,7 +95,7 @@ final class GitlabWebhooks implements Webhooks {
             Json.createObjectBuilder()
                 .add("id", project.repoFullName()
                     .replace("/", "%2F"))
-                .add("url", "https://self-xdsd.com/gitlab/"
+                .add("url", System.getenv(Env.WEBHOOK_BASE_URL) + "/gitlab/"
                     + project.repoFullName())
                 .add("issues_events", true)
                 .add("token", project.webHookToken())

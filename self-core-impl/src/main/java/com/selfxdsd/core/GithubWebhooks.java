@@ -98,7 +98,7 @@ final class GithubWebhooks implements Webhooks {
                     Json.createObjectBuilder()
                         .add(
                             "url",
-                            "https://self-xdsd.com/github/"
+                            System.getenv(Env.WEBHOOK_BASE_URL) + "/github/"
                             + project.repoFullName()
                         )
                         .add("content_type", "json")

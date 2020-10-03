@@ -79,7 +79,7 @@ public final class GithubWebhooksTestCase {
                                     Json.createObjectBuilder()
                                         .add(
                                             "url",
-                                            "https://self-xdsd.com/github/"
+                                            "null/github/"
                                             + "amihaiemil/repo"
                                         )
                                         .add("content_type", "json")
@@ -146,7 +146,7 @@ public final class GithubWebhooksTestCase {
                                     Json.createObjectBuilder()
                                         .add(
                                             "url",
-                                            "https://self-xdsd.com/github/"
+                                            "null/github/"
                                                 + "amihaiemil/repo"
                                         )
                                         .add("content_type", "json")

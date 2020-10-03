@@ -70,7 +70,7 @@ public final class GitlabWebhooksTestCase {
                         req.getBody(),
                         Matchers.equalTo(Json.createObjectBuilder()
                             .add("id", "amihaiemil%2Frepo")
-                            .add("url", "https://self-xdsd.com/gitlab/"
+                            .add("url", "null/gitlab/"
                                 + "amihaiemil/repo")
                             .add("issues_events", true)
                             .add("token", "webhook_tok333n")
