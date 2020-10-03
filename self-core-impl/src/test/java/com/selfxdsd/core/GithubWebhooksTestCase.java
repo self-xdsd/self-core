@@ -73,6 +73,8 @@ public final class GithubWebhooksTestCase {
                                     "events",
                                     Json.createArrayBuilder()
                                         .add("issues")
+                                        .add("issue_comment")
+                                        .add("pull_request")
                                 )
                                 .add(
                                     "config",
@@ -140,6 +142,8 @@ public final class GithubWebhooksTestCase {
                                     "events",
                                     Json.createArrayBuilder()
                                         .add("issues")
+                                        .add("issue_comment")
+                                        .add("pull_request")
                                 )
                                 .add(
                                     "config",

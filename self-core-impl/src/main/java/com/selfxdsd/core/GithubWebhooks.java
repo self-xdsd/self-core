@@ -92,6 +92,8 @@ final class GithubWebhooks implements Webhooks {
                     "events",
                     Json.createArrayBuilder()
                         .add("issues")
+                        .add("issue_comment")
+                        .add("pull_request")
                 )
                 .add(
                     "config",
