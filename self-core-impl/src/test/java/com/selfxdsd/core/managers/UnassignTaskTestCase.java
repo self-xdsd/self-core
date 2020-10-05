@@ -32,6 +32,7 @@ import org.mockito.Mockito;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.20
+ * @checkstyle ExecutableStatementCount (500 lines)
  */
 public final class UnassignTaskTestCase {
 
@@ -121,11 +122,16 @@ public final class UnassignTaskTestCase {
         Mockito.when(project.tasks()).thenReturn(tasks);
         Mockito.when(event.project()).thenReturn(project);
 
+        Mockito.when(task.resignations())
+            .thenReturn(Mockito.mock(Resignations.class));
+
         final Step next = Mockito.mock(Step.class);
         final Step unassign = new UnassignTask(next);
         unassign.perform(event);
 
         Mockito.verify(task, Mockito.times(1)).unassign();
+        Mockito.verify(task.resignations(), Mockito.times(1))
+            .register(task, Resignations.Reason.ASKED);
         Mockito.verify(next, Mockito.times(1)).perform(event);
     }
 

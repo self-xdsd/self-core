@@ -24,6 +24,7 @@ package com.selfxdsd.core.managers;
 
 import com.selfxdsd.api.Event;
 import com.selfxdsd.api.Project;
+import com.selfxdsd.api.Resignations;
 import com.selfxdsd.api.Task;
 import com.selfxdsd.api.pm.Intermediary;
 import com.selfxdsd.api.pm.Step;
@@ -71,6 +72,7 @@ public final class UnassignTask extends Intermediary {
                 + "#" + issueId + " of project " + project.repoFullName()
                 + " at " + project.provider()
             );
+            task.resignations().register(task, Resignations.Reason.ASKED);
             final Task unassigned = task.unassign();
             if(unassigned.assignee() == null) {
                 LOG.debug("Resignation successful!");
