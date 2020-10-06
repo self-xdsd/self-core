@@ -73,10 +73,18 @@ public final class Status implements Conversation {
                 project.provider()
             );
             if(task == null) {
-                reply = String.format(
-                    language.reply("taskNotRegistered.comment"),
-                    event.comment().author()
-                );
+                if (event.issue().isClosed()) {
+                    reply = String.format(
+                        language
+                            .reply("taskNotRegisteredTicketClosed.comment"),
+                        event.comment().author()
+                    );
+                } else {
+                    reply = String.format(
+                        language.reply("taskNotRegistered.comment"),
+                        event.comment().author()
+                    );
+                }
             } else if(task != null && task.assignee() == null) {
                 reply = String.format(
                     language.reply("taskNotAssigned.comment"),

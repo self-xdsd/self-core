@@ -83,6 +83,59 @@ public final class StatusTestCase {
     }
 
     /**
+     * Status replies with "task not registered but ticket closed" if
+     * the task is not in the DB and issue associated with the event is closed.
+     */
+    @Test
+    public void repliesTaskNotRegisteredAndIssueClosed() {
+        final Tasks tasks = Mockito.mock(Tasks.class);
+        Mockito.when(
+            tasks.getById("1", "john/test", "github")
+        ).thenReturn(null);
+        final Project project = Mockito.mock(Project.class);
+        Mockito.when(project.tasks()).thenReturn(tasks);
+        Mockito.when(project.repoFullName()).thenReturn("john/test");
+        Mockito.when(project.provider()).thenReturn("github");
+        Mockito.when(project.language()).thenReturn(new English());
+
+        final Issue issue = Mockito.mock(Issue.class);
+        Mockito.when(issue.issueId()).thenReturn("1");
+        Mockito.when(issue.isClosed()).thenReturn(Boolean.TRUE);
+        Mockito.when(issue.comments()).thenReturn(Mockito.mock(Comments.class));
+        final Comment comment = Mockito.mock(Comment.class);
+        Mockito.when(comment.author()).thenReturn("mihai");
+        Mockito.when(comment.body()).thenReturn("@charlesmike status");
+
+        final Event event = Mockito.mock(Event.class);
+        Mockito.when(event.type()).thenReturn(Event.Type.STATUS);
+        Mockito.when(event.comment()).thenReturn(comment);
+        Mockito.when(event.project()).thenReturn(project);
+        Mockito.when(event.issue()).thenReturn(issue);
+
+        final Conversation status = new Status(
+            next -> {
+                throw new IllegalStateException("Should not be called.");
+            }
+        );
+        final Step steps = status.start(event);
+        MatcherAssert.assertThat(
+            steps,
+            Matchers.allOf(
+                Matchers.notNullValue(),
+                Matchers.instanceOf(SendReply.class)
+            )
+        );
+        steps.perform(event);
+        Mockito.verify(issue.comments()).post(
+            "> @charlesmike status\n\n"
+                + "@mihai this ticket is not registered as a task, "
+                + "therefore I'm not working on it at the moment.\n\n"
+                + "If you want me to take care of it, please reopen it."
+                + " However, reopening Issues is not encouraged --"
+                + "it's better if you open new tickets instead.");
+    }
+
+    /**
      * Status replies with "task not assigned" if
      * the task is present but has no assignee.
      */
