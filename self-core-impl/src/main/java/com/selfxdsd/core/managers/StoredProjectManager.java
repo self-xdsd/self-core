@@ -47,6 +47,11 @@ import java.util.function.Supplier;
  * @since 0.0.1
  * @checkstyle ExecutableStatementCount (1000 lines)
  * @checkstyle ClassFanOutComplexity (1000 lines)
+ * @todo #581:30min When reviewing the unassigned tasks (unassignedTasks(...)),
+ *  the PM should check if the Issue is already assigned to someone and, if it
+ *  is, it should assign the Task to that contributor. If the Issue is assigned
+ *  to someone who is not a registered to someone who is not a Contributor,
+ *  they should be unassigned and a Contributor should be elected.
  */
 public final class StoredProjectManager implements ProjectManager {
 

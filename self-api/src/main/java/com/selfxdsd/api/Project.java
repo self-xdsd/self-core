@@ -22,6 +22,7 @@
  */
 package com.selfxdsd.api;
 
+import com.selfxdsd.api.exceptions.WalletAlreadyExistsException;
 import com.selfxdsd.api.storage.Storage;
 
 /**
@@ -120,6 +121,14 @@ public interface Project {
      * @return This project's repository.
      */
     Repo deactivate();
+
+    /**
+     * Create a wallet.
+     * @return Wallet created Wallet.
+     * @throws WalletAlreadyExistsException If the Wallet with
+     *  the specified type already exists.
+     */
+    Wallet createStripeWallet();
 
     /**
      * Self Storage.

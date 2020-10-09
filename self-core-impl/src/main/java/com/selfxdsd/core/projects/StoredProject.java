@@ -23,6 +23,7 @@
 package com.selfxdsd.core.projects;
 
 import com.selfxdsd.api.*;
+import com.selfxdsd.api.exceptions.WalletAlreadyExistsException;
 import com.selfxdsd.api.storage.Storage;
 
 import java.util.Objects;
@@ -39,6 +40,9 @@ import java.util.Objects;
  *  It should decide what kind of event has occurred and delegate it
  *  further to the ProjectManager who will deal with it. We still need
  *  the Issue Assigned case and Comment Created case.
+ * @todo #581:30min Continue implementing the createStripeMethod here.
+ *  It should create a Customer via Stripe API (using the Project ID), then
+ *  register and return the new stripe Wallet.
  */
 public final class StoredProject implements Project {
 
@@ -189,6 +193,19 @@ public final class StoredProject implements Project {
     @Override
     public Repo deactivate() {
         throw new UnsupportedOperationException("Not yet implemented.");
+    }
+
+    @Override
+    public Wallet createStripeWallet() {
+        final Wallets wallets = this.wallets();
+        for(final Wallet wallet : wallets) {
+            if(wallet.type().equalsIgnoreCase(Wallet.Type.STRIPE)) {
+                throw new WalletAlreadyExistsException(
+                    this, Wallet.Type.STRIPE
+                );
+            }
+        }
+        return null;
     }
 
     @Override
