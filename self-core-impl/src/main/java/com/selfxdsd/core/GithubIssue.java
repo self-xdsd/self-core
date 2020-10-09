@@ -31,6 +31,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.json.Json;
 import javax.json.JsonObject;
+import javax.json.JsonValue;
 import java.net.HttpURLConnection;
 import java.net.URI;
 
@@ -125,6 +126,18 @@ final class GithubIssue implements Issue {
     @Override
     public String author() {
         return this.json.getJsonObject("user").getString("login");
+    }
+
+    @Override
+    public String assignee() {
+        final JsonValue assignee = this.json.get("assignee");
+        final String username;
+        if (assignee instanceof JsonObject) {
+            username = ((JsonObject) assignee).getString("login");
+        } else {
+            username = null;
+        }
+        return username;
     }
 
     @Override

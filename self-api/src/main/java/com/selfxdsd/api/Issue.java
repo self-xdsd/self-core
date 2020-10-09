@@ -62,6 +62,12 @@ public interface Issue {
      */
     String author();
 
+    /***
+     * Assignee's username. Might not be present.
+     * @return String or null.
+     */
+    String assignee();
+
     /**
      * Assign this Issue to someone.
      * @param username Assignee's username.

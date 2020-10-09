@@ -44,14 +44,9 @@ import java.util.function.Supplier;
  *
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
- * @since 0.0.1
  * @checkstyle ExecutableStatementCount (1000 lines)
  * @checkstyle ClassFanOutComplexity (1000 lines)
- * @todo #581:30min When reviewing the unassigned tasks (unassignedTasks(...)),
- *  the PM should check if the Issue is already assigned to someone and, if it
- *  is, it should assign the Task to that contributor. If the Issue is assigned
- *  to someone who is not a registered to someone who is not a Contributor,
- *  they should be unassigned and a Contributor should be elected.
+ * @since 0.0.1
  */
 public final class StoredProjectManager implements ProjectManager {
 
@@ -182,7 +177,7 @@ public final class StoredProjectManager implements ProjectManager {
     @Override
     public Provider provider() {
         final Provider provider;
-        if(this.provider.equals(Provider.Names.GITHUB)) {
+        if (this.provider.equals(Provider.Names.GITHUB)) {
             provider = new Github(new PmUser(this), this.storage);
         } else {
             provider = new Gitlab(new PmUser(this), this.storage);
@@ -278,40 +273,81 @@ public final class StoredProjectManager implements ProjectManager {
                 projectTasks.remove(task);
                 continue;
             }
-            LOG.debug("Electing assignee for task #" + issue.issueId());
-            final Contributor contributor = project.contributors().elect(task);
-            if(contributor == null) {
-                LOG.debug("Couldn't find any assignee, posting comment...");
-                issue.comments().post(
-                    String.format(
-                        project.language().reply("noAssigneeFound.comment"),
-                        project.owner().username(),
-                        task.role()
-                    )
-                );
-                LOG.debug("Comment for noAssigneeFound posted.");
+            final String issueAssignee = issue.assignee();
+            if (issueAssignee != null) {
+                final Contributor contributor = project.contributors()
+                    .getById(issueAssignee, issue.provider());
+                if (contributor == null) {
+                    LOG.debug("Unassigning @" + issueAssignee
+                        + " from issue #" + issue.issueId()
+                        + ". They are not contributor for project "
+                        + project.repoFullName() + " at " + project.provider()
+                    );
+                    if (issue.unassign(issueAssignee)) {
+                        LOG.debug("Electing assignee for task #"
+                            + issue.issueId());
+                        Contributor elected = project.contributors()
+                            .elect(task);
+                        this.assignTask(project, task, issue, elected);
+                    } else {
+                        LOG.debug("Could not unassign @" + issueAssignee
+                            + " from issue #" + issue.issueId()
+                            + ". New election aborted.");
+                    }
+                } else {
+                    this.assignTask(project, task, issue, contributor);
+                }
             } else {
-                LOG.debug("Elected @" + contributor.username() + ".");
-                final Task assigned = task.assign(contributor);
-                issue.assign(contributor.username());
-                issue.comments().post(
-                    String.format(
-                        project.language().reply("taskAssigned.comment"),
-                        contributor.username(),
-                        assigned.deadline(),
-                        assigned.estimation()
-                    )
-                );
-                LOG.debug(
-                    "Task #" + issue.issueId() + " assigned to @"
-                    + contributor.username() + "."
-                );
+                LOG.debug("Electing assignee for task #" + issue.issueId());
+                Contributor contributor = project.contributors().elect(task);
+                this.assignTask(project, task, issue, contributor);
             }
         }
         LOG.debug(
             "Finished checking the unassigned tasks of project "
             + project.repoFullName() + " at " + project.provider()
         );
+    }
+
+    /**
+     * Assigns Project's Task to a Contributor. Contributor might be null from
+     * election.
+     * @param project Project.
+     * @param task Task.
+     * @param issue Issue.
+     * @param contributor Contributor, might be null.
+     */
+    private void assignTask(final Project project,
+                            final Task task,
+                            final Issue issue,
+                            final Contributor contributor) {
+        if (contributor == null) {
+            LOG.debug("Couldn't find any assignee, posting comment...");
+            issue.comments().post(
+                String.format(
+                    project.language().reply("noAssigneeFound.comment"),
+                    project.owner().username(),
+                    task.role()
+                )
+            );
+            LOG.debug("Comment for noAssigneeFound posted.");
+        } else {
+            LOG.debug("Elected @" + contributor.username() + ".");
+            final Task assigned = task.assign(contributor);
+            issue.assign(contributor.username());
+            issue.comments().post(
+                String.format(
+                    project.language().reply("taskAssigned.comment"),
+                    contributor.username(),
+                    assigned.deadline(),
+                    assigned.estimation()
+                )
+            );
+            LOG.debug(
+                "Task #" + issue.issueId() + " assigned to @"
+                    + contributor.username() + "."
+            );
+        }
     }
 
     @Override
@@ -328,8 +364,8 @@ public final class StoredProjectManager implements ProjectManager {
                 if(issue.isClosed()) {
                     LOG.debug(
                         "Task #" + issue.issueId()
-                        + " of Contributor " + assignee.username()
-                        + " is closed. Invoicing... "
+                            + " of Contributor " + assignee.username()
+                            + " is closed. Invoicing... "
                     );
                     final InvoicedTask invoiced = task.contract()
                         .invoices()
@@ -346,8 +382,8 @@ public final class StoredProjectManager implements ProjectManager {
                         );
                         this.storage.tasks().remove(task);
                         LOG.debug(
-                            "Task #" + issue.issueId()
-                            + " successfully invoiced and taken out of scope."
+                            "Task #" + issue.issueId() + " successfully"
+                                + " invoiced and taken out of scope."
                         );
                     }
                 } else {

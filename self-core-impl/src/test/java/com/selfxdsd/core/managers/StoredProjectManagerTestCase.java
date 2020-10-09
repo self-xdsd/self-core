@@ -597,6 +597,152 @@ public final class StoredProjectManagerTestCase {
     }
 
     /**
+     * StoredProjectManager.unassignedTasks(Event) assigns Issue's
+     * assignee if they are Contributor to Project.
+     */
+    @Test
+    public void handlesUnassignedTasksEventIssueAssigneeIsContributor(){
+
+        final Contributor assignee = Mockito.mock(Contributor.class);
+        Mockito.when(assignee.username()).thenReturn("mihai");
+        final Task assigned = Mockito.mock(Task.class);
+
+        final Task task = Mockito.mock(Task.class);
+        Mockito.when(task.assign(assignee)).thenReturn(assigned);
+
+        final Issue issue = Mockito.mock(Issue.class);
+        final Comments comments = Mockito.mock(Comments.class);
+        Mockito.when(comments.post(Mockito.anyString())).thenReturn(null);
+        Mockito.when(issue.comments()).thenReturn(comments);
+        Mockito.when(issue.assignee()).thenReturn("mihai");
+        Mockito.when(issue.provider()).thenReturn("github");
+        Mockito.when(task.issue()).thenReturn(issue);
+        Mockito.when(task.role()).thenReturn("DEV");
+
+        final Tasks unassigned = Mockito.mock(Tasks.class);
+        Mockito.when(unassigned.iterator())
+            .thenReturn(Arrays.asList(task).iterator());
+        final Tasks ofProject = Mockito.mock(Tasks.class);
+        Mockito.when(ofProject.unassigned()).thenReturn(unassigned);
+
+        final Project project = Mockito.mock(Project.class);
+        Mockito.when(project.tasks()).thenReturn(ofProject);
+        Mockito.when(project.language()).thenReturn(new English());
+        final Contributors contributors = Mockito.mock(Contributors.class);
+        Mockito.when(contributors.elect(task)).thenReturn(assignee);
+        Mockito.when(contributors.getById("mihai", "github"))
+            .thenReturn(assignee);
+        Mockito.when(project.contributors()).thenReturn(contributors);
+
+        final User owner = Mockito.mock(User.class);
+        Mockito.when(owner.username()).thenReturn("mihai");
+        Mockito.when(project.owner()).thenReturn(owner);
+
+        final Event event = Mockito.mock(Event.class);
+        Mockito.when(event.project()).thenReturn(project);
+
+        final ProjectManager manager = new StoredProjectManager(
+            1,
+            "123",
+            "zoeself",
+            Provider.Names.GITHUB,
+            "123token",
+            BigDecimal.valueOf(50),
+            Mockito.mock(Storage.class)
+        );
+
+        manager.unassignedTasks(event);
+
+        Mockito.verify(event, Mockito.times(1)).project();
+        Mockito.verify(project, Mockito.times(1)).tasks();
+        Mockito.verify(ofProject, Mockito.times(1)).unassigned();
+        Mockito.verify(task, Mockito.times(1)).assign(assignee);
+        Mockito.verify(issue, Mockito.times(1)).assign("mihai");
+        Mockito.verify(comments, Mockito.times(1))
+            .post(
+                Mockito.startsWith(
+                    "@mihai this is your task now, please go ahead."
+                )
+            );
+
+    }
+
+    /**
+     * StoredProjectManager.unassignedTasks(Event) unassigns Issue's
+     * assignee if they are not Contributor to Project and elects
+     * new Contributor.
+     */
+    @Test
+    public void handlesUnassignedTasksEventIssueAssigneeIsNotContributor(){
+
+        final Contributor assignee = Mockito.mock(Contributor.class);
+        Mockito.when(assignee.username()).thenReturn("mihai");
+        final Task assigned = Mockito.mock(Task.class);
+
+        final Task task = Mockito.mock(Task.class);
+        Mockito.when(task.assign(assignee)).thenReturn(assigned);
+
+        final Issue issue = Mockito.mock(Issue.class);
+        final Comments comments = Mockito.mock(Comments.class);
+        Mockito.when(comments.post(Mockito.anyString())).thenReturn(null);
+        Mockito.when(issue.comments()).thenReturn(comments);
+        Mockito.when(issue.assignee()).thenReturn("john");
+        Mockito.when(issue.unassign("john")).thenReturn(true);
+        Mockito.when(issue.provider()).thenReturn("github");
+        Mockito.when(task.issue()).thenReturn(issue);
+        Mockito.when(task.role()).thenReturn("DEV");
+
+        final Tasks unassigned = Mockito.mock(Tasks.class);
+        Mockito.when(unassigned.iterator())
+            .thenReturn(Arrays.asList(task).iterator());
+        final Tasks ofProject = Mockito.mock(Tasks.class);
+        Mockito.when(ofProject.unassigned()).thenReturn(unassigned);
+
+        final Project project = Mockito.mock(Project.class);
+        Mockito.when(project.tasks()).thenReturn(ofProject);
+        Mockito.when(project.language()).thenReturn(new English());
+        final Contributors contributors = Mockito.mock(Contributors.class);
+        Mockito.when(contributors.elect(task)).thenReturn(assignee);
+        Mockito.when(contributors.getById("mihai", "github"))
+            .thenReturn(assignee);
+        Mockito.when(project.contributors()).thenReturn(contributors);
+
+        final User owner = Mockito.mock(User.class);
+        Mockito.when(owner.username()).thenReturn("mihai");
+        Mockito.when(project.owner()).thenReturn(owner);
+
+        final Event event = Mockito.mock(Event.class);
+        Mockito.when(event.project()).thenReturn(project);
+
+        final ProjectManager manager = new StoredProjectManager(
+            1,
+            "123",
+            "zoeself",
+            Provider.Names.GITHUB,
+            "123token",
+            BigDecimal.valueOf(50),
+            Mockito.mock(Storage.class)
+        );
+
+        manager.unassignedTasks(event);
+
+        Mockito.verify(event, Mockito.times(1)).project();
+        Mockito.verify(project, Mockito.times(1)).tasks();
+        Mockito.verify(ofProject, Mockito.times(1)).unassigned();
+        Mockito.verify(contributors, Mockito.times(1)).elect(task);
+        Mockito.verify(task, Mockito.times(1)).assign(assignee);
+        Mockito.verify(issue, Mockito.times(1)).assign("mihai");
+        Mockito.verify(issue, Mockito.times(1)).unassign("john");
+        Mockito.verify(comments, Mockito.times(1))
+            .post(
+                Mockito.startsWith(
+                    "@mihai this is your task now, please go ahead."
+                )
+            );
+
+    }
+
+    /**
      * StoredProjectManager.unassignedTasks(Event) removes the task if the
      * issue associated with it was closed in the meantime.
      */

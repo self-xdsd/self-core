@@ -3,6 +3,7 @@ package com.selfxdsd.core;
 import com.selfxdsd.api.Issue;
 import com.selfxdsd.api.Issues;
 import com.selfxdsd.api.storage.Storage;
+import org.hamcrest.Matchers;
 import org.junit.Test;
 
 import javax.json.JsonObject;
@@ -31,11 +32,13 @@ public final class GithubIssuesITCase {
         final Issues issues = new GithubIssues(
             new JsonResources.JdkHttp(), uri, mock(Storage.class)
         );
-        final JsonObject jsonIssue = issues.getById("346").json();
+        final Issue issue = issues.getById("346");
+        final JsonObject jsonIssue = issue.json();
         assertThat("Add Json Suppliers",
             equalTo(jsonIssue.getString("title")));
         assertThat(346,
             equalTo(jsonIssue.getInt("number")));
+        assertThat(issue.assignee(), Matchers.nullValue());
     }
 
     /**
