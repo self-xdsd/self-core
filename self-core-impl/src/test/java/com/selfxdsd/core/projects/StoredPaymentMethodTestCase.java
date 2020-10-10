@@ -1,0 +1,197 @@
+/**
+ * Copyright (c) 2020, Self XDSD Contributors
+ * All rights reserved.
+ * <p>
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"),
+ * to read the Software only. Permission is hereby NOT GRANTED to use, copy,
+ * modify, merge, publish, distribute, sublicense, and/or sell copies of
+ * the Software.
+ * <p>
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
+ * OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT
+ * OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ */
+package com.selfxdsd.core.projects;
+
+import com.selfxdsd.api.*;
+import com.selfxdsd.api.storage.Storage;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.Test;
+import org.mockito.Mockito;
+
+import java.math.BigDecimal;
+import java.util.Objects;
+
+/**
+ * Unit tests for {@link StoredPaymentMethod}.
+ * @author criske
+ * @version $Id$
+ * @since 0.0.26
+ */
+public final class StoredPaymentMethodTestCase {
+
+
+    /**
+     * StoredPaymentMethod has identifier and Wallet.
+     */
+    @Test
+    public void hasIdentifierAndWallet(){
+        final Wallet wallet = this.mockWallet(
+            Wallet.Type.STRIPE,
+            "john/test",
+            Provider.Names.GITHUB
+        );
+        final PaymentMethod paymentMethod = new StoredPaymentMethod(
+            Mockito.mock(Storage.class),
+            "fake_id_132",
+            wallet
+        );
+        MatcherAssert.assertThat(paymentMethod.identifier(),
+            Matchers.equalTo("fake_id_132"));
+        MatcherAssert.assertThat(paymentMethod.wallet(),
+            Matchers.equalTo(wallet));
+    }
+
+    /**
+     * StoredPaymentMethod can be active.
+     */
+    @Test
+    public void canBeActive(){
+        final Wallet wallet = this.mockWallet(
+            Wallet.Type.STRIPE,
+            "john/test",
+            Provider.Names.GITHUB
+        );
+        final Storage storage = Mockito.mock(Storage.class);
+
+        final PaymentMethods paymentMethods = Mockito
+            .mock(PaymentMethods.class);
+        final PaymentMethods ofWallet = Mockito
+            .mock(PaymentMethods.class);
+        Mockito.when(storage.paymentMethods()).thenReturn(paymentMethods);
+        Mockito.when(paymentMethods.ofWallet(wallet)).thenReturn(ofWallet);
+
+        final PaymentMethod paymentMethod = new StoredPaymentMethod(
+            storage,
+            "fake_id_132",
+            wallet
+        );
+
+        Mockito.when(ofWallet.active()).thenReturn(paymentMethod);
+
+        MatcherAssert.assertThat(paymentMethod.active(),
+            Matchers.is(Boolean.TRUE));
+    }
+
+    /**
+     * StoredPaymentMethod can be activated.
+     */
+    @Test
+    public void canBeActivated(){
+        final Wallet wallet = this.mockWallet(
+            Wallet.Type.STRIPE,
+            "john/test",
+            Provider.Names.GITHUB
+        );
+        final Storage storage = Mockito.mock(Storage.class);
+
+        final PaymentMethods paymentMethods = Mockito
+            .mock(PaymentMethods.class);
+        final PaymentMethods ofWallet = Mockito
+            .mock(PaymentMethods.class);
+        Mockito.when(storage.paymentMethods()).thenReturn(paymentMethods);
+        Mockito.when(paymentMethods.ofWallet(wallet)).thenReturn(ofWallet);
+
+        final PaymentMethod paymentMethod = new StoredPaymentMethod(
+            storage,
+            "fake_id_132",
+            wallet
+        );
+
+        Mockito.when(ofWallet.activate(paymentMethod))
+            .thenReturn(paymentMethod);
+
+        final PaymentMethod activated = paymentMethod.activate();
+        MatcherAssert.assertThat(activated, Matchers.equalTo(paymentMethod));
+        MatcherAssert.assertThat(activated.hashCode(),
+            Matchers.equalTo(paymentMethod.hashCode()));
+    }
+
+    /**
+     * Mocks a Wallet.
+     * @param type Type
+     * @param repoFullName Repo full name.
+     * @param provider Provider.
+     * @return Mocked Wallet.
+     */
+    private Wallet mockWallet(
+        final String type,
+        final String repoFullName,
+        final String provider
+    ) {
+        final Project project = Mockito.mock(Project.class);
+        Mockito.when(project.repoFullName()).thenReturn(repoFullName);
+        Mockito.when(project.provider()).thenReturn(provider);
+        return new Wallet() {
+
+            @Override
+            public BigDecimal cash() {
+                return BigDecimal.ZERO;
+            }
+
+            @Override
+            public Invoice pay(final Invoice invoice) {
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
+            public String type() {
+                return type;
+            }
+
+            @Override
+            public boolean active() {
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
+            public Project project() {
+                return project;
+            }
+
+            @Override
+            public PaymentMethods paymentMethods() {
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
+            public int hashCode() {
+                return Objects.hash(type, repoFullName, provider);
+            }
+
+            @Override
+            public boolean equals(final Object obj) {
+                if(!(obj instanceof Wallet)){
+                    return false;
+                }
+                final Wallet other = (Wallet) obj;
+                return this.toString().equals(other.toString());
+            }
+
+            @Override
+            public String toString() {
+                return type + repoFullName + provider;
+            }
+        };
+    }
+}

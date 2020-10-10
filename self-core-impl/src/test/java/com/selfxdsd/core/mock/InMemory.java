@@ -146,6 +146,11 @@ public final class InMemory implements Storage {
         return this.payoutMethods;
     }
 
+    @Override
+    public PaymentMethods paymentMethods() {
+        throw new UnsupportedOperationException("Not implemented yet!");
+    }
+
     /**
      * Nothing to close, this is an in-memory storage.
      */

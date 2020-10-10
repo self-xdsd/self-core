@@ -97,4 +97,10 @@ public interface Storage extends AutoCloseable {
      * @return PayoutMethods.
      */
     PayoutMethods payoutMethods();
+
+    /**
+     * Get the payment methods Storage API.
+     * @return PaymentMethods.
+     */
+    PaymentMethods paymentMethods();
 }
