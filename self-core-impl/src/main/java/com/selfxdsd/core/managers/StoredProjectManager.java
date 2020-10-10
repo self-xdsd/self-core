@@ -228,12 +228,19 @@ public final class StoredProjectManager implements ProjectManager {
         final Project project = event.project();
         final Issue issue = event.issue();
         project.tasks().register(issue);
-        issue.comments().post(
-            String.format(
+        final String reply;
+        if(issue.isPullRequest()) {
+            reply = String.format(
+                project.language().reply("newPullRequest.comment"),
+                issue.author()
+            );
+        } else {
+            reply = String.format(
                 project.language().reply("newIssue.comment"),
                 issue.author()
-            )
-        );
+            );
+        }
+        issue.comments().post(reply);
     }
 
     @Override

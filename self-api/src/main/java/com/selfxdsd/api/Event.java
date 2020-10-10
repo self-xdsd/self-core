@@ -81,12 +81,12 @@ public interface Event {
         public static final String ASSIGNED_TASKS = "assigned";
 
         /**
-         * Event for a newly opened Issue.
+         * Event for a newly opened Issue or PR.
          */
         public static final String NEW_ISSUE = "newIssue";
 
         /**
-         * Event for a reopened Issue.
+         * Event for a reopened Issue or PR.
          */
         public static final String REOPENED_ISSUE = "reopened";
 
