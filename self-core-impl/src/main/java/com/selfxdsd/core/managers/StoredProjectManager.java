@@ -299,8 +299,8 @@ public final class StoredProjectManager implements ProjectManager {
                 }
             } else {
                 LOG.debug("Electing assignee for task #" + issue.issueId());
-                Contributor contributor = project.contributors().elect(task);
-                this.assignTask(project, task, issue, contributor);
+                final Contributor elected = project.contributors().elect(task);
+                this.assignTask(project, task, issue, elected);
             }
         }
         LOG.debug(
