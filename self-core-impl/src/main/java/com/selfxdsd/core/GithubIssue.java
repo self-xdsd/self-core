@@ -267,6 +267,12 @@ final class GithubIssue implements Issue {
 
     @Override
     public int estimation() {
-        return 60;
+        final int estimation;
+        if(this.json.getJsonObject("pull_request") == null) {
+            estimation = 60;
+        } else {
+            estimation = 30;
+        }
+        return estimation;
     }
 }
