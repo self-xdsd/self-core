@@ -178,7 +178,13 @@ public final class StoredTask implements Task {
                 "The given contributor doesn't have the needed contract!"
             );
         }
-        return this.storage.tasks().assign(this, contract, 10);
+        final int deadlineDays;
+        if(Contract.Roles.REV.equals(this.role())) {
+            deadlineDays = 3;
+        } else {
+            deadlineDays = 10;
+        }
+        return this.storage.tasks().assign(this, contract, deadlineDays);
     }
 
     @Override
