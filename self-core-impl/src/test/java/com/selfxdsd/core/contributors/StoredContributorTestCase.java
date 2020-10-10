@@ -354,7 +354,7 @@ public final class StoredContributorTestCase {
             MatcherAssert.assertThat(
                 ex.getMessage(),
                 Matchers.equalTo(
-                    "Please specify the stripe.api.token Environment Variable!"
+                    "Please specify the self_stripe_token Environment Variable!"
                 )
             );
         }

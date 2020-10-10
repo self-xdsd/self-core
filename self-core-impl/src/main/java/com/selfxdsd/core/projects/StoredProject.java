@@ -25,7 +25,13 @@ package com.selfxdsd.core.projects;
 import com.selfxdsd.api.*;
 import com.selfxdsd.api.exceptions.WalletAlreadyExistsException;
 import com.selfxdsd.api.storage.Storage;
+import com.selfxdsd.core.Env;
+import com.stripe.Stripe;
+import com.stripe.exception.StripeException;
+import com.stripe.model.Customer;
+import com.stripe.param.CustomerCreateParams;
 
+import java.math.BigDecimal;
 import java.util.Objects;
 
 /**
@@ -40,9 +46,6 @@ import java.util.Objects;
  *  It should decide what kind of event has occurred and delegate it
  *  further to the ProjectManager who will deal with it. We still need
  *  the Issue Assigned case and Comment Created case.
- * @todo #581:30min Continue implementing the createStripeMethod here.
- *  It should create a Customer via Stripe API (using the Project ID), then
- *  register and return the new stripe Wallet.
  */
 public final class StoredProject implements Project {
 
@@ -205,7 +208,29 @@ public final class StoredProject implements Project {
                 );
             }
         }
-        return null;
+        final String apiToken = System.getenv(Env.STRIPE_API_TOKEN);
+        if(apiToken == null || apiToken.trim().isEmpty()) {
+            throw new IllegalStateException(
+                "Please specify the self_stripe_token Environment Variable!"
+            );
+        }
+        Stripe.apiKey = apiToken;
+        try {
+            final Customer customer = Customer.create(
+                CustomerCreateParams.builder().build()
+            );
+            return this.storage.wallets().register(
+                this, Wallet.Type.STRIPE,
+                BigDecimal.valueOf(0), customer.getId()
+            );
+        } catch (final StripeException ex) {
+            throw new IllegalStateException(
+                "Stripe threw an exception when trying to create a Wallet "
+                + "(Customer) for Project " + this.repoFullName + " at "
+                + this.provider() + ". ",
+                ex
+            );
+        }
     }
 
     @Override

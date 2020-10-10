@@ -33,6 +33,17 @@ import java.util.UUID;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.15
+ * @todo #594:60min A project's Wallet should have one or more
+ *  PaymentMethods, which will represent the cards or other payment
+ *  methods that the Project's owner has registered for the project.
+ *  Only one of these methods should be active or primary and it will
+ *  be the first one we try to use when making payments.
+ * @todo #594:30min A Wallet should have the method updateCash(...) which
+ *  will update the amount of cash that we are allowed to use.
+ *  In other words, this cash value will act as a limit that the
+ *  user sets for us -- when this limit reaches zero, we will not make
+ *  any more payments and they will have to go on the web dashboard to update
+ *  this value.
  */
 public interface Wallet {
 
