@@ -349,14 +349,23 @@ public final class StoredProjectManager implements ProjectManager {
             LOG.debug("Elected @" + contributor.username() + ".");
             final Task assigned = task.assign(contributor);
             issue.assign(contributor.username());
-            issue.comments().post(
-                String.format(
+            final String reply;
+            if(issue.isPullRequest()) {
+                reply = String.format(
+                    project.language().reply("pullRequestAssigned.comment"),
+                    contributor.username(),
+                    assigned.deadline(),
+                    assigned.estimation()
+                );
+            } else {
+                reply = String.format(
                     project.language().reply("taskAssigned.comment"),
                     contributor.username(),
                     assigned.deadline(),
                     assigned.estimation()
-                )
-            );
+                );
+            }
+            issue.comments().post(reply);
             LOG.debug(
                 "Task #" + issue.issueId() + " assigned to @"
                     + contributor.username() + "."
