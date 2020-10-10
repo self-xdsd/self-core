@@ -6,6 +6,6 @@ alerts:
     - on-lost-puzzle
     - on-scope
   github:
-    - amihaiemil
+    - charlesmike
 tags:
   - pdd

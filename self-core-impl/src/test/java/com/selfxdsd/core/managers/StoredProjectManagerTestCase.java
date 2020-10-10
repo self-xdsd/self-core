@@ -44,7 +44,7 @@ import java.util.function.Supplier;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
- * @checkstyle ExecutableStatementCount (1000 lines)
+ * @checkstyle ExecutableStatementCount (1500 lines)
  */
 public final class StoredProjectManagerTestCase {
 
@@ -320,6 +320,7 @@ public final class StoredProjectManagerTestCase {
             Mockito.mock(Storage.class)
         );
         final Issue issue = Mockito.mock(Issue.class);
+        Mockito.when(issue.isPullRequest()).thenReturn(Boolean.FALSE);
         Mockito.when(issue.issueId()).thenReturn("1");
         Mockito.when(issue.author()).thenReturn("mihai");
         Mockito.when(issue.repoFullName()).thenReturn("mihai/test");
@@ -339,7 +340,7 @@ public final class StoredProjectManagerTestCase {
             new Event() {
                 @Override
                 public String type() {
-                    return "reopened";
+                    return Type.REOPENED_ISSUE;
                 }
 
                 @Override
@@ -364,10 +365,76 @@ public final class StoredProjectManagerTestCase {
         Mockito.verify(comments, Mockito.times(1))
             .post(
                 "@mihai thanks for reopening this, "
-                + "I'll find someone to take a look at it again. \n"
+                + "I'll find someone to take a look at it. \n"
                 + "However, please keep in mind that reopening tickets "
                 + "is a bad practice. "
                 + "Next time, please open a new ticket."
+            );
+    }
+
+    /**
+     * StoredProjectManager can handle a reopened PR event when the initial
+     * Task associated with it has been finished (in this case we
+     * register a new task and leave a comment).
+     */
+    @Test
+    public void handlesTaskFinishedReopenedPullRequestEvent() {
+        final ProjectManager manager = new StoredProjectManager(
+            1,
+            "123",
+            "zoeself",
+            Provider.Names.GITHUB,
+            "123token",
+            BigDecimal.valueOf(50),
+            Mockito.mock(Storage.class)
+        );
+        final Issue issue = Mockito.mock(Issue.class);
+        Mockito.when(issue.isPullRequest()).thenReturn(Boolean.TRUE);
+        Mockito.when(issue.issueId()).thenReturn("1");
+        Mockito.when(issue.author()).thenReturn("mihai");
+        Mockito.when(issue.repoFullName()).thenReturn("mihai/test");
+        Mockito.when(issue.provider()).thenReturn("github");
+        final Comments comments = Mockito.mock(Comments.class);
+        Mockito.when(comments.post(Mockito.anyString())).thenReturn(null);
+        Mockito.when(issue.comments()).thenReturn(comments);
+
+        final Project project = Mockito.mock(Project.class);
+        final Tasks tasks = Mockito.mock(Tasks.class);
+        Mockito.when(
+            tasks.getById("1", "mihai/test", "github")
+        ).thenReturn(null);
+        Mockito.when(project.tasks()).thenReturn(tasks);
+        Mockito.when(project.language()).thenReturn(new English());
+        manager.reopenedIssue(
+            new Event() {
+                @Override
+                public String type() {
+                    return Type.REOPENED_ISSUE;
+                }
+
+                @Override
+                public Issue issue() {
+                    return issue;
+                }
+
+                @Override
+                public Comment comment() {
+                    return null;
+                }
+
+                @Override
+                public Project project() {
+                    return project;
+                }
+
+            }
+        );
+        Mockito.verify(tasks, Mockito.times(1))
+            .register(issue);
+        Mockito.verify(comments, Mockito.times(1))
+            .post(
+                "@mihai thanks for reopening this PR, "
+                + "I'll find someone to review it soon."
             );
     }
 

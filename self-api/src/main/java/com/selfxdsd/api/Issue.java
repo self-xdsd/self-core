@@ -111,6 +111,13 @@ public interface Issue {
     boolean isClosed();
 
     /**
+     * Should return true if this Issue is a Pull Request and false if
+     * it's a normal Issue.
+     * @return True or false.
+     */
+    boolean isPullRequest();
+
+    /**
      * The estimation in minutes for the given issue.
      *
      * @return Integer.
