@@ -23,6 +23,7 @@
 package com.selfxdsd.core.projects;
 
 import com.selfxdsd.api.Invoice;
+import com.selfxdsd.api.PaymentMethods;
 import com.selfxdsd.api.Project;
 import com.selfxdsd.api.Wallet;
 
@@ -101,5 +102,10 @@ public final class StripeWallet implements Wallet {
     @Override
     public Project project() {
         return this.project;
+    }
+
+    @Override
+    public PaymentMethods paymentMethods() {
+        throw new UnsupportedOperationException("Not implemented yet");
     }
 }
