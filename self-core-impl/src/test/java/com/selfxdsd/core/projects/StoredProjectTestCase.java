@@ -22,11 +22,15 @@
 package com.selfxdsd.core.projects;
 
 import com.selfxdsd.api.*;
+import com.selfxdsd.api.exceptions.WalletAlreadyExistsException;
 import com.selfxdsd.api.storage.Storage;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.mockito.Mockito;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Unit tests for {@link StoredProject}.
@@ -331,6 +335,40 @@ public final class StoredProjectTestCase {
         );
         MatcherAssert.assertThat(project.hashCode(),
             Matchers.equalTo(projectTwo.hashCode()));
+    }
+
+    /**
+     * We should not be able to create more than 1 Stripe Wallet per
+     * Project.
+     */
+    @Test (expected = WalletAlreadyExistsException.class)
+    public void createsOnlyOneStripeWallet() {
+        final List<Wallet> list = new ArrayList<>();
+        final Wallet stripe = Mockito.mock(Wallet.class);
+        Mockito.when(stripe.type()).thenReturn(Wallet.Type.STRIPE);
+        list.add(stripe);
+
+        final Wallets all = Mockito.mock(Wallets.class);
+        final Wallets ofProject = Mockito.mock(Wallets.class);
+        Mockito.when(ofProject.iterator()).thenReturn(list.iterator());
+
+        final Storage storage = Mockito.mock(Storage.class);
+        Mockito.when(storage.wallets()).thenReturn(all);
+
+        final Provider prov = Mockito.mock(Provider.class);
+        Mockito.when(prov.name()).thenReturn(Provider.Names.GITHUB);
+        final User owner = Mockito.mock(User.class);
+        Mockito.when(owner.provider()).thenReturn(prov);
+
+        final Project project = new StoredProject(
+            owner, "john/test", "wh123token",
+            Mockito.mock(ProjectManager.class),
+            storage
+        );
+        Mockito.when(
+            all.ofProject(project)
+        ).thenReturn(ofProject);
+        project.createStripeWallet();
     }
 
     /**
