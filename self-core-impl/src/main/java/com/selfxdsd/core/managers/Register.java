@@ -66,30 +66,42 @@ public final class Register implements Conversation {
         if(Event.Type.REGISTER.equals(event.type())) {
             final Language language = event.project().language();
             final String author = event.comment().author();
-            steps = new AuthorHasRoles(
-                new TaskIsRegistered(
-                    new SendReply(
-                        String.format(
-                            language.reply("taskAlreadyRegistered.comment"),
-                            author
-                        )
-                    ),
-                    new RegisterIssue(
-                        new SendReply(
-                            String.format(
-                                language.reply("taskRegistered.comment"),
-                                author
-                            )
-                        )
-                    )
-                ),
+            steps = new IssueIsClosed(
                 new SendReply(
                     String.format(
-                        language.reply("mustBeContributor.comment"),
+                        language.reply("issueClosed.comment"),
                         author
                     )
                 ),
-                Contract.Roles.ANY
+                new AuthorHasRoles(
+                    new TaskIsRegistered(
+                        new SendReply(
+                            String.format(
+                                language.reply(
+                                    "taskAlreadyRegistered.comment"
+                                ),
+                                author
+                            )
+                        ),
+                        new RegisterIssue(
+                            new SendReply(
+                                String.format(
+                                    language.reply(
+                                        "taskRegistered.comment"
+                                    ),
+                                    author
+                                )
+                            )
+                        )
+                    ),
+                    new SendReply(
+                        String.format(
+                            language.reply("mustBeContributor.comment"),
+                            author
+                        )
+                    ),
+                    Contract.Roles.ANY
+                )
             );
         } else {
             steps = this.notRegister.start(event);

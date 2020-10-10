@@ -68,7 +68,7 @@ public final class RegisterTestCase {
             register.start(event),
             Matchers.allOf(
                 Matchers.notNullValue(),
-                Matchers.instanceOf(AuthorHasRoles.class)
+                Matchers.instanceOf(IssueIsClosed.class)
             )
         );
     }
