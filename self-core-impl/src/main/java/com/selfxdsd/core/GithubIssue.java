@@ -108,10 +108,10 @@ final class GithubIssue implements Issue {
     @Override
     public String role() {
         final String role;
-        if(this.json.getJsonObject("pull_request") == null) {
-            role = Contract.Roles.DEV;
-        } else {
+        if(this.isPullRequest()) {
             role = Contract.Roles.REV;
+        } else {
+            role = Contract.Roles.DEV;
         }
         return role;
     }
@@ -266,12 +266,17 @@ final class GithubIssue implements Issue {
     }
 
     @Override
+    public boolean isPullRequest() {
+        return this.json.getJsonObject("pull_request") != null;
+    }
+
+    @Override
     public int estimation() {
         final int estimation;
-        if(this.json.getJsonObject("pull_request") == null) {
-            estimation = 60;
-        } else {
+        if(this.isPullRequest()) {
             estimation = 30;
+        } else {
+            estimation = 60;
         }
         return estimation;
     }
