@@ -36,6 +36,9 @@ import org.slf4j.LoggerFactory;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.20
+ * @todo #585:30min When unassigning the Task, we should also remove
+ *  the Issue assignee (if any) and leave a comment to let them know
+ *  about it.
  */
 public final class UnassignTask extends Intermediary {
 
