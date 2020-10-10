@@ -857,7 +857,7 @@ public final class StoredProjectManagerTestCase {
             Mockito.mock(Storage.class)
         );
         manager.assignedTasks(event);
-        Mockito.verify(project, Mockito.times(0)).language();
+        Mockito.verify(project, Mockito.never()).language();
     }
 
     /**
@@ -889,11 +889,11 @@ public final class StoredProjectManagerTestCase {
             Mockito.mock(Storage.class)
         );
         manager.assignedTasks(event);
-        Mockito.verify(project, Mockito.times(0)).language();
+        Mockito.verify(project, Mockito.never()).language();
         for(int idx = 0; idx<3; idx++) {
             final Task task = mocks.get(idx);
             Mockito.verify(task, Mockito.times(1)).assignee();
-            Mockito.verify(task, Mockito.times(0)).issue();
+            Mockito.verify(task, Mockito.never()).issue();
         }
     }
 

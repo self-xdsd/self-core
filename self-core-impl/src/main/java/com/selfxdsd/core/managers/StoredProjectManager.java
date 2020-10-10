@@ -284,7 +284,7 @@ public final class StoredProjectManager implements ProjectManager {
                         + project.repoFullName() + " at " + project.provider()
                     );
                     if (issue.unassign(issueAssignee)) {
-                        LOG.debug("Electing assignee for task #"
+                        LOG.debug("Electing new assignee for task #"
                             + issue.issueId());
                         Contributor elected = project.contributors()
                             .elect(task);

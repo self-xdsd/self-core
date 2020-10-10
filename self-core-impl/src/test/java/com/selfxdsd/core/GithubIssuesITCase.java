@@ -3,9 +3,12 @@ package com.selfxdsd.core;
 import com.selfxdsd.api.Issue;
 import com.selfxdsd.api.Issues;
 import com.selfxdsd.api.storage.Storage;
+import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
+import org.mockito.Mockito;
 
+import javax.json.Json;
 import javax.json.JsonObject;
 import java.net.URI;
 
@@ -39,6 +42,28 @@ public final class GithubIssuesITCase {
         assertThat(346,
             equalTo(jsonIssue.getInt("number")));
         assertThat(issue.assignee(), Matchers.nullValue());
+    }
+
+    /**
+     * Fetched Issue has assignee.
+     */
+    @Test
+    public void issueHasAssignee() {
+        final JsonObject json = Json
+            .createObjectBuilder()
+            .add("id", 346)
+            .add("assignee", Json
+                .createObjectBuilder()
+                .add("login", "john")
+                .build())
+            .build();
+        final Issue issue = new GithubIssue(
+            URI.create("/"),
+            json,
+            Mockito.mock(Storage.class),
+            Mockito.mock(JsonResources.class)
+        );
+        MatcherAssert.assertThat(issue.assignee(), Matchers.equalTo("john"));
     }
 
     /**
