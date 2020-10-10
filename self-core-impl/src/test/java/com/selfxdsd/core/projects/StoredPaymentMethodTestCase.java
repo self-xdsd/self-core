@@ -128,6 +128,38 @@ public final class StoredPaymentMethodTestCase {
     }
 
     /**
+     * StoredPaymentMethod respects equals and hash code contracts.
+     */
+    @Test
+    public void respectsEqualsAndHashCodeContracts(){
+        final PaymentMethod paymentMethod = new StoredPaymentMethod(
+            Mockito.mock(Storage.class),
+            "fake_id_132",
+            this.mockWallet(
+                Wallet.Type.STRIPE,
+                "john/test",
+                Provider.Names.GITHUB
+            )
+        );
+        final PaymentMethod paymentMethodSame = new StoredPaymentMethod(
+            Mockito.mock(Storage.class),
+            "fake_id_132",
+            this.mockWallet(
+                Wallet.Type.STRIPE,
+                "john/test",
+                Provider.Names.GITHUB
+            )
+        );
+
+        MatcherAssert.assertThat(paymentMethod
+            .equals(paymentMethodSame), Matchers.is(Boolean.TRUE));
+        MatcherAssert.assertThat(paymentMethod.hashCode(),
+            Matchers.equalTo(paymentMethodSame.hashCode()));
+        MatcherAssert.assertThat(paymentMethod
+            .equals(new Object()), Matchers.is(Boolean.FALSE));
+    }
+
+    /**
      * Mocks a Wallet.
      * @param type Type
      * @param repoFullName Repo full name.
