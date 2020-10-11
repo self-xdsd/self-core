@@ -39,6 +39,8 @@ import java.util.Iterator;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
+ * @todo #610:30min Implement and test method search(...) here,
+ *  by using class FoundIssues to represent the found issues.
  */
 final class GithubIssues implements Issues {
 
@@ -163,6 +165,11 @@ final class GithubIssues implements Issues {
             );
         }
         return issue;
+    }
+
+    @Override
+    public Issues search(final String text, final String... labels) {
+        throw new UnsupportedOperationException("Not yet implemented.");
     }
 
     @Override
