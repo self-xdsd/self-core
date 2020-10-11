@@ -22,10 +22,7 @@
  */
 package com.selfxdsd.core.managers;
 
-import com.selfxdsd.api.Event;
-import com.selfxdsd.api.Project;
-import com.selfxdsd.api.Resignations;
-import com.selfxdsd.api.Task;
+import com.selfxdsd.api.*;
 import com.selfxdsd.api.pm.Intermediary;
 import com.selfxdsd.api.pm.Step;
 import org.slf4j.Logger;
@@ -36,9 +33,6 @@ import org.slf4j.LoggerFactory;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.20
- * @todo #585:30min When unassigning the Task, we should also remove
- *  the Issue assignee (if any) and leave a comment to let them know
- *  about it.
  */
 public final class UnassignTask extends Intermediary {
 
@@ -77,6 +71,10 @@ public final class UnassignTask extends Intermediary {
             );
             task.resignations().register(task, Resignations.Reason.ASKED);
             final Task unassigned = task.unassign();
+            final Issue issue = event.issue();
+            if(issue.assignee() != null) {
+                issue.unassign(issue.assignee());
+            }
             if(unassigned.assignee() == null) {
                 LOG.debug("Resignation successful!");
             } else {

@@ -110,6 +110,7 @@ public final class UnassignTaskTestCase {
         final Event event = Mockito.mock(Event.class);
         final Issue issue = Mockito.mock(Issue.class);
         Mockito.when(issue.issueId()).thenReturn("1");
+        Mockito.when(issue.assignee()).thenReturn("mihai");
         Mockito.when(event.issue()).thenReturn(issue);
 
         final Tasks tasks = Mockito.mock(Tasks.class);
@@ -133,6 +134,8 @@ public final class UnassignTaskTestCase {
         Mockito.verify(task.resignations(), Mockito.times(1))
             .register(task, Resignations.Reason.ASKED);
         Mockito.verify(next, Mockito.times(1)).perform(event);
+        Mockito.verify(issue, Mockito.times(2)).assignee();
+        Mockito.verify(issue, Mockito.times(1)).unassign("mihai");
     }
 
 }

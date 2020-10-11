@@ -99,8 +99,9 @@ public final class DeregisterTestCase {
             Matchers.nullValue());
         Mockito.verify(issue.comments(), Mockito.times(1))
             .post("> Deregister please!\n\n"
-                + "@john-arch task successfully removed.");
-
+                + "@john-arch ok, I've removed this task from scope. "
+                + "I'm not managing it anymore."
+            );
     }
 
     /**
