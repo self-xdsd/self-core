@@ -60,4 +60,12 @@ public interface Issues extends Iterable<Issue> {
         final String body,
         final String... labels
     );
+
+    /**
+     * Search some issues after text and labels.
+     * @param text Search text.
+     * @param labels Labels that the issue should have.
+     * @return Issues.
+     */
+    Issues search(final String text, final String... labels);
 }
