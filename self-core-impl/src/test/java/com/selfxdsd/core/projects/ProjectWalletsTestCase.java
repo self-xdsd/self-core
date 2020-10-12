@@ -33,6 +33,7 @@ import org.mockito.Mockito;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * Unit tests for {@link ProjectWallets}.
@@ -266,5 +267,46 @@ public final class ProjectWalletsTestCase {
             wallets.activate(wallet),
             Matchers.is(active)
         );
+    }
+
+    /**
+     * We can update cash for a Wallet belonging to the project.
+     */
+    @Test
+    public void updatesCashWorks(){
+        final Storage storage = Mockito.mock(Storage.class);
+        final Project project = Mockito.mock(Project.class);
+        final Wallet wallet = Mockito.mock(Wallet.class);
+        final Wallets all = Mockito.mock(Wallets.class);
+        final Wallets wallets = new ProjectWallets(
+            project,
+            List.of(wallet),
+            storage
+        );
+        Mockito.when(wallet.project()).thenReturn(project);
+        Mockito.when(storage.wallets()).thenReturn(all);
+
+        wallets.updateCash(wallet, BigDecimal.TEN);
+
+        Mockito.verify(all, Mockito.times(1))
+            .updateCash(wallet, BigDecimal.TEN);
+    }
+
+    /**
+     * ProjectWallets.updateCash(...) complains if the given Wallet
+     * belongs to another project.
+     */
+    @Test(expected = IllegalStateException.class)
+    public void complainsWhenUpdatesCash(){
+        final Storage storage = Mockito.mock(Storage.class);
+        final Project project = Mockito.mock(Project.class);
+        final Wallet wallet = Mockito.mock(Wallet.class);
+        final Wallets wallets = new ProjectWallets(
+            project,
+            List.of(Mockito.mock(Wallet.class)),
+            storage
+        );
+        Mockito.when(wallet.project()).thenReturn(Mockito.mock(Project.class));
+        wallets.updateCash(wallet, BigDecimal.TEN);
     }
 }

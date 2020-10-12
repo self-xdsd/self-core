@@ -25,6 +25,7 @@ package com.selfxdsd.core.projects;
 import com.selfxdsd.api.Invoice;
 import com.selfxdsd.api.Project;
 import com.selfxdsd.api.Wallet;
+import com.selfxdsd.api.storage.Storage;
 
 import java.math.BigDecimal;
 
@@ -38,6 +39,11 @@ import java.math.BigDecimal;
  *  try to use the active PaymentMethod first.
  */
 public final class StripeWallet implements Wallet {
+
+    /**
+     * Self Storage.
+     */
+    private final Storage storage;
 
     /**
      * Project to which this wallet belongs.
@@ -61,17 +67,20 @@ public final class StripeWallet implements Wallet {
 
     /**
      * Ctor.
+     * @param storage Self storage.
      * @param project Project to which this wallet belongs/
      * @param limit Cash limit we're allowed to use.
      * @param identifier Wallet identifier from Stripe's side.
      * @param active Is this wallet active or not?
      */
     public StripeWallet(
+        final Storage storage,
         final Project project,
         final BigDecimal limit,
         final String identifier,
         final boolean active
     ) {
+        this.storage = storage;
         this.project = project;
         this.identifier = identifier;
         this.limit = limit;
@@ -101,5 +110,13 @@ public final class StripeWallet implements Wallet {
     @Override
     public Project project() {
         return this.project;
+    }
+
+    @Override
+    public Wallet updateCash(final BigDecimal cash) {
+        return this.storage
+            .wallets()
+            .ofProject(this.project)
+            .updateCash(this, cash);
     }
 }

@@ -69,4 +69,20 @@ public interface Wallets extends Iterable<Wallet> {
      */
     Wallet activate(final Wallet wallet);
 
+
+    /**
+     * Updates the total cash limit.
+     * <br/><br/>
+     * There are two scenarios when this method is used:
+     * <ul>
+     *  <li>When user update the limit from their dashboard.</li>
+     *  <li>An invoice is payed. The new limit will be:
+     *  <code>Math.min(0, walletCash - invoiceTotalAmount)</code></li>
+     * </ul>
+     * @param wallet Wallet to be updated.
+     * @param cash New total cash limit.
+     * @return Wallet with new cash limit.
+     */
+    Wallet updateCash(final Wallet wallet, final BigDecimal cash);
+
 }

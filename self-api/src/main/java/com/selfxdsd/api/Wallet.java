@@ -33,17 +33,6 @@ import java.util.UUID;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.15
- * @todo #594:60min A project's Wallet should have one or more
- *  PaymentMethods, which will represent the cards or other payment
- *  methods that the Project's owner has registered for the project.
- *  Only one of these methods should be active or primary and it will
- *  be the first one we try to use when making payments.
- * @todo #594:30min A Wallet should have the method updateCash(...) which
- *  will update the amount of cash that we are allowed to use.
- *  In other words, this cash value will act as a limit that the
- *  user sets for us -- when this limit reaches zero, we will not make
- *  any more payments and they will have to go on the web dashboard to update
- *  this value.
  */
 public interface Wallet {
 
@@ -97,6 +86,13 @@ public interface Wallet {
      * @return Project.
      */
     Project project();
+
+    /**
+     * Updates the total cash limit.
+     * @param cash New total cash limit.
+     * @return Wallet with new cash limit.
+     */
+    Wallet updateCash(BigDecimal cash);
 
     /**
      * Missing wallet. Used when a Project has no wallet set up.
@@ -229,6 +225,12 @@ public interface Wallet {
         @Override
         public Project project() {
             return this.project;
+        }
+
+        @Override
+        public Wallet updateCash(final BigDecimal cash) {
+            return new Missing(this.project, cash, this.active,
+                this.identifier);
         }
     }
 

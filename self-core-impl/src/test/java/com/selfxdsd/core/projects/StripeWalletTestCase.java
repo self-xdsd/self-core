@@ -25,6 +25,8 @@ package com.selfxdsd.core.projects;
 import com.selfxdsd.api.Invoice;
 import com.selfxdsd.api.Project;
 import com.selfxdsd.api.Wallet;
+import com.selfxdsd.api.Wallets;
+import com.selfxdsd.api.storage.Storage;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -46,6 +48,7 @@ public final class StripeWalletTestCase {
     @Test
     public void returnsCashLimit() {
         final Wallet stripe = new StripeWallet(
+            Mockito.mock(Storage.class),
             Mockito.mock(Project.class),
             BigDecimal.valueOf(1000),
             "123StripeID",
@@ -64,6 +67,7 @@ public final class StripeWalletTestCase {
     public void returnsProject() {
         final Project project = Mockito.mock(Project.class);
         final Wallet stripe = new StripeWallet(
+            Mockito.mock(Storage.class),
             project,
             BigDecimal.valueOf(1000),
             "123StripeID",
@@ -81,6 +85,7 @@ public final class StripeWalletTestCase {
     @Test
     public void returnsActiveFlag() {
         final Wallet stripe = new StripeWallet(
+            Mockito.mock(Storage.class),
             Mockito.mock(Project.class),
             BigDecimal.valueOf(1000),
             "123StripeID",
@@ -98,11 +103,45 @@ public final class StripeWalletTestCase {
     @Test (expected = UnsupportedOperationException.class)
     public void payIsNotYetSupported() {
         final Wallet stripe = new StripeWallet(
+            Mockito.mock(Storage.class),
             Mockito.mock(Project.class),
             BigDecimal.valueOf(1000),
             "123StripeID",
             Boolean.TRUE
         );
         stripe.pay(Mockito.mock(Invoice.class));
+    }
+
+    /**
+     * Wallet cash limit can be updated.
+     */
+    @Test
+    public void updatesCash() {
+        final Storage storage= Mockito.mock(Storage.class);
+        final Project project = Mockito.mock(Project.class);
+        final Wallet stripe = new StripeWallet(
+            storage,
+            project,
+            BigDecimal.valueOf(1000),
+            "123StripeID",
+            Boolean.TRUE
+        );
+        final Wallets wallets = Mockito.mock(Wallets.class);
+        final Wallets ofProject = Mockito.mock(Wallets.class);
+        Mockito.when(wallets.ofProject(project)).thenReturn(ofProject);
+        Mockito.when(storage.wallets()).thenReturn(wallets);
+        Mockito.when(ofProject
+            .updateCash(Mockito.any(Wallet.class),
+                Mockito.any(BigDecimal.class)))
+            .then(invocation -> {
+                final BigDecimal cash = (BigDecimal) invocation
+                    .getArguments()[1];
+                return new StripeWallet(storage, project,
+                    cash, "123StripeID", Boolean.TRUE);
+            });
+
+        final Wallet updated = stripe.updateCash(BigDecimal.valueOf(900));
+        MatcherAssert.assertThat(updated.cash(), Matchers
+            .equalTo(BigDecimal.valueOf(900)));
     }
 }
