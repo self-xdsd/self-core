@@ -37,6 +37,8 @@ import java.math.BigDecimal;
  * @todo #604:60min Implement method pay(...) here as soon as
  *  we have a Wallets PaymentMethods available. We should always
  *  try to use the active PaymentMethod first.
+ * @todo #609:15min Implement equals() and hashCode() for StripeWallet since
+ *  StoredPaymentMethod is using Wallet for its equals and hashCode methods.
  */
 public final class StripeWallet implements Wallet {
 

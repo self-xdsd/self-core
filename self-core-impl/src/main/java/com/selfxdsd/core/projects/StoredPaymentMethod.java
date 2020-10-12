@@ -51,18 +51,27 @@ public final class StoredPaymentMethod implements PaymentMethod {
      */
     private final Wallet wallet;
 
+
+    /**
+     * Is the payment method active or not.
+     */
+    private final boolean active;
+
     /**
      * Ctor.
      * @param storage Storage.
      * @param identifier Identifier.
      * @param wallet Wallet.
+     * @param active Is the payment method active or not.
      */
     public StoredPaymentMethod(final Storage storage,
                                final String identifier,
-                               final Wallet wallet) {
+                               final Wallet wallet,
+                               final boolean active) {
         this.storage = storage;
         this.identifier = identifier;
         this.wallet = wallet;
+        this.active = active;
     }
 
     @Override
@@ -77,8 +86,7 @@ public final class StoredPaymentMethod implements PaymentMethod {
 
     @Override
     public boolean active() {
-        return this.equals(this.storage.paymentMethods()
-            .ofWallet(wallet).active());
+        return this.active;
     }
 
     @Override
@@ -89,6 +97,9 @@ public final class StoredPaymentMethod implements PaymentMethod {
 
     @Override
     public boolean equals(final Object obj) {
+        if(this == obj){
+            return true;
+        }
         if (!(obj instanceof PaymentMethod)) {
             return false;
         }

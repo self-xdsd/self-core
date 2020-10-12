@@ -42,10 +42,10 @@ public final class StoredPaymentMethodTestCase {
 
 
     /**
-     * StoredPaymentMethod has identifier and Wallet.
+     * StoredPaymentMethod has identifier, Wallet and active flag.
      */
     @Test
-    public void hasIdentifierAndWallet(){
+    public void hasIdentifierWalletAndActiveFlag(){
         final Wallet wallet = this.mockWallet(
             Wallet.Type.STRIPE,
             "john/test",
@@ -54,43 +54,14 @@ public final class StoredPaymentMethodTestCase {
         final PaymentMethod paymentMethod = new StoredPaymentMethod(
             Mockito.mock(Storage.class),
             "fake_id_132",
-            wallet
-        );
+            wallet,
+            true);
         MatcherAssert.assertThat(paymentMethod.identifier(),
             Matchers.equalTo("fake_id_132"));
         MatcherAssert.assertThat(paymentMethod.wallet(),
             Matchers.equalTo(wallet));
-    }
-
-    /**
-     * StoredPaymentMethod can be active.
-     */
-    @Test
-    public void canBeActive(){
-        final Wallet wallet = this.mockWallet(
-            Wallet.Type.STRIPE,
-            "john/test",
-            Provider.Names.GITHUB
-        );
-        final Storage storage = Mockito.mock(Storage.class);
-
-        final PaymentMethods paymentMethods = Mockito
-            .mock(PaymentMethods.class);
-        final PaymentMethods ofWallet = Mockito
-            .mock(PaymentMethods.class);
-        Mockito.when(storage.paymentMethods()).thenReturn(paymentMethods);
-        Mockito.when(paymentMethods.ofWallet(wallet)).thenReturn(ofWallet);
-
-        final PaymentMethod paymentMethod = new StoredPaymentMethod(
-            storage,
-            "fake_id_132",
-            wallet
-        );
-
-        Mockito.when(ofWallet.active()).thenReturn(paymentMethod);
-
         MatcherAssert.assertThat(paymentMethod.active(),
-            Matchers.is(Boolean.TRUE));
+            Matchers.equalTo(Boolean.TRUE));
     }
 
     /**
@@ -115,8 +86,8 @@ public final class StoredPaymentMethodTestCase {
         final PaymentMethod paymentMethod = new StoredPaymentMethod(
             storage,
             "fake_id_132",
-            wallet
-        );
+            wallet,
+            true);
 
         Mockito.when(ofWallet.activate(paymentMethod))
             .thenReturn(paymentMethod);
@@ -139,8 +110,8 @@ public final class StoredPaymentMethodTestCase {
                 Wallet.Type.STRIPE,
                 "john/test",
                 Provider.Names.GITHUB
-            )
-        );
+            ),
+            true);
         final PaymentMethod paymentMethodSame = new StoredPaymentMethod(
             Mockito.mock(Storage.class),
             "fake_id_132",
@@ -148,11 +119,13 @@ public final class StoredPaymentMethodTestCase {
                 Wallet.Type.STRIPE,
                 "john/test",
                 Provider.Names.GITHUB
-            )
-        );
+            ),
+            false);
 
         MatcherAssert.assertThat(paymentMethod
             .equals(paymentMethodSame), Matchers.is(Boolean.TRUE));
+        MatcherAssert.assertThat(paymentMethod
+            .equals(paymentMethod), Matchers.is(Boolean.TRUE));
         MatcherAssert.assertThat(paymentMethod.hashCode(),
             Matchers.equalTo(paymentMethodSame.hashCode()));
         MatcherAssert.assertThat(paymentMethod
