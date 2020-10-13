@@ -23,9 +23,11 @@
 package com.selfxdsd.api;
 
 import com.selfxdsd.api.exceptions.InvoiceException;
+import com.selfxdsd.api.exceptions.PaymentMethodsException;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Iterator;
 import java.util.UUID;
 
 /**
@@ -93,6 +95,12 @@ public interface Wallet {
      * @return Wallet with new cash limit.
      */
     Wallet updateCash(BigDecimal cash);
+
+    /**
+     * Payment methods of this Wallet.
+     * @return PaymentMethods
+     */
+    PaymentMethods paymentMethods();
 
     /**
      * Missing wallet. Used when a Project has no wallet set up.
@@ -231,6 +239,49 @@ public interface Wallet {
         public Wallet updateCash(final BigDecimal cash) {
             return new Missing(this.project, cash, this.active,
                 this.identifier);
+        }
+
+        @Override
+        public PaymentMethods paymentMethods() {
+            return new PaymentMethods() {
+                @Override
+                public PaymentMethod register(final Wallet wallet,
+                                             final String identifier) {
+                    throw new PaymentMethodsException("Can't register a "
+                        + " payment method for a missing wallet.");
+                }
+
+                @Override
+                public boolean remove(final PaymentMethod paymentMethod) {
+                    throw new PaymentMethodsException("Can't remove a "
+                        + " payment method for a missing wallet.");
+                }
+
+                @Override
+                public PaymentMethods ofWallet(final Wallet wallet) {
+                    throw new PaymentMethodsException("A missing wallet "
+                        + " has no payment methods.");
+                }
+
+                @Override
+                public PaymentMethod active() {
+                    return null;
+                }
+
+                @Override
+                public PaymentMethod activate(
+                    final PaymentMethod paymentMethod
+                ) {
+                    throw new PaymentMethodsException("Can't activate "
+                        + "a missing wallet payment method.");
+                }
+
+                @Override
+                public Iterator<PaymentMethod> iterator() {
+                    throw new PaymentMethodsException("Can't iterate over "
+                        + "a missing wallet payment methods.");
+                }
+            };
         }
     }
 

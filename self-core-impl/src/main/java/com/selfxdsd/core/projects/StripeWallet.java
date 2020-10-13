@@ -23,6 +23,7 @@
 package com.selfxdsd.core.projects;
 
 import com.selfxdsd.api.Invoice;
+import com.selfxdsd.api.PaymentMethods;
 import com.selfxdsd.api.Project;
 import com.selfxdsd.api.Wallet;
 import com.selfxdsd.api.storage.Storage;
@@ -37,6 +38,8 @@ import java.math.BigDecimal;
  * @todo #604:60min Implement method pay(...) here as soon as
  *  we have a Wallets PaymentMethods available. We should always
  *  try to use the active PaymentMethod first.
+ * @todo #609:15min Implement equals() and hashCode() for StripeWallet since
+ *  StoredPaymentMethod is using Wallet for its equals and hashCode methods.
  */
 public final class StripeWallet implements Wallet {
 
@@ -118,5 +121,10 @@ public final class StripeWallet implements Wallet {
             .wallets()
             .ofProject(this.project)
             .updateCash(this, cash);
+    }
+
+    @Override
+    public PaymentMethods paymentMethods() {
+        throw new UnsupportedOperationException("Not implemented yet");
     }
 }

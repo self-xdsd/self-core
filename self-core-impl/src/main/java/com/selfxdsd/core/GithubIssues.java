@@ -25,13 +25,15 @@ package com.selfxdsd.core;
 import com.selfxdsd.api.Issue;
 import com.selfxdsd.api.Issues;
 import com.selfxdsd.api.storage.Storage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import javax.json.Json;
-import javax.json.JsonArrayBuilder;
-import javax.json.JsonObject;
+import javax.json.*;
 import java.net.HttpURLConnection;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * Issues in a Github repository.
@@ -39,10 +41,15 @@ import java.util.Iterator;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
- * @todo #610:30min Implement and test method search(...) here,
- *  by using class FoundIssues to represent the found issues.
  */
 final class GithubIssues implements Issues {
+
+    /**
+     * Logger.
+     */
+    private static final Logger LOG = LoggerFactory.getLogger(
+        GithubIssues.class
+    );
 
     /**
      * Github repo Issues base uri.
@@ -169,7 +176,45 @@ final class GithubIssues implements Issues {
 
     @Override
     public Issues search(final String text, final String... labels) {
-        throw new UnsupportedOperationException("Not yet implemented.");
+        final String[] uriParts = this.issuesUri.getRawPath().split("/");
+        final String repoFullName = uriParts[2] + "/" + uriParts[3];
+
+        String query = "q=" + text + "+repo:" + repoFullName;
+        for(final String label : labels) {
+            query = query + "+label:" + label;
+        }
+
+        final URI search = URI
+            .create(
+                "https://api.github.com/search/issues?" + query
+                + "&sort=created&order=desc"
+            );
+
+        LOG.debug("Searching for Github Issues at: " + search);
+        final Resource resource = this.resources.get(search);
+
+        JsonArray results;
+        switch (resource.statusCode()) {
+            case HttpURLConnection.HTTP_OK:
+                LOG.debug("Search returned status 200 OK.");
+                results = resource.asJsonObject().getJsonArray("items");
+                break;
+            default:
+                LOG.error(
+                    "Search returned status: " + resource.statusCode() + ". "
+                    + "Was expecting 200 OK! Returning 0 found issues..."
+                );
+                results = Json.createArrayBuilder().build();
+                break;
+        }
+
+        final List<Issue> found = new ArrayList<>();
+        for(final JsonValue issue : results) {
+            found.add(
+                this.received((JsonObject) issue)
+            );
+        }
+        return new FoundIssues(this, found);
     }
 
     @Override
