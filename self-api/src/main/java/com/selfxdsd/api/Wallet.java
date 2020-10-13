@@ -239,6 +239,7 @@ public interface Wallet {
         public Wallet updateCash(final BigDecimal cash) {
             return new Missing(this.project, cash, this.active,
                 this.identifier);
+        }
 
         public PaymentMethods paymentMethods() {
             return new PaymentMethods() {
