@@ -105,4 +105,18 @@ public final class StripeWalletTestCase {
         );
         stripe.pay(Mockito.mock(Invoice.class));
     }
+
+    /**
+     * Payment methods is not yet supported.
+     */
+    @Test (expected = UnsupportedOperationException.class)
+    public void paymentMethodsAreNotSupported(){
+        final Wallet stripe = new StripeWallet(
+            Mockito.mock(Project.class),
+            BigDecimal.valueOf(1000),
+            "123StripeID",
+            Boolean.TRUE
+        );
+        stripe.paymentMethods();
+    }
 }

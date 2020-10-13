@@ -23,9 +23,11 @@
 package com.selfxdsd.api;
 
 import com.selfxdsd.api.exceptions.InvoiceException;
+import com.selfxdsd.api.exceptions.PaymentMethodsException;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Iterator;
 import java.util.UUID;
 
 /**
@@ -33,11 +35,6 @@ import java.util.UUID;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.15
- * @todo #594:60min A project's Wallet should have one or more
- *  PaymentMethods, which will represent the cards or other payment
- *  methods that the Project's owner has registered for the project.
- *  Only one of these methods should be active or primary and it will
- *  be the first one we try to use when making payments.
  * @todo #594:30min A Wallet should have the method updateCash(...) which
  *  will update the amount of cash that we are allowed to use.
  *  In other words, this cash value will act as a limit that the
@@ -97,6 +94,12 @@ public interface Wallet {
      * @return Project.
      */
     Project project();
+
+    /**
+     * Payment methods of this Wallet.
+     * @return PaymentMethods
+     */
+    PaymentMethods paymentMethods();
 
     /**
      * Missing wallet. Used when a Project has no wallet set up.
@@ -229,6 +232,49 @@ public interface Wallet {
         @Override
         public Project project() {
             return this.project;
+        }
+
+        @Override
+        public PaymentMethods paymentMethods() {
+            return new PaymentMethods() {
+                @Override
+                public PaymentMethod register(final Wallet wallet,
+                                             final String identifier) {
+                    throw new PaymentMethodsException("Can't register a "
+                        + " payment method for a missing wallet.");
+                }
+
+                @Override
+                public boolean remove(final PaymentMethod paymentMethod) {
+                    throw new PaymentMethodsException("Can't remove a "
+                        + " payment method for a missing wallet.");
+                }
+
+                @Override
+                public PaymentMethods ofWallet(final Wallet wallet) {
+                    throw new PaymentMethodsException("A missing wallet "
+                        + " has no payment methods.");
+                }
+
+                @Override
+                public PaymentMethod active() {
+                    return null;
+                }
+
+                @Override
+                public PaymentMethod activate(
+                    final PaymentMethod paymentMethod
+                ) {
+                    throw new PaymentMethodsException("Can't activate "
+                        + "a missing wallet payment method.");
+                }
+
+                @Override
+                public Iterator<PaymentMethod> iterator() {
+                    throw new PaymentMethodsException("Can't iterate over "
+                        + "a missing wallet payment methods.");
+                }
+            };
         }
     }
 
