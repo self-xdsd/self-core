@@ -274,7 +274,7 @@ public final class GithubIssuesTestCase {
                         Matchers.equalTo(
                             "https://api.github.com/search/issues?"
                             + "q=test+repo:amihaiemil/repo+label:puzzle"
-                            + "&sort=created&order=desc"
+                            + "&sort=created&order=desc&per_page=100"
                         )
                     );
                     return new MockJsonResources.MockResource(
@@ -304,6 +304,138 @@ public final class GithubIssuesTestCase {
             .repo("amihaiemil", "repo")
             .issues()
             .search("test", "puzzle");
+        MatcherAssert.assertThat(
+            found, Matchers.iterableWithSize(3)
+        );
+    }
+
+    /**
+     * GithubIssues.search(...) works with no text
+     * and the received response is 200 OK.
+     */
+    @Test
+    public void searchesIssuesOkNoText() {
+        final User user = Mockito.mock(User.class);
+        Mockito.when(user.username()).thenReturn("amihaiemil");
+        final Provider provider = new Github(
+            user,
+            Mockito.mock(Storage.class),
+            new MockJsonResources(
+                new AccessToken.Github("github123"),
+                req -> {
+                    MatcherAssert.assertThat(
+                        req.getAccessToken().value(),
+                        Matchers.equalTo("token github123")
+                    );
+                    MatcherAssert.assertThat(
+                        req.getMethod(),
+                        Matchers.equalTo("GET")
+                    );
+                    MatcherAssert.assertThat(
+                        req.getBody(),
+                        Matchers.equalTo(JsonObject.NULL)
+                    );
+                    MatcherAssert.assertThat(
+                        req.getUri().toString(),
+                        Matchers.equalTo(
+                            "https://api.github.com/search/issues?"
+                            + "q=repo:amihaiemil/repo+label:puzzle"
+                            + "&sort=created&order=desc&per_page=100"
+                        )
+                    );
+                    return new MockJsonResources.MockResource(
+                        HttpURLConnection.HTTP_OK,
+                        Json
+                            .createObjectBuilder()
+                            .add(
+                                "items",
+                                Json.createArrayBuilder()
+                                    .add(
+                                        Json.createObjectBuilder()
+                                            .add("number", 123)
+                                    ).add(
+                                    Json.createObjectBuilder()
+                                        .add("number", 124)
+                                ).add(
+                                    Json.createObjectBuilder()
+                                        .add("number", 125)
+                                )
+                            )
+                            .build()
+                    );
+                }
+            )
+        );
+        final Issues found = provider
+            .repo("amihaiemil", "repo")
+            .issues()
+            .search("", "puzzle");
+        MatcherAssert.assertThat(
+            found, Matchers.iterableWithSize(3)
+        );
+    }
+
+    /**
+     * GithubIssues.search(...) works with no text and no labels
+     * and the received response is 200 OK.
+     */
+    @Test
+    public void searchesIssuesOkNoTextNoLabels() {
+        final User user = Mockito.mock(User.class);
+        Mockito.when(user.username()).thenReturn("amihaiemil");
+        final Provider provider = new Github(
+            user,
+            Mockito.mock(Storage.class),
+            new MockJsonResources(
+                new AccessToken.Github("github123"),
+                req -> {
+                    MatcherAssert.assertThat(
+                        req.getAccessToken().value(),
+                        Matchers.equalTo("token github123")
+                    );
+                    MatcherAssert.assertThat(
+                        req.getMethod(),
+                        Matchers.equalTo("GET")
+                    );
+                    MatcherAssert.assertThat(
+                        req.getBody(),
+                        Matchers.equalTo(JsonObject.NULL)
+                    );
+                    MatcherAssert.assertThat(
+                        req.getUri().toString(),
+                        Matchers.equalTo(
+                            "https://api.github.com/search/issues?"
+                            + "q=repo:amihaiemil/repo"
+                            + "&sort=created&order=desc&per_page=100"
+                        )
+                    );
+                    return new MockJsonResources.MockResource(
+                        HttpURLConnection.HTTP_OK,
+                        Json
+                            .createObjectBuilder()
+                            .add(
+                                "items",
+                                Json.createArrayBuilder()
+                                    .add(
+                                        Json.createObjectBuilder()
+                                            .add("number", 123)
+                                    ).add(
+                                    Json.createObjectBuilder()
+                                        .add("number", 124)
+                                ).add(
+                                    Json.createObjectBuilder()
+                                        .add("number", 125)
+                                )
+                            )
+                            .build()
+                    );
+                }
+            )
+        );
+        final Issues found = provider
+            .repo("amihaiemil", "repo")
+            .issues()
+            .search("");
         MatcherAssert.assertThat(
             found, Matchers.iterableWithSize(3)
         );
@@ -340,7 +472,7 @@ public final class GithubIssuesTestCase {
                         Matchers.equalTo(
                             "https://api.github.com/search/issues?"
                                 + "q=test+repo:amihaiemil/repo+label:puzzle"
-                                + "&sort=created&order=desc"
+                                + "&sort=created&order=desc&per_page=100"
                         )
                     );
                     return new MockJsonResources.MockResource(
@@ -396,7 +528,7 @@ public final class GithubIssuesTestCase {
                         Matchers.equalTo(
                             "https://api.github.com/search/issues?"
                                 + "q=test+repo:amihaiemil/repo+label:puzzle"
-                                + "&sort=created&order=desc"
+                                + "&sort=created&order=desc&per_page=100"
                         )
                     );
                     return new MockJsonResources.MockResource(

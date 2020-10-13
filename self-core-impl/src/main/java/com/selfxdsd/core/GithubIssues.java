@@ -179,7 +179,13 @@ final class GithubIssues implements Issues {
         final String[] uriParts = this.issuesUri.getRawPath().split("/");
         final String repoFullName = uriParts[2] + "/" + uriParts[3];
 
-        String query = "q=" + text + "+repo:" + repoFullName;
+        String query;
+        if(text != null && !text.trim().isEmpty()) {
+            query = "q=" + text + "+repo:" + repoFullName;
+        } else {
+            query = "q=repo:" + repoFullName;
+        }
+
         for(final String label : labels) {
             query = query + "+label:" + label;
         }
@@ -187,7 +193,7 @@ final class GithubIssues implements Issues {
         final URI search = URI
             .create(
                 "https://api.github.com/search/issues?" + query
-                + "&sort=created&order=desc"
+                + "&sort=created&order=desc&per_page=100"
             );
 
         LOG.debug("Searching for Github Issues at: " + search);
