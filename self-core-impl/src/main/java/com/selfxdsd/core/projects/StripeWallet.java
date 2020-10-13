@@ -142,7 +142,7 @@ public final class StripeWallet implements Wallet {
             throw new WalletPaymentException("No cash available in wallet "
                 + "for paying invoice #" + invoice.invoiceId()
                 + ". Please increase the limit from your dashboard with"
-                + " at least " + newLimit.abs()
+                + " at least " + newLimit.abs().add(invoice.totalAmount())
                 .divide(BigDecimal.valueOf(1000), RoundingMode.HALF_UP) + "$."
             );
         }
