@@ -125,7 +125,7 @@ public final class StripeWalletTestCase {
             BigDecimal.valueOf(1000),
             "123StripeID",
             Boolean.TRUE
-        );
+        );  
         final Wallets wallets = Mockito.mock(Wallets.class);
         final Wallets ofProject = Mockito.mock(Wallets.class);
         Mockito.when(wallets.ofProject(project)).thenReturn(ofProject);
@@ -143,5 +143,20 @@ public final class StripeWalletTestCase {
         final Wallet updated = stripe.updateCash(BigDecimal.valueOf(900));
         MatcherAssert.assertThat(updated.cash(), Matchers
             .equalTo(BigDecimal.valueOf(900)));
+    }
+
+    /**
+     * Payment methods is not yet supported.
+     */
+    @Test (expected = UnsupportedOperationException.class)
+    public void paymentMethodsAreNotSupported(){
+        final Wallet stripe = new StripeWallet(
+            Mockito.mock(Storage.class),
+            Mockito.mock(Project.class),
+            BigDecimal.valueOf(1000),
+            "123StripeID",
+            Boolean.TRUE
+        );  
+        stripe.paymentMethods();
     }
 }

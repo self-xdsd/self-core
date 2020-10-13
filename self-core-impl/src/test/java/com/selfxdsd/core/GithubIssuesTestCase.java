@@ -243,4 +243,175 @@ public final class GithubIssuesTestCase {
             .issues()
             .open("Issue for test", "Body of the test Issue...");
     }
+
+    /**
+     * GithubIssues.search(...) works if the received response is 200 OK.
+     */
+    @Test
+    public void searchesIssuesOk() {
+        final User user = Mockito.mock(User.class);
+        Mockito.when(user.username()).thenReturn("amihaiemil");
+        final Provider provider = new Github(
+            user,
+            Mockito.mock(Storage.class),
+            new MockJsonResources(
+                new AccessToken.Github("github123"),
+                req -> {
+                    MatcherAssert.assertThat(
+                        req.getAccessToken().value(),
+                        Matchers.equalTo("token github123")
+                    );
+                    MatcherAssert.assertThat(
+                        req.getMethod(),
+                        Matchers.equalTo("GET")
+                    );
+                    MatcherAssert.assertThat(
+                        req.getBody(),
+                        Matchers.equalTo(JsonObject.NULL)
+                    );
+                    MatcherAssert.assertThat(
+                        req.getUri().toString(),
+                        Matchers.equalTo(
+                            "https://api.github.com/search/issues?"
+                            + "q=test+repo:amihaiemil/repo+label:puzzle"
+                            + "&sort=created&order=desc"
+                        )
+                    );
+                    return new MockJsonResources.MockResource(
+                        HttpURLConnection.HTTP_OK,
+                        Json
+                            .createObjectBuilder()
+                            .add(
+                                "items",
+                                Json.createArrayBuilder()
+                                    .add(
+                                        Json.createObjectBuilder()
+                                            .add("number", 123)
+                                    ).add(
+                                        Json.createObjectBuilder()
+                                            .add("number", 124)
+                                    ).add(
+                                        Json.createObjectBuilder()
+                                            .add("number", 125)
+                                    )
+                            )
+                            .build()
+                    );
+                }
+            )
+        );
+        final Issues found = provider
+            .repo("amihaiemil", "repo")
+            .issues()
+            .search("test", "puzzle");
+        MatcherAssert.assertThat(
+            found, Matchers.iterableWithSize(3)
+        );
+    }
+
+    /**
+     * GithubIssues.search(...) works if the received response is 200 OK
+     * with no results.
+     */
+    @Test
+    public void searchesIssuesOkNoResults() {
+        final User user = Mockito.mock(User.class);
+        Mockito.when(user.username()).thenReturn("amihaiemil");
+        final Provider provider = new Github(
+            user,
+            Mockito.mock(Storage.class),
+            new MockJsonResources(
+                new AccessToken.Github("github123"),
+                req -> {
+                    MatcherAssert.assertThat(
+                        req.getAccessToken().value(),
+                        Matchers.equalTo("token github123")
+                    );
+                    MatcherAssert.assertThat(
+                        req.getMethod(),
+                        Matchers.equalTo("GET")
+                    );
+                    MatcherAssert.assertThat(
+                        req.getBody(),
+                        Matchers.equalTo(JsonObject.NULL)
+                    );
+                    MatcherAssert.assertThat(
+                        req.getUri().toString(),
+                        Matchers.equalTo(
+                            "https://api.github.com/search/issues?"
+                                + "q=test+repo:amihaiemil/repo+label:puzzle"
+                                + "&sort=created&order=desc"
+                        )
+                    );
+                    return new MockJsonResources.MockResource(
+                        HttpURLConnection.HTTP_OK,
+                        Json
+                            .createObjectBuilder()
+                            .add(
+                                "items",
+                                Json.createArrayBuilder()
+                            )
+                            .build()
+                    );
+                }
+            )
+        );
+        final Issues found = provider
+            .repo("amihaiemil", "repo")
+            .issues()
+            .search("test", "puzzle");
+        MatcherAssert.assertThat(
+            found, Matchers.emptyIterable()
+        );
+    }
+
+    /**
+     * GithubIssues.search(...) works if the received response is NOT 200 OK.
+     * It should return an empty iterable of Issues.
+     */
+    @Test
+    public void searchesIssuesNotOk() {
+        final User user = Mockito.mock(User.class);
+        Mockito.when(user.username()).thenReturn("amihaiemil");
+        final Provider provider = new Github(
+            user,
+            Mockito.mock(Storage.class),
+            new MockJsonResources(
+                new AccessToken.Github("github123"),
+                req -> {
+                    MatcherAssert.assertThat(
+                        req.getAccessToken().value(),
+                        Matchers.equalTo("token github123")
+                    );
+                    MatcherAssert.assertThat(
+                        req.getMethod(),
+                        Matchers.equalTo("GET")
+                    );
+                    MatcherAssert.assertThat(
+                        req.getBody(),
+                        Matchers.equalTo(JsonObject.NULL)
+                    );
+                    MatcherAssert.assertThat(
+                        req.getUri().toString(),
+                        Matchers.equalTo(
+                            "https://api.github.com/search/issues?"
+                                + "q=test+repo:amihaiemil/repo+label:puzzle"
+                                + "&sort=created&order=desc"
+                        )
+                    );
+                    return new MockJsonResources.MockResource(
+                        HttpURLConnection.HTTP_NO_CONTENT,
+                        Json.createObjectBuilder().build()
+                    );
+                }
+            )
+        );
+        final Issues found = provider
+            .repo("amihaiemil", "repo")
+            .issues()
+            .search("test", "puzzle");
+        MatcherAssert.assertThat(
+            found, Matchers.emptyIterable()
+        );
+    }
 }
