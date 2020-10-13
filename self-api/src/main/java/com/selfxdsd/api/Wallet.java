@@ -96,6 +96,7 @@ public interface Wallet {
      */
     Wallet updateCash(BigDecimal cash);
 
+    /**
      * Payment methods of this Wallet.
      * @return PaymentMethods
      */
