@@ -151,6 +151,7 @@ public final class StripeWalletTestCase {
     @Test (expected = UnsupportedOperationException.class)
     public void paymentMethodsAreNotSupported(){
         final Wallet stripe = new StripeWallet(
+            Mockito.mock(Storage.class),
             Mockito.mock(Project.class),
             BigDecimal.valueOf(1000),
             "123StripeID",

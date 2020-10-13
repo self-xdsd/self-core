@@ -175,6 +175,11 @@ public final class StoredPaymentMethodTestCase {
             }
 
             @Override
+            public Wallet updateCash(final BigDecimal cash) {
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
             public PaymentMethods paymentMethods() {
                 throw new UnsupportedOperationException();
             }
