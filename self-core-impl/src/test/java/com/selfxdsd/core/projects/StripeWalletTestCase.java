@@ -113,6 +113,7 @@ public final class StripeWalletTestCase {
     }
 
     /**
+<<<<<<<<< Temporary merge branch 1
      * Wallet cash limit can be updated.
      */
     @Test
