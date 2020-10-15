@@ -27,8 +27,6 @@ package com.selfxdsd.api;
  * @author criske
  * @version $Id$
  * @since 0.0.26
- * @todo #608:60min Provide implementation and unit tests for
- *  PaymentMethods#ofWallet(...).
  */
 public interface PaymentMethods extends Iterable<PaymentMethod> {
 
