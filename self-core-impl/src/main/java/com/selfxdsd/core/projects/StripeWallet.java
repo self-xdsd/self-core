@@ -22,22 +22,27 @@
  */
 package com.selfxdsd.core.projects;
 
-import com.selfxdsd.api.Invoice;
-import com.selfxdsd.api.PaymentMethods;
-import com.selfxdsd.api.Project;
-import com.selfxdsd.api.Wallet;
+import com.selfxdsd.api.*;
+import com.selfxdsd.api.exceptions.InvoiceException;
+import com.selfxdsd.api.exceptions.WalletPaymentException;
 import com.selfxdsd.api.storage.Storage;
+import com.selfxdsd.core.Env;
+import com.selfxdsd.core.contracts.invoices.StoredInvoice;
+import com.stripe.Stripe;
+import com.stripe.exception.StripeException;
+import com.stripe.model.PaymentIntent;
+import com.stripe.param.PaymentIntentCreateParams;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 /**
  * A Project's Stripe wallet.
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.27
- * @todo #604:60min Implement method pay(...) here as soon as
- *  we have a Wallets PaymentMethods available. We should always
- *  try to use the active PaymentMethod first.
  * @todo #609:15min Implement equals() and hashCode() for StripeWallet since
  *  StoredPaymentMethod is using Wallet for its equals and hashCode methods.
  */
@@ -69,6 +74,36 @@ public final class StripeWallet implements Wallet {
     private final String identifier;
 
     /**
+     * Stripe API token.
+     */
+    private final String stripeApiToken;
+
+    /**
+     * Ctor.
+     * @param storage Self storage.
+     * @param project Project to which this wallet belongs/
+     * @param limit Cash limit we're allowed to use.
+     * @param identifier Wallet identifier from Stripe's side.
+     * @param active Is this wallet active or not?
+     * @param stripeApiToken Stripe API token.
+     */
+    StripeWallet(
+        final Storage storage,
+        final Project project,
+        final BigDecimal limit,
+        final String identifier,
+        final boolean active,
+        final String stripeApiToken
+    ) {
+        this.storage = storage;
+        this.project = project;
+        this.identifier = identifier;
+        this.limit = limit;
+        this.active = active;
+        this.stripeApiToken = stripeApiToken;
+    }
+
+    /**
      * Ctor.
      * @param storage Self storage.
      * @param project Project to which this wallet belongs/
@@ -83,11 +118,12 @@ public final class StripeWallet implements Wallet {
         final String identifier,
         final boolean active
     ) {
-        this.storage = storage;
-        this.project = project;
-        this.identifier = identifier;
-        this.limit = limit;
-        this.active = active;
+        this(storage,
+            project,
+            limit,
+            identifier,
+            active,
+            System.getenv(Env.STRIPE_API_TOKEN));
     }
 
     @Override
@@ -96,8 +132,97 @@ public final class StripeWallet implements Wallet {
     }
 
     @Override
-    public Invoice pay(final Invoice invoice) {
-        throw new UnsupportedOperationException("Not yet implemented.");
+    public Wallet pay(final Invoice invoice) {
+        if (invoice.isPaid()) {
+            throw new InvoiceException.AlreadyPaid(invoice);
+        }
+
+        final BigDecimal newLimit = this.limit.subtract(invoice.totalAmount());
+        if (newLimit.longValueExact() < 0L) {
+            throw new WalletPaymentException("No cash available in wallet "
+                + "for paying invoice #" + invoice.invoiceId()
+                + ". Please increase the limit from your dashboard with"
+                + " at least " + newLimit.abs().add(invoice.totalAmount())
+                .divide(BigDecimal.valueOf(1000), RoundingMode.HALF_UP) + "$."
+            );
+        }
+
+        ensureApiToken();
+
+        try {
+            final Contributor contributor = invoice.contract().contributor();
+            final PayoutMethod payoutMethod = this.storage
+                .payoutMethods()
+                .ofContributor(contributor)
+                .active();
+            if (payoutMethod == null) {
+                throw new WalletPaymentException(
+                    "No active payout method for contributor "
+                        + contributor.username()
+                );
+            }
+            final PaymentMethod paymentMethod = this.storage
+                .paymentMethods()
+                .ofWallet(this)
+                .active();
+            if (paymentMethod == null) {
+                throw new WalletPaymentException(
+                    "No active payment method for wallet #"
+                        + this.identifier + " of project "
+                        + this.project.repoFullName() + "/"
+                        + this.project.provider()
+                );
+            }
+            final PaymentIntent paymentIntent = PaymentIntent
+                .create(PaymentIntentCreateParams.builder()
+                    .setCurrency("usd")
+                    .setAmount(invoice.totalAmount().longValueExact())
+                    .setCustomer(payoutMethod.identifier())
+                    .setPaymentMethod(paymentMethod.identifier())
+                    .setConfirm(true)
+                    .build());
+
+            final String status = paymentIntent.getStatus();
+            if ("succeeded".equals(status) || "processing".equals(status)) {
+                final LocalDateTime paymentDate = LocalDateTime
+                    .ofEpochSecond(paymentIntent.getCreated(),
+                        0, OffsetDateTime.now().getOffset());
+                this.storage.invoices()
+                    .registerAsPaid(new StoredInvoice(
+                        invoice.invoiceId(),
+                        invoice.contract(),
+                        invoice.createdAt(),
+                        paymentDate,
+                        paymentIntent.getId(),
+                        this.storage)
+                    );
+            } else {
+                throw new WalletPaymentException(
+                    "Could not pay invoice #" + invoice.invoiceId() + " due to"
+                        + " Stripe payment intent status \"" + status + "\""
+                );
+            }
+        } catch (final StripeException ex) {
+            throw new IllegalStateException(
+                "Stripe threw an exception when trying execute PaymentIntent"
+                    + " for invoice #" + invoice.invoiceId(),
+                ex
+            );
+        }
+        return this.updateCash(newLimit);
+    }
+
+    /**
+     * Ensure that Stripe API token is set.
+     */
+    private void ensureApiToken() {
+        if (this.stripeApiToken == null
+            || this.stripeApiToken.trim().isEmpty()) {
+            throw new WalletPaymentException(
+                "Please specify the self_stripe_token Environment Variable!"
+            );
+        }
+        Stripe.apiKey = this.stripeApiToken;
     }
 
     @Override
@@ -125,6 +250,6 @@ public final class StripeWallet implements Wallet {
 
     @Override
     public PaymentMethods paymentMethods() {
-        throw new UnsupportedOperationException("Not implemented yet");
+        return this.storage.paymentMethods().ofWallet(this);
     }
 }

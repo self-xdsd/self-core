@@ -24,6 +24,7 @@ package com.selfxdsd.core;
 
 import com.selfxdsd.api.*;
 import com.selfxdsd.api.exceptions.InvoiceException;
+import com.selfxdsd.api.exceptions.WalletPaymentException;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -128,18 +129,12 @@ public final class MissingWalletTestCase {
         );
         final Invoice invoice = Mockito.mock(Invoice.class);
         Mockito.when(invoice.isPaid()).thenReturn(Boolean.FALSE);
+        Mockito.when(invoice.totalAmount()).thenReturn(BigDecimal.valueOf(1));
 
-        final Invoice paid = wallet.pay(invoice);
+        final Wallet paid = wallet.pay(invoice);
 
-        MatcherAssert.assertThat(paid.isPaid(), Matchers.is(Boolean.TRUE));
-        MatcherAssert.assertThat(paid.paymentTime(), Matchers.notNullValue());
-        MatcherAssert.assertThat(
-            paid.transactionId(),
-            Matchers.allOf(
-                Matchers.notNullValue(),
-                Matchers.startsWith("fk-")
-            )
-        );
+        MatcherAssert.assertThat(paid.cash(), Matchers
+            .equalTo(BigDecimal.valueOf(99_999_999)));
     }
 
     /**
@@ -157,6 +152,24 @@ public final class MissingWalletTestCase {
         final Invoice paid = Mockito.mock(Invoice.class);
         Mockito.when(paid.isPaid()).thenReturn(Boolean.TRUE);
         wallet.pay(paid);
+    }
+
+    /**
+     * The Missing wallet should throw an exception if we try to pay
+     * an Invoice and there are not enough cash.
+     */
+    @Test(expected = WalletPaymentException.class)
+    public void complainsWhenNoCashAvailable() {
+        final Wallet wallet = new Wallet.Missing(
+            Mockito.mock(Project.class),
+            BigDecimal.valueOf(100_000_000),
+            Boolean.TRUE,
+            "fake-123w"
+        );
+        final Invoice invoice = Mockito.mock(Invoice.class);
+        Mockito.when(invoice.totalAmount())
+            .thenReturn(BigDecimal.valueOf(100_000_001));
+        wallet.pay(invoice);
     }
 
     /**

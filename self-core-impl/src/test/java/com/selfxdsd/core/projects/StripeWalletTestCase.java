@@ -22,10 +22,9 @@
  */
 package com.selfxdsd.core.projects;
 
-import com.selfxdsd.api.Invoice;
-import com.selfxdsd.api.Project;
-import com.selfxdsd.api.Wallet;
-import com.selfxdsd.api.Wallets;
+import com.selfxdsd.api.*;
+import com.selfxdsd.api.exceptions.InvoiceException;
+import com.selfxdsd.api.exceptions.WalletPaymentException;
 import com.selfxdsd.api.storage.Storage;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -39,6 +38,7 @@ import java.math.BigDecimal;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.27
+ * @checkstyle ExecutableStatementCount (1000 lines).
  */
 public final class StripeWalletTestCase {
 
@@ -98,21 +98,6 @@ public final class StripeWalletTestCase {
     }
 
     /**
-     * Pay method is not yet supported.
-     */
-    @Test (expected = UnsupportedOperationException.class)
-    public void payIsNotYetSupported() {
-        final Wallet stripe = new StripeWallet(
-            Mockito.mock(Storage.class),
-            Mockito.mock(Project.class),
-            BigDecimal.valueOf(1000),
-            "123StripeID",
-            Boolean.TRUE
-        );
-        stripe.pay(Mockito.mock(Invoice.class));
-    }
-
-    /**
      * Wallet cash limit can be updated.
      */
     @Test
@@ -146,17 +131,125 @@ public final class StripeWalletTestCase {
     }
 
     /**
-     * Payment methods is not yet supported.
+     * Wallet has payment methods.
      */
-    @Test (expected = UnsupportedOperationException.class)
-    public void paymentMethodsAreNotSupported(){
+    @Test
+    public void hasPaymentMethods(){
+        final PaymentMethods all = Mockito.mock(PaymentMethods.class);
+        final PaymentMethods ofWallet = Mockito.mock(PaymentMethods.class);
+        final Storage storage = Mockito.mock(Storage.class);
         final Wallet stripe = new StripeWallet(
-            Mockito.mock(Storage.class),
+            storage,
             Mockito.mock(Project.class),
             BigDecimal.valueOf(1000),
             "123StripeID",
             Boolean.TRUE
         );
-        stripe.paymentMethods();
+
+        Mockito.when(storage.paymentMethods()).thenReturn(all);
+        Mockito.when(all.ofWallet(stripe)).thenReturn(ofWallet);
+
+        MatcherAssert.assertThat(stripe.paymentMethods(),
+            Matchers.equalTo(ofWallet));
+    }
+
+    /**
+     * Wallet.pay(...) throws if the Invoice is already paid.
+     */
+    @Test(expected = InvoiceException.AlreadyPaid.class)
+    public void complainsIfInvoiceIsAlreadyPaid(){
+        final Invoice invoice = Mockito.mock(Invoice.class);
+        Mockito.when(invoice.isPaid()).thenReturn(true);
+
+        new StripeWallet(
+            Mockito.mock(Storage.class),
+            Mockito.mock(Project.class),
+            BigDecimal.TEN,
+            "id",
+            true
+        ).pay(invoice);
+    }
+
+    /**
+     * Wallet.pay(...) throws if the is no active payout method.
+     */
+    @Test(expected = WalletPaymentException.class)
+    public void complainsIfThereIsNoActivePayout(){
+        final Invoice invoice = Mockito.mock(Invoice.class);
+        Mockito.when(invoice.isPaid()).thenReturn(false);
+        Mockito.when(invoice.totalAmount()).thenReturn(BigDecimal.TEN);
+
+        final Storage storage = Mockito.mock(Storage.class);
+
+        final Contract contract = Mockito.mock(Contract.class);
+        final Contributor contributor = Mockito.mock(Contributor.class);
+        Mockito.when(contract.contributor()).thenReturn(contributor);
+        Mockito.when(invoice.contract()).thenReturn(contract);
+
+        final PayoutMethods allPayoutsMethods = Mockito
+            .mock(PayoutMethods.class);
+        final PayoutMethods payoutsOfContrib = Mockito
+            .mock(PayoutMethods.class);
+
+        Mockito.when(storage.payoutMethods()).thenReturn(allPayoutsMethods);
+        Mockito.when(allPayoutsMethods.ofContributor(contributor))
+            .thenReturn(payoutsOfContrib);
+
+        new StripeWallet(
+            storage,
+            Mockito.mock(Project.class),
+            BigDecimal.TEN,
+            "id",
+            true,
+            "stripe_token_123"
+        ).pay(invoice);
+    }
+
+    /**
+     * Wallet.pay(...) throws if the is no active payment method.
+     */
+    @Test(expected = WalletPaymentException.class)
+    public void complainsIfThereIsNoActivePaymentMethod(){
+        final Invoice invoice = Mockito.mock(Invoice.class);
+        Mockito.when(invoice.isPaid()).thenReturn(false);
+        Mockito.when(invoice.totalAmount()).thenReturn(BigDecimal.TEN);
+
+        final Storage storage = Mockito.mock(Storage.class);
+
+        final Contract contract = Mockito.mock(Contract.class);
+        final Contributor contributor = Mockito.mock(Contributor.class);
+        Mockito.when(contract.contributor()).thenReturn(contributor);
+        Mockito.when(invoice.contract()).thenReturn(contract);
+
+        final PayoutMethods allPayoutsMethods = Mockito
+            .mock(PayoutMethods.class);
+        final PayoutMethods payoutsOfContrib = Mockito
+            .mock(PayoutMethods.class);
+        final PayoutMethod payoutMethod = Mockito.mock(PayoutMethod.class);
+
+        Mockito.when(storage.payoutMethods()).thenReturn(allPayoutsMethods);
+        Mockito.when(allPayoutsMethods.ofContributor(contributor))
+            .thenReturn(payoutsOfContrib);
+        Mockito.when(payoutsOfContrib.active()).thenReturn(payoutMethod);
+        Mockito.when(payoutMethod.identifier()).thenReturn("ac_123");
+
+        final Wallet stripe = new StripeWallet(
+            storage,
+            Mockito.mock(Project.class),
+            BigDecimal.TEN,
+            "id",
+            true,
+            "stripe_token_123"
+        );
+        final PaymentMethods allPaymentMethods = Mockito
+            .mock(PaymentMethods.class);
+        final PaymentMethods paymentsOfWallet = Mockito
+            .mock(PaymentMethods.class);
+        Mockito.when(storage.paymentMethods())
+            .thenReturn(allPaymentMethods);
+        Mockito.when(allPaymentMethods.ofWallet(stripe))
+            .thenReturn(paymentsOfWallet);
+
+        stripe.pay(invoice);
     }
 }

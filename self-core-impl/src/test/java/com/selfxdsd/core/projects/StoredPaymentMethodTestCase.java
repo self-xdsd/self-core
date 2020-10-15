@@ -155,7 +155,7 @@ public final class StoredPaymentMethodTestCase {
             }
 
             @Override
-            public Invoice pay(final Invoice invoice) {
+            public Wallet pay(final Invoice invoice) {
                 throw new UnsupportedOperationException();
             }
 

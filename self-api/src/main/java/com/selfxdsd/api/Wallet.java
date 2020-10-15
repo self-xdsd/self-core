@@ -24,11 +24,11 @@ package com.selfxdsd.api;
 
 import com.selfxdsd.api.exceptions.InvoiceException;
 import com.selfxdsd.api.exceptions.PaymentMethodsException;
+import com.selfxdsd.api.exceptions.WalletPaymentException;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.math.RoundingMode;
 import java.util.Iterator;
-import java.util.UUID;
 
 /**
  * A project's wallet.
@@ -66,10 +66,10 @@ public interface Wallet {
     /**
      * Pay an invoice.
      * @param invoice The Invoice to be paid.
-     * @return The paid Invoice containing the payment time and transaction ID.
+     * @return Wallet having cash deducted with Invoice amount.
      * @throws InvoiceException.AlreadyPaid If the Invoice is already paid.
      */
-    Invoice pay(final Invoice invoice);
+    Wallet pay(final Invoice invoice);
 
     /**
      * Type of this wallet.
@@ -158,66 +158,22 @@ public interface Wallet {
         }
 
         @Override
-        public Invoice pay(final Invoice invoice) {
+        public Wallet pay(final Invoice invoice) {
             if(invoice.isPaid()) {
                 throw new InvoiceException.AlreadyPaid(invoice);
             }
-            final LocalDateTime paymentTime = LocalDateTime.now();
-            final String transactionId = "fk-" + UUID
-                .randomUUID()
-                .toString()
-                .replace("-", "");
-            return new Invoice() {
-                @Override
-                public int invoiceId() {
-                    return invoice.invoiceId();
-                }
-
-                @Override
-                public InvoicedTask register(
-                    final Task task,
-                    final BigDecimal commission
-                ) {
-                    throw new IllegalStateException(
-                        "Invoice is already paid, can't add a new Task to it!"
-                    );
-                }
-
-                @Override
-                public Contract contract() {
-                    return invoice.contract();
-                }
-
-                @Override
-                public LocalDateTime createdAt() {
-                    return invoice.createdAt();
-                }
-
-                @Override
-                public LocalDateTime paymentTime() {
-                    return paymentTime;
-                }
-
-                @Override
-                public String transactionId() {
-                    return transactionId;
-                }
-
-                @Override
-                public InvoicedTasks tasks() {
-                    return invoice.tasks();
-                }
-
-                @Override
-                public BigDecimal totalAmount() {
-                    return invoice.totalAmount();
-                }
-
-                @Override
-                public boolean isPaid() {
-                    return true;
-                }
-            };
+            final BigDecimal newCash = this.cash.subtract(invoice
+                .totalAmount());
+            if (newCash.longValueExact() < 0L) {
+                throw new WalletPaymentException("No cash available in wallet "
+                    + "for paying invoice #" + invoice.invoiceId()
+                    + ". Please increase the limit from your dashboard with"
+                    + " at least " + newCash.abs().divide(BigDecimal
+                    .valueOf(1000), RoundingMode.HALF_UP) + "$."
+                );
+            }
+            return new Missing(this.project, newCash, this.active,
+                this.identifier);
         }
 
         @Override
