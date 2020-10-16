@@ -29,6 +29,7 @@ import com.selfxdsd.api.exceptions.WalletPaymentException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Iterator;
+import java.util.Objects;
 
 /**
  * A project's wallet.
@@ -238,6 +239,28 @@ public interface Wallet {
                         + "a missing wallet payment methods.");
                 }
             };
+        }
+
+        @Override
+        public boolean equals(final Object other) {
+            boolean equals;
+            if (this == other) {
+                equals = true;
+            } else {
+                if (other == null || getClass() != other.getClass()) {
+                    equals = false;
+                } else {
+                    final Missing missing = (Missing) other;
+                    equals = this.project.equals(missing.project)
+                        && this.type.equals(missing.type);
+                }
+            }
+            return equals;
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(this.project, this.type);
         }
     }
 

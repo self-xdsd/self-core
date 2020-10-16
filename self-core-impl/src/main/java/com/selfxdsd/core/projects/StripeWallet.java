@@ -37,14 +37,13 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
+import java.util.Objects;
 
 /**
  * A Project's Stripe wallet.
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.27
- * @todo #609:15min Implement equals() and hashCode() for StripeWallet since
- *  StoredPaymentMethod is using Wallet for its equals and hashCode methods.
  */
 public final class StripeWallet implements Wallet {
 
@@ -251,5 +250,26 @@ public final class StripeWallet implements Wallet {
     @Override
     public PaymentMethods paymentMethods() {
         return this.storage.paymentMethods().ofWallet(this);
+    }
+
+    @Override
+    public boolean equals(final Object other) {
+        boolean equals;
+        if (this == other) {
+            equals = true;
+        } else {
+            if (other == null || getClass() != other.getClass()) {
+                equals = false;
+            } else {
+                final StripeWallet stripeWallet = (StripeWallet) other;
+                equals = this.project.equals(stripeWallet.project);
+            }
+        }
+        return equals;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.project);
     }
 }
