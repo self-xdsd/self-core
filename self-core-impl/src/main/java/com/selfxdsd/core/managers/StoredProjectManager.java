@@ -225,22 +225,33 @@ public final class StoredProjectManager implements ProjectManager {
 
     @Override
     public void newIssue(final Event event) {
-        final Project project = event.project();
-        final Issue issue = event.issue();
-        project.tasks().register(issue);
-        final String reply;
-        if(issue.isPullRequest()) {
-            reply = String.format(
-                project.language().reply("newPullRequest.comment"),
-                issue.author()
-            );
-        } else {
-            reply = String.format(
-                project.language().reply("newIssue.comment"),
-                issue.author()
-            );
-        }
-        issue.comments().post(reply);
+        final Step steps = new IssueHasLabel(
+            "no-task",
+            hasLabel -> LOG.debug(
+                "New Issue is labeled 'no-task'. "
+              + "Will not register it."
+            ),
+            new RegisterIssue(
+                then -> {
+                    final Project project = then.project();
+                    final Issue issue = then.issue();
+                    final String reply;
+                    if(issue.isPullRequest()) {
+                        reply = String.format(
+                            project.language().reply("newPullRequest.comment"),
+                            issue.author()
+                        );
+                    } else {
+                        reply = String.format(
+                            project.language().reply("newIssue.comment"),
+                            issue.author()
+                        );
+                    }
+                    issue.comments().post(reply);
+                }
+            )
+        );
+        steps.perform(event);
     }
 
     @Override

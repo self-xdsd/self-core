@@ -22,6 +22,7 @@
 package com.selfxdsd.core.managers;
 
 import com.selfxdsd.api.*;
+import com.selfxdsd.api.storage.Labels;
 import com.selfxdsd.api.storage.Storage;
 import com.selfxdsd.core.Github;
 import com.selfxdsd.core.mock.InMemory;
@@ -257,7 +258,11 @@ public final class StoredProjectManagerTestCase {
             BigDecimal.valueOf(50),
             Mockito.mock(Storage.class)
         );
+        final Labels labels = Mockito.mock(Labels.class);
+        Mockito.when(labels.iterator())
+            .thenReturn(new ArrayList<Label>().iterator());
         final Issue issue = Mockito.mock(Issue.class);
+        Mockito.when(issue.labels()).thenReturn(labels);
         Mockito.when(issue.issueId()).thenReturn("1");
         Mockito.when(issue.author()).thenReturn("mihai");
         Mockito.when(issue.repoFullName()).thenReturn("mihai/test");
