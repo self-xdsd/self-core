@@ -30,8 +30,8 @@ import com.selfxdsd.core.Env;
 import com.selfxdsd.core.contracts.invoices.StoredInvoice;
 import com.stripe.Stripe;
 import com.stripe.exception.StripeException;
-import com.stripe.model.PaymentIntent;
-import com.stripe.param.PaymentIntentCreateParams;
+import com.stripe.model.Transfer;
+import com.stripe.param.TransferCreateParams;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -172,35 +172,27 @@ public final class StripeWallet implements Wallet {
                         + this.project.provider()
                 );
             }
-            final PaymentIntent paymentIntent = PaymentIntent
-                .create(PaymentIntentCreateParams.builder()
+            final Transfer transfer = Transfer
+                .create(TransferCreateParams
+                    .builder()
                     .setCurrency("usd")
                     .setAmount(invoice.totalAmount().longValueExact())
-                    .setCustomer(payoutMethod.identifier())
-                    .setPaymentMethod(paymentMethod.identifier())
-                    .setConfirm(true)
-                    .build());
-
-            final String status = paymentIntent.getStatus();
-            if ("succeeded".equals(status) || "processing".equals(status)) {
-                final LocalDateTime paymentDate = LocalDateTime
-                    .ofEpochSecond(paymentIntent.getCreated(),
-                        0, OffsetDateTime.now().getOffset());
-                this.storage.invoices()
-                    .registerAsPaid(new StoredInvoice(
-                        invoice.invoiceId(),
-                        invoice.contract(),
-                        invoice.createdAt(),
-                        paymentDate,
-                        paymentIntent.getId(),
-                        this.storage)
-                    );
-            } else {
-                throw new WalletPaymentException(
-                    "Could not pay invoice #" + invoice.invoiceId() + " due to"
-                        + " Stripe payment intent status \"" + status + "\""
+                    .setDestination(payoutMethod.identifier())
+                    .build()
                 );
-            }
+            final LocalDateTime paymentDate = LocalDateTime
+                .ofEpochSecond(transfer.getCreated(),
+                    0, OffsetDateTime.now().getOffset());
+            this.storage.invoices()
+                .registerAsPaid(new StoredInvoice(
+                    invoice.invoiceId(),
+                    invoice.contract(),
+                    invoice.createdAt(),
+                    paymentDate,
+                    transfer.getSourceTransaction(),
+                    this.storage)
+                );
+
         } catch (final StripeException ex) {
             throw new IllegalStateException(
                 "Stripe threw an exception when trying execute PaymentIntent"

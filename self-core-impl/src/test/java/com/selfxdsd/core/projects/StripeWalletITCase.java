@@ -67,9 +67,11 @@ public final class StripeWalletITCase {
                     new MkAnswer.Simple(
                         HttpURLConnection.HTTP_OK,
                         Json.createObjectBuilder()
-                            .add("id", "pi_1DiKBG2eZvKYlo2CRcpuIHvu")
+                            .add("object", "transfer")
+                            .add("id", "tr_1HcR1u2eZvKYlo2CymGXCe0A")
                             .add("created", 1545045758)
-                            .add("status", "succeeded")
+                            .add("source_transaction",
+                                "ch_1HcR1u2eZvKYlo2CpdCWZnIK")
                             .build()
                             .toString()
                     )
