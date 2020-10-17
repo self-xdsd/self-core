@@ -72,7 +72,7 @@ public interface Wallets extends Iterable<Wallet> {
 
     /**
      * Updates the total cash limit.
-     * <br/><br/>
+     * <br><br>
      * There are two scenarios when this method is used:
      * <ul>
      *  <li>When user update the limit from their dashboard.</li>
