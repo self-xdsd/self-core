@@ -30,7 +30,7 @@ import javax.json.JsonObject;
  * A Github Label.
  * @author criske
  * @version $Id$
- * @since 0.0.29
+ * @since 0.0.30
  */
 final class GithubLabel implements Label {
 

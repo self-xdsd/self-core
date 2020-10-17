@@ -226,8 +226,10 @@ final class GithubIssues implements Issues {
 
     @Override
     public Labels labels() {
-        final URI labelsUri = URI.create(this.issuesUri.toString() + "/labels");
-        return new GithubIssueLabels(labelsUri, this.resources);
+        return new GithubIssueLabels(
+            URI.create(this.issuesUri.toString() + "/labels"),
+            this.resources
+        );
     }
 
     @Override

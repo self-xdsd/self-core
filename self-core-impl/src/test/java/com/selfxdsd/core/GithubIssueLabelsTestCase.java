@@ -37,7 +37,7 @@ import java.net.URI;
  * Unit tests for {@link GithubIssueLabels}.
  * @author criske
  * @version $Id$
- * @since 0.0.29
+ * @since 0.0.30
  */
 public final class GithubIssueLabelsTestCase {
 

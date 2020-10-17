@@ -34,7 +34,7 @@ import javax.json.JsonObject;
  * Unit tests for {@link GithubLabel}.
  * @author criske
  * @version $Id$
- * @since 0.0.29
+ * @since 0.0.30
  */
 public final class GithubLabelTestCase {
 

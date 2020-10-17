@@ -38,7 +38,7 @@ import java.util.stream.Collectors;
  * A Github Issue Labels.
  * @author criske
  * @version $Id$
- * @since 0.0.29
+ * @since 0.0.30
  */
 final class GithubIssueLabels implements Labels {
 

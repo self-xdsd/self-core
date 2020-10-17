@@ -28,7 +28,7 @@ import com.selfxdsd.api.Label;
  * Labels for Provider Repo resource (Issue, Milestone etc...).
  * @author criske
  * @version $Id$
- * @since 0.0.29
+ * @since 0.0.30
  */
 public interface Labels extends Iterable<Label> {
 
