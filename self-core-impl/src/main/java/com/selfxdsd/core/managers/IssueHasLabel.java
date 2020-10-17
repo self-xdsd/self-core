@@ -24,6 +24,7 @@ package com.selfxdsd.core.managers;
 
 import com.selfxdsd.api.Event;
 import com.selfxdsd.api.Issue;
+import com.selfxdsd.api.Label;
 import com.selfxdsd.api.Project;
 import com.selfxdsd.api.pm.PreconditionCheck;
 import com.selfxdsd.api.pm.Step;
@@ -75,5 +76,29 @@ public final class IssueHasLabel extends PreconditionCheck {
             + " at " + project.provider() + " has the label ["
             + this.label + "]..."
         );
+        boolean hasLabel = false;
+        for(final Label label : issue.labels()) {
+            if(this.label.equalsIgnoreCase(label.name())) {
+                hasLabel = true;
+                break;
+            }
+        }
+        if(hasLabel) {
+            LOG.debug(
+                "Issue #" + issue.issueId()
+                + " from Project " + project.repoFullName()
+                + " at " + project.provider() + " does have the label ["
+                + this.label + "]!"
+            );
+            this.onTrue().perform(event);
+        } else {
+            LOG.debug(
+                "Issue #" + issue.issueId()
+                + " from Project " + project.repoFullName()
+                + " at " + project.provider() + " does NOT have the label ["
+                + this.label + "]!"
+            );
+            this.onFalse().perform(event);
+        }
     }
 }
