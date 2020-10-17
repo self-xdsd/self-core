@@ -24,6 +24,7 @@ package com.selfxdsd.core;
 
 import com.selfxdsd.api.Issue;
 import com.selfxdsd.api.Issues;
+import com.selfxdsd.api.storage.Labels;
 import com.selfxdsd.api.storage.Storage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -221,6 +222,12 @@ final class GithubIssues implements Issues {
             );
         }
         return new FoundIssues(this, found);
+    }
+
+    @Override
+    public Labels labels() {
+        final URI labelsUri = URI.create(this.issuesUri.toString() + "/labels");
+        return new GithubIssueLabels(labelsUri, this.resources);
     }
 
     @Override

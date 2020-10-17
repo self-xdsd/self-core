@@ -20,60 +20,41 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package com.selfxdsd.api;
+package com.selfxdsd.core;
 
-import com.selfxdsd.api.storage.Labels;
+import com.selfxdsd.api.Label;
 
 import javax.json.JsonObject;
 
 /**
- * Issues in a repository.
- * @author Mihai Andronache (amihaiemil@gmail.com)
+ * A Github Label.
+ * @author criske
  * @version $Id$
- * @since 0.0.1
+ * @since 0.0.29
  */
-public interface Issues extends Iterable<Issue> {
+final class GithubLabel implements Label {
 
     /**
-     * Get an Issue.
-     * @param issueId Issue's ID.
-     * @return Issue or null if it's not found.
+     * Label as JSON.
      */
-    Issue getById(final String issueId);
+    private final JsonObject json;
 
     /**
-     * Get an Issue from an existing JsonObject which
-     * Self may receive as part of an event sent
-     * by the Provider.
-     * @param issue The issue's JSON representation.
-     * @return Issue.
+     * Ctor.
+     * @param json Label as JSON.
      */
-    Issue received(final JsonObject issue);
+    GithubLabel(final JsonObject json) {
+        this.json = json;
+    }
 
-    /**
-     * Open a new Issue.
-     * @param title Title of the Issue.
-     * @param body Text body.
-     * @param labels Labels to attach to the Issue.
-     * @return The opened Issue.
-     */
-    Issue open(
-        final String title,
-        final String body,
-        final String... labels
-    );
 
-    /**
-     * Search some issues after text and labels.
-     * @param text Search text.
-     * @param labels Labels that the issue should have.
-     * @return Issues.
-     */
-    Issues search(final String text, final String... labels);
+    @Override
+    public String name() {
+        return this.json.getString("name");
+    }
 
-    /**
-     * Labels of this Issue.
-     * @return Issues.
-     */
-    Labels labels();
+    @Override
+    public JsonObject json() {
+        return this.json;
+    }
 }

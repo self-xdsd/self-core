@@ -22,58 +22,25 @@
  */
 package com.selfxdsd.api;
 
-import com.selfxdsd.api.storage.Labels;
-
 import javax.json.JsonObject;
 
 /**
- * Issues in a repository.
- * @author Mihai Andronache (amihaiemil@gmail.com)
+ * Label for Provider Repo resource (Issue, Milestone etc...).
+ * @author criske
  * @version $Id$
- * @since 0.0.1
+ * @since 0.0.29
  */
-public interface Issues extends Iterable<Issue> {
+public interface Label {
 
     /**
-     * Get an Issue.
-     * @param issueId Issue's ID.
-     * @return Issue or null if it's not found.
+     * Label name.
+     * @return String.
      */
-    Issue getById(final String issueId);
+    String name();
 
     /**
-     * Get an Issue from an existing JsonObject which
-     * Self may receive as part of an event sent
-     * by the Provider.
-     * @param issue The issue's JSON representation.
-     * @return Issue.
+     * Label as JSON.
+     * @return JSON.
      */
-    Issue received(final JsonObject issue);
-
-    /**
-     * Open a new Issue.
-     * @param title Title of the Issue.
-     * @param body Text body.
-     * @param labels Labels to attach to the Issue.
-     * @return The opened Issue.
-     */
-    Issue open(
-        final String title,
-        final String body,
-        final String... labels
-    );
-
-    /**
-     * Search some issues after text and labels.
-     * @param text Search text.
-     * @param labels Labels that the issue should have.
-     * @return Issues.
-     */
-    Issues search(final String text, final String... labels);
-
-    /**
-     * Labels of this Issue.
-     * @return Issues.
-     */
-    Labels labels();
+    JsonObject json();
 }

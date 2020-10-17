@@ -26,6 +26,7 @@ import com.selfxdsd.api.Issue;
 import com.selfxdsd.api.Issues;
 import com.selfxdsd.api.Provider;
 import com.selfxdsd.api.User;
+import com.selfxdsd.api.storage.Labels;
 import com.selfxdsd.api.storage.Storage;
 import com.selfxdsd.core.mock.MockJsonResources;
 import org.hamcrest.MatcherAssert;
@@ -545,5 +546,22 @@ public final class GithubIssuesTestCase {
         MatcherAssert.assertThat(
             found, Matchers.emptyIterable()
         );
+    }
+
+    /**
+     * GithubIssues has labels.
+     */
+    @Test
+    public void hasLabels(){
+        final Issues issues = new GithubIssues(
+            Mockito.mock(JsonResources.class),
+            URI.create(
+                "https://api.github.com/repos/amihaiemil/docker-java-api/issues"
+            ),
+            mock(Storage.class)
+        );
+        final Labels labels = issues.labels();
+        MatcherAssert.assertThat(labels, Matchers
+            .instanceOf(GithubIssueLabels.class));
     }
 }
