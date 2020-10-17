@@ -24,7 +24,6 @@ package com.selfxdsd.core;
 
 import com.selfxdsd.api.Issue;
 import com.selfxdsd.api.Issues;
-import com.selfxdsd.api.storage.Labels;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -192,17 +191,4 @@ public final class FoundIssuesTestCase {
         );
     }
 
-    /**
-     * FoundIssue.labels(...) should be delegated to the
-     * original Issues labels.
-     */
-    @Test
-    public void labelsDelegatesToOriginal(){
-        final Issues original = Mockito.mock(Issues.class);
-        final Labels labels = Mockito.mock(Labels.class);
-        Mockito.when(original.labels()).thenReturn(labels);
-        final Issues found = new FoundIssues(original, List.of());
-        MatcherAssert.assertThat(found.labels(),
-            Matchers.equalTo(original.labels()));
-    }
 }

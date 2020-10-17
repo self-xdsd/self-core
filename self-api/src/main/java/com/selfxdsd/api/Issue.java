@@ -22,6 +22,8 @@
  */
 package com.selfxdsd.api;
 
+import com.selfxdsd.api.storage.Labels;
+
 import javax.json.JsonObject;
 
 /**
@@ -124,4 +126,9 @@ public interface Issue {
      */
     int estimation();
 
+    /**
+     * Labels of this Issue.
+     * @return Issues.
+     */
+    Labels labels();
 }

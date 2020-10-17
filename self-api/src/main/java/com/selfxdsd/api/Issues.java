@@ -22,8 +22,6 @@
  */
 package com.selfxdsd.api;
 
-import com.selfxdsd.api.storage.Labels;
-
 import javax.json.JsonObject;
 
 /**
@@ -70,10 +68,4 @@ public interface Issues extends Iterable<Issue> {
      * @return Issues.
      */
     Issues search(final String text, final String... labels);
-
-    /**
-     * Labels of this Issue.
-     * @return Issues.
-     */
-    Labels labels();
 }

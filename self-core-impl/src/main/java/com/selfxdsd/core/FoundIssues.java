@@ -24,7 +24,6 @@ package com.selfxdsd.core;
 
 import com.selfxdsd.api.Issue;
 import com.selfxdsd.api.Issues;
-import com.selfxdsd.api.storage.Labels;
 
 import javax.json.JsonObject;
 import java.util.ArrayList;
@@ -92,11 +91,6 @@ final class FoundIssues implements Issues {
         final String... labels
     ) {
         return this.original.search(text, labels);
-    }
-
-    @Override
-    public Labels labels() {
-        return this.original.labels();
     }
 
     @Override
