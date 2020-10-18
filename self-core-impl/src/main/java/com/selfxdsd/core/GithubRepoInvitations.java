@@ -52,16 +52,24 @@ final class GithubRepoInvitations implements Invitations {
     private final URI repoInvitationsUri;
 
     /**
+     * Parent Github.
+     */
+    private final Github github;
+
+    /**
      * Ctor.
      * @param resources Github's JSON resources.
      * @param repoInvitationsUri API uri.
+     * @param github Parent Github.
      */
     GithubRepoInvitations(
         final JsonResources resources,
-        final URI repoInvitationsUri
+        final URI repoInvitationsUri,
+        final Github github
     ) {
         this.resources = resources;
         this.repoInvitationsUri = repoInvitationsUri;
+        this.github = github;
     }
 
     @Override
@@ -71,7 +79,8 @@ final class GithubRepoInvitations implements Invitations {
                 jsonValue -> new GithubInvitation(
                     this.resources,
                     this.repoInvitationsUri,
-                    (JsonObject) jsonValue
+                    (JsonObject) jsonValue,
+                    this.github
                 )
             ).collect(Collectors.toList());
         return invitations.iterator();

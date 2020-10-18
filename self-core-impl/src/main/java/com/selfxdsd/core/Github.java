@@ -122,7 +122,8 @@ public final class Github implements Provider {
             this.resources,
             URI.create(
                 this.uri.toString() + "/user/repository_invitations"
-            )
+            ),
+            this
         );
     }
 

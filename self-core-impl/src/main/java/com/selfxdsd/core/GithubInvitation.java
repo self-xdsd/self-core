@@ -23,9 +23,13 @@
 package com.selfxdsd.core;
 
 import com.selfxdsd.api.Invitation;
+import com.selfxdsd.api.Repo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.json.Json;
 import javax.json.JsonObject;
+import java.net.HttpURLConnection;
 import java.net.URI;
 
 /**
@@ -33,10 +37,16 @@ import java.net.URI;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.7
- * @todo #225:30min When accepting an invitation, get the response status code
- *  and if it's different from 204 NO CONTENT, log a warning or something.
+ * @todo #629:30min After we have the method Repo.star() implemented,
+ *  finish implementation of method accept here to actually star the repo.
  */
 final class GithubInvitation implements Invitation {
+    /**
+     * Logger.
+     */
+    private static final Logger LOG = LoggerFactory.getLogger(
+        GithubInvitation.class
+    );
 
     /**
      * Github's JSON resources.
@@ -54,21 +64,29 @@ final class GithubInvitation implements Invitation {
     private final JsonObject json;
 
     /**
+     * Parent Github.
+     */
+    private final Github github;
+
+    /**
      * Ctor.
      * @param resources Github's JSON resources.
      * @param baseUri Base URI of the Invitations API.
      * @param json This invitation in JSON format.
+     * @param github Parent Github.
      */
     GithubInvitation(
         final JsonResources resources,
         final URI baseUri,
-        final JsonObject json
+        final JsonObject json,
+        final Github github
     ) {
         this.resources = resources;
         this.uri = URI.create(
             baseUri.toString() + "/" + json.getJsonNumber("id")
         );
         this.json = json;
+        this.github = github;
     }
 
     @Override
@@ -78,6 +96,27 @@ final class GithubInvitation implements Invitation {
 
     @Override
     public void accept() {
-        this.resources.patch(this.uri, Json.createObjectBuilder().build());
+        LOG.debug("Accepting Github Repo Invitation...");
+        final Resource resp = this.resources
+            .patch(this.uri, Json.createObjectBuilder().build());
+        if(resp.statusCode() == HttpURLConnection.HTTP_NO_CONTENT) {
+            LOG.debug("Invitation accepted.");
+        } else {
+            LOG.warn(
+                "Problem when accepting invitation. "
+                + "Expected 204 NO CONTENT, but got "
+                + resp.statusCode()
+            );
+        }
+        final String repoFullName = this.json
+            .getJsonObject("repository")
+            .getString("full_name");
+        LOG.debug("Starring Github repository " + repoFullName + "... ");
+        final Repo repo = this.github.repo(
+            repoFullName.split("/")[0],
+            repoFullName.split("/")[1]
+        );
+
+        LOG.debug("Github repository " + repoFullName + "starred. ");
     }
 }
