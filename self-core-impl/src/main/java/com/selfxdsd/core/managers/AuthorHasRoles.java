@@ -23,13 +23,7 @@
 package com.selfxdsd.core.managers;
 
 import com.selfxdsd.api.*;
-import com.selfxdsd.api.pm.PreconditionCheck;
 import com.selfxdsd.api.pm.Step;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * Check if the comment's author has one of the provided roles to perform
@@ -38,67 +32,22 @@ import java.util.List;
  * @version $Id$
  * @since 0.0.20
  */
-public final class AuthorHasRoles extends PreconditionCheck {
-
-    /**
-     * Logger.
-     */
-    private static final Logger LOG = LoggerFactory.getLogger(
-        AuthorHasRoles.class
-    );
-
-    /**
-     * Accepted roles.
-     */
-    private final List<String> acceptedRoles;
+public final class AuthorHasRoles extends UserHasRoles {
 
     /**
      * Ctor.
      * @param onTrue Step to follow if the author has on of the given roles.
      * @param onFalse Step to follow if the author none of the given roles.
+     * @param event Event.
      * @param roles Accepting roles.
      */
-    public AuthorHasRoles(final Step onTrue,
-                          final Step onFalse,
-                          final String...roles) {
-        super(onTrue, onFalse);
-        this.acceptedRoles = Arrays.asList(roles);
+    public AuthorHasRoles(
+        final Step onTrue,
+        final Step onFalse,
+        final Event event,
+        final String...roles
+    ) {
+        super(onTrue, onFalse, event.comment().author(), roles);
     }
 
-    @Override
-    public void perform(final Event event) {
-        final Project project = event.project();
-        final String author = event.comment().author();
-        final Contributor contributor = project
-            .contributors()
-            .getById(author, project.provider());
-        if (contributor == null) {
-            LOG.debug("Author " + author + " is not a contributor "
-                + " of this project.");
-            this.onFalse().perform(event);
-        } else {
-            boolean hasRole = false;
-            if(this.acceptedRoles.contains(Contract.Roles.ANY)) {
-                hasRole = true;
-            } else {
-                final Contracts contracts = project.contracts()
-                    .ofContributor(contributor);
-                for (final Contract contract : contracts) {
-                    if (this.acceptedRoles.contains(contract.role())) {
-                        hasRole = true;
-                        break;
-                    }
-                }
-            }
-            if (hasRole) {
-                LOG.debug("Author " + author + " has the right role "
-                    + "the execute the next command.");
-                this.onTrue().perform(event);
-            } else {
-                LOG.debug("Author " + author + " has no rights to "
-                    + "execute the next command");
-                this.onFalse().perform(event);
-            }
-        }
-    }
 }

@@ -73,6 +73,7 @@ public final class AuthorHasRolesTestCase {
                     "Should not be called!"
                 );
             },
+            event,
             Contract.Roles.ARCH, Contract.Roles.PO
         );
         step.perform(event);
@@ -112,6 +113,7 @@ public final class AuthorHasRolesTestCase {
                 );
             },
             onFalse,
+            event,
             Contract.Roles.DEV
         );
         step.perform(event);
@@ -151,6 +153,7 @@ public final class AuthorHasRolesTestCase {
                     "Should not be called!"
                 );
             },
+            event,
             Contract.Roles.ANY
         );
         step.perform(event);

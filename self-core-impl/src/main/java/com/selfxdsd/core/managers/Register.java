@@ -100,6 +100,7 @@ public final class Register implements Conversation {
                             author
                         )
                     ),
+                    event,
                     Contract.Roles.ANY
                 )
             );

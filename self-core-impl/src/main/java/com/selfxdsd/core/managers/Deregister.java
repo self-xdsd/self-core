@@ -81,7 +81,9 @@ public final class Deregister implements Conversation {
                         language.reply("cannotDeregister.comment"),
                         author
                     )
-                ), Contract.Roles.PO, Contract.Roles.ARCH
+                ),
+                event,
+                Contract.Roles.PO, Contract.Roles.ARCH
             );
         } else {
             steps = this.notDeregister.start(event);
