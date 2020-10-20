@@ -359,7 +359,7 @@ public abstract class TasksException extends SelfException {
         @Override
         public JsonObject json() {
             return Json.createPatchBuilder()
-                .add("issueId", this.issueId)
+                .add("/issueId", this.issueId)
                 .build()
                 .apply(super.json());
         }

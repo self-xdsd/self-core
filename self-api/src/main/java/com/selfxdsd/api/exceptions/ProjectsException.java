@@ -67,8 +67,8 @@ public abstract class ProjectsException extends SelfException {
         @Override
         public JsonObject json() {
             return Json.createPatchBuilder()
-                .add("fullName", this.fullName)
-                .add("provider", this.provider)
+                .add("/fullName", this.fullName)
+                .add("/provider", this.provider)
                 .build()
                 .apply(super.json());
         }

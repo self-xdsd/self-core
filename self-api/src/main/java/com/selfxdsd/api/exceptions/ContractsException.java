@@ -71,8 +71,8 @@ public abstract class ContractsException extends SelfException {
         @Override
         public JsonObject json() {
             return Json.createPatchBuilder()
-                .add("repoFullName", this.repoFullName)
-                .add("provider", this.provider)
+                .add("/repoFullName", this.repoFullName)
+                .add("/provider", this.provider)
                 .build()
                 .apply(super.json());
         }
@@ -148,8 +148,8 @@ public abstract class ContractsException extends SelfException {
         @Override
         public JsonObject json() {
             return Json.createPatchBuilder()
-                .add("username", this.contributor.username())
-                .add("provider", this.contributor.provider())
+                .add("/username", this.contributor.username())
+                .add("/provider", this.contributor.provider())
                 .build()
                 .apply(super.json());
         }
@@ -228,7 +228,7 @@ public abstract class ContractsException extends SelfException {
         @Override
         public JsonObject json() {
             return Json.createPatchBuilder()
-                .add("id", Json.createObjectBuilder()
+                .add("/id", Json.createObjectBuilder()
                     .add("contributorUsername", this.contractId
                         .getContributorUsername())
                     .add("repoFullName", this.contractId

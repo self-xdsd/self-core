@@ -52,7 +52,7 @@ public abstract class InvoiceException extends SelfException {
     @Override
     public JsonObject json() {
         return Json.createPatchBuilder()
-            .add("id", this.invoice.invoiceId())
+            .add("/id", this.invoice.invoiceId())
             .build()
             .apply(super.json());
     }
