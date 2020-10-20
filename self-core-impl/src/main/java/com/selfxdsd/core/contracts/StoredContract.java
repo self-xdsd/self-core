@@ -203,6 +203,11 @@ public final class StoredContract implements Contract {
     }
 
     @Override
+    public Contract update(final BigDecimal hourlyRate) {
+        throw new UnsupportedOperationException("Not yet implemented.");
+    }
+
+    @Override
     public int hashCode() {
         return id.hashCode();
     }

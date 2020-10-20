@@ -318,5 +318,12 @@ public final class StoredTask implements Task {
         public BigDecimal value() {
             return BigDecimal.valueOf(0);
         }
+
+        @Override
+        public Contract update(final BigDecimal hourlyRate) {
+            throw new IllegalStateException(
+                "You cannot update the Contract here!"
+            );
+        }
     }
 }
