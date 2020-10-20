@@ -198,6 +198,64 @@ public final class ProjectContractsTestCase {
     }
 
     /**
+     * Updates a Contract if it belongs to the Project.
+     */
+    @Test
+    public void updatesContractOfProject() {
+        final Contract updated = Mockito.mock(Contract.class);
+
+        final Contract contract = this.mockContract(
+            "mihai/test",
+            "mihai",
+            Provider.Names.GITHUB
+        );
+
+        final Contracts all = Mockito.mock(Contracts.class);
+        Mockito.when(all.update(contract, BigDecimal.valueOf(1000)))
+            .thenReturn(updated);
+
+        final Storage storage = Mockito.mock(Storage.class);
+        Mockito.when(storage.contracts()).thenReturn(all);
+
+        final List<Contract> allSrc = new ArrayList<>();
+        final Contracts ofMihai = new ProjectContracts(
+            "mihai/test",
+            Provider.Names.GITHUB,
+            allSrc::stream,
+            storage
+        );
+
+        MatcherAssert.assertThat(
+            ofMihai.update(contract, BigDecimal.valueOf(1000)),
+            Matchers.is(updated)
+        );
+    }
+
+    /**
+     * If we try to update a Contract of a different Project, it
+     * should throw an exception.
+     */
+    @Test (expected = ContractsException.OfProject.Update.class)
+    public void doesNotUpdateContractOfDifferentProject() {
+        final Contract contract = this.mockContract(
+            "mihai/other",
+            "mihai",
+            Provider.Names.GITHUB
+        );
+        final Storage storage = Mockito.mock(Storage.class);
+        final List<Contract> allSrc = new ArrayList<>();
+
+        final Contracts ofMihai = new ProjectContracts(
+            "mihai/test",
+            Provider.Names.GITHUB,
+            allSrc::stream,
+            storage
+        );
+
+        ofMihai.update(contract, BigDecimal.valueOf(1000));
+    }
+
+    /**
      * ProjectContracts are iterable.
      */
     @Test
@@ -276,9 +334,14 @@ public final class ProjectContractsTestCase {
             Mockito.mock(Storage.class)
         );
 
+        final Contract.Id cid = new Contract.Id(
+            repoFullName, contributorUsername, provider, "DEV"
+        );
+
         final Contract contract = Mockito.mock(Contract.class);
         Mockito.when(contract.contributor()).thenReturn(contributor);
         Mockito.when(contract.project()).thenReturn(project);
+        Mockito.when(contract.contractId()).thenReturn(cid);
 
         return contract;
     }

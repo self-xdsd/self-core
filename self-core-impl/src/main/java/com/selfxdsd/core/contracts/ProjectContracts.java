@@ -166,7 +166,7 @@ public final class ProjectContracts implements Contracts {
                 this.provider
             );
         } else {
-            throw new UnsupportedOperationException("Not yet implemented.");
+            return this.storage.contracts().update(contract, hourlyRate);
         }
     }
 
