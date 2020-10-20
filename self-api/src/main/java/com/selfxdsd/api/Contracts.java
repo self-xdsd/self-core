@@ -80,6 +80,14 @@ public interface Contracts extends Iterable<Contract> {
     Contract findById(Contract.Id id);
 
     /**
+     * Update a Contract.
+     * @param contract Contract to be updated.
+     * @param hourlyRate New hourly rate of the Contract.
+     * @return Contract. Updated contract.
+     */
+    Contract update(final Contract contract, final BigDecimal hourlyRate);
+
+    /**
      * Empty Contracts. Return an instance of this when you cannot
      * find the Contracts you are looking for.
      * @author Mihai Andronache (amihaiemil@gmail.com)
@@ -116,6 +124,16 @@ public interface Contracts extends Iterable<Contract> {
         @Override
         public Contract findById(final Contract.Id id) {
             return null;
+        }
+
+        @Override
+        public Contract update(
+            final Contract contract,
+            final BigDecimal hourlyRate
+        ) {
+            throw new UnsupportedOperationException(
+                "These are Empty Contracts, you cannot update one here."
+            );
         }
 
         @Override

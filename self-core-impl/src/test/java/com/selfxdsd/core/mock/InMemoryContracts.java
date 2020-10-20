@@ -131,6 +131,14 @@ public final class InMemoryContracts implements Contracts {
     }
 
     @Override
+    public Contract update(
+        final Contract contract,
+        final BigDecimal hourlyRate
+    ) {
+        throw new UnsupportedOperationException("Not yet implemented.");
+    }
+
+    @Override
     public Contracts ofProject(
         final String repoFullName,
         final String repoProvider
