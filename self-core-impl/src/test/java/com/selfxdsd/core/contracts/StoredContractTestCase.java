@@ -122,6 +122,35 @@ public final class StoredContractTestCase {
     }
 
     /**
+     * StoredContract updates its hourly rate.
+     */
+    @Test
+    public void updatesHourlyRate() {
+        final Contract updated = Mockito.mock(Contract.class);
+
+        final Contracts all = Mockito.mock(Contracts.class);
+        final Storage storage = Mockito.mock(Storage.class);
+        Mockito.when(storage.contracts()).thenReturn(all);
+
+        final Contract contract = new StoredContract(
+            Mockito.mock(Project.class),
+            Mockito.mock(Contributor.class),
+            BigDecimal.ONE, "DEV",
+            storage
+        );
+
+        Mockito.when(
+            all.update(contract, BigDecimal.valueOf(1000))
+        ).thenReturn(updated);
+
+        MatcherAssert.assertThat(
+            contract.update(BigDecimal.valueOf(1000)),
+            Matchers.is(updated)
+        );
+
+    }
+
+    /**
      * StoredContract returns its role.
      */
     @Test
