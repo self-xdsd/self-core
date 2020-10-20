@@ -246,6 +246,64 @@ public final class ContributorContractsTestCase {
     }
 
     /**
+     * Updates a Contract if it belongs to the Contributor.
+     */
+    @Test
+    public void updatesContractOfContributor() {
+        final Contract updated = Mockito.mock(Contract.class);
+
+        final Contract contract = this.mockContract(
+            "mihai",
+            Provider.Names.GITHUB,
+            "mihai/test"
+        );
+
+        final Contracts all = Mockito.mock(Contracts.class);
+        Mockito.when(all.update(contract, BigDecimal.valueOf(1000)))
+            .thenReturn(updated);
+
+        final Storage storage = Mockito.mock(Storage.class);
+        Mockito.when(storage.contracts()).thenReturn(all);
+
+        final Contributor mihai = new StoredContributor(
+            "mihai", Provider.Names.GITHUB, storage
+        );
+
+        final Contracts ofMihai = new ContributorContracts(
+            mihai, Stream::empty, storage
+        );
+
+        MatcherAssert.assertThat(
+            ofMihai.update(contract, BigDecimal.valueOf(1000)),
+            Matchers.is(updated)
+        );
+    }
+
+    /**
+     * If we try to update the Contract of a different contributor,
+     * we should get an exception.
+     */
+    @Test (expected = ContractsException.OfContributor.Update.class)
+    public void doesNotUpdateContractOfDifferentContributor() {
+        final Contract contract = this.mockContract(
+            "vlad",
+            Provider.Names.GITHUB,
+            "mihai/test"
+        );
+
+        final Storage storage = Mockito.mock(Storage.class);
+        final Contributor mihai = new StoredContributor(
+            "mihai", Provider.Names.GITHUB, storage
+        );
+
+        final Contracts ofMihai = new ContributorContracts(
+            mihai, Stream::empty, storage
+        );
+
+        ofMihai.update(contract, BigDecimal.valueOf(1000));
+    }
+
+    /**
      * Finds a contract by id.
      */
     @Test
@@ -297,9 +355,14 @@ public final class ContributorContractsTestCase {
         Mockito.when(project.repoFullName()).thenReturn(repoFullName);
         Mockito.when(project.provider()).thenReturn(provider);
 
+        final Contract.Id cid = new Contract.Id(
+            repoFullName, contributorUsername, provider, "DEV"
+        );
+
         final Contract contract = Mockito.mock(Contract.class);
         Mockito.when(contract.contributor()).thenReturn(contributor);
         Mockito.when(contract.project()).thenReturn(project);
+        Mockito.when(contract.contractId()).thenReturn(cid);
 
         return contract;
     }

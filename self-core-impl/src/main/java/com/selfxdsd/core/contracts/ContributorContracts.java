@@ -149,9 +149,7 @@ public final class ContributorContracts implements Contracts {
                 this.contributor
             );
         } else {
-            throw new UnsupportedOperationException(
-                "Not yet implemented"
-            );
+            return this.storage.contracts().update(contract, hourlyRate);
         }
     }
 
