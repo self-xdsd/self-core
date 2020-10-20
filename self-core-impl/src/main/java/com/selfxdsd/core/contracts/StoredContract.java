@@ -203,6 +203,11 @@ public final class StoredContract implements Contract {
     }
 
     @Override
+    public Contract update(final BigDecimal hourlyRate) {
+        return this.storage.contracts().update(this, hourlyRate);
+    }
+
+    @Override
     public int hashCode() {
         return id.hashCode();
     }

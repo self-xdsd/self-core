@@ -86,6 +86,13 @@ public interface Contract {
     BigDecimal value();
 
     /**
+     * Update the contract's hourly rate.
+     * @param hourlyRate New hourly rate.
+     * @return Updated contract.
+     */
+    Contract update(final BigDecimal hourlyRate);
+
+    /**
      * Possible roles in a Contract.
      */
     class Roles {

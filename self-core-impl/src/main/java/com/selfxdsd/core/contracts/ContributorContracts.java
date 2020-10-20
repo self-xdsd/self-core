@@ -138,6 +138,22 @@ public final class ContributorContracts implements Contracts {
     }
 
     @Override
+    public Contract update(
+        final Contract contract,
+        final BigDecimal hourlyRate
+    ) {
+        final Contract.Id cid = contract.contractId();
+        if(!this.contributor.username().equals(cid.getContributorUsername())
+            || !this.contributor.provider().equals(cid.getProvider())) {
+            throw new ContractsException.OfContributor.Update(
+                this.contributor
+            );
+        } else {
+            return this.storage.contracts().update(contract, hourlyRate);
+        }
+    }
+
+    @Override
     public Iterator<Contract> iterator() {
         return this.contracts.get().iterator();
     }

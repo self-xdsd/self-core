@@ -153,6 +153,24 @@ public final class ProjectContracts implements Contracts {
     }
 
     @Override
+    public Contract update(
+        final Contract contract,
+        final BigDecimal hourlyRate
+    ) {
+        final Contract.Id cid = contract.contractId();
+        if(!this.repoFullName.equals(cid.getRepoFullName())
+            || !this.provider.equals(cid.getProvider())
+        ) {
+            throw new ContractsException.OfProject.Update(
+                this.repoFullName,
+                this.provider
+            );
+        } else {
+            return this.storage.contracts().update(contract, hourlyRate);
+        }
+    }
+
+    @Override
     public Iterator<Contract> iterator() {
         return this.contracts.get().iterator();
     }

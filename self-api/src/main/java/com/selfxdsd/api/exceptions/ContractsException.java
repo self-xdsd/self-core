@@ -100,6 +100,28 @@ public abstract class ContractsException extends SelfException {
         }
 
         /**
+         * Update Contract Project Self exception.
+         */
+        public static final class Update extends OfProject {
+
+            /**
+             * Ctor.
+             * @param repoFullName Project's repo full name.
+             * @param provider Project's provider.
+             */
+            public Update(final String repoFullName, final String provider) {
+                super(repoFullName, provider);
+            }
+
+            @Override
+            String getSelfMessage() {
+                return "These are the Contracts of " + super.getSelfMessage()
+                    + ". You cannot update another Project's "
+                    + "contract here. ";
+            }
+        }
+
+        /**
          * Iterating Project's Contracts Self exception.
          */
         public static final class List extends OfProject {
@@ -172,6 +194,27 @@ public abstract class ContractsException extends SelfException {
                 return "These are the Contracts of " + super.getSelfMessage()
                     + ". You cannot register another Contributor's "
                     + "contracts here. ";
+            }
+        }
+
+        /**
+         * Update Contract Self exception.
+         */
+        public static final class Update extends OfContributor {
+
+            /**
+             * Ctor.
+             * @param contributor Contributor.
+             */
+            public Update(final Contributor contributor) {
+                super(contributor);
+            }
+
+            @Override
+            String getSelfMessage() {
+                return "These are the Contracts of " + super.getSelfMessage()
+                    + ". You cannot update another Contributor's "
+                    + "contract here. ";
             }
         }
 
