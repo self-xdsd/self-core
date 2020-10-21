@@ -320,6 +320,11 @@ public final class StoredTask implements Task {
         }
 
         @Override
+        public LocalDateTime markedForRemoval() {
+            return null;
+        }
+
+        @Override
         public Contract update(final BigDecimal hourlyRate) {
             throw new IllegalStateException(
                 "You cannot update the Contract here!"

@@ -23,6 +23,7 @@
 package com.selfxdsd.api;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 /**
@@ -84,6 +85,14 @@ public interface Contract {
      * @return Value.
      */
     BigDecimal value();
+
+    /**
+     * Time when this Contract has been marked from removal.<br><br>
+     * If the contract is marked for removal, no more tasks will be assigned
+     * to it and it will be removed after a certain period of time.
+     * @return LocalDateTime or null if it's not set.
+     */
+    LocalDateTime markedForRemoval();
 
     /**
      * Update the contract's hourly rate.

@@ -87,6 +87,7 @@ public final class InMemoryContracts implements Contracts {
                     contributor,
                     hourlyRate,
                     role,
+                    null,
                     this.storage
                 );
                 this.contracts.put(key, contract);

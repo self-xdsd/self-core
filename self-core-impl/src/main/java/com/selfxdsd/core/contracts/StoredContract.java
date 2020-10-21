@@ -26,6 +26,7 @@ import com.selfxdsd.api.*;
 import com.selfxdsd.api.storage.Storage;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 /**
  * A Contract stored in self.
@@ -56,6 +57,13 @@ public final class StoredContract implements Contract {
     private final BigDecimal hourlyRate;
 
     /**
+     * If this attribute is set, the Contract will not be assigned
+     * any more tasks and it will be removed for good after a certain
+     * period of time.
+     */
+    private final LocalDateTime markedForRemoval;
+
+    /**
      * Self's storage.
      */
     private final Storage storage;
@@ -64,11 +72,14 @@ public final class StoredContract implements Contract {
      * Constructor.
      * @param id The contract's ID.
      * @param hourlyRate The hourly rate.
+     * @param markedForRemoval Time when this Contract has been
+     *  marked for removal.
      * @param storage The self's storage
      */
     public StoredContract(
         final Contract.Id id,
         final BigDecimal hourlyRate,
+        final LocalDateTime markedForRemoval,
         final Storage storage
     ) {
         this.id = id;
@@ -76,6 +87,7 @@ public final class StoredContract implements Contract {
         this.storage = storage;
         this.project = null;
         this.contributor = null;
+        this.markedForRemoval = markedForRemoval;
     }
 
 
@@ -85,6 +97,8 @@ public final class StoredContract implements Contract {
      * @param contributor The contract's contributor.
      * @param hourlyRate The hourly rate.
      * @param role The role.
+     * @param markedForRemoval Time when this contract has been
+     *  marked for removal.
      * @param storage The self's storage
      */
     public StoredContract(
@@ -92,11 +106,13 @@ public final class StoredContract implements Contract {
         final Contributor contributor,
         final BigDecimal hourlyRate,
         final String role,
+        final LocalDateTime markedForRemoval,
         final Storage storage
     ) {
         this.project = project;
         this.contributor = contributor;
         this.hourlyRate = hourlyRate;
+        this.markedForRemoval = markedForRemoval;
         this.storage = storage;
         this.id = new Contract.Id(
             project.repoFullName(),
@@ -200,6 +216,11 @@ public final class StoredContract implements Contract {
         }
         total = total.add(this.invoices().active().totalAmount());
         return total;
+    }
+
+    @Override
+    public LocalDateTime markedForRemoval() {
+        return this.markedForRemoval;
     }
 
     @Override

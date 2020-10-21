@@ -8,6 +8,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -29,6 +30,7 @@ public final class StoredContractTestCase {
             project,
             Mockito.mock(Contributor.class),
             BigDecimal.ONE, "DEV",
+            LocalDateTime.now(),
             Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(contract.project(), Matchers.is(project));
@@ -44,6 +46,7 @@ public final class StoredContractTestCase {
             Mockito.mock(Project.class),
             contributor,
             BigDecimal.ONE, "DEV",
+            LocalDateTime.now(),
             Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(
@@ -72,6 +75,7 @@ public final class StoredContractTestCase {
                 Contract.Roles.DEV
             ),
             BigDecimal.valueOf(10000),
+            LocalDateTime.now(),
             storage
         );
 
@@ -99,10 +103,48 @@ public final class StoredContractTestCase {
                 Contract.Roles.DEV
             ),
             BigDecimal.valueOf(10000),
+            LocalDateTime.now(),
             storage
         );
 
         MatcherAssert.assertThat(contract.contributor(), Matchers.is(mihai));
+    }
+
+    /**
+     * StoredContract returns its markedForRemoval LocalDateTime.
+     */
+    @Test
+    public void returnsMarkedForRemoval() {
+        final LocalDateTime now = LocalDateTime.now();
+        final Contract contract = new StoredContract(
+            Mockito.mock(Project.class),
+            Mockito.mock(Contributor.class),
+            BigDecimal.ONE, "DEV",
+            now,
+            Mockito.mock(Storage.class)
+        );
+        MatcherAssert.assertThat(
+            contract.markedForRemoval(),
+            Matchers.equalTo(now)
+        );
+    }
+
+    /**
+     * StoredContract returns its null markedForRemoval.
+     */
+    @Test
+    public void returnsNullMarkedForRemoval() {
+        final Contract contract = new StoredContract(
+            Mockito.mock(Project.class),
+            Mockito.mock(Contributor.class),
+            BigDecimal.ONE, "DEV",
+            null,
+            Mockito.mock(Storage.class)
+        );
+        MatcherAssert.assertThat(
+            contract.markedForRemoval(),
+            Matchers.nullValue()
+        );
     }
 
     /**
@@ -114,6 +156,7 @@ public final class StoredContractTestCase {
             Mockito.mock(Project.class),
             Mockito.mock(Contributor.class),
             BigDecimal.ONE, "DEV",
+            LocalDateTime.now(),
             Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(
@@ -136,6 +179,7 @@ public final class StoredContractTestCase {
             Mockito.mock(Project.class),
             Mockito.mock(Contributor.class),
             BigDecimal.ONE, "DEV",
+            LocalDateTime.now(),
             storage
         );
 
@@ -159,6 +203,7 @@ public final class StoredContractTestCase {
             Mockito.mock(Project.class),
             Mockito.mock(Contributor.class),
             BigDecimal.ONE, "DEV",
+            LocalDateTime.now(),
             Mockito.mock(Storage.class));
         MatcherAssert.assertThat(contract.role(), Matchers.equalTo("DEV"));
     }
@@ -173,6 +218,7 @@ public final class StoredContractTestCase {
             Mockito.mock(Project.class),
             Mockito.mock(Contributor.class),
             BigDecimal.ONE, "DEV",
+            LocalDateTime.now(),
             storage);
         final Invoices all = Mockito.mock(Invoices.class);
         final Invoices invoices = Mockito.mock(Invoices.class);
@@ -199,6 +245,7 @@ public final class StoredContractTestCase {
             project,
             contributor,
             BigDecimal.ONE, "DEV",
+            LocalDateTime.now(),
             storage);
         final Tasks all = Mockito.mock(Tasks.class);
         final Tasks tasks = Mockito.mock(Tasks.class);
@@ -288,6 +335,7 @@ public final class StoredContractTestCase {
                 "DEV"
             ),
             BigDecimal.valueOf(15000),
+            LocalDateTime.now(),
             storage
         );
 
@@ -313,12 +361,14 @@ public final class StoredContractTestCase {
             contributor,
             BigDecimal.ONE,
             "DEV",
+            LocalDateTime.now(),
             storage);
         final Contract contractTwo = new StoredContract(
             project,
             contributor,
             BigDecimal.ONE,
             "DEV",
+            LocalDateTime.now(),
             storage);
         MatcherAssert.assertThat(contract, Matchers.equalTo(contractTwo));
     }
@@ -339,12 +389,14 @@ public final class StoredContractTestCase {
             contributor,
             BigDecimal.ONE,
             "DEV",
+            LocalDateTime.now(),
             storage);
         final Contract contractTwo = new StoredContract(
             project,
             contributor,
             BigDecimal.ONE,
             "DEV",
+            LocalDateTime.now(),
             storage);
         MatcherAssert.assertThat(contract.hashCode(),
             Matchers.equalTo(contractTwo.hashCode()));
