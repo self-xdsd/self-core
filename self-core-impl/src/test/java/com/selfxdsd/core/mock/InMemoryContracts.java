@@ -33,6 +33,7 @@ import com.selfxdsd.core.contracts.ProjectContracts;
 import com.selfxdsd.core.contracts.StoredContract;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -135,6 +136,14 @@ public final class InMemoryContracts implements Contracts {
     public Contract update(
         final Contract contract,
         final BigDecimal hourlyRate
+    ) {
+        throw new UnsupportedOperationException("Not yet implemented.");
+    }
+
+    @Override
+    public Contract markForRemoval(
+        final Contract contract,
+        final LocalDateTime time
     ) {
         throw new UnsupportedOperationException("Not yet implemented.");
     }

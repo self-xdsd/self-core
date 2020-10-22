@@ -30,6 +30,7 @@ import com.selfxdsd.api.exceptions.ContractsException;
 import com.selfxdsd.api.storage.Storage;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Iterator;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
@@ -150,6 +151,23 @@ public final class ContributorContracts implements Contracts {
             );
         } else {
             return this.storage.contracts().update(contract, hourlyRate);
+        }
+    }
+
+    @Override
+    public Contract markForRemoval(
+        final Contract contract,
+        final LocalDateTime time
+    ) {
+        final Contract.Id cid = contract.contractId();
+        if(!this.contributor.username().equals(cid.getContributorUsername())
+            || !this.contributor.provider().equals(cid.getProvider())) {
+            throw new ContractsException.OfContributor.Delete(
+                this.contributor
+            );
+        } else {
+            return this.storage.contracts()
+                .markForRemoval(contract, LocalDateTime.now());
         }
     }
 

@@ -23,6 +23,7 @@
 package com.selfxdsd.api;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -88,6 +89,14 @@ public interface Contracts extends Iterable<Contract> {
     Contract update(final Contract contract, final BigDecimal hourlyRate);
 
     /**
+     * Mark a Contract for removal.
+     * @param contract Contract to be marked for removal.
+     * @param time LocalDateTime when the Contract is marked.
+     * @return Contract. Contract marked for removal.
+     */
+    Contract markForRemoval(final Contract contract, final LocalDateTime time);
+
+    /**
      * Empty Contracts. Return an instance of this when you cannot
      * find the Contracts you are looking for.
      * @author Mihai Andronache (amihaiemil@gmail.com)
@@ -133,6 +142,17 @@ public interface Contracts extends Iterable<Contract> {
         ) {
             throw new UnsupportedOperationException(
                 "These are Empty Contracts, you cannot update one here."
+            );
+        }
+
+        @Override
+        public Contract markForRemoval(
+            final Contract contract,
+            final LocalDateTime time
+        ) {
+            throw new UnsupportedOperationException(
+                "These are Empty Contracts, you cannot "
+                + "mark one for removal here."
             );
         }
 

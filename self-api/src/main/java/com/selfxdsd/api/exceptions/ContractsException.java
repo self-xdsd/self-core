@@ -122,6 +122,28 @@ public abstract class ContractsException extends SelfException {
         }
 
         /**
+         * Delete Contract Project Self exception.
+         */
+        public static final class Delete extends OfProject {
+
+            /**
+             * Ctor.
+             * @param repoFullName Project's repo full name.
+             * @param provider Project's provider.
+             */
+            public Delete(final String repoFullName, final String provider) {
+                super(repoFullName, provider);
+            }
+
+            @Override
+            String getSelfMessage() {
+                return "These are the Contracts of " + super.getSelfMessage()
+                    + ". You cannot delete (or mark for removal) another"
+                    +  " Project's Contract here. ";
+            }
+        }
+
+        /**
          * Iterating Project's Contracts Self exception.
          */
         public static final class List extends OfProject {
@@ -215,6 +237,27 @@ public abstract class ContractsException extends SelfException {
                 return "These are the Contracts of " + super.getSelfMessage()
                     + ". You cannot update another Contributor's "
                     + "contract here. ";
+            }
+        }
+
+        /**
+         * Delete Contract Self exception.
+         */
+        public static final class Delete extends OfContributor {
+
+            /**
+             * Ctor.
+             * @param contributor Contributor.
+             */
+            public Delete(final Contributor contributor) {
+                super(contributor);
+            }
+
+            @Override
+            String getSelfMessage() {
+                return "These are the Contracts of " + super.getSelfMessage()
+                    + ". You cannot delete (or mark for removal) another "
+                    + "Contributor's contract here. ";
             }
         }
 

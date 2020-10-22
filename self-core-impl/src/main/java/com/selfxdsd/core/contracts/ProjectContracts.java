@@ -29,6 +29,7 @@ import com.selfxdsd.api.exceptions.ContractsException;
 import com.selfxdsd.api.storage.Storage;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Iterator;
 import java.util.List;
 import java.util.function.Supplier;
@@ -167,6 +168,25 @@ public final class ProjectContracts implements Contracts {
             );
         } else {
             return this.storage.contracts().update(contract, hourlyRate);
+        }
+    }
+
+    @Override
+    public Contract markForRemoval(
+        final Contract contract,
+        final LocalDateTime time
+    ) {
+        final Contract.Id cid = contract.contractId();
+        if(!this.repoFullName.equals(cid.getRepoFullName())
+            || !this.provider.equals(cid.getProvider())
+        ) {
+            throw new ContractsException.OfProject.Delete(
+                this.repoFullName,
+                this.provider
+            );
+        } else {
+            return this.storage.contracts()
+                .markForRemoval(contract, LocalDateTime.now());
         }
     }
 
