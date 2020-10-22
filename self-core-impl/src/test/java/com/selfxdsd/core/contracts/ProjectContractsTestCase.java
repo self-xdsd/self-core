@@ -32,6 +32,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
@@ -253,6 +254,30 @@ public final class ProjectContractsTestCase {
         );
 
         ofMihai.update(contract, BigDecimal.valueOf(1000));
+    }
+
+    /**
+     * If we try to delete (mark for removal) a Contract of a different
+     * Project, it should throw an exception.
+     */
+    @Test (expected = ContractsException.OfProject.Delete.class)
+    public void doesNotDeleteContractOfAnotherProject() {
+        final Contract contract = this.mockContract(
+            "mihai/other",
+            "mihai",
+            Provider.Names.GITHUB
+        );
+        final Storage storage = Mockito.mock(Storage.class);
+        final List<Contract> allSrc = new ArrayList<>();
+
+        final Contracts ofMihai = new ProjectContracts(
+            "mihai/test",
+            Provider.Names.GITHUB,
+            allSrc::stream,
+            storage
+        );
+
+        ofMihai.markForRemoval(contract, LocalDateTime.now());
     }
 
     /**

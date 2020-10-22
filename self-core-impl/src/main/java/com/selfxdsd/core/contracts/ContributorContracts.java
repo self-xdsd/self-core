@@ -167,7 +167,7 @@ public final class ContributorContracts implements Contracts {
             );
         } else {
             return this.storage.contracts()
-                .markForRemoval(contract, LocalDateTime.now());
+                .markForRemoval(contract, time);
         }
     }
 

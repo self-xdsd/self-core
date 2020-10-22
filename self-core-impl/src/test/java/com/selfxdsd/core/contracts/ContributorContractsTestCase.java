@@ -32,6 +32,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
@@ -301,6 +302,30 @@ public final class ContributorContractsTestCase {
         );
 
         ofMihai.update(contract, BigDecimal.valueOf(1000));
+    }
+
+    /**
+     * If we try to delete (mark for removal) a Contract of a different
+     * Contributor, we should get an exception.
+     */
+    @Test (expected = ContractsException.OfContributor.Delete.class)
+    public void doesNotDeleteContractOfDifferentContributor() {
+        final Contract contract = this.mockContract(
+            "vlad",
+            Provider.Names.GITHUB,
+            "mihai/test"
+        );
+
+        final Storage storage = Mockito.mock(Storage.class);
+        final Contributor mihai = new StoredContributor(
+            "mihai", Provider.Names.GITHUB, storage
+        );
+
+        final Contracts ofMihai = new ContributorContracts(
+            mihai, Stream::empty, storage
+        );
+
+        ofMihai.markForRemoval(contract, LocalDateTime.now());
     }
 
     /**
