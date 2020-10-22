@@ -330,5 +330,12 @@ public final class StoredTask implements Task {
                 "You cannot update the Contract here!"
             );
         }
+
+        @Override
+        public Contract markForRemoval() {
+            throw new IllegalStateException(
+                "You cannot mark the Contract for removal here!"
+            );
+        }
     }
 }

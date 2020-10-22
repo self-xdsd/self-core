@@ -102,6 +102,13 @@ public interface Contract {
     Contract update(final BigDecimal hourlyRate);
 
     /**
+     * Mark this Contract for removal.
+     * @return Contract marked for removal (it will have
+     *  the "markedForRemoval" attribute set).
+     */
+    Contract markForRemoval();
+
+    /**
      * Possible roles in a Contract.
      */
     class Roles {
@@ -250,6 +257,12 @@ public interface Contract {
                 this.provider,
                 this.role
             );
+        }
+
+        @Override
+        public String toString() {
+            return "[" + this.contributorUsername + "-" + this.role
+                + "-" + this.repoFullName + "-" + this.provider + "]";
         }
 
     }

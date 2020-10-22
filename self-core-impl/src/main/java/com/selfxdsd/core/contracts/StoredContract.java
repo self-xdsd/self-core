@@ -229,6 +229,18 @@ public final class StoredContract implements Contract {
     }
 
     @Override
+    public Contract markForRemoval() {
+        if(this.markedForRemoval != null) {
+            throw new IllegalStateException(
+                "Contract " + this.id.toString() + ", was already marked for "
+                + " removal on " + this.markedForRemoval
+            );
+        }
+        return this.storage.contracts()
+            .markForRemoval(this, LocalDateTime.now());
+    }
+
+    @Override
     public int hashCode() {
         return id.hashCode();
     }

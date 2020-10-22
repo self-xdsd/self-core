@@ -401,4 +401,44 @@ public final class StoredContractTestCase {
         MatcherAssert.assertThat(contract.hashCode(),
             Matchers.equalTo(contractTwo.hashCode()));
     }
+
+    /**
+     * We can mark a StoredContract for removal.
+     */
+    @Test
+    public void marksForRemoval() {
+        final Contracts all = Mockito.mock(Contracts.class);
+        final Storage storage = Mockito.mock(Storage.class);
+        Mockito.when(storage.contracts()).thenReturn(all);
+
+        final Contract contract = new StoredContract(
+            Mockito.mock(Project.class),
+            Mockito.mock(Contributor.class),
+            BigDecimal.ONE, "DEV",
+            null,
+            storage
+        );
+
+        contract.markForRemoval();
+
+        Mockito.verify(all, Mockito.times(1)).markForRemoval(
+            Mockito.any(), Mockito.any()
+        );
+    }
+
+    /**
+     * We cannot mark a StoredContract for removal twice.
+     */
+    @Test (expected = IllegalStateException.class)
+    public void doesNotMarkForRemovalTwice() {
+        final LocalDateTime marked = LocalDateTime.now();
+        final Contract contract = new StoredContract(
+            Mockito.mock(Project.class),
+            Mockito.mock(Contributor.class),
+            BigDecimal.ONE, "DEV",
+            marked,
+            Mockito.mock(Storage.class)
+        );
+        contract.markForRemoval();
+    }
 }
