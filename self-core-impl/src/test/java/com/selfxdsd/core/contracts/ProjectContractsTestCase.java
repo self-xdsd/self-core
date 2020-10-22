@@ -257,6 +257,41 @@ public final class ProjectContractsTestCase {
     }
 
     /**
+     * It can mark for removal a Contract, if it belongs to the Project.
+     */
+    @Test
+    public void marksForRemovalContractOfProject() {
+        final LocalDateTime now = LocalDateTime.now();
+        final Contract marked = Mockito.mock(Contract.class);
+
+        final Contract contract = this.mockContract(
+            "mihai/test",
+            "mihai",
+            Provider.Names.GITHUB
+        );
+
+        final Contracts all = Mockito.mock(Contracts.class);
+        Mockito.when(all.markForRemoval(contract, now))
+            .thenReturn(marked);
+
+        final Storage storage = Mockito.mock(Storage.class);
+        Mockito.when(storage.contracts()).thenReturn(all);
+
+        final List<Contract> allSrc = new ArrayList<>();
+        final Contracts ofMihai = new ProjectContracts(
+            "mihai/test",
+            Provider.Names.GITHUB,
+            allSrc::stream,
+            storage
+        );
+
+        MatcherAssert.assertThat(
+            ofMihai.markForRemoval(contract, now),
+            Matchers.is(marked)
+        );
+    }
+
+    /**
      * If we try to delete (mark for removal) a Contract of a different
      * Project, it should throw an exception.
      */

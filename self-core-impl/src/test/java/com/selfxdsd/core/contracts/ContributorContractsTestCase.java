@@ -305,6 +305,41 @@ public final class ContributorContractsTestCase {
     }
 
     /**
+     * Marks for removal a Contract, if it belongs to the Contributor.
+     */
+    @Test
+    public void marksForRemovalContractOfContributor() {
+        final LocalDateTime now = LocalDateTime.now();
+        final Contract marked = Mockito.mock(Contract.class);
+
+        final Contract contract = this.mockContract(
+            "mihai",
+            Provider.Names.GITHUB,
+            "mihai/test"
+        );
+
+        final Contracts all = Mockito.mock(Contracts.class);
+        Mockito.when(all.markForRemoval(contract, now))
+            .thenReturn(marked);
+
+        final Storage storage = Mockito.mock(Storage.class);
+        Mockito.when(storage.contracts()).thenReturn(all);
+
+        final Contributor mihai = new StoredContributor(
+            "mihai", Provider.Names.GITHUB, storage
+        );
+
+        final Contracts ofMihai = new ContributorContracts(
+            mihai, Stream::empty, storage
+        );
+
+        MatcherAssert.assertThat(
+            ofMihai.markForRemoval(contract, now),
+            Matchers.is(marked)
+        );
+    }
+
+    /**
      * If we try to delete (mark for removal) a Contract of a different
      * Contributor, we should get an exception.
      */
