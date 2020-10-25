@@ -83,8 +83,8 @@ public interface Repo {
     Webhooks webhooks();
 
     /**
-     * Star this repo.
+     * Stars of this repo.
      * @return Stars
      */
-    Stars star();
+    Stars stars();
 }

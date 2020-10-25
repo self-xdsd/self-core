@@ -131,7 +131,9 @@ final class GitlabRepo extends BaseRepo {
     }
 
     @Override
-    public Stars star() {
-        throw new UnsupportedOperationException();
+    public Stars stars() {
+        throw new UnsupportedOperationException(
+            "Not yet implemented."
+        );
     }
 }

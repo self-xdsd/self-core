@@ -100,6 +100,26 @@ public final class GithubRepoTestCase {
     }
 
     /**
+     * A GithubRepo can return its Stars.
+     */
+    @Test
+    public void returnsStars() {
+        final Repo repo = new GithubRepo(
+            Mockito.mock(JsonResources.class),
+            URI.create("http://localhost:8080/repos/mihai/test/"),
+            Mockito.mock(User.class),
+            Mockito.mock(Storage.class)
+        );
+        MatcherAssert.assertThat(
+            repo.stars(),
+            Matchers.allOf(
+                Matchers.notNullValue(),
+                Matchers.instanceOf(GithubStars.class)
+            )
+        );
+    }
+
+    /**
      * A GithubRepo can be activated.
      */
     @Test

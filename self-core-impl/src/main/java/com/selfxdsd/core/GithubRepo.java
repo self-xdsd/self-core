@@ -119,11 +119,11 @@ final class GithubRepo extends BaseRepo {
     }
 
     @Override
-    public Stars star() {
+    public Stars stars() {
         return new GithubStars(
-                this.resources(),
-                this.repoUri(),
-                this.storage()
+            this.resources(),
+            this.repoUri(),
+            this.storage()
         );
     }
 }
