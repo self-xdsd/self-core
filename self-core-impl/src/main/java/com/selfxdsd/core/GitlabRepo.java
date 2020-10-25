@@ -130,4 +130,8 @@ final class GitlabRepo extends BaseRepo {
         return new GitlabWebhooks(this.resources(), uri, this.storage());
     }
 
+    @Override
+    public Stars star() {
+        throw new UnsupportedOperationException();
+    }
 }
