@@ -15,11 +15,6 @@ import java.util.List;
  * Github stars.
  * @version $Id$
  * @since 0.0.30
- * @todo #630:30min Write some unit tests for method add() here.
- *  They should follow the same pattern as other unit tests and make
- *  use of class MockJsonResources. As example of usage, see how tests
- *  GithubIssueTestCase.reopensOk() and GithubIssueTestCase.reopensNotFound()
- *  are implemented.
  */
 final class GithubStars implements Stars {
 
