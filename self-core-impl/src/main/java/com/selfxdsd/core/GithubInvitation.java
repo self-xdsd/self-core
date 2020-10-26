@@ -37,8 +37,6 @@ import java.net.URI;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.7
- * @todo #629:30min After we have the method Repo.star() implemented,
- *  finish implementation of method accept here to actually star the repo.
  */
 final class GithubInvitation implements Invitation {
     /**
@@ -101,6 +99,15 @@ final class GithubInvitation implements Invitation {
             .patch(this.uri, Json.createObjectBuilder().build());
         if(resp.statusCode() == HttpURLConnection.HTTP_NO_CONTENT) {
             LOG.debug("Invitation accepted.");
+            final String repoFullName = this.json
+                .getJsonObject("repository")
+                .getString("full_name");
+            LOG.debug("Starring Github repository " + repoFullName + "... ");
+            final Repo repo = this.github.repo(
+                repoFullName.split("/")[0],
+                repoFullName.split("/")[1]
+            );
+            repo.stars().add();
         } else {
             LOG.warn(
                 "Problem when accepting invitation. "
@@ -108,15 +115,5 @@ final class GithubInvitation implements Invitation {
                 + resp.statusCode()
             );
         }
-        final String repoFullName = this.json
-            .getJsonObject("repository")
-            .getString("full_name");
-        LOG.debug("Starring Github repository " + repoFullName + "... ");
-        final Repo repo = this.github.repo(
-            repoFullName.split("/")[0],
-            repoFullName.split("/")[1]
-        );
-
-        LOG.debug("Github repository " + repoFullName + "starred. ");
     }
 }

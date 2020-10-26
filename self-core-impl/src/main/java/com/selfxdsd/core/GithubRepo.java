@@ -122,7 +122,11 @@ final class GithubRepo extends BaseRepo {
     public Stars stars() {
         return new GithubStars(
             this.resources(),
-            this.repoUri(),
+            URI.create(this
+                .repoUri()
+                .toString()
+                .replace("repos", "user/starred")
+            ),
             this.storage()
         );
     }
