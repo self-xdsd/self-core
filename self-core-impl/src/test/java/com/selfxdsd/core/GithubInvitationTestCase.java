@@ -66,8 +66,10 @@ public final class GithubInvitationTestCase {
     @Test
     public void acceptWorks(){
         final MockJsonResources res = new MockJsonResources(
-            mockRequest -> new MockJsonResources
-                .MockResource(204, JsonValue.NULL)
+            mockRequest -> {
+                return new MockJsonResources
+                    .MockResource(204, JsonValue.NULL);
+            }
         );
         final JsonObject json = Json.createObjectBuilder()
             .add("id", 1)
@@ -75,9 +77,11 @@ public final class GithubInvitationTestCase {
                 .add("full_name", "john/test")
                 .build())
             .build();
-        final Provider github = Mockito.mock(Provider.class);
-        final Repo repo = Mockito.mock(Repo.class);
-        final Stars stars = Mockito.mock(Stars.class);
+        final Github github = new Github(
+            Mockito.mock(User.class),
+            Mockito.mock(Storage.class),
+            res
+        );
         final Invitation invitation = new GithubInvitation(
             res,
             URI.create("https://api.github.com/repos/john/test/invitations"),
@@ -85,20 +89,25 @@ public final class GithubInvitationTestCase {
             github
         );
 
-        Mockito.when(github.repo("john", "test")).thenReturn(repo);
-        Mockito.when(repo.stars()).thenReturn(stars);
-
         invitation.accept();
 
-        final MockJsonResources.MockRequest request = res.requests().first();
-        MatcherAssert.assertThat(request.getMethod(),
+        MatcherAssert.assertThat(res.requests(), Matchers.iterableWithSize(2));
+
+        final MockJsonResources.MockRequest invReq = res.requests().first();
+        MatcherAssert.assertThat(invReq.getMethod(),
             Matchers.equalTo("PATCH"));
-        MatcherAssert.assertThat(request.getUri().toString(),
+        MatcherAssert.assertThat(invReq.getUri().toString(),
             Matchers.equalTo(
                 "https://api.github.com/repos/john/test/invitations/1"
             )
         );
-        Mockito.verify(stars, Mockito.times(1)).add();
+
+        MockJsonResources.MockRequest starReq = res.requests().atIndex(1);
+        MatcherAssert.assertThat(starReq.getMethod(),
+            Matchers.equalTo("PUT"));
+        MatcherAssert.assertThat(starReq.getUri().toString(),
+            Matchers.equalTo(
+                "https://api.github.com/user/starred/john/test"));
     }
 
     /**
@@ -116,9 +125,11 @@ public final class GithubInvitationTestCase {
                 .add("full_name", "john/test")
                 .build())
             .build();
-        final Provider github = Mockito.mock(Provider.class);
-        final Repo repo = Mockito.mock(Repo.class);
-        final Stars stars = Mockito.mock(Stars.class);
+        final Github github = new Github(
+            Mockito.mock(User.class),
+            Mockito.mock(Storage.class),
+            res
+        );
         final Invitation invitation = new GithubInvitation(
             res,
             URI.create("https://api.github.com/repos/john/test/invitations"),
@@ -126,11 +137,18 @@ public final class GithubInvitationTestCase {
             github
         );
 
-        Mockito.when(github.repo("john", "test")).thenReturn(repo);
-        Mockito.when(repo.stars()).thenReturn(stars);
-
         invitation.accept();
 
-        Mockito.verify(stars, Mockito.times(0)).add();
+        //starring request is not called, only invitation request is present
+        MatcherAssert.assertThat(res.requests(), Matchers.iterableWithSize(1));
+
+        final MockJsonResources.MockRequest invReq = res.requests().first();
+        MatcherAssert.assertThat(invReq.getMethod(),
+            Matchers.equalTo("PATCH"));
+        MatcherAssert.assertThat(invReq.getUri().toString(),
+            Matchers.equalTo(
+                "https://api.github.com/repos/john/test/invitations/1"
+            )
+        );
     }
 }

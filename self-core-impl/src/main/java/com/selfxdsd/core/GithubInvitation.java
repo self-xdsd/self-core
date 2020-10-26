@@ -23,7 +23,6 @@
 package com.selfxdsd.core;
 
 import com.selfxdsd.api.Invitation;
-import com.selfxdsd.api.Provider;
 import com.selfxdsd.api.Repo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,7 +64,7 @@ final class GithubInvitation implements Invitation {
     /**
      * Parent Github.
      */
-    private final Provider github;
+    private final Github github;
 
     /**
      * Ctor.
@@ -78,7 +77,7 @@ final class GithubInvitation implements Invitation {
         final JsonResources resources,
         final URI baseUri,
         final JsonObject json,
-        final Provider github
+        final Github github
     ) {
         this.resources = resources;
         this.uri = URI.create(
