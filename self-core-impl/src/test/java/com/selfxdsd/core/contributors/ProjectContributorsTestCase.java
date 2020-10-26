@@ -32,6 +32,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
@@ -43,6 +44,7 @@ import java.util.stream.Stream;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.4
+ * @checkstyle ExecutableStatementCount (2000 lines)
  */
 public final class ProjectContributorsTestCase {
 
@@ -412,6 +414,58 @@ public final class ProjectContributorsTestCase {
         MatcherAssert.assertThat(
             elected.username(),
             Matchers.isOneOf("mihai", "vlad", "george", "karen")
+        );
+    }
+
+    /**
+     * Elect(...) returns null when all the available contracts
+     * are marked for removal.
+     */
+    @Test
+    public void electReturnsNullWhenAllContractsAreRemoved() {
+        final Project project = this.mockProject(
+            "john/test",
+            Provider.Names.GITHUB,
+            BigDecimal.valueOf(100000),
+            BigDecimal.valueOf(1000)
+        );
+
+        final Contributor contributor = Mockito.mock(Contributor.class);
+        Mockito.when(contributor.username()).thenReturn("mihai");
+
+        final List<Contract> contracts = new ArrayList<>();
+        final Contract mock = Mockito.mock(Contract.class);
+        Mockito.when(mock.role()).thenReturn("DEV");
+        Mockito.when(mock.hourlyRate()).thenReturn(BigDecimal.valueOf(1000));
+        Mockito.when(mock.project()).thenReturn(project);
+        Mockito.when(mock.markedForRemoval()).thenReturn(LocalDateTime.now());
+        contracts.add(mock);
+
+        Mockito.when(contributor.contracts()).thenReturn(
+            new ContributorContracts(
+                contributor,
+                contracts::stream,
+                Mockito.mock(Storage.class))
+        );
+
+        final Contributors contributors = new ProjectContributors(
+            project,
+            List.of(contributor)::stream,
+            Mockito.mock(Storage.class)
+        );
+        final Task task = Mockito.mock(Task.class);
+        Mockito.when(task.assignee()).thenReturn(null);
+        Mockito.when(task.role()).thenReturn("DEV");
+        Mockito.when(task.project()).thenReturn(project);
+        final Resignations resignations = Mockito.mock(Resignations.class);
+        Mockito.when(task.resignations()).thenReturn(resignations);
+        Mockito.when(resignations.spliterator())
+            .thenReturn(List.<Resignation>of().spliterator());
+        final Contributor elected = contributors.elect(task);
+
+        MatcherAssert.assertThat(
+            elected,
+            Matchers.nullValue()
         );
     }
 
