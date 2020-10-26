@@ -226,7 +226,9 @@ public final class ProjectContributors extends BasePaged
             .filter(
                 contributor -> {
                     for(final Contract contract : contributor.contracts()) {
-                        if(contract.role().equals(task.role())) {
+                        if(contract.role().equals(task.role())
+                            && contract.markedForRemoval() == null
+                        ) {
                             final BigDecimal price = contract.hourlyRate()
                                 .multiply(
                                     BigDecimal.valueOf(task.estimation())
