@@ -130,4 +130,9 @@ final class GithubRepo extends BaseRepo {
             this.storage()
         );
     }
+
+    @Override
+    public Commits commits() {
+        return null;
+    }
 }

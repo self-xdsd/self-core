@@ -136,4 +136,11 @@ final class GitlabRepo extends BaseRepo {
             "Not yet implemented."
         );
     }
+
+    @Override
+    public Commits commits() {
+        throw new UnsupportedOperationException(
+            "Not yet implemented."
+        );
+    }
 }
