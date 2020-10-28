@@ -22,6 +22,8 @@
  */
 package com.selfxdsd.api;
 
+import javax.json.JsonObject;
+
 /**
  * Git commit.
  * @author Mihai Andronache (amihaiemil@gmail.com)
@@ -35,4 +37,16 @@ public interface Commit {
      * @return Comments.
      */
     Comments comments();
+
+    /**
+     * The author's username.
+     * @return String.
+     */
+    String author();
+
+    /**
+     * The Commit in JSON format as returned by the provider's API.
+     * @return JsonObject.
+     */
+    JsonObject json();
 }
