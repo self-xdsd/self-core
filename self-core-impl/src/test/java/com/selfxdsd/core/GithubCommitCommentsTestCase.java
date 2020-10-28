@@ -162,4 +162,16 @@ public final class GithubCommitCommentsTestCase {
         );
         comments.post("test comment");
     }
+
+    /**
+     * We cannot iterate over all of them for now.
+     */
+    @Test(expected = UnsupportedOperationException.class)
+    public void cannotIterate() {
+        final Comments comments = new GithubCommitComments(
+            URI.create("local/repos/mihai/test/commits/ref1"),
+            Mockito.mock(JsonResources.class)
+        );
+        comments.iterator();
+    }
 }

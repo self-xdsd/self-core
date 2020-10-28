@@ -28,6 +28,8 @@ import com.selfxdsd.api.storage.Storage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.json.JsonObject;
+import java.net.HttpURLConnection;
 import java.net.URI;
 import java.util.Iterator;
 
@@ -80,7 +82,47 @@ final class GithubCommits implements Commits {
 
     @Override
     public Commit getCommit(final String ref) {
-        return null;
+        LOG.debug(
+            "Getting commit [" + ref + "] from ["
+            + this.commitsUri + "..."
+        );
+        final URI commitUri = URI.create(
+            this.commitsUri.toString() + "/" + ref
+        );
+        final Resource resource = this.resources.get(commitUri);
+        JsonObject jsonObject;
+        switch (resource.statusCode()) {
+            case HttpURLConnection.HTTP_OK:
+                jsonObject = resource.asJsonObject();
+                break;
+            case HttpURLConnection.HTTP_NOT_FOUND:
+            case HttpURLConnection.HTTP_NO_CONTENT:
+            case 422:
+                jsonObject = null;
+                break;
+            default:
+                LOG.error(
+                    "Could not get the commit " + ref + ". "
+                    + "Received status code: " + resource.statusCode() + "."
+                );
+                throw new IllegalStateException(
+                    "Could not get the commit " + ref + ". "
+                    + "Received status code: " + resource.statusCode() + "."
+                );
+        }
+        Commit commit = null;
+        if(jsonObject != null){
+            LOG.debug("Commit found!");
+            commit = new GithubCommit(
+                commitUri,
+                jsonObject,
+                this.storage,
+                this.resources
+            );
+        } else {
+            LOG.debug("Commit [" + ref + "] not found, returning null.");
+        }
+        return commit;
     }
 
     @Override
