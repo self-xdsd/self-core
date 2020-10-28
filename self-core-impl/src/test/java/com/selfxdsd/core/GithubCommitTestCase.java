@@ -82,4 +82,20 @@ public final class GithubCommitTestCase {
         );
     }
 
+    /**
+     * Returns Commit's comments.
+     */
+    @Test
+    public void returnsComments(){
+        final Commit commit = new GithubCommit(
+            URI.create("http://localhost/repos/mihai/test/commits/ref1"),
+            Json.createObjectBuilder().build(),
+            Mockito.mock(Storage.class),
+            Mockito.mock(JsonResources.class)
+        );
+        MatcherAssert.assertThat(
+            commit.comments(),
+            Matchers.instanceOf(GithubCommitComments.class)
+        );
+    }
 }

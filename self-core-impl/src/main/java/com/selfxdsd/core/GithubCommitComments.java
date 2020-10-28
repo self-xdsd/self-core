@@ -22,44 +22,36 @@
  */
 package com.selfxdsd.core;
 
+import com.selfxdsd.api.Comment;
 import com.selfxdsd.api.Comments;
-import com.selfxdsd.api.Commit;
-import com.selfxdsd.api.storage.Storage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.json.Json;
 import javax.json.JsonObject;
+import java.net.HttpURLConnection;
 import java.net.URI;
+import java.util.Iterator;
 
 /**
- * A Commit in Github.
+ * Comments of a Commit on Github.
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.31
  */
-final class GithubCommit implements Commit {
+final class GithubCommitComments implements Comments {
 
     /**
      * Logger.
      */
     private static final Logger LOG = LoggerFactory.getLogger(
-        GithubCommit.class
+        GithubCommitComments.class
     );
 
     /**
-     * Commit base uri.
+     * Base Comments uri.
      */
-    private final URI commitUri;
-
-    /**
-     * Commit JSON as returned by Github's API.
-     */
-    private final JsonObject json;
-
-    /**
-     * Self storage, in case we want to store something.
-     */
-    private final Storage storage;
+    private final URI commentsUri;
 
     /**
      * Github's JSON Resources.
@@ -68,35 +60,53 @@ final class GithubCommit implements Commit {
 
     /**
      * Ctor.
-     * @param commitUri Commit base URI.
-     * @param json Json Commit as returned by Github's API.
-     * @param storage Storage.
+     *
+     * @param commitUri Commit URI.
      * @param resources Github's JSON Resources.
      */
-    GithubCommit(
+    GithubCommitComments(
         final URI commitUri,
-        final JsonObject json,
-        final Storage storage,
         final JsonResources resources
     ) {
-        this.commitUri = commitUri;
-        this.json = json;
-        this.storage = storage;
+        final String commitUriStr = commitUri.toString();
+        String slash = "/";
+        if(commitUriStr.endsWith("/")){
+            slash = "";
+        }
+        this.commentsUri = URI.create(commitUriStr + slash + "comments");
         this.resources = resources;
     }
 
     @Override
-    public Comments comments() {
-        return new GithubCommitComments(this.commitUri, this.resources);
+    public Comment post(final String body) {
+        LOG.debug("Posting Commit Comment to: [" + this.commentsUri + "].");
+        final Resource resource = this.resources.post(
+            this.commentsUri,
+            Json.createObjectBuilder().add("body", body).build()
+        );
+        if (resource.statusCode() == HttpURLConnection.HTTP_CREATED) {
+            return new GithubComment(resource.asJsonObject());
+        } else {
+            LOG.error(
+                "Expected status 201 CREATED, but got: ["
+                + resource.statusCode() + "]."
+            );
+            throw new IllegalStateException(
+                "Github Commit Comment was not created. Status is "
+                + resource.statusCode() + "."
+            );
+        }
     }
 
     @Override
-    public String author() {
-        return this.json.getJsonObject("author").getString("login");
+    public Comment received(final JsonObject comment) {
+        return new GithubComment(comment);
     }
 
     @Override
-    public JsonObject json() {
-        return this.json;
+    public Iterator<Comment> iterator() {
+        throw new UnsupportedOperationException(
+            "Not yet implemented."
+        );
     }
 }
