@@ -133,6 +133,10 @@ final class GithubRepo extends BaseRepo {
 
     @Override
     public Commits commits() {
-        return null;
+        return new GithubCommits(
+            this.resources(),
+            URI.create(this.repoUri().toString() + "/commits"),
+            this.storage()
+        );
     }
 }

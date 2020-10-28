@@ -120,6 +120,26 @@ public final class GithubRepoTestCase {
     }
 
     /**
+     * A GithubRepo can return its Commits.
+     */
+    @Test
+    public void returnsCommits() {
+        final Repo repo = new GithubRepo(
+            Mockito.mock(JsonResources.class),
+            URI.create("http://localhost:8080/repos/mihai/test/"),
+            Mockito.mock(User.class),
+            Mockito.mock(Storage.class)
+        );
+        MatcherAssert.assertThat(
+            repo.commits(),
+            Matchers.allOf(
+                Matchers.notNullValue(),
+                Matchers.instanceOf(GithubCommits.class)
+            )
+        );
+    }
+
+    /**
      * A GithubRepo can be activated.
      */
     @Test
