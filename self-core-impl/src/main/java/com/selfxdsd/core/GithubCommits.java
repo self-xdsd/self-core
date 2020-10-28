@@ -126,6 +126,18 @@ final class GithubCommits implements Commits {
     }
 
     @Override
+    public Commit received(final JsonObject commit) {
+        return new GithubCommit(
+            URI.create(
+                this.commitsUri.toString() + "/" + commit.getString("sha")
+            ),
+            commit,
+            this.storage,
+            this.resources
+        );
+    }
+
+    @Override
     public Iterator<Commit> iterator() {
         throw new UnsupportedOperationException(
             "You cannot iterate over all the Commits in a Repo."

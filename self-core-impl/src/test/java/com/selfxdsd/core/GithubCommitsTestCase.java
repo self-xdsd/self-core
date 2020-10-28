@@ -174,4 +174,33 @@ public final class GithubCommitsTestCase {
         );
         commits.getCommit("123");
     }
+
+    /**
+     * GithubCommits can receive a Commit in JSON format.
+     */
+    @Test
+    public void receivesCommit() {
+        final Commits commits = new GithubCommits(
+            Mockito.mock(JsonResources.class),
+            URI.create("local/repos/mihai/test/commits/ref1"),
+            Mockito.mock(Storage.class)
+        );
+        final Commit received = commits.received(
+            Json.createObjectBuilder()
+                .add("sha", "12fe4d")
+                .add(
+                    "author",
+                    Json.createObjectBuilder()
+                        .add("login", "mihai")
+                ).build()
+        );
+        MatcherAssert.assertThat(
+            received,
+            Matchers.instanceOf(GithubCommit.class)
+        );
+        MatcherAssert.assertThat(
+            received.author(),
+            Matchers.equalTo("mihai")
+        );
+    }
 }
