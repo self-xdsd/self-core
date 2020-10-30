@@ -33,6 +33,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import javax.json.Json;
+import java.math.BigDecimal;
 import java.net.URI;
 
 /**
@@ -145,6 +146,7 @@ public final class GithubRepoTestCase {
     @Test
     public void canBeActivated() {
         final Project activated = Mockito.mock(Project.class);
+        Mockito.when(activated.repoFullName()).thenReturn("john/test");
         final Wallets wallets = Mockito.mock(Wallets.class);
         Mockito.when(activated.wallets()).thenReturn(wallets);
 
@@ -157,9 +159,16 @@ public final class GithubRepoTestCase {
             .thenReturn(Mockito.mock(Projects.class));
 
         final User owner = Mockito.mock(User.class);
+        Mockito.when(owner.username()).thenReturn("john");
         final Provider provider = Mockito.mock(Provider.class);
         Mockito.when(provider.name()).thenReturn(Provider.Names.GITHUB);
         Mockito.when(owner.provider()).thenReturn(provider);
+
+        final Contracts contracts = Mockito.mock(Contracts.class);
+        Mockito.when(activated.contracts()).thenReturn(contracts);
+
+        final Contributors contributors = Mockito.mock(Contributors.class);
+        Mockito.when(activated.contributors()).thenReturn(contributors);
 
         final JsonResources res = new MockJsonResources(request -> {
             return new MockJsonResources
@@ -180,6 +189,14 @@ public final class GithubRepoTestCase {
 
         MatcherAssert.assertThat(project, Matchers.is(activated));
         Mockito.verify(project, Mockito.times(1)).resolve(Mockito.any());
+        Mockito.verify(contributors).register("john", "github");
+        Mockito.verify(contracts).addContract(
+            "john/test",
+            "john",
+            "github",
+            BigDecimal.valueOf(2500),
+            "PO"
+        );
     }
 
     /**

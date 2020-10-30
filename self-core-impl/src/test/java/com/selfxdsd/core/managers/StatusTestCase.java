@@ -131,7 +131,7 @@ public final class StatusTestCase {
                 + "@mihai this ticket is not registered as a task, "
                 + "therefore I'm not working on it at the moment.\n\n"
                 + "If you want me to take care of it, please reopen it."
-                + " However, reopening Issues is not encouraged --"
+                + " However, reopening Issues is not encouraged -- "
                 + "it's better if you open new tickets instead.");
     }
 
