@@ -167,9 +167,6 @@ public final class GithubRepoTestCase {
         final Contracts contracts = Mockito.mock(Contracts.class);
         Mockito.when(activated.contracts()).thenReturn(contracts);
 
-        final Contributors contributors = Mockito.mock(Contributors.class);
-        Mockito.when(activated.contributors()).thenReturn(contributors);
-
         final JsonResources res = new MockJsonResources(request -> {
             return new MockJsonResources
                 .MockResource(200, Json.createObjectBuilder()
@@ -189,7 +186,6 @@ public final class GithubRepoTestCase {
 
         MatcherAssert.assertThat(project, Matchers.is(activated));
         Mockito.verify(project, Mockito.times(1)).resolve(Mockito.any());
-        Mockito.verify(contributors).register("john", "github");
         Mockito.verify(contracts).addContract(
             "john/test",
             "john",

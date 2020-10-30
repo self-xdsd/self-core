@@ -148,11 +148,6 @@ abstract class BaseRepo implements Repo {
                 .replace("-", "")
         );
         wallets.activate(wallet);
-        final Contributors contributors = project.contributors();
-        contributors.register(
-            this.owner.username(),
-            this.owner.provider().name()
-        );
         project.contracts().addContract(
             project.repoFullName(),
             this.owner.username(),
