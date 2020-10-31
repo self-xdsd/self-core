@@ -431,8 +431,8 @@ public final class StoredProjectManager implements ProjectManager {
                 if(issue.isClosed()) {
                     LOG.debug(
                         "Task #" + issue.issueId()
-                            + " of Contributor " + assignee.username()
-                            + " is closed. Invoicing... "
+                        + " of Contributor " + assignee.username()
+                        + " is closed. Invoicing... "
                     );
                     final InvoicedTask invoiced = task.contract()
                         .invoices()
@@ -448,9 +448,12 @@ public final class StoredProjectManager implements ProjectManager {
                             )
                         );
                         this.storage.tasks().remove(task);
+                        if(issue.assignee() != null) {
+                            issue.unassign(issue.assignee());
+                        }
                         LOG.debug(
                             "Task #" + issue.issueId() + " successfully"
-                                + " invoiced and taken out of scope."
+                            + " invoiced and taken out of scope."
                         );
                     }
                 } else {
@@ -459,6 +462,9 @@ public final class StoredProjectManager implements ProjectManager {
                         task.resignations()
                             .register(task, Resignations.Reason.DEADLINE);
                         task.unassign();
+                        if(issue.assignee() != null) {
+                            issue.unassign(issue.assignee());
+                        }
                         issue.comments().post(
                             String.format(
                                 project.language().reply(
