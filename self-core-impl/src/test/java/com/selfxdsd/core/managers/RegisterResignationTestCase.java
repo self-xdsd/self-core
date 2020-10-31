@@ -28,13 +28,13 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 /**
- * Unit tests for {@link UnassignTask}.
+ * Unit tests for {@link RegisterResignation}.
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
- * @since 0.0.20
+ * @since 0.0.31
  * @checkstyle ExecutableStatementCount (500 lines)
  */
-public final class UnassignTaskTestCase {
+public final class RegisterResignationTestCase {
 
     /**
      * There is actually no task registered for the
@@ -58,8 +58,11 @@ public final class UnassignTaskTestCase {
         Mockito.when(event.project()).thenReturn(project);
 
         final Step next = Mockito.mock(Step.class);
-        final Step unassign = new UnassignTask(next);
-        unassign.perform(event);
+        final Step registerResignation = new RegisterResignation(
+            Resignations.Reason.ASKED,
+            next
+        );
+        registerResignation.perform(event);
         Mockito.verify(next, Mockito.times(1)).perform(event);
     }
 
@@ -71,8 +74,10 @@ public final class UnassignTaskTestCase {
     public void taskIsNotAssigned() {
         final Task task = Mockito.mock(Task.class);
         Mockito.when(task.assignee()).thenReturn(null);
-        Mockito.when(task.unassign()).thenThrow(
-            new IllegalStateException("Task.unassign() should not be called!")
+        Mockito.when(task.resignations()).thenThrow(
+            new IllegalStateException(
+                "Task.resignations() should not be called!"
+            )
         );
 
         final Event event = Mockito.mock(Event.class);
@@ -91,16 +96,19 @@ public final class UnassignTaskTestCase {
         Mockito.when(event.project()).thenReturn(project);
 
         final Step next = Mockito.mock(Step.class);
-        final Step unassign = new UnassignTask(next);
-        unassign.perform(event);
+        final Step registerResignation = new RegisterResignation(
+            Resignations.Reason.ASKED,
+            next
+        );
+        registerResignation.perform(event);
         Mockito.verify(next, Mockito.times(1)).perform(event);
     }
 
     /**
-     * The Task corresponding to the event's Issue is unassigned.
+     * A resignation is registered for the Task's assignee.
      */
     @Test
-    public void taskIsUnassigned() {
+    public void resignationIsRegistered() {
         final Task task = Mockito.mock(Task.class);
         Mockito.when(task.assignee()).thenReturn(
             Mockito.mock(Contributor.class)
@@ -123,14 +131,19 @@ public final class UnassignTaskTestCase {
         Mockito.when(project.tasks()).thenReturn(tasks);
         Mockito.when(event.project()).thenReturn(project);
 
+        Mockito.when(task.resignations())
+            .thenReturn(Mockito.mock(Resignations.class));
+
         final Step next = Mockito.mock(Step.class);
-        final Step unassign = new UnassignTask(next);
-        unassign.perform(event);
+        final Step registerResignation = new RegisterResignation(
+            Resignations.Reason.ASKED,
+            next
+        );
+        registerResignation.perform(event);
 
-        Mockito.verify(task, Mockito.times(1)).unassign();
+        Mockito.verify(task, Mockito.times(0)).unassign();
+        Mockito.verify(task.resignations(), Mockito.times(1))
+            .register(task, Resignations.Reason.ASKED);
         Mockito.verify(next, Mockito.times(1)).perform(event);
-        Mockito.verify(issue, Mockito.times(2)).assignee();
-        Mockito.verify(issue, Mockito.times(1)).unassign("mihai");
     }
-
 }

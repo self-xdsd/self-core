@@ -29,27 +29,33 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Step which unassigns a task.
+ * Step where we register a resignation for the task's assignee.
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
- * @since 0.0.20
+ * @since 0.0.31
  */
-public final class UnassignTask extends Intermediary {
+public final class RegisterResignation extends Intermediary {
 
     /**
      * Logger.
      */
     private static final Logger LOG = LoggerFactory.getLogger(
-        UnassignTask.class
+        RegisterResignation.class
     );
 
     /**
+     * Reason of the resignation.
+     */
+    private final String reason;
+
+    /**
      * Ctor.
-     *
+     * @param reason Reason of the resignation.
      * @param next The next step to perform.
      */
-    public UnassignTask(final Step next) {
+    public RegisterResignation(final String reason, final Step next) {
         super(next);
+        this.reason = reason;
     }
 
     @Override
@@ -61,27 +67,18 @@ public final class UnassignTask extends Intermediary {
         );
         if(task == null || task.assignee() == null) {
             LOG.debug(
-                "Task #" + issueId + " is not register or it is not assigned, "
-                + "nothing to do.");
+                "Task #" + issueId + " is not registered or "
+                + "it is not assigned, nothing to do."
+            );
         } else {
             LOG.debug(
-                "Unassigning @" + task.assignee().username() + " from task "
-                + "#" + issueId + " of project " + project.repoFullName()
-                + " at " + project.provider() + ". "
+                "Registering resignation of  @" + task.assignee().username()
+                + " from task #" + issueId + " of project "
+                + project.repoFullName() + " at "
+                + project.provider() + ". Reason: " + this.reason
             );
-            final Task unassigned = task.unassign();
-            final Issue issue = event.issue();
-            if(issue.assignee() != null) {
-                issue.unassign(issue.assignee());
-            }
-            if(unassigned.assignee() == null) {
-                LOG.debug("Unassgninment successful!");
-            } else {
-                LOG.debug(
-                    "Something went wrong, the task is still assigned to "
-                    + unassigned.assignee().username()
-                );
-            }
+            task.resignations().register(task, this.reason);
+            LOG.debug("Resignation registered successfully!");
         }
         this.next().perform(event);
     }

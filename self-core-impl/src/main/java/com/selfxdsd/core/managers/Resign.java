@@ -24,6 +24,7 @@ package com.selfxdsd.core.managers;
 
 import com.selfxdsd.api.Event;
 import com.selfxdsd.api.Language;
+import com.selfxdsd.api.Resignations;
 import com.selfxdsd.api.pm.Conversation;
 import com.selfxdsd.api.pm.Step;
 import org.slf4j.Logger;
@@ -66,12 +67,15 @@ public final class Resign implements Conversation {
             final String author = event.comment().author();
             steps = new AuthorIsAssignee(
                 new UnassignTask(
-                    new SendReply(
-                        String.format(
-                            language.reply("resigned.comment"),
-                            author
-                        ),
-                        lastly -> LOG.debug("User resigned successfully.")
+                    new RegisterResignation(
+                        Resignations.Reason.ASKED,
+                        new SendReply(
+                            String.format(
+                                language.reply("resigned.comment"),
+                                author
+                            ),
+                            lastly -> LOG.debug("User resigned successfully.")
+                        )
                     )
                 ),
                 new SendReply(
