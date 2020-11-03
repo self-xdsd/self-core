@@ -74,4 +74,26 @@ public final class Env {
      * Webhook Base URL. E.g. http://self-xdsd.go.ro/pm
      */
     public static final String WEBHOOK_BASE_URL = "self_webhook_base_url";
+
+    /**
+     * Host of the server where we clone the repo and discover puzzles.
+     */
+    public static final String PDD_HOST = "self_pdd_host";
+
+    /**
+     * Port of the server where we clone the repo and discover puzzles.
+     */
+    public static final String PDD_PORT = "self_pdd_port";
+
+    /**
+     * Username of the server where we clone the repo and discover puzzles.
+     */
+    public static final String PDD_USERNAME = "self_pdd_username";
+
+    /**
+     * Path to the private key of the server where we clone the repo
+     * and discover puzzles.
+     */
+    public static final String PDD_PRIVATE_KEY = "self_pdd_privatekey";
+
 }
