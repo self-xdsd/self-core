@@ -268,7 +268,8 @@ final class GithubIssue implements Issue {
 
     @Override
     public boolean isPullRequest() {
-        return this.json.getJsonObject("pull_request") != null;
+        return this.json.getString("html_url")
+            .endsWith("/pull/" + this.issueId());
     }
 
     @Override
