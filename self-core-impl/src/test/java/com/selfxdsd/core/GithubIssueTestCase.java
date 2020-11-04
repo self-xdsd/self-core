@@ -78,7 +78,10 @@ public final class GithubIssueTestCase {
     public void returnsDevRole() {
         final Issue issue = new GithubIssue(
             URI.create("http://localhost/issues/1"),
-            Json.createObjectBuilder().add("number", 1).build(),
+            Json.createObjectBuilder()
+                .add("number", 1)
+                .add("html_url", "http://localhost/issues/1")
+                .build(),
             Mockito.mock(Storage.class),
             Mockito.mock(JsonResources.class)
         );
@@ -94,10 +97,10 @@ public final class GithubIssueTestCase {
     @Test
     public void returnsRevRole() {
         final Issue issue = new GithubIssue(
-            URI.create("http://localhost/issues/1"),
+            URI.create("http://localhost/pull/1"),
             Json.createObjectBuilder()
                 .add("number", 1)
-                .add("pull_request", Json.createObjectBuilder())
+                .add("html_url", "http://localhost/pull/1")
                 .build(),
             Mockito.mock(Storage.class),
             Mockito.mock(JsonResources.class)
@@ -180,7 +183,10 @@ public final class GithubIssueTestCase {
     public void returnsIssueEstimation() {
         final int estimation = new GithubIssue(
             URI.create("http://localhost/issues/1"),
-            JsonObject.EMPTY_JSON_OBJECT,
+            Json.createObjectBuilder()
+                .add("number", 1)
+                .add("html_url", "http://localhost/issues/1")
+                .build(),
             Mockito.mock(Storage.class),
             Mockito.mock(JsonResources.class)
         ).estimation();
@@ -193,9 +199,10 @@ public final class GithubIssueTestCase {
     @Test
     public void returnsPullRequestEstimation() {
         final int estimation = new GithubIssue(
-            URI.create("http://localhost/issues/1"),
+            URI.create("http://localhost/pull/1"),
             Json.createObjectBuilder()
-                .add("pull_request", Json.createObjectBuilder())
+                .add("number", 1)
+                .add("html_url", "http://localhost/pull/1")
                 .build(),
             Mockito.mock(Storage.class),
             Mockito.mock(JsonResources.class)
