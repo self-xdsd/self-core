@@ -112,17 +112,44 @@ public final class GithubIssueTestCase {
     }
 
     /**
-     * GithubIssue can return the fullName of the Repo it belongs to.
+     * GithubIssue can return the fullName of the Repo it belongs to,
+     * from an Issue url.
      */
     @Test
-    public void returnsRepoFullName() {
+    public void returnsRepoFullNameFromIssue() {
         final Issue issue = new GithubIssue(
             URI.create("http://localhost/issues/1"),
             Json.createObjectBuilder()
                 .add("number", 1)
                 .add(
-                    "repository_url",
-                    "https://api.github.com/repos/amihaiemil/docker-java-api"
+                    "url",
+                    "https://api.github.com/repos/"
+                    + "amihaiemil/docker-java-api/issues/1"
+                )
+                .build(),
+            Mockito.mock(Storage.class),
+            Mockito.mock(JsonResources.class)
+        );
+        MatcherAssert.assertThat(
+            issue.repoFullName(),
+            Matchers.equalTo("amihaiemil/docker-java-api")
+        );
+    }
+
+    /**
+     * GithubIssue can return the fullName of the Repo it belongs to,
+     * from a PR url.
+     */
+    @Test
+    public void returnsRepoFullNameFromPullRequest() {
+        final Issue issue = new GithubIssue(
+            URI.create("http://localhost/issues/1"),
+            Json.createObjectBuilder()
+                .add("number", 1)
+                .add(
+                    "url",
+                    "https://api.github.com/repos/"
+                        + "amihaiemil/docker-java-api/pull/1"
                 )
                 .build(),
             Mockito.mock(Storage.class),

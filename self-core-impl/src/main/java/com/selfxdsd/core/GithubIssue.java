@@ -119,9 +119,10 @@ final class GithubIssue implements Issue {
 
     @Override
     public String repoFullName() {
-        return this.json.getString("repository_url").substring(
+        final String[] parts = this.json.getString("url").substring(
             "https://api.github.com/repos/".length()
-        );
+        ).split("/");
+        return parts[0] + "/" + parts[1];
     }
 
     @Override
