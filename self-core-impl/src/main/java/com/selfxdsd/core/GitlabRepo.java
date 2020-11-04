@@ -87,14 +87,21 @@ final class GitlabRepo extends BaseRepo {
                 @Override
                 public Issue issue() {
                     throw new UnsupportedOperationException(
-                        "No Issue in the activate event"
+                        "No Issue in the activate event."
                     );
                 }
 
                 @Override
                 public Comment comment() {
                     throw new UnsupportedOperationException(
-                        "No Comment in the activate event"
+                        "No Comment in the activate event."
+                    );
+                }
+
+                @Override
+                public Commit commit() {
+                    throw new UnsupportedOperationException(
+                        "No Commit in the activate event."
                     );
                 }
 

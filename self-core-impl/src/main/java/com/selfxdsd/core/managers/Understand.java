@@ -71,6 +71,11 @@ public final class Understand implements Conversation {
                 }
 
                 @Override
+                public Commit commit() {
+                    return event.commit();
+                }
+
+                @Override
                 public Project project() {
                     return event.project();
                 }

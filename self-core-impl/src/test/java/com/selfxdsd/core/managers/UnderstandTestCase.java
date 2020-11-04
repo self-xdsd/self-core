@@ -22,10 +22,7 @@
  */
 package com.selfxdsd.core.managers;
 
-import com.selfxdsd.api.Comment;
-import com.selfxdsd.api.Event;
-import com.selfxdsd.api.Issue;
-import com.selfxdsd.api.Project;
+import com.selfxdsd.api.*;
 import com.selfxdsd.api.pm.Conversation;
 import com.selfxdsd.core.projects.English;
 import org.hamcrest.MatcherAssert;
@@ -88,6 +85,11 @@ public final class UnderstandTestCase {
                 }
 
                 @Override
+                public Commit commit() {
+                    return null;
+                }
+
+                @Override
                 public Project project() {
                     return project;
                 }
@@ -139,6 +141,11 @@ public final class UnderstandTestCase {
                 @Override
                 public Comment comment() {
                     return comment;
+                }
+
+                @Override
+                public Commit commit() {
+                    return null;
                 }
 
                 @Override
