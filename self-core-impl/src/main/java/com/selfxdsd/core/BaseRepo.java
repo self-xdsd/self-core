@@ -133,10 +133,16 @@ abstract class BaseRepo implements Repo {
         if (isActive) {
             throw new RepoException.AlreadyActive(this.fullName());
         }
-        final Project project = this.storage()
-            .projectManagers()
-            .pick(provider())
-            .assign(this);
+        final String provider = this.provider();
+        final ProjectManager manager = this.storage.projectManagers()
+            .pick(provider);
+        if(manager == null) {
+            throw new IllegalStateException(
+                "No Project Manager found for the " + provider + " Provider. "
+                + "Ask the system admin to register one!"
+            );
+        }
+        final Project project = manager.assign(this);
         final Wallets wallets = project.wallets();
         final Wallet wallet = wallets.register(
             project,
