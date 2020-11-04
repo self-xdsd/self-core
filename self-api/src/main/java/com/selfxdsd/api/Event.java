@@ -50,6 +50,13 @@ public interface Event {
     Comment comment();
 
     /**
+     * Last Commit that triggered the Event, in case the
+     * Event is "push".
+     * @return Commit.
+     */
+    Commit commit();
+
+    /**
      * Project where this event occured.
      * @return Project.
      */

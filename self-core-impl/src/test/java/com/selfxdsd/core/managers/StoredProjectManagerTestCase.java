@@ -293,6 +293,11 @@ public final class StoredProjectManagerTestCase {
                 }
 
                 @Override
+                public Commit commit() {
+                    return null;
+                }
+
+                @Override
                 public Project project() {
                     return project;
                 }
@@ -355,6 +360,11 @@ public final class StoredProjectManagerTestCase {
 
                 @Override
                 public Comment comment() {
+                    return null;
+                }
+
+                @Override
+                public Commit commit() {
                     return null;
                 }
 
@@ -428,6 +438,11 @@ public final class StoredProjectManagerTestCase {
                 }
 
                 @Override
+                public Commit commit() {
+                    return null;
+                }
+
+                @Override
                 public Project project() {
                     return project;
                 }
@@ -496,6 +511,11 @@ public final class StoredProjectManagerTestCase {
 
                 @Override
                 public Comment comment() {
+                    return null;
+                }
+
+                @Override
+                public Commit commit() {
                     return null;
                 }
 
