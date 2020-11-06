@@ -96,6 +96,11 @@ final class GithubCommit implements Commit {
     }
 
     @Override
+    public String shaRef() {
+        return this.json.getString("sha");
+    }
+
+    @Override
     public JsonObject json() {
         return this.json;
     }

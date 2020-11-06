@@ -83,6 +83,29 @@ public final class GithubCommitTestCase {
     }
 
     /**
+     * GithubCommit can return its SHA ref.
+     */
+    @Test
+    public void returnsShaRef() {
+        final JsonObject json = Json.createObjectBuilder()
+            .add("sha", "123ref")
+            .add(
+                "author",
+                Json.createObjectBuilder().add("login", "mihai")
+            ).build();
+        final Commit commit = new GithubCommit(
+            URI.create("localhost:8080/repos/mihai/test/commits/123ref"),
+            json,
+            Mockito.mock(Storage.class),
+            Mockito.mock(JsonResources.class)
+        );
+        MatcherAssert.assertThat(
+            commit.shaRef(),
+            Matchers.equalTo("123ref")
+        );
+    }
+
+    /**
      * Returns Commit's comments.
      */
     @Test
