@@ -45,6 +45,12 @@ public interface Commit {
     String author();
 
     /**
+     * The Commit's SHA reference.
+     * @return String.
+     */
+    String shaRef();
+
+    /**
      * The Commit in JSON format as returned by the provider's API.
      * @return JsonObject.
      */
