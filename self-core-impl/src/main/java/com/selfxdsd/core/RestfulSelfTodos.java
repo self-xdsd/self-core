@@ -38,7 +38,7 @@ import java.net.URI;
  * @version $Id$
  * @since 0.0.33
  */
-final class RestfulSelfTodos implements SelfTodos {
+public final class RestfulSelfTodos implements SelfTodos {
 
     /**
      * Logger.
@@ -60,12 +60,10 @@ final class RestfulSelfTodos implements SelfTodos {
 
     /**
      * Ctor.
+     * @param baseUri Base URI of self-todos.
      */
-    RestfulSelfTodos() {
-        this(
-            URI.create("http://localhost:8282"),
-            new JsonResources.JdkHttp()
-        );
+    public RestfulSelfTodos(final URI baseUri) {
+        this(baseUri, new JsonResources.JdkHttp());
     }
 
     /**
@@ -73,7 +71,7 @@ final class RestfulSelfTodos implements SelfTodos {
      * @param baseUri Base URI of self-todos.
      * @param resources Json Resources.
      */
-    RestfulSelfTodos(final URI baseUri, final JsonResources resources) {
+    public RestfulSelfTodos(final URI baseUri, final JsonResources resources) {
         this.uri = baseUri;
         this.resources = resources;
     }
