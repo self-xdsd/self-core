@@ -23,7 +23,7 @@
 package com.selfxdsd.api;
 
 /**
- * Self TODOs microservice.
+ * Self-todos microservice.
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.33
