@@ -216,8 +216,20 @@ public final class StoredProject implements Project {
         }
         Stripe.apiKey = apiToken;
         try {
+            final String email;
+            if(this.owner.email() != null) {
+                email = this.owner.email();
+            } else {
+                email = "";
+            }
             final Customer customer = Customer.create(
-                CustomerCreateParams.builder().build()
+                CustomerCreateParams.builder()
+                    .setName(this.owner.username())
+                    .setEmail(email)
+                    .setDescription(
+                        this.repoFullName + " at " + this.provider()
+                    )
+                    .build()
             );
             return this.storage.wallets().register(
                 this, Wallet.Type.STRIPE,
