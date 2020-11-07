@@ -64,6 +64,12 @@ public interface Issue {
      */
     String author();
 
+    /**
+     * The issue's text body.
+     * @return String.
+     */
+    String body();
+
     /***
      * Assignee's username. Might not be present.
      * @return String or null.

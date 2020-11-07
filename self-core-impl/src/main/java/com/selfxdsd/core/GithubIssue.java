@@ -131,6 +131,11 @@ final class GithubIssue implements Issue {
     }
 
     @Override
+    public String body() {
+        return this.json.getString("body");
+    }
+
+    @Override
     public String assignee() {
         final JsonValue assignee = this.json.get("assignee");
         final String username;

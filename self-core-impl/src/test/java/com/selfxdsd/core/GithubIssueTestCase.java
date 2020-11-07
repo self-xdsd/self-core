@@ -187,6 +187,31 @@ public final class GithubIssueTestCase {
     }
 
     /**
+     * GithubIssue can return its body.
+     */
+    @Test
+    public void returnsBody() {
+        final Issue issue = new GithubIssue(
+            URI.create("http://localhost/issues/1"),
+            Json.createObjectBuilder()
+                .add("id", 1)
+                .add(
+                    "user",
+                    Json.createObjectBuilder()
+                        .add("login", "amihaiemil")
+                        .build()
+                ).add("body", "Issue description here.")
+                .build(),
+            Mockito.mock(Storage.class),
+            Mockito.mock(JsonResources.class)
+        );
+        MatcherAssert.assertThat(
+            issue.body(),
+            Matchers.equalTo("Issue description here.")
+        );
+    }
+
+    /**
      * Returns Issue's comments.
      */
     @Test
