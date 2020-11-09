@@ -279,7 +279,7 @@ public final class StoredProjectManagerTestCase {
             new Event() {
                 @Override
                 public String type() {
-                    return "reopened";
+                    return Type.NEW_ISSUE;
                 }
 
                 @Override
@@ -310,6 +310,76 @@ public final class StoredProjectManagerTestCase {
             .post(
                 "@mihai thank you for reporting this. "
                 + "I'll assign someone to take care of it soon."
+            );
+    }
+
+    /**
+     * StoredProjectManager can handle a newIssue which was reported
+     * by the PM itself (no reply comment should be posted).
+     */
+    @Test
+    public void handlesNewIssueOpenedByPm() {
+        final ProjectManager manager = new StoredProjectManager(
+            1,
+            "123",
+            "zoeself",
+            Provider.Names.GITHUB,
+            "123token",
+            BigDecimal.valueOf(50),
+            Mockito.mock(Storage.class)
+        );
+        final Labels labels = Mockito.mock(Labels.class);
+        Mockito.when(labels.iterator())
+            .thenReturn(new ArrayList<Label>().iterator());
+        final Issue issue = Mockito.mock(Issue.class);
+        Mockito.when(issue.labels()).thenReturn(labels);
+        Mockito.when(issue.issueId()).thenReturn("1");
+        Mockito.when(issue.author()).thenReturn("zoeself");
+        Mockito.when(issue.repoFullName()).thenReturn("mihai/test");
+        Mockito.when(issue.provider()).thenReturn("github");
+        final Comments comments = Mockito.mock(Comments.class);
+        Mockito.when(comments.post(Mockito.anyString())).thenReturn(null);
+        Mockito.when(issue.comments()).thenReturn(comments);
+
+        final Project project = Mockito.mock(Project.class);
+        final Tasks tasks = Mockito.mock(Tasks.class);
+        Mockito.when(project.tasks()).thenReturn(tasks);
+        Mockito.when(project.language()).thenReturn(new English());
+        manager.newIssue(
+            new Event() {
+                @Override
+                public String type() {
+                    return Type.NEW_ISSUE;
+                }
+
+                @Override
+                public Issue issue() {
+                    return issue;
+                }
+
+                @Override
+                public Comment comment() {
+                    return null;
+                }
+
+                @Override
+                public Commit commit() {
+                    return null;
+                }
+
+                @Override
+                public Project project() {
+                    return project;
+                }
+
+            }
+        );
+        Mockito.verify(tasks, Mockito.times(1))
+            .register(issue);
+        Mockito.verify(comments, Mockito.times(0))
+            .post(
+                "@zoeself thank you for reporting this. "
+                    + "I'll assign someone to take care of it soon."
             );
     }
 

@@ -237,49 +237,60 @@ public final class StoredProjectManager implements ProjectManager {
                         new AssignTaskToIssueAssignee(
                             sendReply -> {
                                 final Issue issue = sendReply.issue();
-                                final Project project = sendReply.project();
-                                final String reply = String.format(
-                                    project.language()
-                                        .reply("manualAssignment.comment"),
-                                    issue.author()
-                                );
-                                issue.comments().post(reply);
+                                final String author = issue.author();
+                                if(!this.username.equalsIgnoreCase(author)) {
+                                    final Project project = sendReply.project();
+                                    final String reply = String.format(
+                                        project.language()
+                                            .reply("manualAssignment.comment"),
+                                        author
+                                    );
+                                    issue.comments().post(reply);
+                                }
                             }
                         ),
                         new UnassignIssue(
                             sendReply -> {
                                 final Issue issue = sendReply.issue();
-                                final Project project = sendReply.project();
-                                final String reply = String.format(
-                                    project.language()
-                                        .reply("newIssueUnassigned.comment"),
-                                    issue.author(),
-                                    issue.assignee(),
-                                    issue.role()
-                                );
-                                issue.comments().post(reply);
+                                final String author = issue.author();
+                                if(!this.username.equalsIgnoreCase(author)) {
+                                    final Project project = sendReply.project();
+                                    final String reply = String.format(
+                                        project.language()
+                                            .reply(
+                                                "newIssueUnassigned.comment"
+                                            ),
+                                        author,
+                                        issue.assignee(),
+                                        issue.role()
+                                    );
+                                    issue.comments().post(reply);
+                                }
                             }
                         ),
                         event
                     ),
                     notAssigned -> {
-                        final Project project = notAssigned.project();
                         final Issue issue = notAssigned.issue();
-                        final String reply;
-                        if(issue.isPullRequest()) {
-                            reply = String.format(
-                                project.language()
-                                    .reply("newPullRequest.comment"),
-                                issue.author()
-                            );
-                        } else {
-                            reply = String.format(
-                                project.language()
-                                    .reply("newIssue.comment"),
-                                issue.author()
-                            );
+                        final String author = issue.author();
+                        if(!this.username.equalsIgnoreCase(author)) {
+                            final Project project = notAssigned.project();
+                            final String reply;
+                            if (issue.isPullRequest()) {
+                                reply = String.format(
+                                    project.language()
+                                        .reply("newPullRequest.comment"),
+                                    issue.author()
+                                );
+                            } else {
+                                reply = String.format(
+                                    project.language()
+                                        .reply("newIssue.comment"),
+                                    issue.author()
+                                );
+                            }
+                            issue.comments().post(reply);
                         }
-                        issue.comments().post(reply);
                     }
                 )
             )
