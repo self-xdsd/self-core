@@ -87,15 +87,23 @@ public final class RestfulSelfTodos implements SelfTodos {
             "Posting PUSH event from " + repoFullName + " at " + provider + " "
             + "to self-todos at [" + pdd.toString() + "]..."
         );
-        final Resource response = this.resources.post(
-            pdd,
-            Json.createReader(new StringReader(push)).readObject()
-        );
-        if(response.statusCode() == HttpURLConnection.HTTP_OK) {
-            LOG.debug("Post successful!");
-        } else {
-            LOG.warn(
-                "Post received response status code " + response.statusCode()
+        try {
+            final Resource response = this.resources.post(
+                pdd,
+                Json.createReader(new StringReader(push)).readObject()
+            );
+            if (response.statusCode() == HttpURLConnection.HTTP_OK) {
+                LOG.debug("Post successful!");
+            } else {
+                LOG.warn(
+                    "Post received response status code "
+                    + response.statusCode()
+                );
+            }
+        } catch (final IllegalStateException ex) {
+            LOG.error(
+                "Caught exception while POST-ing push event to SelfTodos: ",
+                ex
             );
         }
     }
