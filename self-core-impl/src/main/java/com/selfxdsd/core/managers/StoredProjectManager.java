@@ -31,6 +31,7 @@ import com.selfxdsd.core.Gitlab;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.Period;
@@ -310,19 +311,24 @@ public final class StoredProjectManager implements ProjectManager {
             );
         if(task == null) {
             project.tasks().register(issue);
-            final String reply;
-            if(issue.isPullRequest()) {
-                reply = String.format(
-                    project.language().reply("reopenedPullRequest.comment"),
-                    issue.author()
-                );
-            } else {
-                reply = String.format(
-                    project.language().reply("reopened.comment"),
-                    issue.author()
-                );
+            final String author = issue.author();
+            if(!this.username.equalsIgnoreCase(author)) {
+                final String reply;
+                if (issue.isPullRequest()) {
+                    reply = String.format(
+                        project.language().reply(
+                            "reopenedPullRequest.comment"
+                        ),
+                        author
+                    );
+                } else {
+                    reply = String.format(
+                        project.language().reply("reopened.comment"),
+                        author
+                    );
+                }
+                issue.comments().post(reply);
             }
-            issue.comments().post(reply);
         }
     }
 
