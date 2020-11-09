@@ -132,4 +132,47 @@ public final class RestfulSelfTodosTestCase {
         todos.post(project, "{\"event\":\"push\"}");
     }
 
+    /**
+     * JsonResources.post(...) throws IllegalStateException which should
+     * be caught inside and logged.
+     */
+    @Test
+    public void jsonResourcesThrowsIse() {
+        final SelfTodos todos = new RestfulSelfTodos(
+            URI.create("http://localhost:8282"),
+            new MockJsonResources(
+                req -> {
+                    MatcherAssert.assertThat(
+                        req.getAccessToken(),
+                        Matchers.nullValue()
+                    );
+                    MatcherAssert.assertThat(
+                        req.getMethod(),
+                        Matchers.equalTo("POST")
+                    );
+                    MatcherAssert.assertThat(
+                        req.getBody(),
+                        Matchers.equalTo(
+                            Json.createObjectBuilder()
+                                .add("event", "push")
+                                .build()
+                        )
+                    );
+                    MatcherAssert.assertThat(
+                        req.getUri().toString(),
+                        Matchers.equalTo(
+                            "http://localhost:8282/pdd/github/mihai/test"
+                        )
+                    );
+                    throw new IllegalStateException("ISE from JsonResources");
+                }
+            )
+        );
+        final Project project = Mockito.mock(Project.class);
+        Mockito.when(project.repoFullName()).thenReturn("mihai/test");
+        Mockito.when(project.provider()).thenReturn(Provider.Names.GITHUB);
+        todos.post(project, "{\"event\":\"push\"}");
+    }
+
+
 }
