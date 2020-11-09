@@ -22,16 +22,15 @@
  */
 package com.selfxdsd.core;
 
-import com.selfxdsd.api.Commit;
-import com.selfxdsd.api.Commits;
-import com.selfxdsd.api.storage.Storage;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.json.JsonObject;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.util.Iterator;
+import javax.json.JsonObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import com.selfxdsd.api.Commit;
+import com.selfxdsd.api.Commits;
+import com.selfxdsd.api.storage.Storage;
 
 /**
  * Commits in a github Repo.
@@ -123,18 +122,6 @@ final class GithubCommits implements Commits {
             LOG.debug("Commit [" + ref + "] not found, returning null.");
         }
         return commit;
-    }
-
-    @Override
-    public Commit received(final JsonObject commit) {
-        return new GithubCommit(
-            URI.create(
-                this.commitsUri.toString() + "/" + commit.getString("sha")
-            ),
-            commit,
-            this.storage,
-            this.resources
-        );
     }
 
     @Override
