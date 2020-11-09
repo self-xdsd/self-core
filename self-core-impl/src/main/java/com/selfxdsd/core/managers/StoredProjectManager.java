@@ -31,7 +31,6 @@ import com.selfxdsd.core.Gitlab;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.Period;
