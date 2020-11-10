@@ -22,8 +22,6 @@
  */
 package com.selfxdsd.api;
 
-import javax.json.JsonObject;
-
 /**
  * Commits in a Repo.
  * @author Mihai Andronache (amihaiemil@gmail.com)
@@ -38,14 +36,4 @@ public interface Commits extends Iterable<Commit> {
      * @return Commit or null if it's not found.
      */
     Commit getCommit(final String ref);
-
-    /**
-     * Get a Commit from an existing JsonObject which
-     * Self may receive as part of an event sent
-     * by the Provider.
-     * @param commit The commit's JSON representation.
-     * @return Issue.
-     */
-    Commit received(final JsonObject commit);
-
 }
