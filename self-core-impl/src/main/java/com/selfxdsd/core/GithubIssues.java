@@ -106,11 +106,13 @@ final class GithubIssues implements Issues {
         }
         Issue issue = null;
         if(jsonObject != null){
-            issue = new GithubIssue(
-                issueUri,
-                jsonObject,
-                this.storage,
-                this.resources
+            issue = new WithContributorLabel(
+                new GithubIssue(
+                    issueUri,
+                    jsonObject,
+                    this.storage,
+                    this.resources
+                )
             );
         }
         return issue;
@@ -118,13 +120,15 @@ final class GithubIssues implements Issues {
 
     @Override
     public Issue received(final JsonObject issue) {
-        return new GithubIssue(
-            URI.create(
-                this.issuesUri.toString() + "/" + issue.getInt("number")
-            ),
-            issue,
-            this.storage,
-            this.resources
+        return new WithContributorLabel(
+            new GithubIssue(
+                URI.create(
+                    this.issuesUri.toString() + "/" + issue.getInt("number")
+                ),
+                issue,
+                this.storage,
+                this.resources
+            )
         );
     }
 
@@ -161,14 +165,16 @@ final class GithubIssues implements Issues {
         }
         Issue issue = null;
         if(jsonObject != null){
-            issue = new GithubIssue(
-                URI.create(
-                    this.issuesUri.toString() + "/"
-                    + jsonObject.getInt("number")
-                ),
-                jsonObject,
-                this.storage,
-                this.resources
+            issue = new WithContributorLabel(
+                new GithubIssue(
+                    URI.create(
+                        this.issuesUri.toString() + "/"
+                        + jsonObject.getInt("number")
+                    ),
+                    jsonObject,
+                    this.storage,
+                    this.resources
+                )
             );
         }
         return issue;
