@@ -29,6 +29,8 @@ import com.selfxdsd.api.Label;
  * @author criske
  * @version $Id$
  * @since 0.0.30
+ * @todo #689:30min Implement and test GithubRepoLabels, which will
+ *  represent all the labels defined in a Repo.
  */
 public interface Labels extends Iterable<Label> {
 
@@ -37,5 +39,12 @@ public interface Labels extends Iterable<Label> {
      * @param names Array of names.
      * @return True if successfully added.
      */
-    boolean add(final String ...names);
+    boolean add(final String... names);
+
+    /**
+     * Remove a label.
+     * @param name Label to be removed.
+     * @return True if successfully removed.
+     */
+    boolean remove(final String name);
 }

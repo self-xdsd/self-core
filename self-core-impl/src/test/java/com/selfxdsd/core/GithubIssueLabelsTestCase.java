@@ -92,4 +92,43 @@ public final class GithubIssueLabelsTestCase {
                 .build()
             ).build()));
     }
+
+    /**
+     * A GithubIssueLabels can remove an Issue Label.
+     */
+    @Test
+    public void canRemoveLabel(){
+        final MockJsonResources resources =
+            new MockJsonResources(
+                req -> new MockJsonResources.MockResource(
+                    200,
+                    JsonValue.NULL
+                )
+            );
+
+        final URI issueLabelsUri = URI.create(
+            "https://api.github.com/repos/amihaiemil"
+            + "/docker-java-api/issues/labels"
+        );
+
+        final Labels issueLabels = new GithubIssueLabels(
+            issueLabelsUri, resources
+        );
+        MatcherAssert.assertThat(
+            issueLabels.remove("bug"),
+            Matchers.is(true)
+        );
+        MockJsonResources.MockRequest request = resources.requests().first();
+        MatcherAssert.assertThat(
+            request.getMethod(), Matchers.equalTo("DELETE")
+        );
+        MatcherAssert.assertThat(
+            request.getUri(),
+            Matchers.equalTo(URI.create(issueLabelsUri.toString() + "/bug"))
+        );
+        MatcherAssert.assertThat(
+            request.getBody(),
+            Matchers.equalTo(Json.createObjectBuilder().build())
+        );
+    }
 }

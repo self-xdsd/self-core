@@ -24,6 +24,8 @@ package com.selfxdsd.core;
 
 import com.selfxdsd.api.Label;
 import com.selfxdsd.api.storage.Labels;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.json.Json;
 import javax.json.JsonArrayBuilder;
@@ -41,6 +43,13 @@ import java.util.stream.Collectors;
  * @since 0.0.30
  */
 final class GithubIssueLabels implements Labels {
+
+    /**
+     * Logger.
+     */
+    private static final Logger LOG = LoggerFactory.getLogger(
+        GithubIssueLabels.class
+    );
 
     /**
      * Issue Labels URI.
@@ -74,6 +83,31 @@ final class GithubIssueLabels implements Labels {
             .build()
         );
         return resource.statusCode() == HttpURLConnection.HTTP_OK;
+    }
+
+    @Override
+    public boolean remove(final String name) {
+        final URI labelUri = URI.create(this.uri.toString() + "/" + name);
+        LOG.debug("Removing Issue Label [" + labelUri + "]...");
+        final Resource resource = this.resources.delete(
+            labelUri,
+            Json.createObjectBuilder().build()
+        );
+        final int status = resource.statusCode();
+        final boolean result;
+        if(status == HttpURLConnection.HTTP_OK) {
+            result = true;
+            LOG.debug("Label Issue removed successfully (200 OK).");
+        } else if (status == HttpURLConnection.HTTP_NOT_FOUND) {
+            result = true;
+            LOG.warn("Label Issue NOT FOUND (still valid).");
+        } else {
+            result = false;
+            LOG.error(
+                "Unexpected response. Expected 200 or 404, but got: " + status
+            );
+        }
+        return result;
     }
 
     @Override
