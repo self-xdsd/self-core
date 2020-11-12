@@ -41,12 +41,6 @@ import java.util.stream.Collectors;
  * @author criske
  * @version $Id$
  * @since 0.0.30
- * @todo #691:30min Before adding a label to an Issue, use
- *  GithubRepoLabels to add (register) the label in the Repo first.
- *  We can add an Issue label directly and it will be created if it
- *  doesn't exist, but it will be always be grey and we cannot specify
- *  the color directly. Label color can only be specified when adding it
- *  to the repo, that's why we need this mechanism.
  */
 final class GithubIssueLabels implements Labels {
 
@@ -79,6 +73,14 @@ final class GithubIssueLabels implements Labels {
 
     @Override
     public boolean add(final String... names) {
+        final GithubRepoLabels repoLabels = new GithubRepoLabels(
+            URI.create(
+                this.uri.toString()
+                    .replaceAll("/issues/[0-9]+", "")
+            ),
+            this.resources
+        );
+        repoLabels.add(names);
         final JsonArrayBuilder labels = Json.createArrayBuilder();
         for (final String name : names) {
             labels.add(name);

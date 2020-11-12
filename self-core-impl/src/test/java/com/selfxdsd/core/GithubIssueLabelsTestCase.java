@@ -30,6 +30,7 @@ import org.hamcrest.Matchers;
 import org.junit.Test;
 
 import javax.json.Json;
+import javax.json.JsonObject;
 import javax.json.JsonValue;
 import java.net.URI;
 
@@ -57,7 +58,7 @@ public final class GithubIssueLabelsTestCase {
                         .build())
                     .build()));
         final URI uri = URI.create("https://api.github.com/repos/amihaiemil"
-            + "/docker-java-api/issues/labels");
+            + "/docker-java-api/issues/123/labels");
 
         final Iterable<Label> iterable =
             () -> new GithubIssueLabels(uri, resources).iterator();
@@ -69,26 +70,53 @@ public final class GithubIssueLabelsTestCase {
     }
 
     /**
-     * A GithubIssueLabels can add new labels to existing ones.
+     * A GithubIssueLabels can add new label, first to the Repo
+     * and then assign it to the Issue.
      */
     @Test
-    public void canAddLabels(){
+    public void canAddLabel(){
         final MockJsonResources resources =
             new MockJsonResources(req -> new MockJsonResources.MockResource(200,
                 JsonValue.NULL));
         final URI uri = URI.create("https://api.github.com/repos/amihaiemil"
-            + "/docker-java-api/issues/labels");
+            + "/docker-java-api/issues/123/labels");
 
         final Labels issueLabels = new GithubIssueLabels(uri, resources);
-        MatcherAssert.assertThat(issueLabels.add("bug", "feature"),
+        MatcherAssert.assertThat(issueLabels.add("bugLabel"),
             Matchers.is(true));
-        MockJsonResources.MockRequest request = resources.requests().first();
-        MatcherAssert.assertThat(request.getUri(), Matchers.equalTo(uri));
+        MockJsonResources.MockRequest request = resources.requests().atIndex(0);
+        MatcherAssert.assertThat(
+            request.getUri(),
+            Matchers.equalTo(
+                URI.create(
+                    "https://api.github.com/repos/"
+                    + "amihaiemil/docker-java-api/labels"
+                )
+            )
+        );
+        final JsonObject repoLabel = (JsonObject) request.getBody();
+        MatcherAssert.assertThat(
+            repoLabel.getString("name"),
+            Matchers.equalTo("bugLabel")
+        );
+        MatcherAssert.assertThat(
+            repoLabel.getString("color").length(),
+            Matchers.equalTo(6)
+        );
+        request = resources.requests().atIndex(1);
+        MatcherAssert.assertThat(
+            request.getUri(),
+            Matchers.equalTo(
+                URI.create(
+                    "https://api.github.com/repos/"
+                    + "amihaiemil/docker-java-api/issues/123/labels"
+                )
+            )
+        );
         MatcherAssert.assertThat(request.getBody(), Matchers.equalTo(Json
             .createObjectBuilder()
             .add("labels", Json.createArrayBuilder()
-                .add("bug")
-                .add("feature")
+                .add("bugLabel")
                 .build()
             ).build()));
     }
@@ -108,7 +136,7 @@ public final class GithubIssueLabelsTestCase {
 
         final URI issueLabelsUri = URI.create(
             "https://api.github.com/repos/amihaiemil"
-            + "/docker-java-api/issues/labels"
+            + "/docker-java-api/issues/123/labels"
         );
 
         final Labels issueLabels = new GithubIssueLabels(
