@@ -28,39 +28,33 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.json.Json;
-import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 /**
- * A Github Issue Labels.
- * @author criske
+ * All the labels in a Github repository.
+ * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
- * @since 0.0.30
- * @todo #691:30min Before adding a label to an Issue, use
- *  GithubRepoLabels to add (register) the label in the Repo first.
- *  We can add an Issue label directly and it will be created if it
- *  doesn't exist, but it will be always be grey and we cannot specify
- *  the color directly. Label color can only be specified when adding it
- *  to the repo, that's why we need this mechanism.
+ * @since 0.0.34
  */
-final class GithubIssueLabels implements Labels {
+final class GithubRepoLabels implements Labels {
 
     /**
      * Logger.
      */
     private static final Logger LOG = LoggerFactory.getLogger(
-        GithubIssueLabels.class
+        GithubRepoLabels.class
     );
 
     /**
-     * Issue Labels URI.
+     * Repo Labels URI.
      */
-    private final URI uri;
+    private final URI repoLabelsUri;
 
     /**
      * Resources.
@@ -69,48 +63,49 @@ final class GithubIssueLabels implements Labels {
 
     /**
      * Ctor.
-     * @param uri Issue Labels URI.
+     * @param repoLabelsUri Repo Labels URI.
      * @param resources Resources.
      */
-    GithubIssueLabels(final URI uri, final JsonResources resources) {
+    GithubRepoLabels(final URI repoLabelsUri, final JsonResources resources) {
         this.resources = resources;
-        this.uri = uri;
+        this.repoLabelsUri = repoLabelsUri;
     }
 
     @Override
     public boolean add(final String... names) {
-        final JsonArrayBuilder labels = Json.createArrayBuilder();
-        for (final String name : names) {
-            labels.add(name);
+        for(final String name : names) {
+            this.resources.post(
+                this.repoLabelsUri,
+                Json.createObjectBuilder()
+                    .add("name", name)
+                    .add("color", this.randomColor())
+                    .build()
+            );
         }
-        final Resource resource = this.resources.post(this.uri, Json
-            .createObjectBuilder()
-            .add("labels", labels.build())
-            .build()
-        );
-        return resource.statusCode() == HttpURLConnection.HTTP_OK;
+        return true;
     }
 
     @Override
     public boolean remove(final String name) {
-        final URI labelUri = URI.create(this.uri.toString() + "/" + name);
-        LOG.debug("Removing Issue Label [" + labelUri + "]...");
+        final URI labelUri = URI.create(
+            this.repoLabelsUri.toString() + "/" + name
+        );
+        LOG.debug("Removing Repo Label [" + labelUri + "]...");
         final Resource resource = this.resources.delete(
             labelUri,
             Json.createObjectBuilder().build()
         );
-        final int status = resource.statusCode();
         final boolean result;
-        if(status == HttpURLConnection.HTTP_OK) {
+        final int status = resource.statusCode();
+        if(status == HttpURLConnection.HTTP_NO_CONTENT
+            || status == HttpURLConnection.HTTP_NOT_FOUND) {
             result = true;
-            LOG.debug("Label Issue removed successfully (200 OK).");
-        } else if (status == HttpURLConnection.HTTP_NOT_FOUND) {
-            result = true;
-            LOG.warn("Label Issue NOT FOUND (still valid).");
+            LOG.debug("Repo Label removed successfully.");
         } else {
             result = false;
             LOG.error(
-                "Unexpected response. Expected 200 or 404, but got: " + status
+                "Unexpected response. Expected 204 or 404, but got: "
+                + status
             );
         }
         return result;
@@ -118,17 +113,31 @@ final class GithubIssueLabels implements Labels {
 
     @Override
     public Iterator<Label> iterator() {
-        final Resource resource = this.resources.get(this.uri);
-        final List<Label> labels;
+        final Resource resource = this.resources.get(this.repoLabelsUri);
+        final List<Label> repoLabels;
         if (resource.statusCode() == HttpURLConnection.HTTP_OK) {
-            labels = resource.asJsonArray()
+            repoLabels = resource.asJsonArray()
                 .stream()
                 .map(JsonObject.class::cast)
                 .map(GithubLabel::new)
                 .collect(Collectors.toList());
         } else {
-            labels = List.of();
+            repoLabels = List.of();
         }
-        return labels.iterator();
+        return repoLabels.iterator();
+    }
+
+    /**
+     * Get a random color for the added label.
+     * @return String hex code.
+     */
+    private String randomColor() {
+        final Random random = new Random();
+        final String[] hex = "0123456789abcdef".split("");
+        String color = "";
+        while (color.length() < 6){
+            color += hex[random.nextInt(15)];
+        }
+        return color;
     }
 }

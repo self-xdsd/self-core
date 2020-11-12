@@ -22,8 +22,6 @@
  */
 package com.selfxdsd.api;
 
-import com.selfxdsd.api.storage.Labels;
-
 import javax.json.JsonObject;
 
 /**

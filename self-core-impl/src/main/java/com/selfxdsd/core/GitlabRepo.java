@@ -23,6 +23,7 @@
 package com.selfxdsd.core;
 
 import com.selfxdsd.api.*;
+import com.selfxdsd.api.Labels;
 import com.selfxdsd.api.storage.Storage;
 
 import java.net.URI;
@@ -146,6 +147,13 @@ final class GitlabRepo extends BaseRepo {
 
     @Override
     public Commits commits() {
+        throw new UnsupportedOperationException(
+            "Not yet implemented."
+        );
+    }
+
+    @Override
+    public Labels labels() {
         throw new UnsupportedOperationException(
             "Not yet implemented."
         );

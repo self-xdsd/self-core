@@ -22,7 +22,7 @@
 package com.selfxdsd.core.managers;
 
 import com.selfxdsd.api.*;
-import com.selfxdsd.api.storage.Labels;
+import com.selfxdsd.api.Labels;
 import com.selfxdsd.api.storage.Storage;
 import com.selfxdsd.core.Github;
 import com.selfxdsd.core.mock.InMemory;

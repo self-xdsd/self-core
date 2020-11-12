@@ -23,6 +23,7 @@
 package com.selfxdsd.core;
 
 import com.selfxdsd.api.*;
+import com.selfxdsd.api.Labels;
 import com.selfxdsd.api.storage.Storage;
 
 import java.net.URI;
@@ -144,6 +145,14 @@ final class GithubRepo extends BaseRepo {
             this.resources(),
             URI.create(this.repoUri().toString() + "/commits"),
             this.storage()
+        );
+    }
+
+    @Override
+    public Labels labels() {
+        return new GithubRepoLabels(
+            URI.create(this.repoUri().toString() + "/labels"),
+            this.resources()
         );
     }
 }

@@ -24,7 +24,7 @@ package com.selfxdsd.core;
 
 import com.selfxdsd.api.Comments;
 import com.selfxdsd.api.Issue;
-import com.selfxdsd.api.storage.Labels;
+import com.selfxdsd.api.Labels;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

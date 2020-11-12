@@ -27,7 +27,7 @@ import com.selfxdsd.api.Issue;
 import com.selfxdsd.api.Label;
 import com.selfxdsd.api.Project;
 import com.selfxdsd.api.pm.Step;
-import com.selfxdsd.api.storage.Labels;
+import com.selfxdsd.api.Labels;
 import org.junit.Test;
 import org.mockito.Mockito;
 

@@ -20,17 +20,13 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package com.selfxdsd.api.storage;
-
-import com.selfxdsd.api.Label;
+package com.selfxdsd.api;
 
 /**
  * Labels for Provider Repo resource (Issue, Milestone etc...).
  * @author criske
  * @version $Id$
  * @since 0.0.30
- * @todo #689:30min Implement and test GithubRepoLabels, which will
- *  represent all the labels defined in a Repo.
  */
 public interface Labels extends Iterable<Label> {
 

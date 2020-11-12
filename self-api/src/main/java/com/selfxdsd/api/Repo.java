@@ -93,4 +93,10 @@ public interface Repo {
      * @return Commits.
      */
     Commits commits();
+
+    /**
+     * Labels of this repo.
+     * @return Labels.
+     */
+    Labels labels();
 }

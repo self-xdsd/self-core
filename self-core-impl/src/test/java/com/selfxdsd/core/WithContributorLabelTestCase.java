@@ -25,7 +25,7 @@ package com.selfxdsd.core;
 import com.selfxdsd.api.Comments;
 import com.selfxdsd.api.Issue;
 import com.selfxdsd.api.Provider;
-import com.selfxdsd.api.storage.Labels;
+import com.selfxdsd.api.Labels;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;

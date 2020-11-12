@@ -30,19 +30,21 @@ import org.hamcrest.Matchers;
 import org.junit.Test;
 
 import javax.json.Json;
+import javax.json.JsonObject;
 import javax.json.JsonValue;
+import java.net.HttpURLConnection;
 import java.net.URI;
 
 /**
- * Unit tests for {@link GithubIssueLabels}.
- * @author criske
+ * Unit tests for {@link GithubRepoLabels}.
+ * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
- * @since 0.0.30
+ * @since 0.0.34
  */
-public final class GithubIssueLabelsTestCase {
+public final class GithubRepoLabelsTestCase {
 
     /**
-     * A GithubIssueLabels can be iterated.
+     * GithubRepoLabels can be iterated.
      */
     @Test
     public void canIterateOverLabels() {
@@ -57,10 +59,10 @@ public final class GithubIssueLabelsTestCase {
                         .build())
                     .build()));
         final URI uri = URI.create("https://api.github.com/repos/amihaiemil"
-            + "/docker-java-api/issues/labels");
+            + "/docker-java-api/labels");
 
         final Iterable<Label> iterable =
-            () -> new GithubIssueLabels(uri, resources).iterator();
+            () -> new GithubRepoLabels(uri, resources).iterator();
 
         MatcherAssert.assertThat(iterable,
             Matchers.iterableWithSize(2));
@@ -69,53 +71,65 @@ public final class GithubIssueLabelsTestCase {
     }
 
     /**
-     * A GithubIssueLabels can add new labels to existing ones.
+     * GithubRepoLabels can add a label.
      */
     @Test
-    public void canAddLabels(){
+    public void canAddLabel(){
         final MockJsonResources resources =
-            new MockJsonResources(req -> new MockJsonResources.MockResource(200,
-                JsonValue.NULL));
-        final URI uri = URI.create("https://api.github.com/repos/amihaiemil"
-            + "/docker-java-api/issues/labels");
-
-        final Labels issueLabels = new GithubIssueLabels(uri, resources);
-        MatcherAssert.assertThat(issueLabels.add("bug", "feature"),
-            Matchers.is(true));
+            new MockJsonResources(
+                req -> new MockJsonResources.MockResource(
+                    HttpURLConnection.HTTP_OK,
+                    JsonValue.NULL
+                )
+            );
+        final URI uri = URI.create(
+            "https://api.github.com/repos/amihaiemil"
+            + "/docker-java-api/labels"
+        );
+        final Labels repoLabels = new GithubRepoLabels(uri, resources);
+        MatcherAssert.assertThat(
+            repoLabels.add("bugLabel"),
+            Matchers.is(true)
+        );
         MockJsonResources.MockRequest request = resources.requests().first();
         MatcherAssert.assertThat(request.getUri(), Matchers.equalTo(uri));
-        MatcherAssert.assertThat(request.getBody(), Matchers.equalTo(Json
-            .createObjectBuilder()
-            .add("labels", Json.createArrayBuilder()
-                .add("bug")
-                .add("feature")
-                .build()
-            ).build()));
+        MatcherAssert.assertThat(
+            request.getMethod(), Matchers.equalTo("POST")
+        );
+        final JsonObject body = (JsonObject) request.getBody();
+        MatcherAssert.assertThat(
+            body.getString("name"),
+            Matchers.equalTo("bugLabel")
+        );
+        MatcherAssert.assertThat(
+            body.getString("color").length(),
+            Matchers.equalTo(6)
+        );
     }
 
     /**
-     * A GithubIssueLabels can remove an Issue Label.
+     * GithubRepoLabels can remove a label.
      */
     @Test
     public void canRemoveLabel(){
         final MockJsonResources resources =
             new MockJsonResources(
                 req -> new MockJsonResources.MockResource(
-                    200,
+                    HttpURLConnection.HTTP_NO_CONTENT,
                     JsonValue.NULL
                 )
             );
 
-        final URI issueLabelsUri = URI.create(
+        final URI repoLabelsUri = URI.create(
             "https://api.github.com/repos/amihaiemil"
-            + "/docker-java-api/issues/labels"
+            + "/docker-java-api/labels"
         );
 
-        final Labels issueLabels = new GithubIssueLabels(
-            issueLabelsUri, resources
+        final Labels repoLabels = new GithubRepoLabels(
+            repoLabelsUri, resources
         );
         MatcherAssert.assertThat(
-            issueLabels.remove("bug"),
+            repoLabels.remove("bugLabel"),
             Matchers.is(true)
         );
         MockJsonResources.MockRequest request = resources.requests().first();
@@ -124,11 +138,14 @@ public final class GithubIssueLabelsTestCase {
         );
         MatcherAssert.assertThat(
             request.getUri(),
-            Matchers.equalTo(URI.create(issueLabelsUri.toString() + "/bug"))
+            Matchers.equalTo(
+                URI.create(repoLabelsUri.toString() + "/bugLabel")
+            )
         );
         MatcherAssert.assertThat(
             request.getBody(),
             Matchers.equalTo(Json.createObjectBuilder().build())
         );
     }
+
 }
