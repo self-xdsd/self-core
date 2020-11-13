@@ -173,6 +173,20 @@ public final class MissingWalletTestCase {
     }
 
     /**
+     * The Missing wallet should create no SetupIntent for PaymentMethod.
+     */
+    @Test(expected = UnsupportedOperationException.class)
+    public void unsupportedSetupIntent() {
+        final Wallet wallet = new Wallet.Missing(
+            Mockito.mock(Project.class),
+            BigDecimal.valueOf(100_000_000),
+            Boolean.TRUE,
+            "fake-123w"
+        );
+        wallet.paymentMethodSetupIntent();
+    }
+
+    /**
      * Mock a Contract.
      * @param value Value of the contract.
      * @return Contract.

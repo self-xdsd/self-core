@@ -24,6 +24,7 @@ package com.selfxdsd.core.projects;
 
 import com.selfxdsd.api.*;
 import com.selfxdsd.api.storage.Storage;
+import com.stripe.model.SetupIntent;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -177,6 +178,13 @@ public final class StoredPaymentMethodTestCase {
             @Override
             public Wallet updateCash(final BigDecimal cash) {
                 throw new UnsupportedOperationException();
+            }
+
+            @Override
+            public SetupIntent paymentMethodSetupIntent() {
+                throw new UnsupportedOperationException(
+                    "This operation is available only for Stripe wallets!"
+                );
             }
 
             @Override
