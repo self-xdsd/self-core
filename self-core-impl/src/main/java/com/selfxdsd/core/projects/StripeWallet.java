@@ -230,7 +230,9 @@ public final class StripeWallet implements Wallet {
         if (this.stripeApiToken == null
             || this.stripeApiToken.trim().isEmpty()) {
             throw new WalletPaymentException(
-                "Please specify the self_stripe_token Environment Variable!"
+                "Please specify the "
+                + Env.STRIPE_API_TOKEN
+                + " Environment Variable!"
             );
         }
         Stripe.apiKey = this.stripeApiToken;
@@ -261,6 +263,15 @@ public final class StripeWallet implements Wallet {
 
     @Override
     public SetupIntent paymentMethodSetupIntent() {
+        final String apiToken = System.getenv(Env.STRIPE_API_TOKEN);
+        if(apiToken == null || apiToken.trim().isEmpty()) {
+            throw new IllegalStateException(
+                "Please specify the "
+                + Env.STRIPE_API_TOKEN
+                + " Environment Variable!"
+            );
+        }
+        Stripe.apiKey = apiToken;
         final Map<String, Object> params = new HashMap<>();
         params.put("customer", this.identifier);
         try {

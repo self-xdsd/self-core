@@ -24,6 +24,7 @@ package com.selfxdsd.core.contributors;
 
 import com.selfxdsd.api.Contributor;
 import com.selfxdsd.api.PayoutMethod;
+import com.selfxdsd.core.Env;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
@@ -122,7 +123,9 @@ public final class StripePayoutMethodTestCase {
             MatcherAssert.assertThat(
                 ex.getMessage(),
                 Matchers.equalTo(
-                    "Please specify the stripe.api.token Environment Variable!"
+                    "Please specify the "
+                    + Env.STRIPE_API_TOKEN
+                    + " Environment Variable!"
                 )
             );
         }

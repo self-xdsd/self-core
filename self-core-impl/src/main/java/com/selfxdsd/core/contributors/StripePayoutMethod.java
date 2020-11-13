@@ -97,7 +97,9 @@ public final class StripePayoutMethod implements PayoutMethod {
         final String apiToken = System.getenv(Env.STRIPE_API_TOKEN);
         if(apiToken == null || apiToken.trim().isEmpty()) {
             throw new IllegalStateException(
-                "Please specify the stripe.api.token Environment Variable!"
+                "Please specify the "
+                + Env.STRIPE_API_TOKEN
+                + " Environment Variable!"
             );
         }
         Stripe.apiKey = apiToken;
