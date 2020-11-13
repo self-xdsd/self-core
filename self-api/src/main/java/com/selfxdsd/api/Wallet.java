@@ -25,6 +25,7 @@ package com.selfxdsd.api;
 import com.selfxdsd.api.exceptions.InvoiceException;
 import com.selfxdsd.api.exceptions.PaymentMethodsException;
 import com.selfxdsd.api.exceptions.WalletPaymentException;
+import com.stripe.model.SetupIntent;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -96,6 +97,16 @@ public interface Wallet {
      * @return Wallet with new cash limit.
      */
     Wallet updateCash(BigDecimal cash);
+
+    /**
+     * Create a Stripe SetupIntent in order to create a PaymentMethod
+     * using the client secret and Stripe UI widgets.<br><br>
+     * For non-Stripe Wallet implementations, this method should throw
+     * UnsupportedOperationException.
+     * @see <a href='https://stripe.com/docs/payments/save-and-reuse'>docs</a>
+     * @return SetupIntent.
+     */
+    SetupIntent paymentMethodSetupIntent();
 
     /**
      * Payment methods of this Wallet.
@@ -196,6 +207,13 @@ public interface Wallet {
         public Wallet updateCash(final BigDecimal cash) {
             return new Missing(this.project, cash, this.active,
                 this.identifier);
+        }
+
+        @Override
+        public SetupIntent paymentMethodSetupIntent() {
+            throw new UnsupportedOperationException(
+                "This operation is available only for Stripe wallets!"
+            );
         }
 
         @Override

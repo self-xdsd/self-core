@@ -31,12 +31,17 @@ import com.selfxdsd.core.contracts.invoices.StoredInvoice;
 import com.stripe.Stripe;
 import com.stripe.exception.StripeException;
 import com.stripe.model.PaymentIntent;
+import com.stripe.model.SetupIntent;
 import com.stripe.param.PaymentIntentCreateParams;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -46,6 +51,13 @@ import java.util.Objects;
  * @since 0.0.27
  */
 public final class StripeWallet implements Wallet {
+
+    /**
+     * Logger.
+     */
+    private static final Logger LOG = LoggerFactory.getLogger(
+        StripeWallet.class
+    );
 
     /**
      * Self Storage.
@@ -245,6 +257,24 @@ public final class StripeWallet implements Wallet {
             .wallets()
             .ofProject(this.project)
             .updateCash(this, cash);
+    }
+
+    @Override
+    public SetupIntent paymentMethodSetupIntent() {
+        final Map<String, Object> params = new HashMap<>();
+        params.put("customer", this.identifier);
+        try {
+            return SetupIntent.create(params);
+        } catch (final StripeException ex) {
+            LOG.error(
+                "StripeException when trying to create a "
+                + "PaymentMethod SetupIntent for Wallet " + this.identifier
+            );
+            throw new IllegalStateException(
+                "Could not create Stripe SetupIntent",
+                ex
+            );
+        }
     }
 
     @Override
