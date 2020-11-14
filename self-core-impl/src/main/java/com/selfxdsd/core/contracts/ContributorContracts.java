@@ -175,4 +175,9 @@ public final class ContributorContracts implements Contracts {
     public Iterator<Contract> iterator() {
         return this.contracts.get().iterator();
     }
+
+    @Override
+    public void remove(final Contract contract) {
+        this.storage.contracts().remove(contract);
+    }
 }

@@ -169,6 +169,16 @@ public final class InMemoryContracts implements Contracts {
     }
 
     @Override
+    public void remove(final Contract contract) {
+        if (!this.contracts.containsValue(contract)) {
+            throw new IllegalArgumentException(
+                String.format("%s not found", contract)
+            );
+        }
+        this.contracts.values().removeIf(contract::equals);
+    }
+
+    @Override
     public Contracts ofContributor(final Contributor contributor) {
         final List<Contract> ofContributor = this.contracts.keySet()
             .stream()

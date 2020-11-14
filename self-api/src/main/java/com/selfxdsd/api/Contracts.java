@@ -74,6 +74,13 @@ public interface Contracts extends Iterable<Contract> {
     );
 
     /**
+     * Remove specific contract.
+     *
+     * @param contract Contract to remove
+     */
+    void remove(final Contract contract);
+
+    /**
      * Finds a contract by id.
      * @param id Contract's id.
      * @return Contract or null if not found.
@@ -159,6 +166,13 @@ public interface Contracts extends Iterable<Contract> {
         @Override
         public Iterator<Contract> iterator() {
             return new ArrayList<Contract>().iterator();
+        }
+
+        @Override
+        public void remove(final Contract contract) {
+            throw new UnsupportedOperationException(
+                "These are Empty Contracts, you cannot remove from it."
+            );
         }
     }
 }

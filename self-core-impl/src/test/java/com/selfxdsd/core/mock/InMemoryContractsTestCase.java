@@ -182,6 +182,38 @@ public final class InMemoryContractsTestCase {
     }
 
     /**
+     * Removes a contract.
+     */
+    @Test
+    public void removesContract() {
+        final Storage storage = new InMemory();
+        final ProjectManager projectManager = storage.projectManagers()
+            .pick("github");
+        final Project project = storage.projects()
+            .register(
+                this.mockRepo("john/test", "github"),
+                projectManager,
+                "whtoken123"
+            );
+        final Contributor contributor = storage.contributors()
+            .register("mihai", "github");
+        final Contracts contracts = storage.contracts();
+        final Contract contract = contracts.addContract(
+            project.repoFullName(),
+            contributor.username(),
+            contributor.provider(),
+            BigDecimal.ONE,
+            Contract.Roles.DEV
+        );
+        contracts.remove(contract);
+        assertThat(
+            contracts,
+            emptyIterable()
+        );
+    }
+
+
+    /**
      * Mock a Repo for test.
      * @param fullName Full name.
      * @param provider Provider.

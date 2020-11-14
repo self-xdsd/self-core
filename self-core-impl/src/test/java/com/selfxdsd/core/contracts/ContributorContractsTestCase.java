@@ -394,6 +394,34 @@ public final class ContributorContractsTestCase {
     }
 
     /**
+     * Removes Contract from Contracts.
+     */
+    @Test
+    public void contractCanBeRemoved() {
+        final Contract marked = Mockito.mock(Contract.class);
+        final Contract contract = this.mockContract(
+            "mihai",
+            Provider.Names.GITHUB,
+            "mihai/test"
+        );
+        final Contracts all = Mockito.mock(Contracts.class);
+        Mockito.doNothing().when(all).remove(contract);
+        final Storage storage = Mockito.mock(Storage.class);
+        Mockito.when(storage.contracts()).thenReturn(all);
+        final Contributor mihai = new StoredContributor(
+            "mihai", Provider.Names.GITHUB, storage
+        );
+        final Contracts ofMihai = new ContributorContracts(
+            mihai, Stream::empty, storage
+        );
+        ofMihai.remove(marked);
+        MatcherAssert.assertThat(
+            ofMihai,
+            Matchers.emptyIterable()
+        );
+    }
+
+    /**
      * Mock a Contract for test.
      * @param contributorUsername Contributor's username.
      * @param provider Contributor/Project's provider.

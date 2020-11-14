@@ -194,4 +194,20 @@ public final class ProjectContracts implements Contracts {
     public Iterator<Contract> iterator() {
         return this.contracts.get().iterator();
     }
+
+    @Override
+    public void remove(final Contract contract) {
+        final Contract.Id cid = contract.contractId();
+        if (
+            !this.repoFullName.equals(cid.getRepoFullName())
+                || !this.provider.equals(cid.getProvider())
+        ) {
+            throw new ContractsException.OfProject.Delete(
+                this.repoFullName,
+                this.provider
+            );
+        } else {
+            this.storage.contracts().remove(contract);
+        }
+    }
 }
