@@ -398,7 +398,6 @@ public final class ContributorContractsTestCase {
      */
     @Test
     public void contractCanBeRemoved() {
-        final Contract marked = Mockito.mock(Contract.class);
         final Contract contract = this.mockContract(
             "mihai",
             Provider.Names.GITHUB,
@@ -414,7 +413,7 @@ public final class ContributorContractsTestCase {
         final Contracts ofMihai = new ContributorContracts(
             mihai, Stream::empty, storage
         );
-        ofMihai.remove(marked);
+        ofMihai.remove(contract);
         MatcherAssert.assertThat(
             ofMihai,
             Matchers.emptyIterable()

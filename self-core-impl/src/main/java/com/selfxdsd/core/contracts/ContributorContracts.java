@@ -98,9 +98,7 @@ public final class ContributorContracts implements Contracts {
 
     @Override
     public Contracts ofContributor(final Contributor contributor) {
-        if(this.contributor.username().equals(contributor.username())
-            && this.contributor.provider().equals(contributor.provider())
-        ) {
+        if (this.isContributor(contributor)) {
             return this;
         }
         throw new ContractsException.OfContributor.List(this.contributor);
@@ -114,18 +112,16 @@ public final class ContributorContracts implements Contracts {
         final BigDecimal hourlyRate,
         final String role
     ) {
-        if(!this.contributor.username().equals(contributorUsername)
-            || !this.contributor.provider().equals(provider)) {
+        if (!this.isContributor(contributorUsername, provider)) {
             throw new ContractsException.OfContributor.Add(this.contributor);
-        } else {
-            return this.storage.contracts().addContract(
-                repoFullName,
-                this.contributor.username(),
-                this.contributor.provider(),
-                hourlyRate,
-                role
-            );
         }
+        return this.storage.contracts().addContract(
+            repoFullName,
+            this.contributor.username(),
+            this.contributor.provider(),
+            hourlyRate,
+            role
+        );
     }
 
     @Override
@@ -143,15 +139,12 @@ public final class ContributorContracts implements Contracts {
         final Contract contract,
         final BigDecimal hourlyRate
     ) {
-        final Contract.Id cid = contract.contractId();
-        if(!this.contributor.username().equals(cid.getContributorUsername())
-            || !this.contributor.provider().equals(cid.getProvider())) {
+        if (!this.belongsToContributor(contract)) {
             throw new ContractsException.OfContributor.Update(
                 this.contributor
             );
-        } else {
-            return this.storage.contracts().update(contract, hourlyRate);
         }
+        return this.storage.contracts().update(contract, hourlyRate);
     }
 
     @Override
@@ -159,16 +152,13 @@ public final class ContributorContracts implements Contracts {
         final Contract contract,
         final LocalDateTime time
     ) {
-        final Contract.Id cid = contract.contractId();
-        if(!this.contributor.username().equals(cid.getContributorUsername())
-            || !this.contributor.provider().equals(cid.getProvider())) {
+        if (!this.belongsToContributor(contract)) {
             throw new ContractsException.OfContributor.Delete(
                 this.contributor
             );
-        } else {
-            return this.storage.contracts()
-                .markForRemoval(contract, time);
         }
+        return this.storage.contracts()
+            .markForRemoval(contract, time);
     }
 
     @Override
@@ -178,6 +168,48 @@ public final class ContributorContracts implements Contracts {
 
     @Override
     public void remove(final Contract contract) {
+        if (!this.belongsToContributor(contract)) {
+            throw new ContractsException.OfContributor.Delete(
+                this.contributor
+            );
+        }
         this.storage.contracts().remove(contract);
+    }
+
+    /**
+     * Check if contract belongs to the contributor.
+     * @param contract A contract
+     * @return True if belongs
+     */
+    private boolean belongsToContributor(final Contract contract) {
+        final String username = contract.contractId().getContributorUsername();
+        final String provider = contract.contractId().getProvider();
+        return isContributor(username, provider);
+    }
+
+    /**
+     * Check contributors username & provider.
+     * @param username A username to check.
+     * @param provider A provider to check.
+     * @return True if match
+     */
+    private boolean isContributor(
+        final String username,
+        final String provider
+    ) {
+        return this.contributor.username().equals(username)
+            && this.contributor.provider().equals(provider);
+    }
+
+    /**
+     * Check if its the same contributor.
+     * @param contributor A contributor to check.
+     * @return True if they match
+     */
+    private boolean isContributor(final Contributor contributor) {
+        return this.isContributor(
+            contributor.username(),
+            contributor.provider()
+        );
     }
 }
