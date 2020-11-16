@@ -130,6 +130,56 @@ public final class StoredContractTestCase {
     }
 
     /**
+     * StoredContract cannot be removed without being marked for removal.
+     */
+    @Test(expected = IllegalStateException.class)
+    public void cannotRemoveWithoutMarkForRemoval() {
+        final Contract contract = new StoredContract(
+            Mockito.mock(Project.class),
+            Mockito.mock(Contributor.class),
+            BigDecimal.ONE, "DEV",
+            null,
+            Mockito.mock(Storage.class)
+        );
+        contract.remove();
+    }
+
+    /**
+     * StoredContract cannot be removed if it has been marked for removal
+     * earlier than 30 days ago.
+     */
+    @Test(expected = IllegalStateException.class)
+    public void cannotRemoveIfMarkForRemovalIsNotOldEnough() {
+        final Contract contract = new StoredContract(
+            Mockito.mock(Project.class),
+            Mockito.mock(Contributor.class),
+            BigDecimal.ONE, "DEV",
+            LocalDateTime.now(),
+            Mockito.mock(Storage.class)
+        );
+        contract.remove();
+    }
+
+    /**
+     * StoredContract can remove itself if markForRemoval > 30 days.
+     */
+    @Test
+    public void removeWorks() {
+        final Storage storage = Mockito.mock(Storage.class);
+        final Contracts all = Mockito.mock(Contracts.class);
+        Mockito.when(storage.contracts()).thenReturn(all);
+        final Contract contract = new StoredContract(
+            Mockito.mock(Project.class),
+            Mockito.mock(Contributor.class),
+            BigDecimal.ONE, "DEV",
+            LocalDateTime.of(2020, 6, 10, 0, 0),
+            storage
+        );
+        contract.remove();
+        Mockito.verify(all, Mockito.times(1)).remove(contract);
+    }
+
+    /**
      * StoredContract returns its null markedForRemoval.
      */
     @Test

@@ -27,6 +27,7 @@ import com.selfxdsd.api.storage.Storage;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 
 /**
  * A Contract stored in self.
@@ -238,6 +239,24 @@ public final class StoredContract implements Contract {
         }
         return this.storage.contracts()
             .markForRemoval(this, LocalDateTime.now());
+    }
+
+    @Override
+    public void remove() {
+        if(this.markedForRemoval == null) {
+            throw new IllegalStateException(
+                "Contract is not marked for removal, can't remove it."
+            );
+        } else {
+            final LocalDateTime now = LocalDateTime.now();
+            if(ChronoUnit.DAYS.between(this.markedForRemoval, now) <= 30) {
+                throw new IllegalStateException(
+                    "Contract cannot be removed yet. "
+                    + "30 days have to pass since it was marked for removal."
+                );
+            }
+        }
+        this.storage.contracts().remove(this);
     }
 
     @Override

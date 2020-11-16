@@ -109,6 +109,13 @@ public interface Contract {
     Contract markForRemoval();
 
     /**
+     * Completely remove this Contract. In order for it to work,
+     * the Contract has to have been marked for removal more than
+     * 30 days ago (markedForRemoval != null && markedForRemoval > 30 days).
+     */
+    void remove();
+
+    /**
      * Possible roles in a Contract.
      */
     class Roles {
