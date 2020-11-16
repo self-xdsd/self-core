@@ -29,6 +29,7 @@ import com.stripe.model.SetupIntent;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Objects;
 
@@ -259,8 +260,7 @@ public interface Wallet {
 
                 @Override
                 public Iterator<PaymentMethod> iterator() {
-                    throw new PaymentMethodsException("Can't iterate over "
-                        + "a missing wallet payment methods.");
+                    return new ArrayList<PaymentMethod>().iterator();
                 }
             };
         }
