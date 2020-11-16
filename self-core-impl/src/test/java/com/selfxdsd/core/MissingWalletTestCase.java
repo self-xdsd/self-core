@@ -115,6 +115,22 @@ public final class MissingWalletTestCase {
         );
     }
 
+    /**
+     * The Missing Wallet returns its identifier.
+     */
+    @Test
+    public void returnsIdentifier() {
+        final Wallet wallet = new Wallet.Missing(
+            Mockito.mock(Project.class),
+            BigDecimal.valueOf(100_000_000),
+            Boolean.TRUE,
+            "fake-123w"
+        );
+        MatcherAssert.assertThat(
+            wallet.identifier(),
+            Matchers.equalTo("fake-123w")
+        );
+    }
 
     /**
      * The Missing wallet can pay an Invoice.

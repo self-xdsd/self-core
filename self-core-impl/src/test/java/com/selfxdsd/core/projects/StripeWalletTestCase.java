@@ -61,6 +61,24 @@ public final class StripeWalletTestCase {
     }
 
     /**
+     * The StripeWallet can return its identifier.
+     */
+    @Test
+    public void returnsIdentifier() {
+        final Wallet stripe = new StripeWallet(
+            Mockito.mock(Storage.class),
+            Mockito.mock(Project.class),
+            BigDecimal.valueOf(1000),
+            "123StripeID",
+            Boolean.TRUE
+        );
+        MatcherAssert.assertThat(
+            stripe.identifier(),
+            Matchers.equalTo("123StripeID")
+        );
+    }
+
+    /**
      * The StripeWallet can return its Project.
      */
     @Test

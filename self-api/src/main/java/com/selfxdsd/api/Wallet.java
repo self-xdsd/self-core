@@ -115,6 +115,12 @@ public interface Wallet {
     PaymentMethods paymentMethods();
 
     /**
+     * Wallet's identifier.
+     * @return String.
+     */
+    String identifier();
+
+    /**
      * Missing wallet. Used when a Project has no wallet set up.
      */
     final class Missing implements Wallet {
@@ -257,6 +263,11 @@ public interface Wallet {
                         + "a missing wallet payment methods.");
                 }
             };
+        }
+
+        @Override
+        public String identifier() {
+            return this.identifier;
         }
 
         @Override

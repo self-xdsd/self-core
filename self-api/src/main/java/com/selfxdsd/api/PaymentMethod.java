@@ -22,6 +22,8 @@
  */
 package com.selfxdsd.api;
 
+import javax.json.JsonObject;
+
 /**
  * A Wallet's payment method.
  * @author criske
@@ -53,4 +55,10 @@ public interface PaymentMethod {
      * @return PaymentMethod
      */
     PaymentMethod activate();
+
+    /**
+     * Get the whole PaymentMethod as JSON.
+     * @return PaymentMethod in JSON.
+     */
+    JsonObject json();
 }

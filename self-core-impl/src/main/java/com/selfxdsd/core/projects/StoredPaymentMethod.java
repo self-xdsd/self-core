@@ -34,7 +34,7 @@ import java.util.Objects;
  * @version $Id$
  * @since 0.0.26
  */
-public final class StoredPaymentMethod implements PaymentMethod {
+public abstract class StoredPaymentMethod implements PaymentMethod {
 
     /**
      * Self storage.
@@ -75,28 +75,28 @@ public final class StoredPaymentMethod implements PaymentMethod {
     }
 
     @Override
-    public String identifier() {
+    public final String identifier() {
         return this.identifier;
     }
 
     @Override
-    public Wallet wallet() {
+    public final Wallet wallet() {
         return this.wallet;
     }
 
     @Override
-    public boolean active() {
+    public final boolean active() {
         return this.active;
     }
 
     @Override
-    public PaymentMethod activate() {
+    public final PaymentMethod activate() {
         return this.storage.paymentMethods().ofWallet(wallet)
             .activate(this);
     }
 
     @Override
-    public boolean equals(final Object obj) {
+    public final boolean equals(final Object obj) {
         if(this == obj){
             return true;
         }
@@ -109,7 +109,7 @@ public final class StoredPaymentMethod implements PaymentMethod {
     }
 
     @Override
-    public int hashCode() {
+    public final int hashCode() {
         return Objects.hash(this.identifier, this.wallet);
     }
 }

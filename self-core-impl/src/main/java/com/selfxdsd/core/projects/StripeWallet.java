@@ -294,6 +294,11 @@ public final class StripeWallet implements Wallet {
     }
 
     @Override
+    public String identifier() {
+        return this.identifier;
+    }
+
+    @Override
     public boolean equals(final Object other) {
         boolean equals;
         if (this == other) {

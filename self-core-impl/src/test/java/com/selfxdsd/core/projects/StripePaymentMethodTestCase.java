@@ -24,9 +24,11 @@ package com.selfxdsd.core.projects;
 
 import com.selfxdsd.api.*;
 import com.selfxdsd.api.storage.Storage;
+import com.selfxdsd.core.Env;
 import com.stripe.model.SetupIntent;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
+import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -34,12 +36,12 @@ import java.math.BigDecimal;
 import java.util.Objects;
 
 /**
- * Unit tests for {@link StoredPaymentMethod}.
+ * Unit tests for {@link StripePaymentMethod}.
  * @author criske
  * @version $Id$
  * @since 0.0.26
  */
-public final class StoredPaymentMethodTestCase {
+public final class StripePaymentMethodTestCase {
 
 
     /**
@@ -52,7 +54,7 @@ public final class StoredPaymentMethodTestCase {
             "john/test",
             Provider.Names.GITHUB
         );
-        final PaymentMethod paymentMethod = new StoredPaymentMethod(
+        final PaymentMethod paymentMethod = new StripePaymentMethod(
             Mockito.mock(Storage.class),
             "fake_id_132",
             wallet,
@@ -84,7 +86,7 @@ public final class StoredPaymentMethodTestCase {
         Mockito.when(storage.paymentMethods()).thenReturn(paymentMethods);
         Mockito.when(paymentMethods.ofWallet(wallet)).thenReturn(ofWallet);
 
-        final PaymentMethod paymentMethod = new StoredPaymentMethod(
+        final PaymentMethod paymentMethod = new StripePaymentMethod(
             storage,
             "fake_id_132",
             wallet,
@@ -104,7 +106,7 @@ public final class StoredPaymentMethodTestCase {
      */
     @Test
     public void respectsEqualsAndHashCodeContracts(){
-        final PaymentMethod paymentMethod = new StoredPaymentMethod(
+        final PaymentMethod paymentMethod = new StripePaymentMethod(
             Mockito.mock(Storage.class),
             "fake_id_132",
             this.mockWallet(
@@ -113,7 +115,7 @@ public final class StoredPaymentMethodTestCase {
                 Provider.Names.GITHUB
             ),
             true);
-        final PaymentMethod paymentMethodSame = new StoredPaymentMethod(
+        final PaymentMethod paymentMethodSame = new StripePaymentMethod(
             Mockito.mock(Storage.class),
             "fake_id_132",
             this.mockWallet(
@@ -193,6 +195,11 @@ public final class StoredPaymentMethodTestCase {
             }
 
             @Override
+            public String identifier() {
+                return "mockWalletIdentifier";
+            }
+
+            @Override
             public int hashCode() {
                 return Objects.hash(type, repoFullName, provider);
             }
@@ -211,5 +218,36 @@ public final class StoredPaymentMethodTestCase {
                 return type + repoFullName + provider;
             }
         };
+    }
+
+    /**
+     * StripePaymentMethod.json() should throw an ISE
+     * if the stripe.api.token env variable is not set.
+     */
+    @Test
+    public void jsonComplainsOnMissingApiKey() {
+        final PaymentMethod paymentMethod = new StripePaymentMethod(
+            Mockito.mock(Storage.class),
+            "fake_id_132",
+            this.mockWallet(
+                Wallet.Type.STRIPE,
+                "john/test",
+                Provider.Names.GITHUB
+            ),
+            true
+        );
+        try {
+            paymentMethod.json();
+            Assert.fail("IllegalStateException was expected.");
+        } catch (final IllegalStateException ex) {
+            MatcherAssert.assertThat(
+                ex.getMessage(),
+                Matchers.equalTo(
+                "Please specify the "
+                    + Env.STRIPE_API_TOKEN
+                    + " Environment Variable!"
+                )
+            );
+        }
     }
 }
