@@ -28,18 +28,74 @@ import com.selfxdsd.api.Project;
 import com.selfxdsd.api.pm.Conversation;
 import com.selfxdsd.api.pm.Step;
 import com.selfxdsd.core.projects.English;
+import java.util.Collection;
+import java.util.LinkedHashSet;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.mockito.internal.stubbing.defaultanswers.ReturnsMocks;
 
 /**
  * Unit tests for {@link Resign}.
+ *
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.20
  */
 public final class ResignTestCase {
+
+    /**
+     * Resign.start(...) returns the steps for the
+     * "resign" event in correct order.
+     */
+    @Test
+    public void orderOfStepsIsCorrect() {
+        final Project project = Mockito.mock(Project.class);
+        Mockito.when(project.language()).thenReturn(new English());
+        final Comment comment = Mockito.mock(Comment.class);
+        Mockito.when(comment.author()).thenReturn("mihai");
+        final Event event = Mockito.mock(Event.class);
+        Mockito.when(event.type()).thenReturn("resign");
+        Mockito.when(event.project()).thenReturn(project);
+        Mockito.when(event.comment()).thenReturn(comment);
+        final Conversation ressign = new Resign(
+            next -> {
+                throw new IllegalStateException(
+                    "Should not be called."
+                );
+            }
+        );
+        Mockito.when(event.type()).thenReturn("resign");
+        Mockito.when(event.project()).thenReturn(project);
+        Mockito.when(event.comment()).thenReturn(comment);
+        final Collection<String> callsites = new LinkedHashSet<>();
+        final Event perf = Mockito.mock(
+            Event.class,
+            Mockito
+                .withSettings()
+                .defaultAnswer(new ReturnsMocks())
+                .invocationListeners(
+                    report -> callsites.add(
+                        report
+                            .getInvocation()
+                            .getLocation()
+                            .toString()
+                            .replaceFirst("\\(.*$", "")
+                    )
+                )
+        );
+        ressign.start(event).perform(perf);
+        MatcherAssert.assertThat(
+            callsites,
+            Matchers.contains(
+                Matchers.endsWith("AuthorIsAssignee.perform"),
+                Matchers.endsWith("RegisterResignation.perform"),
+                Matchers.endsWith("UnassignTask.perform"),
+                Matchers.endsWith("SendReply.perform")
+            )
+        );
+    }
 
     /**
      * Resign.start(...) returns the steps for the
