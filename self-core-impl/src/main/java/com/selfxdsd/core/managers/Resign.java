@@ -66,9 +66,9 @@ public final class Resign implements Conversation {
             final Language language = event.project().language();
             final String author = event.comment().author();
             steps = new AuthorIsAssignee(
-                new UnassignTask(
-                    new RegisterResignation(
-                        Resignations.Reason.ASKED,
+                new RegisterResignation(
+                    Resignations.Reason.ASKED,
+                    new UnassignTask(
                         new SendReply(
                             String.format(
                                 language.reply("resigned.comment"),
