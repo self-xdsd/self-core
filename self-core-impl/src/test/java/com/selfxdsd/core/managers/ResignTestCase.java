@@ -59,16 +59,13 @@ public final class ResignTestCase {
         Mockito.when(event.type()).thenReturn("resign");
         Mockito.when(event.project()).thenReturn(project);
         Mockito.when(event.comment()).thenReturn(comment);
-        final Conversation ressign = new Resign(
+        final Conversation resign = new Resign(
             next -> {
                 throw new IllegalStateException(
                     "Should not be called."
                 );
             }
         );
-        Mockito.when(event.type()).thenReturn("resign");
-        Mockito.when(event.project()).thenReturn(project);
-        Mockito.when(event.comment()).thenReturn(comment);
         final Collection<String> callsites = new LinkedHashSet<>();
         final Event perf = Mockito.mock(
             Event.class,
@@ -85,7 +82,7 @@ public final class ResignTestCase {
                     )
                 )
         );
-        ressign.start(event).perform(perf);
+        resign.start(event).perform(perf);
         MatcherAssert.assertThat(
             callsites,
             Matchers.contains(
@@ -113,7 +110,7 @@ public final class ResignTestCase {
         Mockito.when(event.project()).thenReturn(project);
         Mockito.when(event.comment()).thenReturn(comment);
 
-        final Conversation ressign = new Resign(
+        final Conversation resign = new Resign(
             next -> {
                 throw new IllegalStateException(
                     "Should not be called."
@@ -121,7 +118,7 @@ public final class ResignTestCase {
             }
         );
         MatcherAssert.assertThat(
-            ressign.start(event),
+            resign.start(event),
             Matchers.allOf(
                 Matchers.notNullValue(),
                 Matchers.instanceOf(AuthorIsAssignee.class)
