@@ -80,7 +80,7 @@ public final class StripePaymentMethod extends StoredPaymentMethod {
                 if(this.identifier().equalsIgnoreCase(method.getId())){
                     return Json.createReader(
                         new StringReader(
-                            method.getRawJsonObject().toString()
+                            method.toJson()
                         )
                     ).readObject();
                 }
