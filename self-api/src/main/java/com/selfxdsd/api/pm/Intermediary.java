@@ -33,7 +33,7 @@ public abstract class Intermediary implements Step {
     /**
      * Next step in line.
      */
-    private final Step nextStep;
+    private Step nextStep;
 
     /**
      * Ctor.
