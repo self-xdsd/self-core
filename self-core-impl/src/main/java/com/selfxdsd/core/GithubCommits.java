@@ -125,6 +125,30 @@ final class GithubCommits implements Commits {
     }
 
     @Override
+    public Commit latest() {
+        final Resource resource = this.resources.get(this.commitsUri);
+        final Commit latest;
+        if (resource.statusCode() == HttpURLConnection.HTTP_OK) {
+            final JsonObject json = resource.asJsonArray().getJsonObject(0);
+            latest = new GithubCommit(
+                URI.create(
+                    this.commitsUri.toString() + "/" + json.getString("sha")
+                ),
+                json,
+                this.storage,
+                this.resources
+            );
+        } else {
+            throw new IllegalStateException(
+                "List of Repo Commits returned " + resource.statusCode()
+                + ", expected 200 OK. URI is [" + this.commitsUri.toString()
+                + "]."
+            );
+        }
+        return latest;
+    }
+
+    @Override
     public Iterator<Commit> iterator() {
         throw new UnsupportedOperationException(
             "You cannot iterate over all the Commits in a Repo."

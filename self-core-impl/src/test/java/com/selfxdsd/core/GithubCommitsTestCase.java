@@ -25,6 +25,7 @@ package com.selfxdsd.core;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import javax.json.Json;
+
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -172,6 +173,84 @@ public final class GithubCommitsTestCase {
             Mockito.mock(Storage.class)
         );
         commits.getCommit("123");
+    }
+
+    /**
+     * GithubCommits can return the latest commit.
+     */
+    @Test
+    public void getLatestCommit() {
+        final Commits commits = new GithubCommits(
+            new MockJsonResources(
+                new AccessToken.Github("github123"),
+                req -> {
+                    MatcherAssert.assertThat(
+                        req.getAccessToken().value(),
+                        Matchers.equalTo("token github123")
+                    );
+                    MatcherAssert.assertThat(
+                        req.getMethod(),
+                        Matchers.equalTo("GET")
+                    );
+                    MatcherAssert.assertThat(
+                        req.getUri().toString(),
+                        Matchers.equalTo(
+                            "http://localhost/repos/mihai/test/commits"
+                        )
+                    );
+                    return new MockJsonResources.MockResource(
+                        HttpURLConnection.HTTP_OK,
+                        Json.createArrayBuilder().add(
+                            Json.createObjectBuilder()
+                                .add("sha", "123")
+                                .build()
+                        ).build()
+                    );
+                }
+            ),
+            URI.create("http://localhost/repos/mihai/test/commits"),
+            Mockito.mock(Storage.class)
+        );
+        final Commit found = commits.latest();
+        MatcherAssert.assertThat(
+            found.shaRef(),
+            Matchers.equalTo("123")
+        );
+    }
+
+    /**
+     * GithubCommits.latest() throws ISE if the HTTP response is not 200 OK.
+     */
+    @Test(expected = IllegalStateException.class)
+    public void getLatestCommitThrowsIse() {
+        final Commits commits = new GithubCommits(
+            new MockJsonResources(
+                new AccessToken.Github("github123"),
+                req -> {
+                    MatcherAssert.assertThat(
+                        req.getAccessToken().value(),
+                        Matchers.equalTo("token github123")
+                    );
+                    MatcherAssert.assertThat(
+                        req.getMethod(),
+                        Matchers.equalTo("GET")
+                    );
+                    MatcherAssert.assertThat(
+                        req.getUri().toString(),
+                        Matchers.equalTo(
+                            "http://localhost/repos/mihai/test/commits"
+                        )
+                    );
+                    return new MockJsonResources.MockResource(
+                        HttpURLConnection.HTTP_NO_CONTENT,
+                        Json.createArrayBuilder().build()
+                    );
+                }
+            ),
+            URI.create("http://localhost/repos/mihai/test/commits"),
+            Mockito.mock(Storage.class)
+        );
+        commits.latest();
     }
 
 }
