@@ -76,11 +76,15 @@ final class GithubRepoInvitations implements Invitations {
     public Iterator<Invitation> iterator() {
         final List<Invitation> invitations = this.fetchInvitations().stream()
             .map(
-                jsonValue -> new GithubInvitation(
-                    this.resources,
-                    this.repoInvitationsUri,
-                    (JsonObject) jsonValue,
-                    this.github
+                jsonValue -> new HelloIssue(
+                        new StarRepo(
+                            new GithubInvitation(
+                                this.resources,
+                                this.repoInvitationsUri,
+                                (JsonObject) jsonValue,
+                                this.github
+                        )
+                    )
                 )
             ).collect(Collectors.toList());
         return invitations.iterator();
