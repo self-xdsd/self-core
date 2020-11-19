@@ -30,17 +30,20 @@ import org.slf4j.LoggerFactory;
 import javax.json.JsonObject;
 
 /**
- * Star the Repo after accepting the Invitation.
+ * After accepting a repo Invitation, the PM should open
+ * a 'no-task' Issue, introducing itself and letting the owner
+ * know that setup is fully completed.
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.37
  */
-final class StarRepo implements Invitation {
+final class HelloIssue implements Invitation {
+
     /**
      * Logger.
      */
     private static final Logger LOG = LoggerFactory.getLogger(
-        StarRepo.class
+        HelloIssue.class
     );
 
 
@@ -53,7 +56,7 @@ final class StarRepo implements Invitation {
      * Ctor.
      * @param origin Original Invitation.
      */
-    StarRepo(final Invitation origin) {
+    HelloIssue(final Invitation origin) {
         this.origin = origin;
     }
 
@@ -70,11 +73,37 @@ final class StarRepo implements Invitation {
     @Override
     public void accept() {
         this.origin.accept();
-        LOG.debug("Starring repo...");
+        LOG.debug("Opening 'Hello' Issue...");
+        final Repo repo = this.origin.repo();
         try {
-            this.repo().stars().add();
+            repo.issues().open(
+                "Hello from Self XDSD!",
+                String.format(
+                    this.helloMessage(),
+                    repo.owner().username()
+                ),
+                "no-task"
+            );
         } catch (final IllegalStateException ex) {
-            LOG.error("Caught ISE while starring Repo", ex);
+            LOG.error("Caught ISE while opening 'Hello' Issue", ex);
         }
+    }
+
+    /**
+     * Get the hello message.
+     * @return String.
+     */
+    public String helloMessage() {
+        final StringBuilder message = new StringBuilder(
+            "@%s Thank you for the invitation, your repo is all set up "
+            + "and I will manage it starting now. \n\n"
+            + "I will take care of tickets' assignment, payments and more, "
+            + "automatically.\n\n"
+            + "If you don't want me to handle a certain Issue or PR, add the "
+            + "``no-task`` label when creating it. You can also say "
+            + "``deregister`` to me (if it's already in scope) and "
+            + "I will forget about it."
+        );
+        return message.toString();
     }
 }
