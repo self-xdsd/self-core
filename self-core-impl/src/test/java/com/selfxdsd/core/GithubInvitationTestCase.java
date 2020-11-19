@@ -61,6 +61,33 @@ public final class GithubInvitationTestCase {
     }
 
     /**
+     * A GithubInvitation can return its Repo.
+     */
+    @Test
+    public void hasRepo() {
+        final JsonObject json = Json.createObjectBuilder()
+            .add("id", 1)
+            .add(
+                "repository",
+                Json.createObjectBuilder()
+                    .add("full_name", "mihai/test")
+            ).build();
+        final Invitation invitation = new GithubInvitation(
+            Mockito.mock(JsonResources.class),
+            URI.create("https://api.github.com/repos/mihai/test/invitations"),
+            json,
+            new Github(Mockito.mock(User.class), Mockito.mock(Storage.class))
+        );
+        MatcherAssert.assertThat(
+            invitation.repo(),
+            Matchers.allOf(
+                Matchers.notNullValue(),
+                Matchers.instanceOf(GithubRepo.class)
+            )
+        );
+    }
+
+    /**
      * GithubInvitation.accept() works.
      */
     @Test
