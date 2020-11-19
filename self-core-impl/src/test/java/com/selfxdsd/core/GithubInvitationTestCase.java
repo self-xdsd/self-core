@@ -91,7 +91,7 @@ public final class GithubInvitationTestCase {
 
         invitation.accept();
 
-        MatcherAssert.assertThat(res.requests(), Matchers.iterableWithSize(2));
+        MatcherAssert.assertThat(res.requests(), Matchers.iterableWithSize(1));
 
         final MockJsonResources.MockRequest invReq = res.requests().first();
         MatcherAssert.assertThat(invReq.getMethod(),
@@ -101,13 +101,6 @@ public final class GithubInvitationTestCase {
                 "https://api.github.com/repos/john/test/invitations/1"
             )
         );
-
-        MockJsonResources.MockRequest starReq = res.requests().atIndex(1);
-        MatcherAssert.assertThat(starReq.getMethod(),
-            Matchers.equalTo("PUT"));
-        MatcherAssert.assertThat(starReq.getUri().toString(),
-            Matchers.equalTo(
-                "https://api.github.com/user/starred/john/test"));
     }
 
     /**

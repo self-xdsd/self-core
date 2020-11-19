@@ -20,33 +20,57 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package com.selfxdsd.api;
+package com.selfxdsd.core;
+
+import com.selfxdsd.api.Invitation;
+import com.selfxdsd.api.Repo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.json.JsonObject;
 
 /**
- * Invitation.
+ * Star the Repo after accepting the Invitation.
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
- * @since 0.0.7
+ * @since 0.0.37
  */
-public interface Invitation {
+final class StarRepo implements Invitation {
+    /**
+     * Logger.
+     */
+    private static final Logger LOG = LoggerFactory.getLogger(
+        StarRepo.class
+    );
+
 
     /**
-     * This invitation as json.
-     * @return JsonObject.
+     * Original Invitation.
      */
-    JsonObject json();
+    private final Invitation origin;
 
     /**
-     * Repo where the invitation occured.
-     * @return Repo.
+     * Ctor.
+     * @param origin Original Invitation.
      */
-    Repo repo();
+    StarRepo(final Invitation origin) {
+        this.origin = origin;
+    }
 
-    /**
-     * Accept this invitation.
-     */
-    void accept();
+    @Override
+    public JsonObject json() {
+        return this.origin.json();
+    }
 
+    @Override
+    public Repo repo() {
+        return this.origin.repo();
+    }
+
+    @Override
+    public void accept() {
+        this.origin.accept();
+        LOG.debug("Starring repo...");
+        this.repo().stars().add();
+    }
 }

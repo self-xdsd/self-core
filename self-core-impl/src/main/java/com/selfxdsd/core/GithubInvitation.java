@@ -93,21 +93,27 @@ final class GithubInvitation implements Invitation {
     }
 
     @Override
+    public Repo repo() {
+        final String repoFullName = this.json
+            .getJsonObject("repository")
+            .getString("full_name");
+        LOG.debug("Starring Github repository " + repoFullName + "... ");
+        return this.github.repo(
+            repoFullName.split("/")[0],
+            repoFullName.split("/")[1]
+        );
+    }
+
+    @Override
     public void accept() {
-        LOG.debug("Accepting Github Repo Invitation...");
+        LOG.debug(
+            "Accepting Github Repo Invitation ["
+            + this.uri.toString() +"]..."
+        );
         final Resource resp = this.resources
             .patch(this.uri, Json.createObjectBuilder().build());
         if(resp.statusCode() == HttpURLConnection.HTTP_NO_CONTENT) {
             LOG.debug("Invitation accepted.");
-            final String repoFullName = this.json
-                .getJsonObject("repository")
-                .getString("full_name");
-            LOG.debug("Starring Github repository " + repoFullName + "... ");
-            final Repo repo = this.github.repo(
-                repoFullName.split("/")[0],
-                repoFullName.split("/")[1]
-            );
-            repo.stars().add();
         } else {
             LOG.warn(
                 "Problem when accepting invitation. "
