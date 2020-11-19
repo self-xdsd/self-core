@@ -97,7 +97,6 @@ final class GithubInvitation implements Invitation {
         final String repoFullName = this.json
             .getJsonObject("repository")
             .getString("full_name");
-        LOG.debug("Starring Github repository " + repoFullName + "... ");
         return this.github.repo(
             repoFullName.split("/")[0],
             repoFullName.split("/")[1]
