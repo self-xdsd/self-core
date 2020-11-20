@@ -64,6 +64,12 @@ public interface Invoice {
     BigDecimal totalAmount();
 
     /**
+     * Value of the commission.
+     * @return BigDecimal.
+     */
+    BigDecimal commission();
+
+    /**
      * An invoice is active until payment is done.
      * @return Boolean
      */
