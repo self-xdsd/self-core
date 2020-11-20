@@ -83,6 +83,7 @@ public final class StripeWalletITCase {
             Mockito.when(invoice.createdAt()).thenReturn(now);
             Mockito.when(invoice.isPaid()).thenReturn(false);
             Mockito.when(invoice.totalAmount()).thenReturn(BigDecimal.TEN);
+            Mockito.when(invoice.commission()).thenReturn(BigDecimal.ONE);
 
             final Contract contract = Mockito.mock(Contract.class);
             final Contributor contributor = Mockito.mock(Contributor.class);

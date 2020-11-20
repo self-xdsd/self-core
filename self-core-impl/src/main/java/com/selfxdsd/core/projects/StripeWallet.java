@@ -49,6 +49,7 @@ import java.util.Objects;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.27
+ * @checkstyle ExecutableStatementCount (500 lines)
  */
 public final class StripeWallet implements Wallet {
 
@@ -142,6 +143,13 @@ public final class StripeWallet implements Wallet {
         return this.limit;
     }
 
+    /**
+     * Collect money from the Customer and wire it directly to the
+     * Contributor (connected account).
+     * @see <a href='https://stripe.com/docs/connect/collect-then-transfer-guide'>docs</a>
+     * @param invoice The Invoice to be paid.
+     * @return Wallet with the updated cash limit.
+     */
     @Override
     public Wallet pay(final Invoice invoice) {
         if (invoice.isPaid()) {
@@ -169,7 +177,7 @@ public final class StripeWallet implements Wallet {
             if (payoutMethod == null) {
                 throw new WalletPaymentException(
                     "No active payout method for contributor "
-                        + contributor.username()
+                    + contributor.username()
                 );
             }
             final PaymentMethod paymentMethod = this.storage
@@ -179,21 +187,37 @@ public final class StripeWallet implements Wallet {
             if (paymentMethod == null) {
                 throw new WalletPaymentException(
                     "No active payment method for wallet #"
-                        + this.identifier + " of project "
-                        + this.project.repoFullName() + "/"
-                        + this.project.provider()
+                    + this.identifier + " of project "
+                    + this.project.repoFullName() + "/"
+                    + this.project.provider()
                 );
             }
+            LOG.debug(
+                "[STRIPE] Paying Invoice #" + invoice.invoiceId()
+                + " of Contract " + invoice.contract().contractId()
+                + "..."
+            );
             final PaymentIntent paymentIntent = PaymentIntent
                 .create(PaymentIntentCreateParams.builder()
                     .setCurrency("usd")
                     .setAmount(invoice.totalAmount().longValueExact())
-                    .setCustomer(payoutMethod.identifier())
+                    .setApplicationFeeAmount(
+                        invoice.commission().longValueExact()
+                    )
+                    .setCustomer(this.identifier)
                     .setPaymentMethod(paymentMethod.identifier())
+                    .setTransferData(
+                        PaymentIntentCreateParams.TransferData
+                            .builder()
+                            .setDestination(payoutMethod.identifier())
+                            .build()
+                    )
+                    .setOffSession(true)
                     .setConfirm(true)
                     .build());
 
             final String status = paymentIntent.getStatus();
+            LOG.debug("[STRIPE] Payment Status " + status);
             if ("succeeded".equals(status) || "processing".equals(status)) {
                 final LocalDateTime paymentDate = LocalDateTime
                     .ofEpochSecond(paymentIntent.getCreated(),
@@ -210,13 +234,13 @@ public final class StripeWallet implements Wallet {
             } else {
                 throw new WalletPaymentException(
                     "Could not pay invoice #" + invoice.invoiceId() + " due to"
-                        + " Stripe payment intent status \"" + status + "\""
+                    + " Stripe payment intent status \"" + status + "\""
                 );
             }
         } catch (final StripeException ex) {
             throw new IllegalStateException(
                 "Stripe threw an exception when trying execute PaymentIntent"
-                    + " for invoice #" + invoice.invoiceId(),
+                + " for invoice #" + invoice.invoiceId(),
                 ex
             );
         }

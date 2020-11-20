@@ -140,6 +140,15 @@ public final class StoredInvoice implements Invoice {
     }
 
     @Override
+    public BigDecimal commission() {
+        BigDecimal commission = BigDecimal.valueOf(0);
+        for(final InvoicedTask task : this.tasks()) {
+            commission = commission.add(task.commission());
+        }
+        return commission;
+    }
+
+    @Override
     public int hashCode() {
         return this.id;
     }

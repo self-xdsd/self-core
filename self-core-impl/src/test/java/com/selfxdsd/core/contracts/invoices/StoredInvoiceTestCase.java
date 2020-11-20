@@ -133,6 +133,45 @@ public final class StoredInvoiceTestCase {
     }
 
     /**
+     * Invoice can return its total commission.
+     */
+    @Test
+    public void returnsCommission() {
+        final Storage storage = Mockito.mock(Storage.class);
+        final Invoice invoice = new StoredInvoice(
+            1,
+            Mockito.mock(Contract.class),
+            LocalDateTime.now(),
+            LocalDateTime.now(),
+            "transactionID",
+            storage
+        );
+        final InvoicedTasks all = Mockito.mock(InvoicedTasks.class);
+        Mockito.when(all.ofInvoice(invoice)).thenReturn(
+            new InvoiceTasks(
+                invoice,
+                () -> {
+                    final InvoicedTask task = Mockito.mock(InvoicedTask.class);
+                    Mockito.when(task.commission())
+                        .thenReturn(BigDecimal.valueOf(100));
+                    final List<InvoicedTask> tasks = new ArrayList<>();
+                    tasks.add(task);
+                    tasks.add(task);
+                    tasks.add(task);
+                    return tasks.stream();
+                },
+                storage
+            )
+        );
+        Mockito.when(storage.invoicedTasks()).thenReturn(all);
+
+        MatcherAssert.assertThat(
+            invoice.commission(),
+            Matchers.equalTo(BigDecimal.valueOf(300))
+        );
+    }
+
+    /**
      * A StoredInvoice can return its creation time.
      */
     @Test
