@@ -133,6 +133,65 @@ public final class StoredProjectManagerTestCase {
     }
 
     /**
+     * StoredProjectManager can calculate the effective commission
+     * for a certain sum, based on the encapsulated percentage.
+     */
+    @Test
+    public void returnsCommission() {
+        final ProjectManager fixed = new StoredProjectManager(
+            1,
+            "123",
+            "zoeself",
+            Provider.Names.GITHUB,
+            "123token",
+            8,
+            Mockito.mock(Storage.class)
+        );
+        MatcherAssert.assertThat(
+            fixed.commission(BigDecimal.valueOf(1000)),
+            Matchers.equalTo(BigDecimal.valueOf(80.0))
+        );
+        MatcherAssert.assertThat(
+            fixed.commission(BigDecimal.valueOf(10000)),
+            Matchers.equalTo(BigDecimal.valueOf(800.0))
+        );
+        MatcherAssert.assertThat(
+            fixed.commission(BigDecimal.valueOf(100)),
+            Matchers.equalTo(BigDecimal.valueOf(8.0))
+        );
+        MatcherAssert.assertThat(
+            fixed.commission(BigDecimal.valueOf(10)),
+            Matchers.equalTo(BigDecimal.valueOf(0.8))
+        );
+
+        final ProjectManager comma = new StoredProjectManager(
+            1,
+            "123",
+            "zoeself",
+            Provider.Names.GITHUB,
+            "123token",
+            8.6345,
+            Mockito.mock(Storage.class)
+        );
+        MatcherAssert.assertThat(
+            comma.commission(BigDecimal.valueOf(1000)).toString(),
+            Matchers.equalTo("86.30")
+        );
+        MatcherAssert.assertThat(
+            comma.commission(BigDecimal.valueOf(10000)).toString(),
+            Matchers.equalTo("863.00")
+        );
+        MatcherAssert.assertThat(
+            comma.commission(BigDecimal.valueOf(100)).toString(),
+            Matchers.equalTo("8.63")
+        );
+        MatcherAssert.assertThat(
+            comma.commission(BigDecimal.valueOf(10)).toString(),
+            Matchers.equalTo("0.86")
+        );
+    }
+
+    /**
      * StoredProjectManager returns its assigned projects.
      */
     @Test
