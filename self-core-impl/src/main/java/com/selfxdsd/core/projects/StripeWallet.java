@@ -199,7 +199,7 @@ public final class StripeWallet implements Wallet {
             );
             final PaymentIntent paymentIntent = PaymentIntent
                 .create(PaymentIntentCreateParams.builder()
-                    .setCurrency("usd")
+                    .setCurrency("eur")
                     .setAmount(invoice.totalAmount().longValueExact())
                     .setApplicationFeeAmount(
                         invoice.commission().longValueExact()
