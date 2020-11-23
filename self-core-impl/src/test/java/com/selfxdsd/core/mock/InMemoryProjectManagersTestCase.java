@@ -5,8 +5,6 @@ import com.selfxdsd.api.ProjectManagers;
 import com.selfxdsd.api.storage.Storage;
 import org.junit.Test;
 
-import java.math.BigDecimal;
-
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.mock;
@@ -79,7 +77,7 @@ public final class InMemoryProjectManagersTestCase {
             "userpm",
             "foo-provider",
             "122token",
-            BigDecimal.valueOf(50)
+            8
         );
         assertThat(
             "Should have pms for: github, gitlab, foo-provider",
@@ -99,7 +97,7 @@ public final class InMemoryProjectManagersTestCase {
                 "userpm",
                 "foo-provider",
                 "122token",
-                BigDecimal.valueOf(50)
+                8
             );
         assertThat(projectManagers.getById(3), equalTo(projectManager));
     }
