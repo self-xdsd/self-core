@@ -363,7 +363,13 @@ public final class StoredContractTestCase {
         ).thenReturn(invoices);
 
         final ProjectManager manager = Mockito.mock(ProjectManager.class);
-        Mockito.when(manager.commission()).thenReturn(BigDecimal.valueOf(50));
+        Mockito.when(manager.percentage()).thenReturn(8.0);
+        Mockito.when(manager.commission(BigDecimal.valueOf(10000)))
+            .thenReturn(BigDecimal.valueOf(800));
+        Mockito.when(manager.commission(BigDecimal.valueOf(15000)))
+            .thenReturn(BigDecimal.valueOf(1200));
+        Mockito.when(manager.commission(BigDecimal.valueOf(7500)))
+            .thenReturn(BigDecimal.valueOf(600));
 
         final Projects allProjects = Mockito.mock(Projects.class);
         final Project project = Mockito.mock(Project.class);
@@ -391,7 +397,7 @@ public final class StoredContractTestCase {
 
         MatcherAssert.assertThat(
             contract.value(),
-            Matchers.equalTo(BigDecimal.valueOf(44950))
+            Matchers.equalTo(BigDecimal.valueOf(47400))
         );
     }
 
