@@ -32,6 +32,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.time.LocalDateTime;
 import java.time.Period;
 import java.time.temporal.ChronoUnit;
@@ -83,9 +85,9 @@ public final class StoredProjectManager implements ProjectManager {
     private final String accessToken;
 
     /**
-     * Commission for each handled Task, in cents.
+     * Commission for each handled Task.
      */
-    private final BigDecimal commission;
+    private final double percentage;
 
     /**
      * Self's storage.
@@ -104,7 +106,7 @@ public final class StoredProjectManager implements ProjectManager {
      * @param username PM's username.
      * @param provider The provider's name (Gitlab, Github etc).
      * @param accessToken API Access token.
-     * @param commission Commission in cents.
+     * @param percentage Commission percentage.
      * @param storage Self's storage.
      * @checkstyle ParameterNumber (10 lines)
      */
@@ -114,7 +116,7 @@ public final class StoredProjectManager implements ProjectManager {
         final String username,
         final String provider,
         final String accessToken,
-        final BigDecimal commission,
+        final double percentage,
         final Storage storage
     ) {
         this(id,
@@ -122,7 +124,7 @@ public final class StoredProjectManager implements ProjectManager {
             username,
             provider,
             accessToken,
-            commission,
+            percentage,
             storage,
             LocalDateTime::now);
     }
@@ -134,7 +136,7 @@ public final class StoredProjectManager implements ProjectManager {
      * @param username PM's username.
      * @param provider The provider's name (Gitlab, Github etc).
      * @param accessToken API Access token.
-     * @param commission Commission in cents.
+     * @param percentage Commission percentage.
      * @param storage Self's storage.
      * @param dateTimeSupplier Current date time. Used in testing deadlines.
      * @checkstyle ParameterNumber (10 lines)
@@ -145,7 +147,7 @@ public final class StoredProjectManager implements ProjectManager {
         final String username,
         final String provider,
         final String accessToken,
-        final BigDecimal commission,
+        final double percentage,
         final Storage storage,
         final Supplier<LocalDateTime> dateTimeSupplier
     ) {
@@ -154,7 +156,7 @@ public final class StoredProjectManager implements ProjectManager {
         this.username = username;
         this.provider = provider;
         this.accessToken = accessToken;
-        this.commission = commission;
+        this.percentage = percentage;
         this.storage = storage;
         this.dateTimeSupplier = dateTimeSupplier;
     }
@@ -202,8 +204,21 @@ public final class StoredProjectManager implements ProjectManager {
     }
 
     @Override
-    public BigDecimal commission() {
-        return this.commission;
+    public double percentage() {
+        return this.percentage;
+    }
+
+    @Override
+    public BigDecimal commission(final BigDecimal value) {
+        final double twoDigitsPercentage = Double.valueOf(
+            new DecimalFormat("0.00").format(this.percentage)
+        );
+        return value.multiply(
+            BigDecimal.valueOf(twoDigitsPercentage)
+        ).divide(
+            BigDecimal.valueOf(100),
+            RoundingMode.HALF_UP
+        );
     }
 
     @Override
@@ -453,7 +468,7 @@ public final class StoredProjectManager implements ProjectManager {
                     final InvoicedTask invoiced = task.contract()
                         .invoices()
                         .active()
-                        .register(task, this.commission);
+                        .register(task, this.commission(task.value()));
                     if(invoiced != null) {
                         issue.comments().post(
                             String.format(

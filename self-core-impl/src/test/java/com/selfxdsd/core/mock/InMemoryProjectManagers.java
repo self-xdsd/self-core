@@ -26,7 +26,6 @@ import com.selfxdsd.api.*;
 import com.selfxdsd.api.storage.Storage;
 import com.selfxdsd.core.managers.StoredProjectManager;
 
-import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -67,14 +66,14 @@ public final class InMemoryProjectManagers implements ProjectManagers {
             "zoeself",
             Provider.Names.GITHUB,
             "123token",
-            BigDecimal.valueOf(50)
+            8
         );
         register(
             "123",
             "zoeself",
             Provider.Names.GITLAB,
             "123token",
-            BigDecimal.valueOf(50)
+            8
         );
     }
 
@@ -118,7 +117,7 @@ public final class InMemoryProjectManagers implements ProjectManagers {
         final String username,
         final String provider,
         final String accessToken,
-        final BigDecimal commission
+        final double percentage
     ) {
         final int id = ++this.idCounter;
         final StoredProjectManager projectManager = new StoredProjectManager(
@@ -127,7 +126,7 @@ public final class InMemoryProjectManagers implements ProjectManagers {
             username,
             provider,
             accessToken,
-            commission,
+            percentage,
             this.storage
         );
         this.pms.put(id, projectManager);

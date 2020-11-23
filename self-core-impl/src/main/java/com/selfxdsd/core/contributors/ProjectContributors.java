@@ -225,20 +225,20 @@ public final class ProjectContributors extends BasePaged
                 .noneMatch(r -> r.contributor().equals(contributor)))
             .filter(
                 contributor -> {
+                    final ProjectManager manager = this.project
+                        .projectManager();
                     for(final Contract contract : contributor.contracts()) {
                         if(contract.role().equals(task.role())
                             && contract.markedForRemoval() == null
                         ) {
-                            final BigDecimal price = contract.hourlyRate()
+                            BigDecimal price = contract.hourlyRate()
                                 .multiply(
                                     BigDecimal.valueOf(task.estimation())
                                 ).divide(
                                     BigDecimal.valueOf(60),
                                     RoundingMode.HALF_UP
-                                ).add(this.project
-                                    .projectManager()
-                                    .commission()
                                 );
+                            price = price.add(manager.commission(price));
                             final BigDecimal budget = this.project
                                 .wallet()
                                 .available();

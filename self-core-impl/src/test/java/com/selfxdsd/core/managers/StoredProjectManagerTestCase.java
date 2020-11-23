@@ -60,7 +60,7 @@ public final class StoredProjectManagerTestCase {
             "zoeself",
             Provider.Names.GITHUB,
             "1s23token",
-            BigDecimal.valueOf(50),
+            8,
             Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(
@@ -80,7 +80,7 @@ public final class StoredProjectManagerTestCase {
             "zoeself",
             Provider.Names.GITHUB,
             "1s23token",
-            BigDecimal.valueOf(50),
+            8,
             Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(
@@ -100,7 +100,7 @@ public final class StoredProjectManagerTestCase {
             "zoeself",
             Provider.Names.GITHUB,
             "123token",
-            BigDecimal.valueOf(50),
+            8,
             Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(
@@ -113,22 +113,81 @@ public final class StoredProjectManagerTestCase {
     }
 
     /**
-     * StoredProjectManager returns its commission.
+     * StoredProjectManager returns its commission percentage.
      */
     @Test
-    public void returnsCommission() {
+    public void returnsPercentage() {
         final ProjectManager manager = new StoredProjectManager(
             1,
             "123",
             "zoeself",
             Provider.Names.GITHUB,
             "123token",
-            BigDecimal.valueOf(50),
+            8,
             Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(
-            manager.commission(),
-            Matchers.equalTo(BigDecimal.valueOf(50))
+            manager.percentage(),
+            Matchers.equalTo(8.0)
+        );
+    }
+
+    /**
+     * StoredProjectManager can calculate the effective commission
+     * for a certain sum, based on the encapsulated percentage.
+     */
+    @Test
+    public void returnsCommission() {
+        final ProjectManager fixed = new StoredProjectManager(
+            1,
+            "123",
+            "zoeself",
+            Provider.Names.GITHUB,
+            "123token",
+            8,
+            Mockito.mock(Storage.class)
+        );
+        MatcherAssert.assertThat(
+            fixed.commission(BigDecimal.valueOf(1000)),
+            Matchers.equalTo(BigDecimal.valueOf(80.0))
+        );
+        MatcherAssert.assertThat(
+            fixed.commission(BigDecimal.valueOf(10000)),
+            Matchers.equalTo(BigDecimal.valueOf(800.0))
+        );
+        MatcherAssert.assertThat(
+            fixed.commission(BigDecimal.valueOf(100)),
+            Matchers.equalTo(BigDecimal.valueOf(8.0))
+        );
+        MatcherAssert.assertThat(
+            fixed.commission(BigDecimal.valueOf(10)),
+            Matchers.equalTo(BigDecimal.valueOf(0.8))
+        );
+
+        final ProjectManager comma = new StoredProjectManager(
+            1,
+            "123",
+            "zoeself",
+            Provider.Names.GITHUB,
+            "123token",
+            8.6345,
+            Mockito.mock(Storage.class)
+        );
+        MatcherAssert.assertThat(
+            comma.commission(BigDecimal.valueOf(1000)).toString(),
+            Matchers.equalTo("86.30")
+        );
+        MatcherAssert.assertThat(
+            comma.commission(BigDecimal.valueOf(10000)).toString(),
+            Matchers.equalTo("863.00")
+        );
+        MatcherAssert.assertThat(
+            comma.commission(BigDecimal.valueOf(100)).toString(),
+            Matchers.equalTo("8.63")
+        );
+        MatcherAssert.assertThat(
+            comma.commission(BigDecimal.valueOf(10)).toString(),
+            Matchers.equalTo("0.86")
         );
     }
 
@@ -150,7 +209,7 @@ public final class StoredProjectManagerTestCase {
             "zoeself",
             Provider.Names.GITHUB,
             "123token",
-            BigDecimal.valueOf(50),
+            8,
             storage
         );
         MatcherAssert.assertThat(
@@ -229,7 +288,7 @@ public final class StoredProjectManagerTestCase {
             "zoeself",
             Provider.Names.GITHUB,
             "123token",
-            BigDecimal.valueOf(50),
+            8,
             new InMemory()
         );
         final Project assigned = manager.assign(repo);
@@ -255,7 +314,7 @@ public final class StoredProjectManagerTestCase {
             "zoeself",
             Provider.Names.GITHUB,
             "123token",
-            BigDecimal.valueOf(50),
+            8,
             Mockito.mock(Storage.class)
         );
         final Labels labels = Mockito.mock(Labels.class);
@@ -325,7 +384,7 @@ public final class StoredProjectManagerTestCase {
             "zoeself",
             Provider.Names.GITHUB,
             "123token",
-            BigDecimal.valueOf(50),
+            8,
             Mockito.mock(Storage.class)
         );
         final Labels labels = Mockito.mock(Labels.class);
@@ -396,7 +455,7 @@ public final class StoredProjectManagerTestCase {
             "zoeself",
             Provider.Names.GITHUB,
             "123token",
-            BigDecimal.valueOf(50),
+            8,
             Mockito.mock(Storage.class)
         );
         final Issue issue = Mockito.mock(Issue.class);
@@ -471,7 +530,7 @@ public final class StoredProjectManagerTestCase {
             "zoeself",
             Provider.Names.GITHUB,
             "123token",
-            BigDecimal.valueOf(50),
+            8,
             Mockito.mock(Storage.class)
         );
         final Issue issue = Mockito.mock(Issue.class);
@@ -539,7 +598,7 @@ public final class StoredProjectManagerTestCase {
             "zoeself",
             Provider.Names.GITHUB,
             "123token",
-            BigDecimal.valueOf(50),
+            8,
             Mockito.mock(Storage.class)
         );
         final Issue issue = Mockito.mock(Issue.class);
@@ -611,7 +670,7 @@ public final class StoredProjectManagerTestCase {
             "zoeself",
             Provider.Names.GITHUB,
             "123token",
-            BigDecimal.valueOf(50),
+            8,
             Mockito.mock(Storage.class)
         );
         final Issue issue = Mockito.mock(Issue.class);
@@ -678,7 +737,7 @@ public final class StoredProjectManagerTestCase {
             "zoeself",
             Provider.Names.GITHUB,
             "123token",
-            BigDecimal.valueOf(50),
+            8,
             Mockito.mock(Storage.class)
         );
         final Issue issue = Mockito.mock(Issue.class);
@@ -776,7 +835,7 @@ public final class StoredProjectManagerTestCase {
             "zoeself",
             Provider.Names.GITHUB,
             "123token",
-            BigDecimal.valueOf(50),
+            8,
             Mockito.mock(Storage.class)
         );
 
@@ -819,7 +878,7 @@ public final class StoredProjectManagerTestCase {
             "zoeself",
             Provider.Names.GITHUB,
             "123token",
-            BigDecimal.valueOf(50),
+            8,
             Mockito.mock(Storage.class)
         );
 
@@ -875,7 +934,7 @@ public final class StoredProjectManagerTestCase {
             "zoeself",
             Provider.Names.GITHUB,
             "123token",
-            BigDecimal.valueOf(50),
+            8,
             Mockito.mock(Storage.class)
         );
 
@@ -947,7 +1006,7 @@ public final class StoredProjectManagerTestCase {
             "zoeself",
             Provider.Names.GITHUB,
             "123token",
-            BigDecimal.valueOf(50),
+            8,
             Mockito.mock(Storage.class)
         );
 
@@ -1020,7 +1079,7 @@ public final class StoredProjectManagerTestCase {
             "zoeself",
             Provider.Names.GITHUB,
             "123token",
-            BigDecimal.valueOf(50),
+            8,
             Mockito.mock(Storage.class)
         );
 
@@ -1060,7 +1119,7 @@ public final class StoredProjectManagerTestCase {
             "zoeself",
             Provider.Names.GITHUB,
             "123token",
-            BigDecimal.valueOf(50),
+            8,
             Mockito.mock(Storage.class)
         );
 
@@ -1090,7 +1149,7 @@ public final class StoredProjectManagerTestCase {
             "zoeself",
             Provider.Names.GITHUB,
             "1s23token",
-            BigDecimal.valueOf(50),
+            8,
             Mockito.mock(Storage.class)
         );
         final ProjectManager managerTwo = new StoredProjectManager(
@@ -1099,7 +1158,7 @@ public final class StoredProjectManagerTestCase {
             "zoeself",
             Provider.Names.GITHUB,
             "1s23token",
-            BigDecimal.valueOf(50),
+            8,
             Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(manager, Matchers.equalTo(managerTwo));
@@ -1116,7 +1175,7 @@ public final class StoredProjectManagerTestCase {
             "zoeself",
             Provider.Names.GITHUB,
             "1s23token",
-            BigDecimal.valueOf(50),
+            8,
             Mockito.mock(Storage.class)
         );
         final ProjectManager managerTwo = new StoredProjectManager(
@@ -1125,7 +1184,7 @@ public final class StoredProjectManagerTestCase {
             "zoeself",
             Provider.Names.GITHUB,
             "1s23token",
-            BigDecimal.valueOf(50),
+            8,
             Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(manager.hashCode(),
@@ -1153,7 +1212,7 @@ public final class StoredProjectManagerTestCase {
             "zoeself",
             Provider.Names.GITHUB,
             "123token",
-            BigDecimal.valueOf(50),
+            8,
             Mockito.mock(Storage.class)
         );
         manager.assignedTasks(event);
@@ -1185,7 +1244,7 @@ public final class StoredProjectManagerTestCase {
             "zoeself",
             Provider.Names.GITHUB,
             "123token",
-            BigDecimal.valueOf(50),
+            8,
             Mockito.mock(Storage.class)
         );
         manager.assignedTasks(event);
@@ -1213,13 +1272,14 @@ public final class StoredProjectManagerTestCase {
 
         Mockito.when(task.assignee()).thenReturn(assignee);
         Mockito.when(task.issue()).thenReturn(issue);
+        Mockito.when(task.value()).thenReturn(BigDecimal.valueOf(1000));
 
         mocks.add(task);
 
         final InvoicedTask invoiced = Mockito.mock(InvoicedTask.class);
         final Invoice active = Mockito.mock(Invoice.class);
         Mockito.when(
-            active.register(task, BigDecimal.valueOf(50))
+            active.register(task, BigDecimal.valueOf(80.0))
         ).thenReturn(invoiced);
         final Invoices invoices = Mockito.mock(Invoices.class);
         Mockito.when(invoices.active()).thenReturn(active);
@@ -1255,7 +1315,7 @@ public final class StoredProjectManagerTestCase {
             "zoeself",
             Provider.Names.GITHUB,
             "123token",
-            BigDecimal.valueOf(50),
+            8,
             storage
         );
         manager.assignedTasks(event);
@@ -1264,7 +1324,7 @@ public final class StoredProjectManagerTestCase {
         Mockito.verify(contract, Mockito.times(1)).invoices();
         Mockito.verify(invoices, Mockito.times(1)).active();
         Mockito.verify(active, Mockito.times(1))
-            .register(task, BigDecimal.valueOf(50));
+            .register(task, BigDecimal.valueOf(80.0));
         Mockito.verify(all, Mockito.times(1)).remove(task);
         Mockito.verify(comments, Mockito.times(1)).post(Mockito.anyString());
     }
@@ -1314,7 +1374,7 @@ public final class StoredProjectManagerTestCase {
             "zoeself",
             Provider.Names.GITHUB,
             "123token",
-            BigDecimal.valueOf(50),
+            8,
             Mockito.mock(Storage.class),
             now
         );
@@ -1370,7 +1430,7 @@ public final class StoredProjectManagerTestCase {
             "zoeself",
             Provider.Names.GITHUB,
             "123token",
-            BigDecimal.valueOf(50),
+            8,
             Mockito.mock(Storage.class),
             now
         );

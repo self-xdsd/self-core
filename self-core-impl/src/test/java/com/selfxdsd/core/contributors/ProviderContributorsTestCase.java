@@ -164,7 +164,7 @@ public final class ProviderContributorsTestCase {
                 "john/test",
                 Provider.Names.GITHUB,
                 BigDecimal.valueOf(100000),
-                BigDecimal.valueOf(1000)
+                8
             ),
             List.of(vlad)::stream,
             Mockito.mock(Storage.class)
@@ -203,7 +203,7 @@ public final class ProviderContributorsTestCase {
             "john/test",
             Provider.Names.GITHUB,
             BigDecimal.valueOf(100000),
-            BigDecimal.valueOf(1000)
+            8
         );
         final Storage storage = Mockito.mock(Storage.class);
         final Projects allProjects = Mockito.mock(Projects.class);
@@ -305,14 +305,14 @@ public final class ProviderContributorsTestCase {
      * @param repoFullName Repo full name.
      * @param providerName Provider name.
      * @param budget Budget.
-     * @param pmCommission Pm's commission.
+     * @param pmCommission Pm's commission percentage.
      * @return Project.
      */
     private Project mockProject(
         final String repoFullName,
         final String providerName,
         final BigDecimal budget,
-        final BigDecimal pmCommission
+        final double pmCommission
     ) {
         final Project project = Mockito.mock(Project.class);
         Mockito.when(project.repoFullName()).thenReturn(repoFullName);
@@ -329,7 +329,7 @@ public final class ProviderContributorsTestCase {
 
         final ProjectManager projectManager = Mockito
             .mock(ProjectManager.class);
-        Mockito.when(projectManager.commission()).thenReturn(pmCommission);
+        Mockito.when(projectManager.percentage()).thenReturn(pmCommission);
         Mockito.when(project.projectManager()).thenReturn(projectManager);
 
         return project;

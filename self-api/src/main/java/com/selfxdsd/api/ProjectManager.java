@@ -71,11 +71,19 @@ public interface ProjectManager {
     Projects projects();
 
     /**
-     * The commission that this PM will earn for every handled
-     * Task, in cents.
-     * @return BigDecimal.
+     * The commission percentage that this PM will earn for every handled
+     * Task.
+     * @return Double.
      */
-    BigDecimal commission();
+    double percentage();
+
+    /**
+     * Calculate the effective commission that the PM will earn for a sum
+     * of money, in cents.
+     * @param value Commissioned value, in cents.
+     * @return Effective commission, in cents.
+     */
+    BigDecimal commission(final BigDecimal value);
 
     /**
      * Handle the "activate" (new project registered) event.

@@ -22,8 +22,6 @@
  */
 package com.selfxdsd.api;
 
-import java.math.BigDecimal;
-
 /**
  * Project Managers API.
  * @author Mihai Andronache (amihaiemil@gmail.com)
@@ -60,8 +58,8 @@ public interface ProjectManagers extends Iterable<ProjectManager> {
      * @param username User name.
      * @param provider Provider name.
      * @param accessToken Access token.
-     * @param commission Commission that this PM will earn
-     *  for each Task it deals with.
+     * @param percentage Commission percentage that this PM takes for
+     *  each invoiced task.
      * @return The registered ProjectManager.
      */
     ProjectManager register(
@@ -69,6 +67,6 @@ public interface ProjectManagers extends Iterable<ProjectManager> {
         final String username,
         final String provider,
         final String accessToken,
-        final BigDecimal commission
+        final double percentage
     );
 }
