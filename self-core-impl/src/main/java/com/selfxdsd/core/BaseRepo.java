@@ -147,7 +147,7 @@ abstract class BaseRepo implements Repo {
         final Wallet wallet = wallets.register(
             project,
             Wallet.Type.FAKE,
-            BigDecimal.valueOf(1_000_000_000),
+            BigDecimal.valueOf(100_000_00),
             "fake-" + UUID
                 .randomUUID()
                 .toString()
