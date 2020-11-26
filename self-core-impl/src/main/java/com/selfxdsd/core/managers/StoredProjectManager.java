@@ -33,7 +33,6 @@ import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.text.DecimalFormat;
 import java.time.LocalDateTime;
 import java.time.Period;
 import java.time.temporal.ChronoUnit;
@@ -210,15 +209,12 @@ public final class StoredProjectManager implements ProjectManager {
 
     @Override
     public BigDecimal commission(final BigDecimal value) {
-        final double twoDigitsPercentage = Double.valueOf(
-            new DecimalFormat("0.00").format(this.percentage)
-        );
-        return value.multiply(
-            BigDecimal.valueOf(twoDigitsPercentage)
-        ).divide(
-            BigDecimal.valueOf(100),
-            RoundingMode.HALF_UP
-        );
+        return value
+            .multiply(BigDecimal
+                .valueOf(this.percentage)
+                .setScale(2, RoundingMode.HALF_UP)
+                .divide(BigDecimal.valueOf(100)))
+            .setScale(2, RoundingMode.HALF_UP);
     }
 
     @Override
