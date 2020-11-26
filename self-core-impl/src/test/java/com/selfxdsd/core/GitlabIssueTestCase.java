@@ -191,6 +191,49 @@ public final class GitlabIssueTestCase {
     }
 
     /**
+     * GitlabIssue can return its assignee.
+     */
+    @Test
+    public void returnsAssigneeUsername() {
+        final Issue issue = new GitlabIssue(
+            URI.create("https://gitlab.com/api/v4/projects"
+                + "/john%2Ftest/merge_requests/1"),
+            Json.createObjectBuilder()
+                .add("assignee",
+                    Json.createObjectBuilder()
+                        .add("username", "amihaiemil")
+                        .build()
+                )
+                .build(),
+            Mockito.mock(Storage.class),
+            Mockito.mock(JsonResources.class)
+        );
+        MatcherAssert.assertThat(
+            issue.assignee(),
+            Matchers.equalTo("amihaiemil")
+        );
+    }
+
+    /**
+     * GitlabIssue can return no assignee.
+     */
+    @Test
+    public void returnsNoAssignee() {
+        final Issue issue = new GitlabIssue(
+            URI.create("https://gitlab.com/api/v4/projects"
+                + "/john%2Ftest/merge_requests/1"),
+            Json.createObjectBuilder()
+                .build(),
+            Mockito.mock(Storage.class),
+            Mockito.mock(JsonResources.class)
+        );
+        MatcherAssert.assertThat(
+            issue.assignee(),
+            Matchers.nullValue()
+        );
+    }
+
+    /**
      * GitlabIssue can return its body.
      */
     @Test
@@ -354,6 +397,25 @@ public final class GitlabIssueTestCase {
         MatcherAssert.assertThat(
             issue.isClosed(),
             Matchers.is(Boolean.FALSE)
+        );
+    }
+
+    /**
+     * GitlabIssue can return its wrapped json object.
+     */
+    @Test
+    public void returnsItsJson(){
+        final JsonObject json = JsonObject.EMPTY_JSON_OBJECT;
+        final Issue issue = new GitlabIssue(
+            URI.create("https://gitlab.com/api/v4/projects"
+                + "/john%2Ftest/issues/1"),
+            json,
+            Mockito.mock(Storage.class),
+            Mockito.mock(JsonResources.class)
+        );
+        MatcherAssert.assertThat(
+            issue.json(),
+            Matchers.equalTo(json)
         );
     }
 }
