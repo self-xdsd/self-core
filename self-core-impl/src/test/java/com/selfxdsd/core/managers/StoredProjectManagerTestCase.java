@@ -33,6 +33,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -149,19 +150,23 @@ public final class StoredProjectManagerTestCase {
         );
         MatcherAssert.assertThat(
             fixed.commission(BigDecimal.valueOf(1000)),
-            Matchers.equalTo(BigDecimal.valueOf(80.0))
+            Matchers.equalTo(BigDecimal.valueOf(80.0)
+                .setScale(2, RoundingMode.HALF_UP))
         );
         MatcherAssert.assertThat(
             fixed.commission(BigDecimal.valueOf(10000)),
-            Matchers.equalTo(BigDecimal.valueOf(800.0))
+            Matchers.equalTo(BigDecimal.valueOf(800.0)
+                .setScale(2, RoundingMode.HALF_UP))
         );
         MatcherAssert.assertThat(
             fixed.commission(BigDecimal.valueOf(100)),
-            Matchers.equalTo(BigDecimal.valueOf(8.0))
+            Matchers.equalTo(BigDecimal.valueOf(8.0)
+                .setScale(2, RoundingMode.HALF_UP))
         );
         MatcherAssert.assertThat(
             fixed.commission(BigDecimal.valueOf(10)),
-            Matchers.equalTo(BigDecimal.valueOf(0.8))
+            Matchers.equalTo(BigDecimal.valueOf(0.8)
+                .setScale(2, RoundingMode.HALF_UP))
         );
 
         final ProjectManager comma = new StoredProjectManager(
@@ -1279,7 +1284,8 @@ public final class StoredProjectManagerTestCase {
         final InvoicedTask invoiced = Mockito.mock(InvoicedTask.class);
         final Invoice active = Mockito.mock(Invoice.class);
         Mockito.when(
-            active.register(task, BigDecimal.valueOf(80.0))
+            active.register(task, BigDecimal.valueOf(80.0)
+                .setScale(2, RoundingMode.HALF_UP))
         ).thenReturn(invoiced);
         final Invoices invoices = Mockito.mock(Invoices.class);
         Mockito.when(invoices.active()).thenReturn(active);
@@ -1324,7 +1330,8 @@ public final class StoredProjectManagerTestCase {
         Mockito.verify(contract, Mockito.times(1)).invoices();
         Mockito.verify(invoices, Mockito.times(1)).active();
         Mockito.verify(active, Mockito.times(1))
-            .register(task, BigDecimal.valueOf(80.0));
+            .register(task, BigDecimal.valueOf(80.0)
+                .setScale(2, RoundingMode.HALF_UP));
         Mockito.verify(all, Mockito.times(1)).remove(task);
         Mockito.verify(comments, Mockito.times(1)).post(Mockito.anyString());
     }
