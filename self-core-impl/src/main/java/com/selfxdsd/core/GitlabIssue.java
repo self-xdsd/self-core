@@ -43,17 +43,17 @@ import java.net.URI;
  * @author criske
  * @version $Id$
  * @since 0.0.38
- * @todo #719:60min Implement and test method `assign()` for
+ * @todo #722:60min Implement and test method `assign()` for
  *  GitlabIssue by following GithubIssue as model.
- * @todo #720:60min Implement and test method `unassign()` for
+ * @todo #723:60min Implement and test method `unassign()` for
  *  GitlabIssue by following GithubIssue as model.
- * @todo #721:60min Implement and test method `close()` for
+ * @todo #724:60min Implement and test method `close()` for
  *  GitlabIssue by following GithubIssue as model.
- * @todo #722:60min Implement and test method `reopen()` for
+ * @todo #725:60min Implement and test method `reopen()` for
  *  GitlabIssue by following GithubIssue as model.
- * @todo #723:60min Start implementing GitlabComments by following
+ * @todo #726:60min Start implementing GitlabComments by following
  *  GithubComments as model. These will be used by GitlabIssue.
- * @todo #724:60min Start implementing GitlabLabels by following GithubLabels
+ * @todo #727:60min Start implementing GitlabLabels by following GithubLabels
  *  as model. These will be used by GitlabIssue.
  */
 final class GitlabIssue implements Issue {
