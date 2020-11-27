@@ -37,7 +37,7 @@ import java.util.Iterator;
  * @author criske
  * @version $Id$
  * @since 0.0.38
- * @todo 725#60 Implement and test method `getById()` for
+ * @todo #725:60min Implement and test method `getById()` for
  *  GitlabIssues by following GithubIssues as model.
  */
 final class GitlabIssues implements Issues {
