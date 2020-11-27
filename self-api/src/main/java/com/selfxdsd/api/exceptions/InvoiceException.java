@@ -23,6 +23,7 @@
 package com.selfxdsd.api.exceptions;
 
 import com.selfxdsd.api.Invoice;
+import com.selfxdsd.api.Project;
 
 import javax.json.Json;
 import javax.json.JsonObject;
@@ -80,6 +81,37 @@ public abstract class InvoiceException extends SelfException {
         public String getSelfMessage() {
             return super.getSelfMessage() + " is already paid, "
                 + "can't pay it twice.";
+        }
+    }
+
+    /**
+     * Invoice is not port part of Project Contract.
+     */
+    public static final class NotPartOfProjectContract
+        extends InvoiceException {
+
+        /**
+         * Project with contracts checked against.
+         */
+        private final Project project;
+
+        /**
+         * Ctor.
+         * @param invoice Invoice in question.
+         * @param project Project with contracts checked against.
+         */
+        public NotPartOfProjectContract(
+            final Invoice invoice,
+            final Project project
+        ) {
+            super(invoice);
+            this.project = project;
+        }
+
+        @Override
+        public String getSelfMessage() {
+            return super.getSelfMessage() + " is not part of a Project ["
+                + project.repoFullName() + "] contract.";
         }
     }
 

@@ -26,6 +26,7 @@ import com.selfxdsd.api.Project;
 import com.selfxdsd.api.Wallet;
 import com.selfxdsd.api.Wallets;
 import com.selfxdsd.api.storage.Storage;
+import com.selfxdsd.core.projects.FakeWallet;
 import com.selfxdsd.core.projects.ProjectWallets;
 
 import java.math.BigDecimal;
@@ -70,11 +71,12 @@ public final class InMemoryWallets implements Wallets {
         final BigDecimal cash,
         final String identifier
     ) {
-        final Wallet wallet = new Wallet.Missing(
+        final Wallet wallet = new FakeWallet(
+            this.storage,
             project,
             cash,
-            Boolean.FALSE,
-            identifier
+            identifier,
+            Boolean.FALSE
         );
         this.wallets.put(
             new WalletKey(
