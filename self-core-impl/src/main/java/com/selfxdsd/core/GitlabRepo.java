@@ -154,8 +154,10 @@ final class GitlabRepo extends BaseRepo {
 
     @Override
     public Labels labels() {
-        throw new UnsupportedOperationException(
-            "Not yet implemented."
+        return new GitlabRepoLabels(
+            URI.create(this.repoUri().toString() + "/labels"),
+            this.resources(),
+            this
         );
     }
 }

@@ -139,4 +139,25 @@ public final class GitlabRepoTestCase {
         );
     }
 
+    /**
+     * A GitlabRepo can return its Labels.
+     */
+    @Test
+    public void returnsLabels() {
+        final Repo repo = new GitlabRepo(
+            Mockito.mock(JsonResources.class),
+            URI.create("http://localhost:8080/repos/mihai/test/"),
+            Mockito.mock(User.class),
+            Mockito.mock(Storage.class)
+        );
+        MatcherAssert.assertThat(
+            repo.labels(),
+            Matchers.allOf(
+                Matchers.notNullValue(),
+                Matchers.instanceOf(GitlabRepoLabels.class)
+            )
+        );
+    }
+
+
 }
