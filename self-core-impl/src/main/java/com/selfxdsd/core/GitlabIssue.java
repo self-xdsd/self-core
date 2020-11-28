@@ -27,8 +27,10 @@ import com.selfxdsd.api.storage.Storage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonValue;
+import java.net.HttpURLConnection;
 import java.net.URI;
 
 /**
@@ -43,8 +45,6 @@ import java.net.URI;
  * @author criske
  * @version $Id$
  * @since 0.0.38
- * @todo #722:60min Implement and test method `assign()` for
- *  GitlabIssue by following GithubIssue as model.
  * @todo #723:60min Implement and test method `unassign()` for
  *  GitlabIssue by following GithubIssue as model.
  * @todo #724:60min Implement and test method `close()` for
@@ -155,9 +155,42 @@ final class GitlabIssue implements Issue {
         return username;
     }
 
+    /**
+     * {@inheritDoc}
+     * <br/>
+     * For Gitlab, assigning is done via
+     * <a href="https://docs.gitlab.com/ee/api/issues.html#edit-issue">
+     *     updating the issue</a> with `assignee_id` attribute. Thus we need
+     *  to get the user `id` by their "username" first.
+     */
     @Override
     public boolean assign(final String username) {
-        throw new UnsupportedOperationException("Not implemented yet");
+        LOG.debug(
+            "Assigning user " + username + " to Issue ["
+                + this.issueUri + "]..."
+        );
+        boolean assigned = false;
+        final Integer userId = this.findUserId(username);
+        if(userId != null) {
+            final Resource resource = this.resources.put(
+                this.issueUri,
+                Json.createObjectBuilder()
+                    .add("assignee_id", userId)
+                    .build()
+            );
+            if (resource.statusCode() == HttpURLConnection.HTTP_OK) {
+                LOG.debug("User \"" + username + "\" (id: " + userId + ") "
+                    + "assigned successfully!");
+                assigned = true;
+            } else {
+                LOG.debug(
+                    "Problem while assigning user \"" + username + "\". "
+                        + "Expected 200 OK, but got " + resource.statusCode()
+                );
+                assigned = false;
+            }
+        }
+        return assigned;
     }
 
     @Override
@@ -211,4 +244,45 @@ final class GitlabIssue implements Issue {
     public Labels labels() {
         throw new UnsupportedOperationException("Not implemented yet");
     }
+
+    /**
+     * Find user id by searching it in projects/repo members.
+     * @param username Username to query.
+     * @return User id or null if not found.
+     */
+    private Integer findUserId(final String username) {
+        final String projectPrefix = this.issueUri.toString()
+            .split("/issues")[0];
+        final URI projectMembersUri = URI.create(projectPrefix
+            + "/search?scope=users&search=" + username);
+        final Resource resource = this.resources.get(projectMembersUri);
+        LOG.debug(
+            "Searching for user \"" + username + "\" id in project members ["
+                + projectMembersUri + "]..."
+        );
+        final Integer userId;
+        if (resource.statusCode() == HttpURLConnection.HTTP_OK) {
+            userId = resource.asJsonArray().stream()
+                .filter(o -> o.asJsonObject()
+                    .getString("username")
+                    .equals(username))
+                .map(o -> o.asJsonObject().getInt("id"))
+                .findFirst()
+                .orElse(null);
+            if (userId == null) {
+                LOG.debug(
+                    "User id for \"" + username + "\" was not found. Make sure "
+                        + "they are part of the Issue's Project."
+                );
+            }
+        } else {
+            LOG.debug(
+                "Could not get id for \"" + username + "\". Status code: "
+                    + resource.statusCode()
+            );
+            userId = null;
+        }
+        return userId;
+    }
+
 }
