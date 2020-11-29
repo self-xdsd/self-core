@@ -25,6 +25,7 @@ package com.selfxdsd.core;
 import com.selfxdsd.api.Contract;
 import com.selfxdsd.api.Issue;
 import com.selfxdsd.api.storage.Storage;
+import com.selfxdsd.core.mock.MockJsonResources;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -32,6 +33,7 @@ import org.mockito.Mockito;
 
 import javax.json.Json;
 import javax.json.JsonObject;
+import javax.json.JsonValue;
 import java.net.URI;
 
 /**
@@ -306,20 +308,148 @@ public final class GitlabIssueTestCase {
     }
 
     /**
-     *GitlabIssue.assign(...) is not implemented yet.
+     *GitlabIssue.assign(...) is successful.
      */
-    @Test(expected = UnsupportedOperationException.class)
-    public void assignIsNotImplemented() {
-        new GitlabIssue(
+    @Test
+    public void assignIsSuccessful() {
+        final MockJsonResources resources = new MockJsonResources((req) -> {
+            final JsonValue body;
+            if (req.getUri().toString()
+                .endsWith("search?scope=users&search=john")) {
+                body = Json
+                    .createArrayBuilder()
+                    .add(Json.createObjectBuilder()
+                        .add("id", 1)
+                        .add("username", "john")
+                        .build())
+                    .build();
+            } else {
+                body = JsonValue.NULL;
+            }
+            return new MockJsonResources.MockResource(200, body);
+        });
+
+        boolean assigned = new GitlabIssue(
             URI.create("https://gitlab.com/api/v4/projects"
                 + "/john%2Ftest/issues/1"),
             JsonObject.EMPTY_JSON_OBJECT,
             Mockito.mock(Storage.class),
-            Mockito.mock(JsonResources.class)
-        ).assign("");
+            resources
+        ).assign("john");
+
+        final MockJsonResources.MockRequests requests = resources.requests();
+        //checking GET "members" request
+        MatcherAssert.assertThat(requests.first().getUri().toString(),
+            Matchers.equalTo("https://gitlab.com/api/v4/projects"
+                + "/john%2Ftest/search?scope=users&search=john"));
+        MatcherAssert.assertThat(requests.first().getMethod(), Matchers
+            .equalTo("GET"));
+        //checking PUT "assign" request
+        MatcherAssert.assertThat(requests.atIndex(1).getUri().toString(),
+            Matchers.equalTo("https://gitlab.com/api/v4/projects"
+                + "/john%2Ftest/issues/1"));
+        MatcherAssert.assertThat(requests.atIndex(1).getMethod(), Matchers
+            .equalTo("PUT"));
+        MatcherAssert.assertThat(requests.atIndex(1).getBody(), Matchers
+            .equalTo(Json.createObjectBuilder()
+                .add("assignee_id", 1)
+                .build()));
+
+        MatcherAssert.assertThat(assigned, Matchers.is(true));
     }
 
-    
+    /**
+     *GitlabIssue.assign(...) fails if assign response is not OK.
+     */
+    @Test
+    public void assignFailsIfAssignResponseIsNotOk() {
+        final MockJsonResources resources = new MockJsonResources((req) -> {
+            final MockJsonResources.MockResource res;
+            if (req.getUri().toString()
+                .endsWith("search?scope=users&search=john")) {
+                res = new MockJsonResources.MockResource(200, Json
+                    .createArrayBuilder()
+                    .add(Json.createObjectBuilder()
+                        .add("id", 1)
+                        .add("username", "john")
+                        .build())
+                    .build());
+            } else {
+                res = new MockJsonResources.MockResource(500,
+                    JsonValue.NULL);
+            }
+            return res;
+        });
+        boolean assigned = new GitlabIssue(
+            URI.create("https://gitlab.com/api/v4/projects"
+                + "/john%2Ftest/issues/1"),
+            JsonObject.EMPTY_JSON_OBJECT,
+            Mockito.mock(Storage.class),
+            resources
+        ).assign("john");
+
+        MatcherAssert.assertThat(assigned, Matchers.is(false));
+    }
+
+    /**
+     *GitlabIssue.assign(...) fails if getting members response is not OK.
+     */
+    @Test
+    public void assignFailsIfMembersResponseIsNotOk() {
+        final MockJsonResources resources = new MockJsonResources((req) -> {
+            final int code;
+            if (req.getUri().toString()
+                .endsWith("search?scope=users&search=john")) {
+                code = 500;
+            } else {
+                code = 200;
+            }
+            return new MockJsonResources.MockResource(code, JsonValue.NULL);
+        });
+        boolean assigned = new GitlabIssue(
+            URI.create("https://gitlab.com/api/v4/projects"
+                + "/john%2Ftest/issues/1"),
+            JsonObject.EMPTY_JSON_OBJECT,
+            Mockito.mock(Storage.class),
+            resources
+        ).assign("john");
+
+        MatcherAssert.assertThat(assigned, Matchers.is(false));
+    }
+
+    /**
+     *GitlabIssue.assign(...) if user id is not found.
+     */
+    @Test
+    public void assignFailsIfUserIdIsNotFound() {
+        final MockJsonResources resources = new MockJsonResources((req) -> {
+            final JsonValue body;
+            if (req.getUri().toString()
+                .endsWith("search?scope=users&search=john")) {
+                body = Json
+                    .createArrayBuilder()
+                    .add(Json.createObjectBuilder()
+                        .add("id", 1)
+                        .add("username", "john")
+                        .build())
+                    .build();
+            } else {
+                body = JsonValue.NULL;
+            }
+            return new MockJsonResources.MockResource(200, body);
+        });
+        boolean assigned = new GitlabIssue(
+            URI.create("https://gitlab.com/api/v4/projects"
+                + "/john%2Ftest/issues/1"),
+            JsonObject.EMPTY_JSON_OBJECT,
+            Mockito.mock(Storage.class),
+            resources
+        ).assign("dan");
+
+        MatcherAssert.assertThat(assigned, Matchers.is(false));
+    }
+
+
     /**
      * GitlabIssue.unassign(...) is not implemented yet.
      */

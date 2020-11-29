@@ -142,9 +142,22 @@ public final class FakeWalletTestCase {
      */
     @Test
     public void updatesCash() {
+        final Storage storage = Mockito.mock(Storage.class);
+        final Project project = Mockito.mock(Project.class);
+
+        final Wallets wallets = Mockito.mock(Wallets.class);
+        Mockito.when(project.wallets()).thenReturn(wallets);
+        Mockito.when(wallets.updateCash(Mockito.any(), Mockito.any()))
+            .thenAnswer(invocation -> new FakeWallet(
+                storage,
+                project,
+                (BigDecimal) invocation.getArguments()[1],
+                "id",
+                true
+            ));
         final Wallet fake = new FakeWallet(
-            Mockito.mock(Storage.class),
-            Mockito.mock(Project.class),
+            storage,
+            project,
             BigDecimal.valueOf(1000),
             "123FakeID",
             Boolean.TRUE
@@ -304,7 +317,19 @@ public final class FakeWalletTestCase {
      */
     @Test
     public void canPayInvoice() {
+        final Storage storage = Mockito.mock(Storage.class);
         final Project project = Mockito.mock(Project.class);
+
+        final Wallets wallets = Mockito.mock(Wallets.class);
+        Mockito.when(project.wallets()).thenReturn(wallets);
+        Mockito.when(wallets.updateCash(Mockito.any(), Mockito.any()))
+            .thenAnswer(invocation -> new FakeWallet(
+                storage,
+                project,
+                (BigDecimal) invocation.getArguments()[1],
+                "id",
+                true
+            ));
 
         final Invoice invoice = Mockito.mock(Invoice.class);
         Mockito.when(invoice.isPaid()).thenReturn(false);
@@ -316,7 +341,6 @@ public final class FakeWalletTestCase {
         Mockito.when(invoice.contract())
             .thenReturn(contract);
 
-        final Storage storage = Mockito.mock(Storage.class);
         final Invoices invoices = Mockito.mock(Invoices.class);
         Mockito.when(storage.invoices()).thenReturn(invoices);
         Mockito.when(invoices.registerAsPaid(Mockito.any(Invoice.class)))

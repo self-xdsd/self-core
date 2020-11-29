@@ -45,8 +45,6 @@ import java.util.UUID;
  * @author criske
  * @version $Id$
  * @since 0.0.39
- * @todo #730:15min Change `FakeWallet#updateCash(...)` to return the Storage
- *  Wallets `updateCash()`. `StripeWallet` is using the same approach.
  */
 public final class FakeWallet implements Wallet {
 
@@ -168,13 +166,9 @@ public final class FakeWallet implements Wallet {
 
     @Override
     public Wallet updateCash(final BigDecimal cash) {
-        return new FakeWallet(
-            this.storage,
-            this.project,
-            cash,
-            this.identifier,
-            this.active
-        );
+        return this.project()
+            .wallets()
+            .updateCash(this, cash);
     }
 
     @Override
