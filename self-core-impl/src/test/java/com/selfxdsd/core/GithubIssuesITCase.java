@@ -2,6 +2,7 @@ package com.selfxdsd.core;
 
 import com.selfxdsd.api.Issue;
 import com.selfxdsd.api.Issues;
+import com.selfxdsd.api.Repo;
 import com.selfxdsd.api.storage.Storage;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -33,7 +34,10 @@ public final class GithubIssuesITCase {
         final URI uri = URI.create(
             "https://api.github.com/repos/amihaiemil/docker-java-api/issues");
         final Issues issues = new GithubIssues(
-            new JsonResources.JdkHttp(), uri, mock(Storage.class)
+            new JsonResources.JdkHttp(),
+            uri,
+            mock(Repo.class),
+            mock(Storage.class)
         );
         final Issue issue = issues.getById("346");
         final JsonObject jsonIssue = issue.json();
@@ -74,7 +78,10 @@ public final class GithubIssuesITCase {
         final URI uri = URI.create(
             "https://api.github.com/repos/amihaiemil/docker-java-api/issues");
         final Issues issues = new GithubIssues(
-            new JsonResources.JdkHttp(), uri, mock(Storage.class)
+            new JsonResources.JdkHttp(),
+            uri,
+            mock(Repo.class),
+            mock(Storage.class)
         );
         final Issue issue = issues.getById("100000");
         assertThat(issue, nullValue());

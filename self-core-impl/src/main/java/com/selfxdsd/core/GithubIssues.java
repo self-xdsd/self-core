@@ -24,6 +24,7 @@ package com.selfxdsd.core;
 
 import com.selfxdsd.api.Issue;
 import com.selfxdsd.api.Issues;
+import com.selfxdsd.api.Repo;
 import com.selfxdsd.api.storage.Storage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,6 +63,11 @@ final class GithubIssues implements Issues {
     private final JsonResources resources;
 
     /**
+     * Parent Repo.
+     */
+    private final Repo repo;
+
+    /**
      * Self storage, in case we want to store something.
      */
     private final Storage storage;
@@ -71,15 +77,18 @@ final class GithubIssues implements Issues {
      *
      * @param resources Github's JSON Resources.
      * @param issuesUri Issues base URI.
+     * @param repo Parent Repo.
      * @param storage Storage.
      */
     GithubIssues(
         final JsonResources resources,
         final URI issuesUri,
+        final Repo repo,
         final Storage storage
     ) {
         this.resources = resources;
         this.issuesUri = issuesUri;
+        this.repo = repo;
         this.storage = storage;
     }
 
@@ -138,6 +147,7 @@ final class GithubIssues implements Issues {
         final String body,
         final String... labels
     ) {
+        this.repo.labels().add(labels);
         final JsonArrayBuilder labelsArray = Json.createArrayBuilder();
         for(final String label : labels) {
             labelsArray.add(label);
