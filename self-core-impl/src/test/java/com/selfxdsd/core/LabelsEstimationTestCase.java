@@ -85,14 +85,14 @@ public final class LabelsEstimationTestCase {
     }
 
     /**
-     * Returns a label estimation with a single digit.
+     * Minimum estimation should be 15 minutes.
      */
     @Test
-    public void returnsSingleDigitLabelEstimation() {
+    public void doesNotGoBellowMinimumEstimation() {
         final Issue issue = Mockito.mock(Issue.class);
         Mockito.when(issue.isPullRequest()).thenReturn(Boolean.TRUE);
         final Label label = Mockito.mock(Label.class);
-        Mockito.when(label.name()).thenReturn("8 minutes");
+        Mockito.when(label.name()).thenReturn("7 minutes");
         final Labels labels = Mockito.mock(Labels.class);
         Mockito.when(labels.iterator()).thenReturn(List.of(label).iterator());
         Mockito.when(issue.labels()).thenReturn(labels);
@@ -101,7 +101,7 @@ public final class LabelsEstimationTestCase {
 
         MatcherAssert.assertThat(
             est.minutes(),
-            Matchers.equalTo(8)
+            Matchers.equalTo(15)
         );
     }
 

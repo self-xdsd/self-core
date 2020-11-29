@@ -55,6 +55,12 @@ final class LabelsEstimation implements Estimation {
     private static final int MAX_ESTIMATION = 360;
 
     /**
+     * Minimum estimation allowed.
+     */
+    private static final int MIN_ESTIMATION = 15;
+
+
+    /**
      * Issue being estimated.
      */
     private final Issue issue;
@@ -89,6 +95,8 @@ final class LabelsEstimation implements Estimation {
             }
         } else if(minutes > MAX_ESTIMATION) {
             minutes = MAX_ESTIMATION;
+        } else if(minutes < MIN_ESTIMATION) {
+            minutes = MIN_ESTIMATION;
         }
         return minutes;
     }
