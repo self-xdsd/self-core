@@ -207,6 +207,10 @@ final class GitlabIssue implements Issue {
 
     @Override
     public Labels labels() {
-        throw new UnsupportedOperationException("Not implemented yet");
+        return new GitlabIssueLabels(
+            this.issueUri,
+            this.resources,
+            this.json
+        );
     }
 }

@@ -418,4 +418,25 @@ public final class GitlabIssueTestCase {
             Matchers.equalTo(json)
         );
     }
+
+    /**
+     * GitlabIssue can return its Labels.
+     */
+    @Test
+    public void returnsLabels() {
+        final Issue issue = new GitlabIssue(
+            URI.create("https://gitlab.com/api/v4/projects"
+                + "/john%2Ftest/issues/1"),
+            Json.createObjectBuilder().build(),
+            Mockito.mock(Storage.class),
+            Mockito.mock(JsonResources.class)
+        );
+        MatcherAssert.assertThat(
+            issue.labels(),
+            Matchers.allOf(
+                Matchers.notNullValue(),
+                Matchers.instanceOf(GitlabIssueLabels.class)
+            )
+        );
+    }
 }
