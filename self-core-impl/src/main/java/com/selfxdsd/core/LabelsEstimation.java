@@ -87,8 +87,7 @@ final class LabelsEstimation implements Estimation {
             } else {
                 minutes = 60;
             }
-        }
-        if(minutes > MAX_ESTIMATION) {
+        } else if(minutes > MAX_ESTIMATION) {
             minutes = MAX_ESTIMATION;
         }
         return minutes;
