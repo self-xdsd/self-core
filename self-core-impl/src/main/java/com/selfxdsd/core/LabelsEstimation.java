@@ -50,6 +50,11 @@ final class LabelsEstimation implements Estimation {
     private static final String ESTIMATION = "^([1-9]+[0-9]*)[ ]*(minutes|min|m)$";
 
     /**
+     * Maximum estimation allowed.
+     */
+    private static final int MAX_ESTIMATION = 360;
+
+    /**
      * Issue being estimated.
      */
     private final Issue issue;
@@ -82,6 +87,9 @@ final class LabelsEstimation implements Estimation {
             } else {
                 minutes = 60;
             }
+        }
+        if(minutes > MAX_ESTIMATION) {
+            minutes = MAX_ESTIMATION;
         }
         return minutes;
     }

@@ -167,4 +167,25 @@ public final class LabelsEstimationTestCase {
             Matchers.equalTo(125)
         );
     }
+
+    /**
+     * Maximum estimation (360min) is not exceeded.
+     */
+    @Test
+    public void doesNotExceedMaximum() {
+        final Issue issue = Mockito.mock(Issue.class);
+        Mockito.when(issue.isPullRequest()).thenReturn(Boolean.TRUE);
+        final Label label = Mockito.mock(Label.class);
+        Mockito.when(label.name()).thenReturn("800 min");
+        final Labels labels = Mockito.mock(Labels.class);
+        Mockito.when(labels.iterator()).thenReturn(List.of(label).iterator());
+        Mockito.when(issue.labels()).thenReturn(labels);
+
+        final Estimation est = new LabelsEstimation(issue);
+
+        MatcherAssert.assertThat(
+            est.minutes(),
+            Matchers.equalTo(360)
+        );
+    }
 }
