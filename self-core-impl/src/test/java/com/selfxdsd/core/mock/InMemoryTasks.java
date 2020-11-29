@@ -92,7 +92,7 @@ public final class InMemoryTasks implements Tasks {
                 project,
                 issue.issueId(),
                 issue.role(),
-                issue.estimation(),
+                issue.estimation().minutes(),
                 this.storage
             );
             this.tasks.put(

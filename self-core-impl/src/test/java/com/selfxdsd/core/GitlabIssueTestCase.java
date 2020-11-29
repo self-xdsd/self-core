@@ -23,6 +23,7 @@
 package com.selfxdsd.core;
 
 import com.selfxdsd.api.Contract;
+import com.selfxdsd.api.Estimation;
 import com.selfxdsd.api.Issue;
 import com.selfxdsd.api.storage.Storage;
 import com.selfxdsd.core.mock.MockJsonResources;
@@ -270,41 +271,26 @@ public final class GitlabIssueTestCase {
     }
 
     /**
-     * An Issue should have an estimation of 60 minutes.
+     * A GitlabIssue can return its Estimation.
      */
     @Test
-    public void returnsIssueEstimation() {
-        final int estimation = new GitlabIssue(
-            URI.create("https://gitlab.com/api/v4/projects"
-                + "/john%2Ftest/issues/1"),
+    public void returnsEstimation() {
+        final Estimation estimation = new GithubIssue(
+            URI.create("http://localhost/issues/1"),
             Json.createObjectBuilder()
-                .add("iid", 1)
-                .add("web_url", "http://gitlab.com/john/"
-                    + "test/-/issues/1")
+                .add("number", 1)
+                .add("html_url", "http://localhost/issues/1")
                 .build(),
             Mockito.mock(Storage.class),
             Mockito.mock(JsonResources.class)
         ).estimation();
-        MatcherAssert.assertThat(estimation, Matchers.is(60));
-    }
-
-    /**
-     * A Pull Request should have an estimation of 30 minutes.
-     */
-    @Test
-    public void returnsPullRequestEstimation() {
-        final int estimation = new GitlabIssue(
-            URI.create("https://gitlab.com/api/v4/projects"
-                + "/john%2Ftest/merge_requests/1"),
-            Json.createObjectBuilder()
-                .add("iid", 1)
-                .add("web_url", "http://gitlab.com/john/"
-                    + "test/-/merge_requests/1")
-                .build(),
-            Mockito.mock(Storage.class),
-            Mockito.mock(JsonResources.class)
-        ).estimation();
-        MatcherAssert.assertThat(estimation, Matchers.is(30));
+        MatcherAssert.assertThat(
+            estimation,
+            Matchers.allOf(
+                Matchers.notNullValue(),
+                Matchers.instanceOf(LabelsEstimation.class)
+            )
+        );
     }
 
     /**

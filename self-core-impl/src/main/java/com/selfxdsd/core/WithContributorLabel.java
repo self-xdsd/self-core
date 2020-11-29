@@ -23,6 +23,7 @@
 package com.selfxdsd.core;
 
 import com.selfxdsd.api.Comments;
+import com.selfxdsd.api.Estimation;
 import com.selfxdsd.api.Issue;
 import com.selfxdsd.api.Labels;
 import org.slf4j.Logger;
@@ -155,7 +156,7 @@ final class WithContributorLabel implements Issue {
     }
 
     @Override
-    public int estimation() {
+    public Estimation estimation() {
         return this.decorated.estimation();
     }
 

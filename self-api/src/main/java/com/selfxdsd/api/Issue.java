@@ -124,11 +124,10 @@ public interface Issue {
     boolean isPullRequest();
 
     /**
-     * The estimation in minutes for the given issue.
-     *
-     * @return Integer.
+     * The Estimation of this issue.
+     * @return Estimation.
      */
-    int estimation();
+    Estimation estimation();
 
     /**
      * Labels of this Issue.

@@ -22,10 +22,7 @@
  */
 package com.selfxdsd.core;
 
-import com.selfxdsd.api.Comments;
-import com.selfxdsd.api.Issue;
-import com.selfxdsd.api.Provider;
-import com.selfxdsd.api.Labels;
+import com.selfxdsd.api.*;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -286,12 +283,13 @@ public final class WithContributorLabelTestCase {
      */
     @Test
     public void delegatesEstimation() {
+        final Estimation estimation = Mockito.mock(Estimation.class);
         final Issue decorated = Mockito.mock(Issue.class);
-        Mockito.when(decorated.estimation()).thenReturn(45);
+        Mockito.when(decorated.estimation()).thenReturn(estimation);
         final Issue withLabel = new WithContributorLabel(decorated);
         MatcherAssert.assertThat(
             withLabel.estimation(),
-            Matchers.is(45)
+            Matchers.is(estimation)
         );
         Mockito.verify(decorated, Mockito.times(1)).estimation();
     }

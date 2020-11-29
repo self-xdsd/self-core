@@ -22,10 +22,7 @@
  */
 package com.selfxdsd.core;
 
-import com.selfxdsd.api.Comments;
-import com.selfxdsd.api.Contract;
-import com.selfxdsd.api.Issue;
-import com.selfxdsd.api.Labels;
+import com.selfxdsd.api.*;
 import com.selfxdsd.api.storage.Storage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -279,14 +276,8 @@ final class GithubIssue implements Issue {
     }
 
     @Override
-    public int estimation() {
-        final int estimation;
-        if(this.isPullRequest()) {
-            estimation = 30;
-        } else {
-            estimation = 60;
-        }
-        return estimation;
+    public Estimation estimation() {
+        return new LabelsEstimation(this);
     }
 
     @Override
