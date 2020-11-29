@@ -104,6 +104,7 @@ final class GithubRepo extends BaseRepo {
         return new GithubIssues(
             this.resources(),
             URI.create(this.repoUri().toString() + "/issues"),
+            this,
             this.storage()
         );
     }

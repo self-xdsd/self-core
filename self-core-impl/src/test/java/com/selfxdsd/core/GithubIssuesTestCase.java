@@ -22,10 +22,7 @@
  */
 package com.selfxdsd.core;
 
-import com.selfxdsd.api.Issue;
-import com.selfxdsd.api.Issues;
-import com.selfxdsd.api.Provider;
-import com.selfxdsd.api.User;
+import com.selfxdsd.api.*;
 import com.selfxdsd.api.storage.Storage;
 import com.selfxdsd.core.mock.MockJsonResources;
 import org.hamcrest.MatcherAssert;
@@ -60,6 +57,7 @@ public final class GithubIssuesTestCase {
             URI.create(
                 "https://api.github.com/repos/amihaiemil/docker-java-api/issues"
             ),
+            mock(Repo.class),
             mock(Storage.class)
         );
         final JsonObject json = Json.createObjectBuilder()
@@ -134,47 +132,16 @@ public final class GithubIssuesTestCase {
     public void opensIssueOk() {
         final User user = Mockito.mock(User.class);
         Mockito.when(user.username()).thenReturn("amihaiemil");
+        final MockJsonResources resources = new MockJsonResources(
+            req -> new MockJsonResources.MockResource(
+                HttpURLConnection.HTTP_OK,
+                Json.createObjectBuilder().add("number", 123).build()
+            )
+        );
         final Provider provider = new Github(
             user,
             Mockito.mock(Storage.class),
-            new MockJsonResources(
-                new AccessToken.Github("github123"),
-                req -> {
-                    MatcherAssert.assertThat(
-                        req.getAccessToken().value(),
-                        Matchers.equalTo("token github123")
-                    );
-                    MatcherAssert.assertThat(
-                        req.getMethod(),
-                        Matchers.equalTo("POST")
-                    );
-                    MatcherAssert.assertThat(
-                        req.getBody(),
-                        Matchers.equalTo(
-                            Json.createObjectBuilder()
-                                .add("title", "Issue for test")
-                                .add("body", "Body of the test Issue...")
-                                .add(
-                                    "labels",
-                                    Json.createArrayBuilder()
-                                        .add("label1")
-                                        .add("label2")
-                                ).build()
-                        )
-                    );
-                    MatcherAssert.assertThat(
-                        req.getUri().toString(),
-                        Matchers.equalTo(
-                            "https://api.github.com/repos/amihaiemil/repo"
-                                + "/issues"
-                        )
-                    );
-                    return new MockJsonResources.MockResource(
-                        HttpURLConnection.HTTP_OK,
-                        Json.createObjectBuilder().add("number", 123).build()
-                    );
-                }
-            )
+            resources
         );
         final Issue created = provider
             .repo("amihaiemil", "repo")
@@ -182,13 +149,77 @@ public final class GithubIssuesTestCase {
             .open(
                 "Issue for test",
                 "Body of the test Issue...",
-                "label1", "label2"
+                "bug", "puzzle"
             );
         MatcherAssert.assertThat(
             created, Matchers.notNullValue()
         );
         MatcherAssert.assertThat(
             created.issueId(), Matchers.equalTo("123")
+        );
+
+        final MockJsonResources.MockRequest bug = resources.requests()
+            .atIndex(0);
+        MatcherAssert.assertThat(
+            bug.getMethod(),
+            Matchers.equalTo("POST")
+        );
+        MatcherAssert.assertThat(
+            bug.getBody().asJsonObject().getString("name"),
+            Matchers.equalTo("bug")
+        );
+        MatcherAssert.assertThat(
+            bug.getUri().toString(),
+            Matchers.equalTo(
+                "https://api.github.com/repos/amihaiemil/repo"
+                + "/labels"
+            )
+        );
+
+        final MockJsonResources.MockRequest puzzle = resources.requests()
+            .atIndex(1);
+        MatcherAssert.assertThat(
+            puzzle.getMethod(),
+            Matchers.equalTo("POST")
+        );
+        MatcherAssert.assertThat(
+            puzzle.getBody().asJsonObject().getString("name"),
+            Matchers.equalTo("puzzle")
+        );
+        MatcherAssert.assertThat(
+            puzzle.getUri().toString(),
+            Matchers.equalTo(
+                "https://api.github.com/repos/amihaiemil/repo"
+                    + "/labels"
+            )
+        );
+
+        final MockJsonResources.MockRequest open = resources.requests()
+            .atIndex(2);
+        MatcherAssert.assertThat(
+            open.getMethod(),
+            Matchers.equalTo("POST")
+        );
+        MatcherAssert.assertThat(
+            open.getBody(),
+            Matchers.equalTo(
+                Json.createObjectBuilder()
+                    .add("title", "Issue for test")
+                    .add("body", "Body of the test Issue...")
+                    .add(
+                        "labels",
+                        Json.createArrayBuilder()
+                            .add("bug")
+                            .add("puzzle")
+                    ).build()
+            )
+        );
+        MatcherAssert.assertThat(
+            open.getUri().toString(),
+            Matchers.equalTo(
+                "https://api.github.com/repos/amihaiemil/repo"
+                + "/issues"
+            )
         );
     }
 
