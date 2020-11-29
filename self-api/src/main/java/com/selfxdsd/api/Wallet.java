@@ -63,7 +63,6 @@ public interface Wallet {
      * Pay an invoice.
      * @param invoice The Invoice to be paid.
      * @return Wallet having cash deducted with Invoice amount.
-     * @throws InvoiceException.AlreadyPaid If the Invoice is already paid.
      */
     Wallet pay(final Invoice invoice);
 

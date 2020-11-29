@@ -229,11 +229,11 @@ public final class GithubIssueTestCase {
     }
 
     /**
-     * An Issue should have an estimation of 60 minutes.
+     * A GithubIssue can return its Estimation.
      */
     @Test
-    public void returnsIssueEstimation() {
-        final int estimation = new GithubIssue(
+    public void returnsEstimation() {
+        final Estimation estimation = new GithubIssue(
             URI.create("http://localhost/issues/1"),
             Json.createObjectBuilder()
                 .add("number", 1)
@@ -242,24 +242,13 @@ public final class GithubIssueTestCase {
             Mockito.mock(Storage.class),
             Mockito.mock(JsonResources.class)
         ).estimation();
-        MatcherAssert.assertThat(estimation, Matchers.is(60));
-    }
-
-    /**
-     * A Pull Request should have an estimation of 30 minutes.
-     */
-    @Test
-    public void returnsPullRequestEstimation() {
-        final int estimation = new GithubIssue(
-            URI.create("http://localhost/pull/1"),
-            Json.createObjectBuilder()
-                .add("number", 1)
-                .add("html_url", "http://localhost/pull/1")
-                .build(),
-            Mockito.mock(Storage.class),
-            Mockito.mock(JsonResources.class)
-        ).estimation();
-        MatcherAssert.assertThat(estimation, Matchers.is(30));
+        MatcherAssert.assertThat(
+            estimation,
+            Matchers.allOf(
+                Matchers.notNullValue(),
+                Matchers.instanceOf(LabelsEstimation.class)
+            )
+        );
     }
 
     /**

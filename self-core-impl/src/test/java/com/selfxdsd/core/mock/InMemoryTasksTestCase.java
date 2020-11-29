@@ -273,6 +273,9 @@ public final class InMemoryTasksTestCase {
         Mockito.when(issue.repoFullName()).thenReturn(repoFullName);
         Mockito.when(issue.provider()).thenReturn(provider);
         Mockito.when(issue.role()).thenReturn(role);
+        final Estimation estimation = Mockito.mock(Estimation.class);
+        Mockito.when(estimation.minutes()).thenReturn(60);
+        Mockito.when(issue.estimation()).thenReturn(estimation);
         return issue;
     }
 

@@ -228,14 +228,8 @@ final class GitlabIssue implements Issue {
     }
 
     @Override
-    public int estimation() {
-        final int estimation;
-        if(this.isPullRequest()) {
-            estimation = 30;
-        } else {
-            estimation = 60;
-        }
-        return estimation;
+    public Estimation estimation() {
+        return new LabelsEstimation(this);
     }
 
     @Override
