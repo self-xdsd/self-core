@@ -58,6 +58,21 @@ public final class StarRepoTestCase {
     }
 
     /**
+     * StarRepo delegates inviter() to the original Invitation.
+     */
+    @Test
+    public void delegatesInviter() {
+        final Invitation origin = Mockito.mock(Invitation.class);
+        Mockito.when(origin.inviter()).thenReturn("mihai");
+        final Invitation star = new StarRepo(origin);
+        MatcherAssert.assertThat(
+            star.inviter(),
+            Matchers.is("mihai")
+        );
+        Mockito.verify(origin, Mockito.times(1)).inviter();
+    }
+
+    /**
      * StarRepo delegates repo() to the original Invitation.
      */
     @Test

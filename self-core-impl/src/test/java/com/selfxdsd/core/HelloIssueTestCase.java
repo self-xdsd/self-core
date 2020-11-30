@@ -57,6 +57,21 @@ public final class HelloIssueTestCase {
     }
 
     /**
+     * HelloIssue delegates inviter() to the original Invitation.
+     */
+    @Test
+    public void delegatesInviter() {
+        final Invitation origin = Mockito.mock(Invitation.class);
+        Mockito.when(origin.inviter()).thenReturn("mihai");
+        final Invitation helloIssue = new HelloIssue(origin);
+        MatcherAssert.assertThat(
+            helloIssue.inviter(),
+            Matchers.is("mihai")
+        );
+        Mockito.verify(origin, Mockito.times(1)).inviter();
+    }
+
+    /**
      * HelloIssue delegates repo() to the original Invitation.
      */
     @Test
@@ -105,13 +120,11 @@ public final class HelloIssueTestCase {
     @Test
     public void acceptsAndOpensIssue() {
         final Repo repo = Mockito.mock(Repo.class);
-        final User owner = Mockito.mock(User.class);
-        Mockito.when(owner.username()).thenReturn("mihai");
-        Mockito.when(repo.owner()).thenReturn(owner);
         final Issues issues = Mockito.mock(Issues.class);
         Mockito.when(repo.issues()).thenReturn(issues);
         final Invitation origin = Mockito.mock(Invitation.class);
         Mockito.when(origin.repo()).thenReturn(repo);
+        Mockito.when(origin.inviter()).thenReturn("emil");
         final HelloIssue helloIssue = new HelloIssue(origin);
 
         helloIssue.accept();
@@ -124,7 +137,7 @@ public final class HelloIssueTestCase {
                 "Hello from Self XDSD!",
                 String.format(
                     helloIssue.helloMessage(),
-                    "mihai"
+                    "emil"
                 ),
                 "no-task"
             );

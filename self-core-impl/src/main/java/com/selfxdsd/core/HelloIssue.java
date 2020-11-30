@@ -66,6 +66,11 @@ final class HelloIssue implements Invitation {
     }
 
     @Override
+    public String inviter() {
+        return this.origin.inviter();
+    }
+
+    @Override
     public Repo repo() {
         return this.origin.repo();
     }
@@ -80,7 +85,7 @@ final class HelloIssue implements Invitation {
                 "Hello from Self XDSD!",
                 String.format(
                     this.helloMessage(),
-                    repo.owner().username()
+                    this.inviter()
                 ),
                 "no-task"
             );

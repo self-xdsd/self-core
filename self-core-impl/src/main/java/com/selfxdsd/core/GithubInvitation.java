@@ -93,6 +93,11 @@ final class GithubInvitation implements Invitation {
     }
 
     @Override
+    public String inviter() {
+        return this.json.getJsonObject("inviter").getString("login");
+    }
+
+    @Override
     public Repo repo() {
         final String repoFullName = this.json
             .getJsonObject("repository")

@@ -61,6 +61,31 @@ public final class GithubInvitationTestCase {
     }
 
     /**
+     * A GithubInvitation can return the inviter.
+     */
+    @Test
+    public void returnsInviter() {
+        final JsonObject json = Json.createObjectBuilder()
+            .add("id", 1)
+            .add(
+                "inviter",
+                Json.createObjectBuilder()
+                    .add("login", "mihai")
+            ).build();
+        final Invitation invitation = new GithubInvitation(
+            Mockito.mock(JsonResources.class),
+            URI.create("https://api.github.com/repos/john/test/invitations"),
+            json,
+            new Github(Mockito.mock(User.class), Mockito.mock(Storage.class))
+        );
+        MatcherAssert.assertThat(
+            invitation.inviter(),
+            Matchers.equalTo("mihai")
+        );
+    }
+
+
+    /**
      * A GithubInvitation can return its Repo.
      */
     @Test
