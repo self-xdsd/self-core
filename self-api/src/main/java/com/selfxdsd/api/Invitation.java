@@ -39,6 +39,12 @@ public interface Invitation {
     JsonObject json();
 
     /**
+     * Login of the inviter.
+     * @return String.
+     */
+    String inviter();
+
+    /**
      * Repo where the invitation occured.
      * @return Repo.
      */

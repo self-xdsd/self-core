@@ -63,6 +63,11 @@ final class StarRepo implements Invitation {
     }
 
     @Override
+    public String inviter() {
+        return this.origin.inviter();
+    }
+
+    @Override
     public Repo repo() {
         return this.origin.repo();
     }
