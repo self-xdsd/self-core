@@ -94,6 +94,7 @@ final class GithubWebhooks implements Webhooks {
                         .add("issues")
                         .add("issue_comment")
                         .add("pull_request")
+                        .add("push")
                 )
                 .add(
                     "config",
