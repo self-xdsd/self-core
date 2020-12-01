@@ -47,8 +47,6 @@ import java.net.URI;
  * @since 0.0.38
  * @todo #723:60min Implement and test method `unassign()` for
  *  GitlabIssue by following GithubIssue as model.
- * @todo #724:60min Implement and test method `close()` for
- *  GitlabIssue by following GithubIssue as model.
  * @todo #725:60min Implement and test method `reopen()` for
  *  GitlabIssue by following GithubIssue as model.
  * @todo #726:60min Start implementing GitlabComments by following
@@ -206,9 +204,32 @@ final class GitlabIssue implements Issue {
         throw new UnsupportedOperationException("Not implemented yet");
     }
 
+    /**
+     * {@inheritDoc}
+     * <br/>
+     * For Gitlab, closing is done via
+     * <a href="https://docs.gitlab.com/ee/api/issues.html#edit-issue">
+     *     updating the issue</a> with `state_event` attribute set to `close`.
+     */
     @Override
     public void close() {
-        throw new UnsupportedOperationException("Not implemented yet");
+        LOG.debug(
+            "Closing GitLab Issue [" + this.issueUri + "]..."
+        );
+        final Resource resource = this.resources.put(
+            this.issueUri,
+            Json.createObjectBuilder()
+                .add("state_event", "close")
+                .build()
+        );
+        if (resource.statusCode() == HttpURLConnection.HTTP_OK) {
+            LOG.debug("Issue closed successfully!");
+        } else {
+            LOG.error(
+                "Problem while closing Issue. "
+                + "Expected 200 OK, but got " + resource.statusCode()
+            );
+        }
     }
 
     @Override
