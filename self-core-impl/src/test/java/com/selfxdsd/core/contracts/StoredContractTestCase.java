@@ -497,4 +497,46 @@ public final class StoredContractTestCase {
         );
         contract.markForRemoval();
     }
+
+    /**
+     * We can restore a StoredContract.
+     */
+    @Test
+    public void restoresItself() {
+        final Contract restored = Mockito.mock(Contract.class);
+
+        final Contracts all = Mockito.mock(Contracts.class);
+        final Storage storage = Mockito.mock(Storage.class);
+        Mockito.when(storage.contracts()).thenReturn(all);
+
+        final Contract contract = new StoredContract(
+            Mockito.mock(Project.class),
+            Mockito.mock(Contributor.class),
+            BigDecimal.ONE, "DEV",
+            LocalDateTime.now(),
+            storage
+        );
+
+        Mockito.when(all.markForRemoval(contract, null)).thenReturn(restored);
+
+        MatcherAssert.assertThat(
+            contract.restore(),
+            Matchers.is(restored)
+        );
+    }
+
+    /**
+     * We cannot restore a StoredContract twice.
+     */
+    @Test (expected = IllegalStateException.class)
+    public void doesNotRestoreTwice() {
+        final Contract contract = new StoredContract(
+            Mockito.mock(Project.class),
+            Mockito.mock(Contributor.class),
+            BigDecimal.ONE, "DEV",
+            null,
+            Mockito.mock(Storage.class)
+        );
+        contract.restore();
+    }
 }

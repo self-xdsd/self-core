@@ -109,6 +109,13 @@ public interface Contract {
     Contract markForRemoval();
 
     /**
+     * Restore this Contract (remove the markedForRemoval flag).
+     * @return Contract restored (it will have the "markedForRemoval"
+     *  set to null).
+     */
+    Contract restore();
+
+    /**
      * Completely remove this Contract. In order for it to work,
      * the Contract has to have been marked for removal more than
      * 30 days ago (markedForRemoval != null and markedForRemoval gt 30 days).
