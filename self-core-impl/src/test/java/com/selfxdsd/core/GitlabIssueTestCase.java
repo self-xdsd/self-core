@@ -35,6 +35,7 @@ import org.mockito.Mockito;
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonValue;
+import java.net.HttpURLConnection;
 import java.net.URI;
 
 /**
@@ -453,17 +454,42 @@ public final class GitlabIssueTestCase {
     
 
     /**
-     * Issue.close() is not implemented yet.
+     * GitlabIssue.close() sends the right request.
      */
-    @Test(expected = UnsupportedOperationException.class)
-    public void closeIsNotImplemented() {
-        new GitlabIssue(
-            URI.create("https://gitlab.com/api/v4/projects"
-                + "/john%2Ftest/issues/1"),
+    @Test
+    public void closeSendsRightRequest() {
+        final MockJsonResources resources = new MockJsonResources(
+            req -> new MockJsonResources.MockResource(
+                HttpURLConnection.HTTP_OK,
+                Json.createObjectBuilder().build()
+            )
+        );
+        final URI uri = URI.create(
+            "https://gitlab.com/api/v4/projects"
+            + "/john%2Ftest/issues/1"
+        );
+        final Issue issue = new GitlabIssue(
+            uri,
             JsonObject.EMPTY_JSON_OBJECT,
             Mockito.mock(Storage.class),
-            Mockito.mock(JsonResources.class)
-        ).close();
+            resources
+        );
+        issue.close();
+        final MockJsonResources.MockRequest req = resources.requests().first();
+        MatcherAssert.assertThat(
+            req.getUri(), Matchers.equalTo(uri)
+        );
+        MatcherAssert.assertThat(
+            req.getMethod(), Matchers.equalTo("PUT")
+        );
+        MatcherAssert.assertThat(
+            req.getBody(),
+            Matchers.equalTo(
+                Json.createObjectBuilder()
+                    .add("state_event", "close")
+                    .build()
+            )
+        );
     }
     
     /**
