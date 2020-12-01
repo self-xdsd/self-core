@@ -339,6 +339,13 @@ public final class StoredTask implements Task {
         }
 
         @Override
+        public Contract restore() {
+            throw new IllegalStateException(
+                "You cannot restore the Contract here!"
+            );
+        }
+
+        @Override
         public void remove() {
             throw new IllegalStateException(
                 "You cannot remove the Contract here!"
