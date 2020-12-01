@@ -33,8 +33,6 @@ import java.net.URI;
  * @version $Id$
  * @since 0.0.1
  * @todo #27:30min Continue adding integration tests for Gitlab provider.
- * @todo #300:30min Gitlab Invitations: implement and test invitations for
- *  Gitlab provider.
  */
 public final class Gitlab implements Provider {
 
@@ -122,7 +120,7 @@ public final class Gitlab implements Provider {
 
     @Override
     public Invitations invitations() {
-        throw new UnsupportedOperationException("Not yet implemented.");
+        return new GitlabRepoInvitations();
     }
 
     @Override
