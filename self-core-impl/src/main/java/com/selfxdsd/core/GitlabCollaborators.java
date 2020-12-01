@@ -15,7 +15,7 @@ import java.net.URI;
  * @version $Id$
  * @since 0.0.13
  */
-public final class GitlabCollaborators implements Collaborators {
+final class GitlabCollaborators implements Collaborators {
 
     /**
      * Logger.
