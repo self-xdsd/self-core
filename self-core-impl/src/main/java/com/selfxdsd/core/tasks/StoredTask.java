@@ -320,6 +320,11 @@ public final class StoredTask implements Task {
         }
 
         @Override
+        public BigDecimal revenue() {
+            return BigDecimal.valueOf(0);
+        }
+
+        @Override
         public LocalDateTime markedForRemoval() {
             return null;
         }

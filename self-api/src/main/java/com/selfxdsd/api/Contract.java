@@ -87,6 +87,14 @@ public interface Contract {
     BigDecimal value();
 
     /**
+     * Revenue. This is the total potential earnings of the Contributor.
+     * It's the sum of the active tasks' value and the value of the active
+     * Invoice (it's the Contract's value without the PM's commission).
+     * @return Revenue.
+     */
+    BigDecimal revenue();
+
+    /**
      * Time when this Contract has been marked from removal.<br><br>
      * If the contract is marked for removal, no more tasks will be assigned
      * to it and it will be removed after a certain period of time.

@@ -219,6 +219,16 @@ public final class StoredContract implements Contract {
     }
 
     @Override
+    public BigDecimal revenue() {
+        BigDecimal revenue = BigDecimal.valueOf(0);
+        for(final Task task : this.tasks()) {
+            revenue = revenue.add(task.value());
+        }
+        revenue = revenue.add(this.invoices().active().amount());
+        return revenue;
+    }
+
+    @Override
     public LocalDateTime markedForRemoval() {
         return this.markedForRemoval;
     }
