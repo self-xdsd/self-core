@@ -172,7 +172,8 @@ public final class PmProjectsTestCase {
             .rangeClosed(1, 14)
             .mapToObj(i -> mockProject("repo-" + i,
                 Provider.Names.GITHUB)));
-        MatcherAssert.assertThat(projects, Matchers.iterableWithSize(10));
+        //initial page has all available records
+        MatcherAssert.assertThat(projects, Matchers.iterableWithSize(14));
         MatcherAssert.assertThat(projects.page(new Paged.Page(2, 5)),
             Matchers.iterableWithSize(5));
         MatcherAssert.assertThat(projects.page(new Paged.Page(3, 5)),

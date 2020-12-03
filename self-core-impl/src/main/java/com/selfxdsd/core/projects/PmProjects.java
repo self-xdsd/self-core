@@ -59,7 +59,7 @@ public final class PmProjects extends BasePaged implements Projects {
      */
     public PmProjects(final int pmId,
                       final Supplier<Stream<Project>> projects) {
-        this(pmId, projects, new Page(1, 10));
+        this(pmId, projects, Page.all());
     }
 
     /**
