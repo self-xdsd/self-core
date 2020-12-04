@@ -32,6 +32,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import javax.json.Json;
+import javax.json.JsonValue;
 import java.net.HttpURLConnection;
 
 /**
@@ -194,6 +195,112 @@ public final class GithubCollaboratorsTestCase {
             .invite("mihai");
         MatcherAssert.assertThat(
             res, Matchers.is(Boolean.FALSE)
+        );
+    }
+
+    /**
+     * GithubCollaborators can remove a Collaborator.
+     */
+    @Test
+    public void removesCollaborator(){
+        final User user = Mockito.mock(User.class);
+        Mockito.when(user.username()).thenReturn("amihaiemil");
+        MockJsonResources resources = new MockJsonResources(
+            new AccessToken.Github("github123"),
+            req -> new MockJsonResources.MockResource(
+                HttpURLConnection.HTTP_NO_CONTENT,
+                JsonValue.EMPTY_JSON_OBJECT
+            )
+        );
+        final Provider provider = new Github(
+            user,
+            Mockito.mock(Storage.class),
+            resources
+        );
+
+        final boolean res = provider
+            .repo("amihaiemil", "repo")
+            .collaborators()
+            .remove("mihai");
+        MatcherAssert.assertThat(
+            res, Matchers.is(Boolean.TRUE)
+        );
+
+        final MockJsonResources.MockRequest req = resources.requests().first();
+        MatcherAssert.assertThat(
+            req.getAccessToken().value(),
+            Matchers.equalTo("token github123")
+        );
+        MatcherAssert.assertThat(
+            req.getMethod(),
+            Matchers.equalTo("DELETE")
+        );
+        MatcherAssert.assertThat(
+            req.getBody(),
+            Matchers.equalTo(
+                Json.createObjectBuilder()
+                    .build()
+            )
+        );
+        MatcherAssert.assertThat(
+            req.getUri().toString(),
+            Matchers.equalTo(
+                "https://api.github.com/repos/amihaiemil/repo"
+                    + "/collaborators/mihai"
+            )
+        );
+    }
+
+    /**
+     * GithubCollaborators can fail removing a Collaborator.
+     */
+    @Test
+    public void removeCollaboratorFails(){
+        final User user = Mockito.mock(User.class);
+        Mockito.when(user.username()).thenReturn("amihaiemil");
+        MockJsonResources resources = new MockJsonResources(
+            new AccessToken.Github("github123"),
+            req -> new MockJsonResources.MockResource(
+                HttpURLConnection.HTTP_NOT_FOUND,
+                JsonValue.EMPTY_JSON_OBJECT
+            )
+        );
+        final Provider provider = new Github(
+            user,
+            Mockito.mock(Storage.class),
+            resources
+        );
+
+        final boolean res = provider
+            .repo("amihaiemil", "repo")
+            .collaborators()
+            .remove("mihai");
+        MatcherAssert.assertThat(
+            res, Matchers.is(Boolean.FALSE)
+        );
+
+        final MockJsonResources.MockRequest req = resources.requests().first();
+        MatcherAssert.assertThat(
+            req.getAccessToken().value(),
+            Matchers.equalTo("token github123")
+        );
+        MatcherAssert.assertThat(
+            req.getMethod(),
+            Matchers.equalTo("DELETE")
+        );
+        MatcherAssert.assertThat(
+            req.getBody(),
+            Matchers.equalTo(
+                Json.createObjectBuilder()
+                    .build()
+            )
+        );
+        MatcherAssert.assertThat(
+            req.getUri().toString(),
+            Matchers.equalTo(
+                "https://api.github.com/repos/amihaiemil/repo"
+                    + "/collaborators/mihai"
+            )
         );
     }
 

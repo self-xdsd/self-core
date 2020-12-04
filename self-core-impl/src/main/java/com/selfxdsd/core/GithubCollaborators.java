@@ -36,9 +36,6 @@ import java.net.URI;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.13
- * @todo #681:60min Implement and test method remove(username) here,
- *  which will remove the Github user from the Repo (they will no longer
- *  be a collaborator).
  */
 final class GithubCollaborators implements Collaborators {
 
@@ -110,10 +107,36 @@ final class GithubCollaborators implements Collaborators {
         return result;
     }
 
+    /**
+     * {@inheritDoc}
+     * <br/>
+     * <code>DELETE /repos/:owner/:repo/collaborators/:username</code>
+     * <br/>
+     * <a href="https://developer.github.com/v3/repos/collaborators/#remove-a-repository-collaborator">See</a>
+     */
     @Override
     public boolean remove(final String username) {
-        throw new UnsupportedOperationException(
-            "Not yet implemented."
+        final boolean result;
+        LOG.debug(
+            "Removing Collaborator " + username
+                + "from [" + this.collaboratorsUri.toString() + "]."
         );
+        final Resource response = this.resources.delete(
+            URI.create(this.collaboratorsUri.toString() + "/" + username),
+            Json.createObjectBuilder().build()
+        );
+        if(response.statusCode() == HttpURLConnection.HTTP_NO_CONTENT) {
+            result = true;
+            LOG.debug("Collaborator successfully removed!");
+        }else {
+            result = false;
+            LOG.error(
+                "Unexpected status when removing collaborator " + username
+                    + " from [" + this.collaboratorsUri.toString() + "]. "
+                    + "Expected 204 NO CONTENT, but got "
+                    + response.statusCode()
+            );
+        }
+        return result;
     }
 }
