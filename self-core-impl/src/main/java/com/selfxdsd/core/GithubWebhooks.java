@@ -37,6 +37,8 @@ import java.net.URI;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.13
+ * @todo #681:60min Implemented method remove() from this class, which
+ *  should remove any webhooks related to Self XDSD from the Github repo.
  */
 final class GithubWebhooks implements Webhooks {
 
@@ -119,5 +121,10 @@ final class GithubWebhooks implements Webhooks {
             );
         }
         return added;
+    }
+
+    @Override
+    public boolean remove() {
+        return false;
     }
 }

@@ -195,7 +195,20 @@ public final class StoredProject implements Project {
 
     @Override
     public Repo deactivate() {
-        throw new UnsupportedOperationException("Not yet implemented.");
+        final int count = this.contracts().count();
+        if(count > 0) {
+            throw new IllegalStateException(
+                "Project " + this.repoFullName + " at " + this.provider()
+                + " still has " + count + " contracts. "
+                + "A project can only be removed after all "
+                + "its contracts are removed."
+            );
+        }
+        this.storage.projects().remove(this);
+        final Repo repo = this.repo();
+        repo.webhooks().remove();
+        repo.collaborators().remove(this.projectManager.username());
+        return repo;
     }
 
     @Override

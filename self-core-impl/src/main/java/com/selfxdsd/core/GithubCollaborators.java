@@ -36,6 +36,9 @@ import java.net.URI;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.13
+ * @todo #681:60min Implement and test method remove(username) here,
+ *  which will remove the Github user from the Repo (they will no longer
+ *  be a collaborator).
  */
 final class GithubCollaborators implements Collaborators {
 
@@ -105,5 +108,12 @@ final class GithubCollaborators implements Collaborators {
             );
         }
         return result;
+    }
+
+    @Override
+    public boolean remove(final String username) {
+        throw new UnsupportedOperationException(
+            "Not yet implemented."
+        );
     }
 }

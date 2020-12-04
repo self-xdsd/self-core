@@ -38,6 +38,8 @@ import java.net.URI;
  * @author criske
  * @version $Id$
  * @since 0.0.13
+ * @todo #681:60min Implemented method remove() from this class, which
+ *  should remove any webhooks related to Self XDSD from the Gitlab repo.
  */
 final class GitlabWebhooks implements Webhooks {
 
@@ -45,7 +47,7 @@ final class GitlabWebhooks implements Webhooks {
      * Logger.
      */
     private static final Logger LOG = LoggerFactory.getLogger(
-            GitlabWebhooks.class
+        GitlabWebhooks.class
     );
 
     /**
@@ -110,5 +112,12 @@ final class GitlabWebhooks implements Webhooks {
                 + " but got " + response.statusCode());
         }
         return added;
+    }
+
+    @Override
+    public boolean remove() {
+        throw new UnsupportedOperationException(
+            "Not yet implemented."
+        );
     }
 }

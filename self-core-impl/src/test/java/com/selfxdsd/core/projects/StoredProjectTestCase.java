@@ -38,6 +38,7 @@ import java.util.List;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
+ * @checkstyle ExecutableStatementCount (1000 lines)
  */
 public final class StoredProjectTestCase {
 
@@ -369,6 +370,87 @@ public final class StoredProjectTestCase {
             all.ofProject(project)
         ).thenReturn(ofProject);
         project.createStripeWallet();
+    }
+
+    /**
+     * A StoredProject cannot be deactivated if it still
+     * has contracts.
+     */
+    @Test(expected = IllegalStateException.class)
+    public void doesNotDeactivateWithContracts() {
+        final Storage storage = Mockito.mock(Storage.class);
+        final Provider prov = Mockito.mock(Provider.class);
+        Mockito.when(prov.name()).thenReturn(Provider.Names.GITHUB);
+        final User owner = Mockito.mock(User.class);
+        Mockito.when(owner.provider()).thenReturn(prov);
+        final Project project = new StoredProject(
+            owner,
+            "john/test",
+            "wh123token",
+            Mockito.mock(ProjectManager.class),
+            storage
+        );
+
+        final Contracts all = Mockito.mock(Contracts.class);
+        final Contracts ofProject = Mockito.mock(Contracts.class);
+        Mockito.when(ofProject.count()).thenReturn(5);
+        Mockito.when(all.ofProject("john/test", "github")).thenReturn(
+            ofProject
+        );
+        Mockito.when(storage.contracts()).thenReturn(all);
+
+        project.deactivate();
+    }
+
+    /**
+     * A StoredProject with no Contracts can be deactivated.
+     */
+    @Test
+    public void canBeDeactivated() {
+        final Repo repo = Mockito.mock(Repo.class);
+
+        final Storage storage = Mockito.mock(Storage.class);
+        final Provider prov = Mockito.mock(Provider.class);
+        Mockito.when(prov.name()).thenReturn(Provider.Names.GITHUB);
+        Mockito.when(prov.repo("john", "test")).thenReturn(repo);
+
+        final User owner = Mockito.mock(User.class);
+        Mockito.when(owner.provider()).thenReturn(prov);
+        final ProjectManager manager = Mockito.mock(ProjectManager.class);
+        Mockito.when(manager.username()).thenReturn("charlesmike");
+        final Project project = new StoredProject(
+            owner,
+            "john/test",
+            "wh123token",
+            manager,
+            storage
+        );
+
+        final Contracts all = Mockito.mock(Contracts.class);
+        final Contracts ofProject = Mockito.mock(Contracts.class);
+        Mockito.when(ofProject.count()).thenReturn(0);
+        Mockito.when(all.ofProject("john/test", "github")).thenReturn(
+            ofProject
+        );
+        Mockito.when(storage.contracts()).thenReturn(all);
+        final Projects allProjects = Mockito.mock(Projects.class);
+        Mockito.when(storage.projects()).thenReturn(allProjects);
+
+        final Webhooks webhooks = Mockito.mock(Webhooks.class);
+        final Collaborators collaborators = Mockito.mock(Collaborators.class);
+        Mockito.when(repo.webhooks()).thenReturn(webhooks);
+        Mockito.when(repo.collaborators()).thenReturn(collaborators);
+
+        MatcherAssert.assertThat(
+            project.deactivate(),
+            Matchers.is(repo)
+        );
+
+        Mockito.verify(allProjects, Mockito.times(1)).remove(project);
+        Mockito.verify(repo, Mockito.times(1)).webhooks();
+        Mockito.verify(repo, Mockito.times(1)).collaborators();
+        Mockito.verify(webhooks, Mockito.times(1)).remove();
+        Mockito.verify(collaborators, Mockito.times(1)).remove("charlesmike");
     }
 
     /**
