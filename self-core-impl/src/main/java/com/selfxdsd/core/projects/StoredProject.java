@@ -41,9 +41,6 @@ import java.util.Objects;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
- * @todo #31:30min Implement the deactivate method which should remove the
- *  Project form the DB (it means Self will stop managing it). Return the
- *  corresponding Repo when done. Don't forget the tests.
  * @todo #278:30min Continue implementation of the resolve(...) method.
  *  It should decide what kind of event has occurred and delegate it
  *  further to the ProjectManager who will deal with it. We still need
