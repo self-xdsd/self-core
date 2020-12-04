@@ -38,7 +38,7 @@ public interface Contracts extends Iterable<Contract> {
 
     /**
      * How many contracts are there?
-     * @return Intteger greater or equal to 0.
+     * @return Integer greater or equal to 0.
      */
     default int count() {
         int count = 0;

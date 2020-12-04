@@ -79,4 +79,11 @@ public interface Projects extends Iterable<Project>, Paged {
      */
     Projects page(final Paged.Page page);
 
+    /**
+     * Remove specific project.
+     *
+     * @param project Project to remove.
+     */
+    void remove(final Project project);
+
 }

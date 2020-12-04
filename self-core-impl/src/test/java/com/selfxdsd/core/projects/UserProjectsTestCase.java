@@ -209,6 +209,52 @@ public final class UserProjectsTestCase {
     }
 
     /**
+     * We can remove a Project if it's owned by the same User.
+     */
+    @Test
+    public void removesProjectIfOwnedBySameUser() {
+        final User mihai = this.mockUser("mihai", "github");
+        final Projects projects = new UserProjects(
+            mihai,
+            () -> List.of(
+                mockProject("mihai/test", "github"),
+                mockProject("mihai/test2", "github"),
+                mockProject("mihai/test3", "github"),
+                mockProject("mihai/test4", "github")
+            ).stream()
+        );
+        final Project toRemove = mockProject("mihai/test", "github");
+        Mockito.when(toRemove.owner()).thenReturn(mihai);
+
+        projects.remove(toRemove);
+
+        Mockito.verify(toRemove, Mockito.times(1)).deactivate();
+    }
+
+    /**
+     * We can remove a Project if it's owned by the same User.
+     */
+    @Test(expected = IllegalStateException.class)
+    public void doesNotRemoveProjectIfNotOwnedBySameUser() {
+        final Projects projects = new UserProjects(
+            this.mockUser("mihai", "github"),
+            () -> List.of(
+                mockProject("mihai/test", "github"),
+                mockProject("mihai/test2", "github"),
+                mockProject("mihai/test3", "github"),
+                mockProject("mihai/test4", "github")
+            ).stream()
+        );
+        final Project toRemove = mockProject("mihai/test", "github");
+        final User vlad = this.mockUser("vlad", "github");
+        Mockito.when(toRemove.owner()).thenReturn(vlad);
+
+        projects.remove(toRemove);
+
+        Mockito.verify(toRemove, Mockito.times(1)).deactivate();
+    }
+
+    /**
      * Mock a User.
      * @param username Username.
      * @param providerName Name of the provider.

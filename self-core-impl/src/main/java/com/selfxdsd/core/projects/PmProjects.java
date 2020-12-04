@@ -133,6 +133,18 @@ public final class PmProjects extends BasePaged implements Projects {
     }
 
     @Override
+    public void remove(final Project project) {
+        if(this.pmId == project.projectManager().id()) {
+            project.deactivate();
+        } else {
+            throw new IllegalStateException(
+                "These are the Projects of PM " + this.pmId + ". "
+                + "You cannot remove a Project of another PM here."
+            );
+        }
+    }
+
+    @Override
     public Iterator<Project> iterator() {
         final Page page = super.current();
         return this.projects.get()

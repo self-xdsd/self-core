@@ -278,6 +278,49 @@ public final class PmProjectsTestCase {
         );
     }
 
+    /**
+     * We can remove a Project if it's owned by the same PM.
+     */
+    @Test
+    public void removesProjectIfOwnedBySamePm() {
+        final List<Project> list = new ArrayList<>();
+        list.add(this.projectOwnedBy("mihai", "github"));
+        list.add(this.projectOwnedBy("mihai", "github"));
+        list.add(this.projectOwnedBy("vlad", "github"));
+        list.add(this.projectOwnedBy("mihai", "gitlab"));
+        list.add(this.projectOwnedBy("mihai", "github"));
+        final Projects projects = new PmProjects(1, list::stream);
+
+        final Project toRemove = this.projectOwnedBy("mihai", "github");
+        final ProjectManager owner = Mockito.mock(ProjectManager.class);
+        Mockito.when(owner.id()).thenReturn(1);
+        Mockito.when(toRemove.projectManager()).thenReturn(owner);
+        projects.remove(toRemove);
+
+        Mockito.verify(toRemove, Mockito.times(1)).deactivate();
+    }
+
+    /**
+     * We cannot remove a Project owned by another PM.
+     */
+    @Test(expected = IllegalStateException.class)
+    public void doesNotRemoveProjectIfNotOwnedBySamePm() {
+        final List<Project> list = new ArrayList<>();
+        list.add(this.projectOwnedBy("mihai", "github"));
+        list.add(this.projectOwnedBy("mihai", "github"));
+        list.add(this.projectOwnedBy("vlad", "github"));
+        list.add(this.projectOwnedBy("mihai", "gitlab"));
+        list.add(this.projectOwnedBy("mihai", "github"));
+        final Projects projects = new PmProjects(1, list::stream);
+
+        final Project toRemove = this.projectOwnedBy("mihai", "github");
+        final ProjectManager owner = Mockito.mock(ProjectManager.class);
+        Mockito.when(owner.id()).thenReturn(2);
+        Mockito.when(toRemove.projectManager()).thenReturn(owner);
+        projects.remove(toRemove);
+
+        Mockito.verify(toRemove, Mockito.times(0)).deactivate();
+    }
 
     /**
      * Mock a User.
