@@ -37,6 +37,18 @@ import java.util.Iterator;
 public interface Contracts extends Iterable<Contract> {
 
     /**
+     * How many contracts are there?
+     * @return Integer greater or equal to 0.
+     */
+    default int count() {
+        int count = 0;
+        for(final Contract contract : this) {
+            count++;
+        }
+        return count;
+    }
+
+    /**
      * Get the Contracts belonging to a given Project.
      * @param repoFullName Full name of the Repo that the Project represents.
      * @param repoProvider Provider of the Repo that the Project represents.
@@ -111,6 +123,7 @@ public interface Contracts extends Iterable<Contract> {
      * @since 0.0.1
      */
     final class Empty implements Contracts {
+
         @Override
         public Contracts ofProject(
             final String repoFullName,

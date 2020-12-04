@@ -30,6 +30,8 @@ import com.stripe.Stripe;
 import com.stripe.exception.StripeException;
 import com.stripe.model.Customer;
 import com.stripe.param.CustomerCreateParams;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
 import java.util.Objects;
@@ -39,15 +41,19 @@ import java.util.Objects;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
- * @todo #31:30min Implement the deactivate method which should remove the
- *  Project form the DB (it means Self will stop managing it). Return the
- *  corresponding Repo when done. Don't forget the tests.
  * @todo #278:30min Continue implementation of the resolve(...) method.
  *  It should decide what kind of event has occurred and delegate it
  *  further to the ProjectManager who will deal with it. We still need
  *  the Issue Assigned case and Comment Created case.
  */
 public final class StoredProject implements Project {
+
+    /**
+     * Logger.
+     */
+    private static final Logger LOG = LoggerFactory.getLogger(
+        StoredProject.class
+    );
 
     /**
      * Owner of this Project.
@@ -195,14 +201,56 @@ public final class StoredProject implements Project {
 
     @Override
     public Repo deactivate() {
-        throw new UnsupportedOperationException("Not yet implemented.");
+        final String provider = this.provider();
+        LOG.debug(
+            "Deactivating Project " + this.repoFullName
+            + " at " + provider + "... "
+        );
+        final int count = this.contracts().count();
+        if(count > 0) {
+            LOG.error(
+                "Project still has " + count + " contracts. "
+                + "It cannot be deactivated."
+            );
+            throw new IllegalStateException(
+                "Project " + this.repoFullName + " at " + provider
+                + " still has " + count + " contracts. "
+                + "A project can only be removed after all "
+                + "its contracts are removed."
+            );
+        }
+        this.storage.projects().remove(this);
+        LOG.debug("Project successfully deactivated (removed).");
+        final Repo repo = this.repo();
+        boolean noWebhooks = repo.webhooks().remove();
+        if(noWebhooks) {
+            LOG.debug("Successfully removed webhooks.");
+        } else {
+            LOG.error("Problem while removing webhooks.");
+        }
+        boolean noPm = repo.collaborators().remove(
+            this.projectManager.username()
+        );
+        if(noPm) {
+            LOG.debug("PM is no longer a Repo collaborator.");
+        } else {
+            LOG.error("Problem while removing PM from repo Collaborators.");
+        }
+        return repo;
     }
 
     @Override
     public Wallet createStripeWallet() {
+        LOG.debug(
+            "Creating STRIPE wallet for Project " + this.repoFullName
+            + " at " + this.provider() + "... "
+        );
         final Wallets wallets = this.wallets();
         for(final Wallet wallet : wallets) {
             if(wallet.type().equalsIgnoreCase(Wallet.Type.STRIPE)) {
+                LOG.error(
+                    "STRIPE wallet already exists, can't create a second one."
+                );
                 throw new WalletAlreadyExistsException(
                     this, Wallet.Type.STRIPE
                 );
@@ -210,6 +258,7 @@ public final class StoredProject implements Project {
         }
         final String apiToken = System.getenv(Env.STRIPE_API_TOKEN);
         if(apiToken == null || apiToken.trim().isEmpty()) {
+            LOG.error("Stripe API Token missing!");
             throw new IllegalStateException(
                 "Please specify the "
                 + Env.STRIPE_API_TOKEN
@@ -233,11 +282,16 @@ public final class StoredProject implements Project {
                     )
                     .build()
             );
+            LOG.debug("Created STRIPE Wallet [" + customer.getId() + "].");
             return this.storage.wallets().register(
                 this, Wallet.Type.STRIPE,
                 BigDecimal.valueOf(0), customer.getId()
             );
         } catch (final StripeException ex) {
+            LOG.error(
+                "StripeException while trying to create the wallet.",
+                ex
+            );
             throw new IllegalStateException(
                 "Stripe threw an exception when trying to create a Wallet "
                 + "(Customer) for Project " + this.repoFullName + " at "

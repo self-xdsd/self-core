@@ -38,4 +38,11 @@ public interface Collaborators {
      */
     boolean invite(final String username);
 
+    /**
+     * Remove a user from the repository.
+     * @param username Username.
+     * @return True or false.
+     */
+    boolean remove(final String username);
+
 }

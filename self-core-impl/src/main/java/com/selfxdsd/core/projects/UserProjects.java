@@ -133,6 +133,21 @@ public final class UserProjects extends BasePaged implements Projects {
     }
 
     @Override
+    public void remove(final Project project) {
+        final User owner = project.owner();
+        if(this.user.username().equals(owner.username())
+            && this.user.provider().name().equals(owner.provider().name())) {
+            project.deactivate();
+        } else {
+            throw new IllegalStateException(
+                "These are the Projects of User " + this.user.username()
+                + ", from " + this.user.provider().name() + ". "
+                + "You cannot remove a Project of another User here."
+            );
+        }
+    }
+
+    @Override
     public Iterator<Project> iterator() {
         final Page page = super.current();
         return this.projects.get()

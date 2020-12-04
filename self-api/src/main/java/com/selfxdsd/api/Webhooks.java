@@ -37,4 +37,10 @@ public interface Webhooks {
      *  was successful or not.
      */
     boolean add(final Project project);
+
+    /**
+     * Remove any Self XDSD-related webhooks.
+     * @return True or false.
+     */
+    boolean remove();
 }
