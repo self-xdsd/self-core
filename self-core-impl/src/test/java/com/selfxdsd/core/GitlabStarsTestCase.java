@@ -57,7 +57,7 @@ public final class GitlabStarsTestCase {
                     );
                     MatcherAssert.assertThat(
                         req.getUri().toString(),
-                        Matchers.equalTo("https://gitlab.com/projects/test/star")
+                        Matchers.equalTo("repo/star")
                     );
                     MatcherAssert.assertThat(
                         req.getBody(),
@@ -69,7 +69,7 @@ public final class GitlabStarsTestCase {
                     );
                 }
             ),
-            URI.create("https://gitlab.com/projects/test/star"),
+            URI.create("repo/star"),
             Mockito.mock(Repo.class)
         );
         MatcherAssert.assertThat(
@@ -92,7 +92,7 @@ public final class GitlabStarsTestCase {
                     );
                     MatcherAssert.assertThat(
                         req.getUri().toString(),
-                        Matchers.equalTo("https://gitlab.com/projects/test/star")
+                        Matchers.equalTo("repo/star")
                     );
                     MatcherAssert.assertThat(
                         req.getBody(),
@@ -104,7 +104,7 @@ public final class GitlabStarsTestCase {
                     );
                 }
             ),
-            URI.create("https://gitlab.com/projects/test/star"),
+            URI.create("repo/star"),
             Mockito.mock(Repo.class)
         );
         MatcherAssert.assertThat(
@@ -118,10 +118,11 @@ public final class GitlabStarsTestCase {
      */
     @Test
     public void starIsNotAdded() {
-        final MockJsonResources.MockResource response = new MockJsonResources.MockResource(
-            HttpURLConnection.HTTP_BAD_REQUEST,
-            JsonValue.EMPTY_JSON_OBJECT
-        );
+        final MockJsonResources.MockResource response =
+            new MockJsonResources.MockResource(
+                HttpURLConnection.HTTP_BAD_REQUEST,
+                JsonValue.EMPTY_JSON_OBJECT
+            );
         final Stars stars = new GitlabStars(
             new MockJsonResources(
                 req -> {
@@ -131,7 +132,7 @@ public final class GitlabStarsTestCase {
                     );
                     MatcherAssert.assertThat(
                         req.getUri().toString(),
-                        Matchers.equalTo("https://gitlab.com/projects/test/star")
+                        Matchers.equalTo("repo/star")
                     );
                     MatcherAssert.assertThat(
                         req.getBody(),
@@ -140,7 +141,7 @@ public final class GitlabStarsTestCase {
                     return response;
                 }
             ),
-            URI.create("https://gitlab.com/projects/test/star"),
+            URI.create("repo/star"),
             Mockito.mock(Repo.class)
         );
         MatcherAssert.assertThat(

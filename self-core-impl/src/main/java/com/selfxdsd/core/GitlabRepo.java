@@ -141,7 +141,7 @@ final class GitlabRepo extends BaseRepo {
     @Override
     public Stars stars() {
         final URI uri = URI.create(this.repoUri().toString() + "/star");
-        return new GitlabStars(this.resources(), uri,this);
+        return new GitlabStars(this.resources(), uri, this);
     }
 
     @Override
