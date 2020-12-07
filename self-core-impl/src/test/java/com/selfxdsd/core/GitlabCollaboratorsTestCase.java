@@ -191,4 +191,102 @@ public final class GitlabCollaboratorsTestCase {
         );
     }
 
+    /**
+     * A Collaborator can be removed with 204 NO CONTENT (happy flow).
+     */
+    @Test
+    public void removesUserNoContent() {
+        final User user = Mockito.mock(User.class);
+        Mockito.when(user.username()).thenReturn("amihaiemil");
+        final Provider provider = new Gitlab(
+            user,
+            Mockito.mock(Storage.class),
+            new MockJsonResources(
+                new AccessToken.Gitlab("gitlab123"),
+                req -> {
+                    MatcherAssert.assertThat(
+                        req.getAccessToken().value(),
+                        Matchers.equalTo("gitlab123")
+                    );
+                    MatcherAssert.assertThat(
+                        req.getMethod(),
+                        Matchers.equalTo("DELETE")
+                    );
+                    MatcherAssert.assertThat(
+                        req.getBody(),
+                        Matchers.equalTo(
+                            Json.createObjectBuilder()
+                            .build()
+                        )
+                    );
+                    MatcherAssert.assertThat(
+                        req.getUri().toString(),
+                        Matchers.equalTo("https://gitlab.com/api/v4/"
+                            + "projects/amihaiemil%2Frepo/members/12345")
+                    );
+                    return new MockJsonResources.MockResource(
+                        HttpURLConnection.HTTP_NO_CONTENT,
+                        Json.createObjectBuilder().build()
+                    );
+                }
+            )
+        );
+        final boolean res = provider
+            .repo("amihaiemil", "repo")
+            .collaborators()
+            .remove("12345");
+        MatcherAssert.assertThat(
+            res, Matchers.is(Boolean.TRUE)
+        );
+    }
+
+    /**
+     * We try to remove a Collaborator but receive 404 NOT FOUND.
+     */
+    @Test
+    public void removesUserNotFound() {
+        final User user = Mockito.mock(User.class);
+        Mockito.when(user.username()).thenReturn("amihaiemil");
+        final Provider provider = new Gitlab(
+            user,
+            Mockito.mock(Storage.class),
+            new MockJsonResources(
+                new AccessToken.Gitlab("gitlab123"),
+                req -> {
+                    MatcherAssert.assertThat(
+                        req.getAccessToken().value(),
+                        Matchers.equalTo("gitlab123")
+                    );
+                    MatcherAssert.assertThat(
+                        req.getMethod(),
+                        Matchers.equalTo("DELETE")
+                    );
+                    MatcherAssert.assertThat(
+                        req.getBody(),
+                        Matchers.equalTo(
+                            Json.createObjectBuilder()
+                                .build()
+                        )
+                    );
+                    MatcherAssert.assertThat(
+                        req.getUri().toString(),
+                        Matchers.equalTo("https://gitlab.com/api/v4/"
+                            + "projects/amihaiemil%2Frepo/members/12345")
+                    );
+                    return new MockJsonResources.MockResource(
+                        HttpURLConnection.HTTP_NOT_FOUND,
+                        Json.createObjectBuilder().build()
+                    );
+                }
+            )
+        );
+        final boolean res = provider
+            .repo("amihaiemil", "repo")
+            .collaborators()
+            .remove("12345");
+        MatcherAssert.assertThat(
+            res, Matchers.is(Boolean.FALSE)
+        );
+    }
+
 }

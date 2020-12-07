@@ -103,9 +103,29 @@ final class GitlabCollaborators implements Collaborators {
 
     @Override
     public boolean remove(final String username) {
-        throw new UnsupportedOperationException(
-            "Not yet implemented."
+        final boolean result;
+        LOG.debug(
+            "Removing user " + username
+            + " from [" + this.collaboratorsUri.toString() + "]... "
         );
+        final Resource response = this.resources.delete(
+            URI.create(
+                this.collaboratorsUri.toString() + "/" + username
+            ),
+            Json.createObjectBuilder().build()
+        );
+        final int status = response.statusCode();
+        if(status == HttpURLConnection.HTTP_NO_CONTENT) {
+            result = true;
+            LOG.debug("User successfully removed!");
+        } else {
+            result = false;
+            LOG.error(
+                "Problem while removing user. Expected 204 NO CONTENT, "
+                + "but got " + status + ". "
+            );
+        }
+        return result;
     }
 
 }
