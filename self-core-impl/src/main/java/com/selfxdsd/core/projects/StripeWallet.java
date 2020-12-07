@@ -152,9 +152,10 @@ public final class StripeWallet implements Wallet {
      */
     @Override
     public Wallet pay(final Invoice invoice) {
+        final Contract contract = invoice.contract();
         LOG.debug(
             "[STRIPE] Trying to pay Invoice #" + invoice.invoiceId() + " of "
-            + " Contract " + invoice.contract().contractId()
+            + " Contract " + contract.contractId()
             + " from Wallet " + this.identifier
         );
         if (invoice.isPaid()) {
@@ -224,6 +225,10 @@ public final class StripeWallet implements Wallet {
                             .builder()
                             .setDestination(payoutMethod.identifier())
                             .build()
+                    )
+                    .setDescription(
+                        "Payment for Invoice #" + invoice.invoiceId() + " "
+                        g+ "of Contract " + contract.contractId() + ". "
                     )
                     .setOffSession(true)
                     .setConfirm(true)
