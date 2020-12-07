@@ -23,6 +23,7 @@
 package com.selfxdsd.core;
 
 import com.selfxdsd.api.Project;
+import com.selfxdsd.api.Webhook;
 import com.selfxdsd.api.Webhooks;
 import com.selfxdsd.api.storage.Storage;
 import org.slf4j.Logger;
@@ -31,6 +32,7 @@ import org.slf4j.LoggerFactory;
 import javax.json.Json;
 import java.net.HttpURLConnection;
 import java.net.URI;
+import java.util.Iterator;
 
 /**
  * Gitlab repo webhooks.
@@ -116,6 +118,13 @@ final class GitlabWebhooks implements Webhooks {
 
     @Override
     public boolean remove() {
+        throw new UnsupportedOperationException(
+            "Not yet implemented."
+        );
+    }
+
+    @Override
+    public Iterator<Webhook> iterator() {
         throw new UnsupportedOperationException(
             "Not yet implemented."
         );

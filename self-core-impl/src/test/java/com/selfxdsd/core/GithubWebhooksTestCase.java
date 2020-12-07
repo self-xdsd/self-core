@@ -183,4 +183,94 @@ public final class GithubWebhooksTestCase {
         );
     }
 
+    /**
+     * GithubWebhooks can be iterated.
+     */
+    @Test
+    public void iteratesWebhooksOk() {
+        final Project project = Mockito.mock(Project.class);
+        Mockito.when(project.repoFullName()).thenReturn("amihaiemil/repo");
+        Mockito.when(project.webHookToken()).thenReturn("webhook_tok333n");
+        final Provider provider = new Github(
+            Mockito.mock(User.class),
+            Mockito.mock(Storage.class),
+            new MockJsonResources(
+                new AccessToken.Github("github123"),
+                req -> {
+                    MatcherAssert.assertThat(
+                        req.getAccessToken().value(),
+                        Matchers.equalTo("token github123")
+                    );
+                    MatcherAssert.assertThat(
+                        req.getMethod(),
+                        Matchers.equalTo("GET")
+                    );
+                    MatcherAssert.assertThat(
+                        req.getUri().toString(),
+                        Matchers.equalTo(
+                            "https://api.github.com/repos/amihaiemil/repo"
+                                + "/hooks?per_page=100"
+                        )
+                    );
+                    return new MockJsonResources.MockResource(
+                        HttpURLConnection.HTTP_OK,
+                        Json.createArrayBuilder()
+                            .add(Json.createObjectBuilder())
+                            .add(Json.createObjectBuilder())
+                            .build()
+                    );
+                }
+            )
+        );
+        MatcherAssert.assertThat(
+            provider
+                .repo("amihaiemil", "repo")
+                .webhooks(),
+            Matchers.iterableWithSize(2)
+        );
+    }
+
+    /**
+     * GithubWebhooks is empty iterable due to 404 NOT FOUND.
+     */
+    @Test
+    public void iteratesWebhooksNotFound() {
+        final Project project = Mockito.mock(Project.class);
+        Mockito.when(project.repoFullName()).thenReturn("amihaiemil/repo");
+        Mockito.when(project.webHookToken()).thenReturn("webhook_tok333n");
+        final Provider provider = new Github(
+            Mockito.mock(User.class),
+            Mockito.mock(Storage.class),
+            new MockJsonResources(
+                new AccessToken.Github("github123"),
+                req -> {
+                    MatcherAssert.assertThat(
+                        req.getAccessToken().value(),
+                        Matchers.equalTo("token github123")
+                    );
+                    MatcherAssert.assertThat(
+                        req.getMethod(),
+                        Matchers.equalTo("GET")
+                    );
+                    MatcherAssert.assertThat(
+                        req.getUri().toString(),
+                        Matchers.equalTo(
+                            "https://api.github.com/repos/amihaiemil/repo"
+                                + "/hooks?per_page=100"
+                        )
+                    );
+                    return new MockJsonResources.MockResource(
+                        HttpURLConnection.HTTP_NOT_FOUND,
+                        Json.createObjectBuilder().build()
+                    );
+                }
+            )
+        );
+        MatcherAssert.assertThat(
+            provider
+                .repo("amihaiemil", "repo")
+                .webhooks(),
+            Matchers.iterableWithSize(0)
+        );
+    }
 }

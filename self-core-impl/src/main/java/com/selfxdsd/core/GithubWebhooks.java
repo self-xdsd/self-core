@@ -23,14 +23,22 @@
 package com.selfxdsd.core;
 
 import com.selfxdsd.api.Project;
+import com.selfxdsd.api.Webhook;
 import com.selfxdsd.api.Webhooks;
 import com.selfxdsd.api.storage.Storage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.json.Json;
+import javax.json.JsonArray;
+import javax.json.JsonObject;
+import javax.json.JsonValue;
+import java.lang.reflect.Array;
 import java.net.HttpURLConnection;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Github repo webhooks.
@@ -126,5 +134,50 @@ final class GithubWebhooks implements Webhooks {
     @Override
     public boolean remove() {
         return false;
+    }
+
+    @Override
+    public Iterator<Webhook> iterator() {
+        final Iterator<Webhook> iterator;
+        LOG.debug(
+            "Fetching Github webhooks [" + this.hooksUri + "]..."
+        );
+        final Resource response = this.resources.get(
+            URI.create(this.hooksUri.toString() + "?per_page=100")
+        );
+        if(response.statusCode() == HttpURLConnection.HTTP_OK) {
+            LOG.debug("Webhooks fetched successfully!");
+            final List<Webhook> list = new ArrayList<>();
+            for(final JsonValue hook : response.asJsonArray()) {
+                list.add(
+                    new Webhook() {
+                        /**
+                         * Hook in JSON.
+                         */
+                        final JsonObject json = (JsonObject) hook;
+
+                        @Override
+                        public String id() {
+                            return String.valueOf(this.json.getInt("id"));
+                        }
+
+                        @Override
+                        public String url() {
+                            return this.json.getJsonObject("config")
+                                .getString("url");
+                        }
+                    }
+                );
+            }
+            iterator = list.iterator();
+        } else {
+            LOG.error(
+                "Problem when fetching webhooks. Expected 200 OK, "
+                + " but got " + response.statusCode()
+                + ". Returning empty iterable."
+            );
+            iterator = new ArrayList<Webhook>().iterator();
+        }
+        return iterator;
     }
 }

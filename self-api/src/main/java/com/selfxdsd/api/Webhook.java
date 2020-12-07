@@ -23,24 +23,23 @@
 package com.selfxdsd.api;
 
 /**
- * Repo webhooks.
+ * A Webhook set in the Provider.
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
- * @since 0.0.13
+ * @since 0.0.42
  */
-public interface Webhooks extends Iterable<Webhook> {
+public interface Webhook {
 
     /**
-     * Add a webhook for the Self Project.
-     * @param project Project.
-     * @return True or false, whether the webhook setup
-     *  was successful or not.
+     * Id of the Webhook.
+     * @return String Id.
      */
-    boolean add(final Project project);
+    String id();
 
     /**
-     * Remove any Self XDSD-related webhooks.
-     * @return True or false.
+     * URL of the Webhook.
+     * @return String URL.
      */
-    boolean remove();
+    String url();
+
 }
