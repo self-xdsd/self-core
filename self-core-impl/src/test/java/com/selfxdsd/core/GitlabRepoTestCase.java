@@ -12,7 +12,6 @@ import org.mockito.Mockito;
 
 import javax.json.Json;
 import java.math.BigDecimal;
-import java.net.HttpURLConnection;
 import java.net.URI;
 
 /**
@@ -165,20 +164,9 @@ public final class GitlabRepoTestCase {
      */
     @Test
     public void returnsStars() {
-        MockJsonResources resources = new MockJsonResources(
-            req -> {
-                return new MockJsonResources.MockResource(
-                    HttpURLConnection.HTTP_OK,
-                    Json.createObjectBuilder().add(
-                        "path_with_namespace",
-                        "test/repo"
-                    ).build()
-                );
-            }
-        );
         final Repo repo = new GitlabRepo(
-            resources,
-            URI.create("https://gitlab.com/projects/test/repo"),
+            Mockito.mock(JsonResources.class),
+            URI.create("test/repo"),
             Mockito.mock(User.class),
             Mockito.mock(Storage.class)
         );
@@ -188,11 +176,6 @@ public final class GitlabRepoTestCase {
                 Matchers.notNullValue(),
                 Matchers.instanceOf(GitlabStars.class)
             )
-        );
-        repo.stars().add();
-        MatcherAssert.assertThat(
-            resources.requests().last().getUri().toString(),
-            Matchers.equalTo("https://gitlab.com/projects/test/repo/star")
         );
     }
 }
