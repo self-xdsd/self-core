@@ -159,5 +159,23 @@ public final class GitlabRepoTestCase {
         );
     }
 
-
+    /**
+     * A GitlabRepo can return its Stars.
+     */
+    @Test
+    public void returnsStars() {
+        final Repo repo = new GitlabRepo(
+            Mockito.mock(JsonResources.class),
+            URI.create("test/repo"),
+            Mockito.mock(User.class),
+            Mockito.mock(Storage.class)
+        );
+        MatcherAssert.assertThat(
+            repo.stars(),
+            Matchers.allOf(
+                Matchers.notNullValue(),
+                Matchers.instanceOf(GitlabStars.class)
+            )
+        );
+    }
 }

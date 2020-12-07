@@ -140,9 +140,8 @@ final class GitlabRepo extends BaseRepo {
 
     @Override
     public Stars stars() {
-        throw new UnsupportedOperationException(
-            "Not yet implemented."
-        );
+        final URI uri = URI.create(this.repoUri().toString() + "/star");
+        return new GitlabStars(this.resources(), uri, this);
     }
 
     @Override
