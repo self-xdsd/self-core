@@ -212,27 +212,27 @@ public final class StripeWallet implements Wallet {
                 );
             }
             final PaymentIntent paymentIntent = PaymentIntent
-                .create(PaymentIntentCreateParams.builder()
-                    .setCurrency("eur")
-                    .setAmount(invoice.totalAmount().longValueExact())
-                    .setApplicationFeeAmount(
-                        invoice.commission().longValueExact()
-                    )
-                    .setCustomer(this.identifier)
-                    .setPaymentMethod(paymentMethod.identifier())
-                    .setTransferData(
-                        PaymentIntentCreateParams.TransferData
-                            .builder()
-                            .setDestination(payoutMethod.identifier())
-                            .build()
-                    )
-                    .setDescription(
-                        "Payment for Invoice #" + invoice.invoiceId() + " "
-                        + "of Contract " + contract.contractId() + ". "
-                    )
-                    .setOffSession(true)
-                    .setConfirm(true)
-                    .build());
+                .create(
+                    PaymentIntentCreateParams.builder()
+                        .setCurrency("eur")
+                        .setAmount(invoice.totalAmount().longValueExact())
+                        .setCustomer(this.identifier)
+                        .setPaymentMethod(paymentMethod.identifier())
+                        .setTransferData(
+                            PaymentIntentCreateParams.TransferData
+                                .builder()
+                                .setDestination(payoutMethod.identifier())
+                                .setAmount(invoice.amount().longValueExact())
+                                .build()
+                        )
+                        .setDescription(
+                            "Payment for Invoice #" + invoice.invoiceId() + " "
+                            + "of Contract " + contract.contractId() + ". "
+                        )
+                        .setOffSession(true)
+                        .setConfirm(true)
+                        .build()
+                );
 
             final String status = paymentIntent.getStatus();
             LOG.debug("[STRIPE] Payment Status " + status);
