@@ -30,10 +30,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.json.Json;
-import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.json.JsonValue;
-import java.lang.reflect.Array;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.util.ArrayList;
@@ -45,8 +43,6 @@ import java.util.List;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.13
- * @todo #681:60min Implemented method remove() from this class, which
- *  should remove any webhooks related to Self XDSD from the Github repo.
  */
 final class GithubWebhooks implements Webhooks {
 
@@ -133,7 +129,33 @@ final class GithubWebhooks implements Webhooks {
 
     @Override
     public boolean remove() {
-        return false;
+        boolean removed = true;
+        for(final Webhook hook : this) {
+            if(hook.url().contains("//self-xdsd.")) {
+                LOG.debug(
+                    "Removing Self XDSD Webhook from ["
+                    + this.hooksUri + "]..."
+                );
+                final Resource response = this.resources
+                    .delete(
+                        URI.create(
+                            this.hooksUri.toString() + "/" + hook.id()
+                        ),
+                        Json.createObjectBuilder().build()
+                    );
+                final int status = response.statusCode();
+                if(status == HttpURLConnection.HTTP_NO_CONTENT) {
+                    LOG.debug("Hook removed successfully!");
+                } else {
+                    LOG.debug(
+                        "Problem while removing webhook. "
+                        + "Expected 204 NO CONTENT, but got " + status + "."
+                    );
+                    removed = removed && Boolean.FALSE;
+                }
+            }
+        }
+        return removed;
     }
 
     @Override
@@ -154,7 +176,7 @@ final class GithubWebhooks implements Webhooks {
                         /**
                          * Hook in JSON.
                          */
-                        final JsonObject json = (JsonObject) hook;
+                        private final JsonObject json = (JsonObject) hook;
 
                         @Override
                         public String id() {

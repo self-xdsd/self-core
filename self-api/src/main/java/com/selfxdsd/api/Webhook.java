@@ -33,6 +33,7 @@ public interface Webhook {
     /**
      * Id of the Webhook.
      * @return String Id.
+     * @checkstyle MethodName (5 lines)
      */
     String id();
 

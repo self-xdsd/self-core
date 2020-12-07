@@ -46,6 +46,11 @@ import java.util.Objects;
  *  It should decide what kind of event has occurred and delegate it
  *  further to the ProjectManager who will deal with it. We still need
  *  the Issue Assigned case and Comment Created case.
+ * @todo #759:30min Method deactivate() from this class has to take the
+ *  Repo as parameter. This is because StoredProject's encapsulated Repo
+ *  doesn't have any authentication in this scenario (we don't save the
+ *  User's access token in the DB). Therefore, the Repo method parameter
+ *  should be properly authenticated by the User beforehand.
  */
 public final class StoredProject implements Project {
 
