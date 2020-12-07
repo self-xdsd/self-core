@@ -41,6 +41,7 @@ import java.util.Objects;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
+ * @checkstyle ExecutableStatementCount (500 lines)
  * @todo #278:30min Continue implementation of the resolve(...) method.
  *  It should decide what kind of event has occurred and delegate it
  *  further to the ProjectManager who will deal with it. We still need
@@ -228,9 +229,17 @@ public final class StoredProject implements Project {
         } else {
             LOG.error("Problem while removing webhooks.");
         }
-        boolean noPm = repo.collaborators().remove(
-            this.projectManager.username()
-        );
+        final String user;
+        if(Provider.Names.GITHUB.equals(provider)) {
+            user = this.projectManager.username();
+        } else if (Provider.Names.GITLAB.equals(provider)) {
+            user = this.projectManager.userId();
+        } else {
+            throw new IllegalStateException(
+                "Unknown Provider: [" + provider + "]."
+            );
+        }
+        boolean noPm = repo.collaborators().remove(user);
         if(noPm) {
             LOG.debug("PM is no longer a Repo collaborator.");
         } else {
