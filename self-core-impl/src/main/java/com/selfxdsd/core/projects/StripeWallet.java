@@ -228,7 +228,7 @@ public final class StripeWallet implements Wallet {
                     )
                     .setDescription(
                         "Payment for Invoice #" + invoice.invoiceId() + " "
-                        g+ "of Contract " + contract.contractId() + ". "
+                        + "of Contract " + contract.contractId() + ". "
                     )
                     .setOffSession(true)
                     .setConfirm(true)
@@ -250,12 +250,18 @@ public final class StripeWallet implements Wallet {
                         this.storage)
                     );
             } else {
+                LOG.error("[STRIPE] PaymentIntent status: " + status);
                 throw new WalletPaymentException(
                     "Could not pay invoice #" + invoice.invoiceId() + " due to"
                     + " Stripe payment intent status \"" + status + "\""
                 );
             }
         } catch (final StripeException ex) {
+            LOG.error(
+                "[STRIPE] StripeException while trying "
+                + "to make the payment.",
+                ex
+            );
             throw new IllegalStateException(
                 "Stripe threw an exception when trying execute PaymentIntent"
                 + " for invoice #" + invoice.invoiceId(),
