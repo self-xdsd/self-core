@@ -177,6 +177,16 @@ public final class StripeWalletTestCase {
     @Test(expected = InvoiceException.AlreadyPaid.class)
     public void complainsIfInvoiceIsAlreadyPaid(){
         final Invoice invoice = Mockito.mock(Invoice.class);
+        final Contract contract = Mockito.mock(Contract.class);
+        Mockito.when(contract.contractId()).thenReturn(
+            new Contract.Id(
+                "mihai/test",
+                "mihai",
+                "github",
+                "DEV"
+            )
+        );
+        Mockito.when(invoice.contract()).thenReturn(contract);
         Mockito.when(invoice.isPaid()).thenReturn(true);
 
         new StripeWallet(

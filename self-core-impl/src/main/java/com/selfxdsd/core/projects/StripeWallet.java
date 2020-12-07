@@ -152,17 +152,25 @@ public final class StripeWallet implements Wallet {
      */
     @Override
     public Wallet pay(final Invoice invoice) {
+        final Contract contract = invoice.contract();
+        LOG.debug(
+            "[STRIPE] Trying to pay Invoice #" + invoice.invoiceId() + " of "
+            + " Contract " + contract.contractId()
+            + " from Wallet " + this.identifier
+        );
         if (invoice.isPaid()) {
+            LOG.error("[STRIPE] Invoice already paid.");
             throw new InvoiceException.AlreadyPaid(invoice);
         }
 
         final BigDecimal newLimit = this.limit.subtract(invoice.totalAmount());
         if (newLimit.longValueExact() < 0L) {
+            LOG.error("[STRIPE] Not enough cash to pay Invoice.");
             throw new WalletPaymentException("No cash available in wallet "
                 + "for paying invoice #" + invoice.invoiceId()
-                + ". Please increase the limit from your dashboard with"
+                + ". Please increase the Limit from your dashboard with"
                 + " at least " + newLimit.abs().add(invoice.totalAmount())
-                .divide(BigDecimal.valueOf(1000), RoundingMode.HALF_UP) + "$."
+                .divide(BigDecimal.valueOf(100), RoundingMode.HALF_UP) + " €."
             );
         }
 
@@ -175,9 +183,16 @@ public final class StripeWallet implements Wallet {
                 .ofContributor(contributor)
                 .active();
             if (payoutMethod == null) {
+                LOG.error(
+                    "[STRIPE] Contributor " + contributor.username()
+                    + " from " + contributor.provider() + " has no "
+                    + "PayoutMethod set up, cannot pay."
+                );
                 throw new WalletPaymentException(
-                    "No active payout method for contributor "
-                    + contributor.username()
+                    "Contributor " + contributor.username()
+                    + " hasn't finished setting up their Stripe account yet. "
+                    + "We cannot make the payment yet."
+
                 );
             }
             final PaymentMethod paymentMethod = this.storage
@@ -185,6 +200,10 @@ public final class StripeWallet implements Wallet {
                 .ofWallet(this)
                 .active();
             if (paymentMethod == null) {
+                LOG.error(
+                    "[STRIPE] Project has no Payment Method (card) set up. "
+                    + "Cannot make payment."
+                );
                 throw new WalletPaymentException(
                     "No active payment method for wallet #"
                     + this.identifier + " of project "
@@ -192,11 +211,6 @@ public final class StripeWallet implements Wallet {
                     + this.project.provider()
                 );
             }
-            LOG.debug(
-                "[STRIPE] Paying Invoice #" + invoice.invoiceId()
-                + " of Contract " + invoice.contract().contractId()
-                + "..."
-            );
             final PaymentIntent paymentIntent = PaymentIntent
                 .create(PaymentIntentCreateParams.builder()
                     .setCurrency("eur")
@@ -211,6 +225,10 @@ public final class StripeWallet implements Wallet {
                             .builder()
                             .setDestination(payoutMethod.identifier())
                             .build()
+                    )
+                    .setDescription(
+                        "Payment for Invoice #" + invoice.invoiceId() + " "
+                        + "of Contract " + contract.contractId() + ". "
                     )
                     .setOffSession(true)
                     .setConfirm(true)
@@ -232,12 +250,18 @@ public final class StripeWallet implements Wallet {
                         this.storage)
                     );
             } else {
+                LOG.error("[STRIPE] PaymentIntent status: " + status);
                 throw new WalletPaymentException(
                     "Could not pay invoice #" + invoice.invoiceId() + " due to"
                     + " Stripe payment intent status \"" + status + "\""
                 );
             }
         } catch (final StripeException ex) {
+            LOG.error(
+                "[STRIPE] StripeException while trying "
+                + "to make the payment.",
+                ex
+            );
             throw new IllegalStateException(
                 "Stripe threw an exception when trying execute PaymentIntent"
                 + " for invoice #" + invoice.invoiceId(),
