@@ -33,6 +33,8 @@ import java.net.URI;
  * @author criske
  * @version $Id$
  * @since 0.0.1
+ * @todo #728:15min Implement and test method `issues()` for
+ *  GitlabRepo.
  */
 final class GitlabRepo extends BaseRepo {
 

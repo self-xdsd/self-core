@@ -29,6 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.json.JsonObject;
+import java.net.HttpURLConnection;
 import java.net.URI;
 import java.util.Iterator;
 
@@ -37,7 +38,11 @@ import java.util.Iterator;
  * @author criske
  * @version $Id$
  * @since 0.0.38
- * @todo #728:60min Implement and test method `getById()` for
+ * @todo #728:60min Implement and test method `received()` for
+ *  GitlabIssues by following GithubIssues as model.
+ * @todo #728:60min Implement and test method `open()` for
+ *  GitlabIssues by following GithubIssues as model.
+ * @todo #728:60min Implement and test method `search()` for
  *  GitlabIssues by following GithubIssues as model.
  */
 final class GitlabIssues implements Issues {
@@ -83,7 +88,38 @@ final class GitlabIssues implements Issues {
 
     @Override
     public Issue getById(final String issueId) {
-        throw new UnsupportedOperationException("Not implemented yet");
+        LOG.debug("Getting Gitlab issue with id " + issueId + "...");
+        final URI issueUri = URI.create(
+            this.issuesUri.toString() + "/" + issueId
+        );
+        final Resource resource = this.resources.get(issueUri);
+        JsonObject jsonObject;
+        switch (resource.statusCode()) {
+            case HttpURLConnection.HTTP_OK:
+                jsonObject = resource.asJsonObject();
+                break;
+            case HttpURLConnection.HTTP_NOT_FOUND:
+            case HttpURLConnection.HTTP_NO_CONTENT:
+                jsonObject = null;
+                break;
+            default:
+                throw new IllegalStateException(
+                    "Could not get the issue " + issueId + ". "
+                        + "Received status code: " + resource.statusCode()
+                );
+        }
+        Issue issue = null;
+        if(jsonObject != null){
+            issue = new WithContributorLabel(
+                new GithubIssue(
+                    issueUri,
+                    jsonObject,
+                    this.storage,
+                    this.resources
+                )
+            );
+        }
+        return issue;
     }
 
     @Override
