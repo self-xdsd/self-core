@@ -137,7 +137,7 @@ public final class UserProjects extends BasePaged implements Projects {
         final User owner = project.owner();
         if(this.user.username().equals(owner.username())
             && this.user.provider().name().equals(owner.provider().name())) {
-            project.deactivate();
+            project.deactivate(project.repo());
         } else {
             throw new IllegalStateException(
                 "These are the Projects of User " + this.user.username()

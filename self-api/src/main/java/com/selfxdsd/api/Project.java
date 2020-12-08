@@ -118,9 +118,10 @@ public interface Project {
     /**
      * Deactivate this project, tell  Self to stop
      * managing it.
-     * @return This project's repository.
+     * @param repo This Project's corresponding Repo.
+     * @return The repository.
      */
-    Repo deactivate();
+    Repo deactivate(final Repo repo);
 
     /**
      * Create a wallet.

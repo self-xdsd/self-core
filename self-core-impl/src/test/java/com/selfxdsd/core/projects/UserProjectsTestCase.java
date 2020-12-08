@@ -224,11 +224,13 @@ public final class UserProjectsTestCase {
             ).stream()
         );
         final Project toRemove = mockProject("mihai/test", "github");
+        final Repo repo = Mockito.mock(Repo.class);
+        Mockito.when(toRemove.repo()).thenReturn(repo);
         Mockito.when(toRemove.owner()).thenReturn(mihai);
 
         projects.remove(toRemove);
 
-        Mockito.verify(toRemove, Mockito.times(1)).deactivate();
+        Mockito.verify(toRemove, Mockito.times(1)).deactivate(repo);
     }
 
     /**
@@ -246,12 +248,14 @@ public final class UserProjectsTestCase {
             ).stream()
         );
         final Project toRemove = mockProject("mihai/test", "github");
+        final Repo repo = Mockito.mock(Repo.class);
+        Mockito.when(toRemove.repo()).thenReturn(repo);
         final User vlad = this.mockUser("vlad", "github");
         Mockito.when(toRemove.owner()).thenReturn(vlad);
 
         projects.remove(toRemove);
 
-        Mockito.verify(toRemove, Mockito.times(1)).deactivate();
+        Mockito.verify(toRemove, Mockito.times(0)).deactivate(repo);
     }
 
     /**

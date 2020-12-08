@@ -292,12 +292,14 @@ public final class PmProjectsTestCase {
         final Projects projects = new PmProjects(1, list::stream);
 
         final Project toRemove = this.projectOwnedBy("mihai", "github");
+        final Repo repo = Mockito.mock(Repo.class);
+        Mockito.when(toRemove.repo()).thenReturn(repo);
         final ProjectManager owner = Mockito.mock(ProjectManager.class);
         Mockito.when(owner.id()).thenReturn(1);
         Mockito.when(toRemove.projectManager()).thenReturn(owner);
         projects.remove(toRemove);
 
-        Mockito.verify(toRemove, Mockito.times(1)).deactivate();
+        Mockito.verify(toRemove, Mockito.times(1)).deactivate(repo);
     }
 
     /**
@@ -314,12 +316,14 @@ public final class PmProjectsTestCase {
         final Projects projects = new PmProjects(1, list::stream);
 
         final Project toRemove = this.projectOwnedBy("mihai", "github");
+        final Repo repo = Mockito.mock(Repo.class);
+        Mockito.when(toRemove.repo()).thenReturn(repo);
         final ProjectManager owner = Mockito.mock(ProjectManager.class);
         Mockito.when(owner.id()).thenReturn(2);
         Mockito.when(toRemove.projectManager()).thenReturn(owner);
         projects.remove(toRemove);
 
-        Mockito.verify(toRemove, Mockito.times(0)).deactivate();
+        Mockito.verify(toRemove, Mockito.times(0)).deactivate(repo);
     }
 
     /**

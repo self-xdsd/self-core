@@ -46,11 +46,6 @@ import java.util.Objects;
  *  It should decide what kind of event has occurred and delegate it
  *  further to the ProjectManager who will deal with it. We still need
  *  the Issue Assigned case and Comment Created case.
- * @todo #759:30min Method deactivate() from this class has to take the
- *  Repo as parameter. This is because StoredProject's encapsulated Repo
- *  doesn't have any authentication in this scenario (we don't save the
- *  User's access token in the DB). Therefore, the Repo method parameter
- *  should be properly authenticated by the User beforehand.
  */
 public final class StoredProject implements Project {
 
@@ -205,8 +200,18 @@ public final class StoredProject implements Project {
         return this.webHookToken;
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * We take the Repo as method parameter because StoredProject.repo()
+     * will return an unauthenticated Repo in this scenario (we do not save
+     * the User's authentication token in the DB).<br><br>
+     *
+     * The User has to give us an authenticated Repo when calling
+     * this method, in order to uninvite the PM and remove any Self Webhooks.
+     */
     @Override
-    public Repo deactivate() {
+    public Repo deactivate(final Repo repo) {
         final String provider = this.provider();
         LOG.debug(
             "Deactivating Project " + this.repoFullName
@@ -227,7 +232,6 @@ public final class StoredProject implements Project {
         }
         this.storage.projects().remove(this);
         LOG.debug("Project successfully deactivated (removed).");
-        final Repo repo = this.repo();
         boolean noWebhooks = repo.webhooks().remove();
         if(noWebhooks) {
             LOG.debug("Successfully removed webhooks.");

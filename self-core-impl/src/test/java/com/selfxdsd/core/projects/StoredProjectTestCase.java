@@ -399,7 +399,7 @@ public final class StoredProjectTestCase {
         );
         Mockito.when(storage.contracts()).thenReturn(all);
 
-        project.deactivate();
+        project.deactivate(Mockito.mock(Repo.class));
     }
 
     /**
@@ -412,7 +412,6 @@ public final class StoredProjectTestCase {
         final Storage storage = Mockito.mock(Storage.class);
         final Provider prov = Mockito.mock(Provider.class);
         Mockito.when(prov.name()).thenReturn(Provider.Names.GITHUB);
-        Mockito.when(prov.repo("john", "test")).thenReturn(repo);
 
         final User owner = Mockito.mock(User.class);
         Mockito.when(owner.provider()).thenReturn(prov);
@@ -442,7 +441,7 @@ public final class StoredProjectTestCase {
         Mockito.when(repo.collaborators()).thenReturn(collaborators);
 
         MatcherAssert.assertThat(
-            project.deactivate(),
+            project.deactivate(repo),
             Matchers.is(repo)
         );
 

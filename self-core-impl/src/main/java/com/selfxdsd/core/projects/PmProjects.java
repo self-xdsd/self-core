@@ -51,7 +51,6 @@ public final class PmProjects extends BasePaged implements Projects {
      */
     private final Supplier<Stream<Project>> projects;
 
-
     /**
      * Constructor.
      * @param pmId ID of the manager.
@@ -135,7 +134,7 @@ public final class PmProjects extends BasePaged implements Projects {
     @Override
     public void remove(final Project project) {
         if(this.pmId == project.projectManager().id()) {
-            project.deactivate();
+            project.deactivate(project.repo());
         } else {
             throw new IllegalStateException(
                 "These are the Projects of PM " + this.pmId + ". "
