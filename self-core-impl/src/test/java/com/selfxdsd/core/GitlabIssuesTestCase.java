@@ -22,11 +22,17 @@
  */
 package com.selfxdsd.core;
 
+import com.selfxdsd.api.Issue;
 import com.selfxdsd.api.storage.Storage;
+import com.selfxdsd.core.mock.MockJsonResources;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.mockito.Mockito;
 
 import javax.json.JsonObject;
+import javax.json.JsonValue;
+import java.net.HttpURLConnection;
 import java.net.URI;
 
 /**
@@ -39,12 +45,91 @@ public final class GitlabIssuesTestCase {
 
 
     /**
-     * GitlabIssues.getById(...) is not implemented yet.
+     * GitlabIssues.getById(...) can get an issue by its id.
      */
-    @Test(expected = UnsupportedOperationException.class)
-    public void getByIdIsNotImplemented() {
+    @Test
+    public void getsIssueById() {
+        final MockJsonResources resources = new MockJsonResources(
+            req -> new MockJsonResources.MockResource(
+                HttpURLConnection.HTTP_OK,
+                JsonValue.EMPTY_JSON_OBJECT
+            )
+        );
+        final Issue issue= new GitlabIssues(
+            resources,
+            URI.create("https://gitlab.com/api/v4/projects/john%2Ftest/issues"),
+            Mockito.mock(Storage.class)
+        ).getById("1");
+
+        final MockJsonResources.MockRequest req = resources.requests().first();
+
+        MatcherAssert.assertThat(req.getUri().toString(), Matchers
+            .equalTo("https://gitlab.com/api/v4/projects/john%2Ftest/issues/1")
+        );
+        MatcherAssert.assertThat(req.getMethod(), Matchers
+            .equalTo("GET")
+        );
+        MatcherAssert.assertThat(issue, Matchers.allOf(
+            Matchers.notNullValue(),
+            Matchers.instanceOf(WithContributorLabel.class)
+        ));
+    }
+
+    /**
+     * GitlabIssues.getById(...) can't get an issue by its id.
+     */
+    @Test
+    public void getIssueByIdIsNotFound() {
+        final MockJsonResources resources = new MockJsonResources(
+            req -> new MockJsonResources.MockResource(
+                HttpURLConnection.HTTP_NOT_FOUND,
+                JsonValue.NULL
+            )
+        );
+        final Issue issue= new GitlabIssues(
+            resources,
+            URI.create("https://gitlab.com/api/v4/projects/john%2Ftest/issues"),
+            Mockito.mock(Storage.class)
+        ).getById("1");
+
+        MatcherAssert.assertThat(issue, Matchers.nullValue());
+    }
+
+    /**
+     * GitlabIssues.getById(...) returns null when response code is
+     * no content.
+     */
+    @Test
+    public void getsIssueByIdNoContent() {
+        final MockJsonResources resources = new MockJsonResources(
+            req -> new MockJsonResources.MockResource(
+                HttpURLConnection.HTTP_NO_CONTENT,
+                JsonValue.NULL
+            )
+        );
+        final Issue issue= new GitlabIssues(
+            resources,
+            URI.create("https://gitlab.com/api/v4/projects/john%2Ftest/issues"),
+            Mockito.mock(Storage.class)
+        ).getById("1");
+
+        MatcherAssert.assertThat(issue, Matchers.nullValue());
+    }
+
+    /**
+     * GitlabIssues.getById(...) throws IllegalStateException when response
+     * code is other then HTTP_OK, HTTP_NOT_FOUND or HTTP_NO_CONTENT.
+     */
+    @Test(expected = IllegalStateException.class)
+    public void getIssueByIdThrowsWhenResponseCodeNotProcessed() {
+        final MockJsonResources resources = new MockJsonResources(
+            req -> new MockJsonResources.MockResource(
+                HttpURLConnection.HTTP_UNAVAILABLE,
+                JsonValue.NULL
+            )
+        );
         new GitlabIssues(
-            Mockito.mock(JsonResources.class),
+            resources,
             URI.create("https://gitlab.com/api/v4/projects/john%2Ftest/issues"),
             Mockito.mock(Storage.class)
         ).getById("1");
