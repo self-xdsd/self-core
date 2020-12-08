@@ -44,8 +44,6 @@ import java.util.List;
  * @author criske
  * @version $Id$
  * @since 0.0.13
- * @todo #681:60min Implemented method remove() from this class, which
- *  should remove any webhooks related to Self XDSD from the Gitlab repo.
  */
 final class GitlabWebhooks implements Webhooks {
 
@@ -122,9 +120,33 @@ final class GitlabWebhooks implements Webhooks {
 
     @Override
     public boolean remove() {
-        throw new UnsupportedOperationException(
-            "Not yet implemented."
-        );
+        boolean removed = true;
+        for(final Webhook hook : this) {
+            if(hook.url().contains("//self-xdsd.")) {
+                LOG.debug(
+                    "Removing Self XDSD Webhook from ["
+                    + this.hooksUri + "]..."
+                );
+                final Resource response = this.resources
+                    .delete(
+                        URI.create(
+                            this.hooksUri.toString() + "/" + hook.id()
+                        ),
+                        Json.createObjectBuilder().build()
+                    );
+                final int status = response.statusCode();
+                if(status == HttpURLConnection.HTTP_NO_CONTENT) {
+                    LOG.debug("Hook removed successfully!");
+                } else {
+                    LOG.debug(
+                        "Problem while removing webhook. "
+                        + "Expected 204 NO CONTENT, but got " + status + "."
+                    );
+                    removed = removed && Boolean.FALSE;
+                }
+            }
+        }
+        return removed;
     }
 
     @Override
