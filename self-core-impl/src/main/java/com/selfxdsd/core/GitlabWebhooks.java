@@ -30,9 +30,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.json.Json;
+import javax.json.JsonObject;
+import javax.json.JsonValue;
 import java.net.HttpURLConnection;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * Gitlab repo webhooks.
@@ -40,8 +44,6 @@ import java.util.Iterator;
  * @author criske
  * @version $Id$
  * @since 0.0.13
- * @todo #681:60min Implemented method remove() from this class, which
- *  should remove any webhooks related to Self XDSD from the Gitlab repo.
  */
 final class GitlabWebhooks implements Webhooks {
 
@@ -118,15 +120,76 @@ final class GitlabWebhooks implements Webhooks {
 
     @Override
     public boolean remove() {
-        throw new UnsupportedOperationException(
-            "Not yet implemented."
-        );
+        boolean removed = true;
+        for(final Webhook hook : this) {
+            if(hook.url().contains("//self-xdsd.")) {
+                LOG.debug(
+                    "Removing Self XDSD Webhook from ["
+                    + this.hooksUri + "]..."
+                );
+                final Resource response = this.resources
+                    .delete(
+                        URI.create(
+                            this.hooksUri.toString() + "/" + hook.id()
+                        ),
+                        Json.createObjectBuilder().build()
+                    );
+                final int status = response.statusCode();
+                if(status == HttpURLConnection.HTTP_NO_CONTENT) {
+                    LOG.debug("Hook removed successfully!");
+                } else {
+                    LOG.debug(
+                        "Problem while removing webhook. "
+                        + "Expected 204 NO CONTENT, but got " + status + "."
+                    );
+                    removed = removed && Boolean.FALSE;
+                }
+            }
+        }
+        return removed;
     }
 
     @Override
     public Iterator<Webhook> iterator() {
-        throw new UnsupportedOperationException(
-            "Not yet implemented."
+        final Iterator<Webhook> iterator;
+        LOG.debug(
+            "Fetching GitLab webhooks [" + this.hooksUri + "]..."
         );
+        final Resource response = this.resources.get(
+            URI.create(this.hooksUri.toString() + "?per_page=100")
+        );
+        if(response.statusCode() == HttpURLConnection.HTTP_OK) {
+            LOG.debug("Webhooks fetched successfully!");
+            final List<Webhook> list = new ArrayList<>();
+            for(final JsonValue hook : response.asJsonArray()) {
+                list.add(
+                    new Webhook() {
+                        /**
+                         * Hook in JSON.
+                         */
+                        private final JsonObject json = (JsonObject) hook;
+
+                        @Override
+                        public String id() {
+                            return String.valueOf(this.json.getInt("id"));
+                        }
+
+                        @Override
+                        public String url() {
+                            return this.json.getString("url");
+                        }
+                    }
+                );
+            }
+            iterator = list.iterator();
+        } else {
+            LOG.error(
+                "Problem when fetching webhooks. Expected 200 OK, "
+                + " but got " + response.statusCode()
+                + ". Returning empty iterable."
+            );
+            iterator = new ArrayList<Webhook>().iterator();
+        }
+        return iterator;
     }
 }
