@@ -38,11 +38,11 @@ import java.util.Iterator;
  * @author criske
  * @version $Id$
  * @since 0.0.38
- * @todo #774:60min Implement and test method `received()` for
+ * @todo #728:60min Implement and test method `received()` for
  *  GitlabIssues by following GithubIssues as model.
- * @todo #775:60min Implement and test method `open()` for
+ * @todo #728:60min Implement and test method `open()` for
  *  GitlabIssues by following GithubIssues as model.
- * @todo #776:60min Implement and test method `search()` for
+ * @todo #728:60min Implement and test method `search()` for
  *  GitlabIssues by following GithubIssues as model.
  */
 final class GitlabIssues implements Issues {
