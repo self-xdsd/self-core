@@ -111,7 +111,7 @@ final class GitlabIssues implements Issues {
         Issue issue = null;
         if(jsonObject != null){
             issue = new WithContributorLabel(
-                new GithubIssue(
+                new GitlabIssue(
                     issueUri,
                     jsonObject,
                     this.storage,

@@ -30,6 +30,7 @@ import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonValue;
 import java.net.HttpURLConnection;
@@ -52,7 +53,9 @@ public final class GitlabIssuesTestCase {
         final MockJsonResources resources = new MockJsonResources(
             req -> new MockJsonResources.MockResource(
                 HttpURLConnection.HTTP_OK,
-                JsonValue.EMPTY_JSON_OBJECT
+                Json.createObjectBuilder()
+                    .add("iid", 1)
+                    .build()
             )
         );
         final Issue issue= new GitlabIssues(
@@ -73,6 +76,7 @@ public final class GitlabIssuesTestCase {
             Matchers.notNullValue(),
             Matchers.instanceOf(WithContributorLabel.class)
         ));
+        MatcherAssert.assertThat(issue.issueId(), Matchers.is("1"));
     }
 
     /**
