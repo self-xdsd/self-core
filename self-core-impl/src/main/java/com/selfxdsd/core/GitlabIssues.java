@@ -38,8 +38,6 @@ import java.util.Iterator;
  * @author criske
  * @version $Id$
  * @since 0.0.38
- * @todo #728:60min Implement and test method `received()` for
- *  GitlabIssues by following GithubIssues as model.
  * @todo #728:60min Implement and test method `open()` for
  *  GitlabIssues by following GithubIssues as model.
  * @todo #728:60min Implement and test method `search()` for
@@ -124,7 +122,16 @@ final class GitlabIssues implements Issues {
 
     @Override
     public Issue received(final JsonObject issue) {
-        throw new UnsupportedOperationException("Not implemented yet");
+        return new WithContributorLabel(
+            new GitlabIssue(
+                URI.create(
+                    this.issuesUri.toString() + "/" + issue.getInt("iid")
+                ),
+                issue,
+                this.storage,
+                this.resources
+            )
+        );
     }
 
     @Override

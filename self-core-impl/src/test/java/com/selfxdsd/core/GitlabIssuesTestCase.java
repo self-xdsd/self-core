@@ -23,6 +23,7 @@
 package com.selfxdsd.core;
 
 import com.selfxdsd.api.Issue;
+import com.selfxdsd.api.Issues;
 import com.selfxdsd.api.storage.Storage;
 import com.selfxdsd.core.mock.MockJsonResources;
 import org.hamcrest.MatcherAssert;
@@ -140,15 +141,35 @@ public final class GitlabIssuesTestCase {
     }
 
     /**
-     * GitlabIssues.received(...) is not implemented yet.
+     * GitlabIssues.received(json) can create an Issue
+     * received from a Provider as JsonObject.
      */
-    @Test(expected = UnsupportedOperationException.class)
-    public void receivedIsNotImplemented() {
-        new GitlabIssues(
+    @Test
+    public void canCreateIssueFromJson() {
+        final Issues issues = new GitlabIssues(
             Mockito.mock(JsonResources.class),
             URI.create("https://gitlab.com/api/v4/projects/john%2Ftest/issues"),
             Mockito.mock(Storage.class)
-        ).received(JsonObject.EMPTY_JSON_OBJECT);
+        );
+        final JsonObject json = Json.createObjectBuilder()
+            .add("iid", 1)
+            .build();
+        final Issue issue = issues.received(json);
+        MatcherAssert.assertThat(
+            issue,
+            Matchers.allOf(
+                Matchers.notNullValue(),
+                Matchers.instanceOf(WithContributorLabel.class)
+            )
+        );
+        MatcherAssert.assertThat(
+            issue.issueId(),
+            Matchers.equalTo("1")
+        );
+        MatcherAssert.assertThat(
+            issue.json(),
+            Matchers.equalTo(json)
+        );
     }
 
     /**
