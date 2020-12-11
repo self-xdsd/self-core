@@ -48,6 +48,10 @@ public final class EnglishTestCase {
             english.categorize("@zoeself hello there, who are you?"),
             Matchers.equalTo("hello")
         );
+        MatcherAssert.assertThat(
+            english.categorize("@zoeself hi there"),
+            Matchers.equalTo("hello")
+        );
     }
 
     /**
