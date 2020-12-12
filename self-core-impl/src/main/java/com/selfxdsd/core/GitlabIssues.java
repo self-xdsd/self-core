@@ -30,11 +30,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.json.Json;
+import javax.json.JsonArray;
 import javax.json.JsonObject;
+import javax.json.JsonValue;
 import java.net.HttpURLConnection;
 import java.net.URI;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -42,8 +48,6 @@ import java.util.stream.Collectors;
  * @author criske
  * @version $Id$
  * @since 0.0.38
- * @todo #728:60min Implement and test method `search()` for
- *  GitlabIssues by following GithubIssues as model.
  */
 final class GitlabIssues implements Issues {
 
@@ -202,9 +206,59 @@ final class GitlabIssues implements Issues {
         return issue;
     }
 
+    /**
+     *{@inheritDoc}
+     * <br/>
+     * See following <a href="https://docs.gitlab.com/ee/api/issues.html#list-issues">
+     *     documentation</a>.
+     */
     @Override
     public Issues search(final String text, final String... labels) {
-        throw new UnsupportedOperationException("Not implemented yet");
+        final StringBuilder searchPath = new StringBuilder(
+            this.issuesUri.toString()
+        );
+        searchPath.append("/?per_page=100");
+        final boolean hasText = text != null && !text.isBlank();
+        if (hasText) {
+            searchPath.append("&search=");
+            searchPath.append(URLEncoder.encode(text, StandardCharsets.UTF_8));
+        }
+        if (labels.length > 0) {
+            searchPath.append("&labels=");
+            searchPath.append(Arrays
+                .stream(labels)
+                .map(l -> URLEncoder.encode(l, StandardCharsets.UTF_8))
+                .collect(Collectors.joining(","))
+            );
+        }
+
+        final URI search = URI.create(searchPath.toString());
+
+        LOG.debug("Searching for Gitlab Issues at: " + search);
+        final Resource resource = this.resources.get(search);
+
+        JsonArray results;
+        switch (resource.statusCode()) {
+            case HttpURLConnection.HTTP_OK:
+                LOG.debug("Search returned status 200 OK.");
+                results = resource.asJsonArray();
+                break;
+            default:
+                LOG.error(
+                    "Search returned status: " + resource.statusCode() + ". "
+                        + "Was expecting 200 OK! Returning 0 found issues..."
+                );
+                results = Json.createArrayBuilder().build();
+                break;
+        }
+
+        final List<Issue> found = new ArrayList<>();
+        for (final JsonValue issue : results) {
+            found.add(
+                this.received((JsonObject) issue)
+            );
+        }
+        return new FoundIssues(this, found);
     }
 
     @Override

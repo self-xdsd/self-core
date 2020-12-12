@@ -42,6 +42,8 @@ import java.util.List;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
+ * @todo #777:60min In GithubIssues#search() text and labels must be url encoded
+ *  when adding them to the search url.
  */
 final class GithubIssues implements Issues {
 
