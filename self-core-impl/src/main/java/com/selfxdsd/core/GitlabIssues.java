@@ -24,22 +24,26 @@ package com.selfxdsd.core;
 
 import com.selfxdsd.api.Issue;
 import com.selfxdsd.api.Issues;
+import com.selfxdsd.api.Repo;
 import com.selfxdsd.api.storage.Storage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.json.Json;
+import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 import java.net.HttpURLConnection;
 import java.net.URI;
+import java.util.Arrays;
 import java.util.Iterator;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 /**
  * Issues in a Gitlab repository.
  * @author criske
  * @version $Id$
  * @since 0.0.38
- * @todo #728:60min Implement and test method `open()` for
- *  GitlabIssues by following GithubIssues as model.
  * @todo #728:60min Implement and test method `search()` for
  *  GitlabIssues by following GithubIssues as model.
  */
@@ -63,6 +67,11 @@ final class GitlabIssues implements Issues {
     private final JsonResources resources;
 
     /**
+     * Parent Repo.
+     */
+    private final Repo repo;
+
+    /**
      * Self storage, in case we want to store something.
      */
     private final Storage storage;
@@ -72,15 +81,18 @@ final class GitlabIssues implements Issues {
      *
      * @param resources Gitlab's JSON Resources.
      * @param issuesUri Issues base URI.
+     * @param repo Parent repo.
      * @param storage Storage.
      */
     GitlabIssues(
         final JsonResources resources,
         final URI issuesUri,
+        final Repo repo,
         final Storage storage
     ) {
         this.resources = resources;
         this.issuesUri = issuesUri;
+        this.repo = repo;
         this.storage = storage;
     }
 
@@ -134,13 +146,62 @@ final class GitlabIssues implements Issues {
         );
     }
 
+    /**
+     * {@inheritDoc}
+     * <br>
+     * When opening an Issue, Gitlab will create the specified labels if they
+     * do not exist. However, they will all be blue.<br><br>
+     *
+     * Since we cannot specify the labels' color when opening an Issue,
+     * we first add them to the repository (where we can specify the color).
+     */
     @Override
     public Issue open(
         final String title,
         final String body,
         final String... labels
     ) {
-        throw new UnsupportedOperationException("Not implemented yet");
+        this.repo.labels().add(labels);
+        final Resource resource = this.resources.post(
+            this.issuesUri,
+            Json.createObjectBuilder()
+                .add("title", title)
+                .add("description", body)
+                .add(
+                    "labels",
+                    Arrays.stream(labels)
+                        .collect(Collectors.joining(","))
+                )
+                .build()
+        );
+        JsonObject jsonObject;
+        switch (resource.statusCode()) {
+            case HttpURLConnection.HTTP_CREATED:
+            case HttpURLConnection.HTTP_OK:
+                jsonObject = resource.asJsonObject();
+                break;
+            default:
+                throw new IllegalStateException(
+                    "Could not create Issue at [" + this.issuesUri + "]. "
+                    + "Expected status 201 CREATED or 200 OK, but received "
+                    + "status code: " + resource.statusCode()
+                );
+        }
+        Issue issue = null;
+        if(jsonObject != null){
+            issue = new WithContributorLabel(
+                new GitlabIssue(
+                    URI.create(
+                        this.issuesUri.toString() + "/"
+                            + jsonObject.getInt("iid")
+                    ),
+                    jsonObject,
+                    this.storage,
+                    this.resources
+                )
+            );
+        }
+        return issue;
     }
 
     @Override

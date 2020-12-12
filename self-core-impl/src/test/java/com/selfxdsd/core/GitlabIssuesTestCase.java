@@ -24,6 +24,7 @@ package com.selfxdsd.core;
 
 import com.selfxdsd.api.Issue;
 import com.selfxdsd.api.Issues;
+import com.selfxdsd.api.Repo;
 import com.selfxdsd.api.storage.Storage;
 import com.selfxdsd.core.mock.MockJsonResources;
 import org.hamcrest.MatcherAssert;
@@ -62,6 +63,7 @@ public final class GitlabIssuesTestCase {
         final Issue issue= new GitlabIssues(
             resources,
             URI.create("https://gitlab.com/api/v4/projects/john%2Ftest/issues"),
+            Mockito.mock(Repo.class),
             Mockito.mock(Storage.class)
         ).getById("1");
 
@@ -94,6 +96,7 @@ public final class GitlabIssuesTestCase {
         final Issue issue= new GitlabIssues(
             resources,
             URI.create("https://gitlab.com/api/v4/projects/john%2Ftest/issues"),
+            Mockito.mock(Repo.class),
             Mockito.mock(Storage.class)
         ).getById("1");
 
@@ -115,6 +118,7 @@ public final class GitlabIssuesTestCase {
         final Issue issue= new GitlabIssues(
             resources,
             URI.create("https://gitlab.com/api/v4/projects/john%2Ftest/issues"),
+            Mockito.mock(Repo.class),
             Mockito.mock(Storage.class)
         ).getById("1");
 
@@ -136,6 +140,7 @@ public final class GitlabIssuesTestCase {
         new GitlabIssues(
             resources,
             URI.create("https://gitlab.com/api/v4/projects/john%2Ftest/issues"),
+            Mockito.mock(Repo.class),
             Mockito.mock(Storage.class)
         ).getById("1");
     }
@@ -149,6 +154,7 @@ public final class GitlabIssuesTestCase {
         final Issues issues = new GitlabIssues(
             Mockito.mock(JsonResources.class),
             URI.create("https://gitlab.com/api/v4/projects/john%2Ftest/issues"),
+            Mockito.mock(Repo.class),
             Mockito.mock(Storage.class)
         );
         final JsonObject json = Json.createObjectBuilder()
@@ -180,6 +186,7 @@ public final class GitlabIssuesTestCase {
         new GitlabIssues(
             Mockito.mock(JsonResources.class),
             URI.create("https://gitlab.com/api/v4/projects/john%2Ftest/issues"),
+            Mockito.mock(Repo.class),
             Mockito.mock(Storage.class)
         ).open("", "", "");
     }
@@ -192,6 +199,7 @@ public final class GitlabIssuesTestCase {
         new GitlabIssues(
             Mockito.mock(JsonResources.class),
             URI.create("https://gitlab.com/api/v4/projects/john%2Ftest/issues"),
+            Mockito.mock(Repo.class),
             Mockito.mock(Storage.class)
         ).search("", "");
     }
@@ -204,6 +212,7 @@ public final class GitlabIssuesTestCase {
         new GitlabIssues(
             Mockito.mock(JsonResources.class),
             URI.create("https://gitlab.com/api/v4/projects/john%2Ftest/issues"),
+            Mockito.mock(Repo.class),
             Mockito.mock(Storage.class)
         ).iterator();
     }

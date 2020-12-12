@@ -125,7 +125,12 @@ final class GitlabRepo extends BaseRepo {
 
     @Override
     public Issues issues() {
-        throw new UnsupportedOperationException("Not yet implemented.");
+        return new GitlabIssues(
+            this.resources(),
+            URI.create(this.repoUri().toString() +"/issues"),
+            this,
+            this.storage()
+        );
     }
 
     @Override

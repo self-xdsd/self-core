@@ -141,6 +141,15 @@ final class GithubIssues implements Issues {
         );
     }
 
+    /**
+     * {@inheritDoc}
+     * <br>
+     * When opening an Issue, Github will create the specified labels if they
+     * do not exist. However, they will all be grey.<br><br>
+     *
+     * Since we cannot specify the labels' color when opening an Issue,
+     * we first add them to the repository (where we can specify the color).
+     */
     @Override
     public Issue open(
         final String title,
