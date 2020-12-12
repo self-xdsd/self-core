@@ -45,8 +45,6 @@ import java.net.URI;
  * @author criske
  * @version $Id$
  * @since 0.0.38
- * @todo #723:60min Implement and test method `unassign()` for
- *  GitlabIssue by following GithubIssue as model.
  * @todo #726:60min Start implementing GitlabComments by following
  *  GithubComments as model. These will be used by GitlabIssue.
  */
@@ -179,7 +177,7 @@ final class GitlabIssue implements Issue {
             } else {
                 LOG.debug(
                     "Problem while assigning user \"" + username + "\". "
-                        + "Expected 200 OK, but got " + resource.statusCode()
+                    + "Expected 200 OK, but got " + resource.statusCode()
                 );
                 assigned = false;
             }
@@ -187,9 +185,42 @@ final class GitlabIssue implements Issue {
         return assigned;
     }
 
+    /**
+     * {@inheritDoc}
+     * We just set the assignee_ids to empty via Edit Issue endpoint,
+     * and we will remove all assignees.<br><br>
+     *
+     * From Self XDSD's perspective, an Issue should always have only
+     * one assignee, so it's ok to remove all of them
+     * (there should be only one, anyway).
+     *
+     * @param username Assignee's username.
+     * @return True or false.
+     */
     @Override
     public boolean unassign(final String username) {
-        throw new UnsupportedOperationException("Not implemented yet");
+        LOG.debug(
+            "Removing assignees from Gitlab Issue ["
+            + this.issueUri + "]..."
+        );
+        final boolean unassigned;
+        final Resource resource = this.resources.put(
+            this.issueUri,
+            Json.createObjectBuilder()
+                .add("assignee_ids", "")
+                .build()
+        );
+        if (resource.statusCode() == HttpURLConnection.HTTP_OK) {
+            LOG.debug("Assignees removed successfully!");
+            unassigned = true;
+        } else {
+            LOG.debug(
+                "Problem while removing assignees. "
+                + "Expected 200 OK, but got " + resource.statusCode()
+            );
+            unassigned = false;
+        }
+        return unassigned;
     }
 
     @Override

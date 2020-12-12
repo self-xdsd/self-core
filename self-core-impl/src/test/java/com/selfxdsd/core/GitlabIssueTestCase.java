@@ -436,23 +436,6 @@ public final class GitlabIssueTestCase {
         MatcherAssert.assertThat(assigned, Matchers.is(false));
     }
 
-
-    /**
-     * GitlabIssue.unassign(...) is not implemented yet.
-     */
-    @Test(expected = UnsupportedOperationException.class)
-    public void unassignIsNotImplemented() {
-        new GitlabIssue(
-            URI.create("https://gitlab.com/api/v4/projects"
-                + "/john%2Ftest/issues/1"),
-            JsonObject.EMPTY_JSON_OBJECT,
-            Mockito.mock(Storage.class),
-            Mockito.mock(JsonResources.class)
-        ).unassign("");
-    }
-
-    
-
     /**
      * GitlabIssue.close() sends the right request.
      */
@@ -530,7 +513,46 @@ public final class GitlabIssueTestCase {
             )
         );
     }
-    
+
+    /**
+     * GitlabIssue.unassign(...) sends the right request.
+     */
+    @Test
+    public void unassignSendsRightRequest() {
+        final MockJsonResources resources = new MockJsonResources(
+            req -> new MockJsonResources.MockResource(
+                HttpURLConnection.HTTP_OK,
+                Json.createObjectBuilder().build()
+            )
+        );
+        final URI uri = URI.create(
+            "https://gitlab.com/api/v4/projects"
+            + "/john%2Ftest/issues/1"
+        );
+        final Issue issue = new GitlabIssue(
+            uri,
+            JsonObject.EMPTY_JSON_OBJECT,
+            Mockito.mock(Storage.class),
+            resources
+        );
+        issue.unassign("amihaiemil");
+        final MockJsonResources.MockRequest req = resources.requests().first();
+        MatcherAssert.assertThat(
+            req.getUri(), Matchers.equalTo(uri)
+        );
+        MatcherAssert.assertThat(
+            req.getMethod(), Matchers.equalTo("PUT")
+        );
+        MatcherAssert.assertThat(
+            req.getBody(),
+            Matchers.equalTo(
+                Json.createObjectBuilder()
+                    .add("assignee_ids", "")
+                    .build()
+            )
+        );
+    }
+
     /**
      * GitlabIssue can return its state flag.
      */
