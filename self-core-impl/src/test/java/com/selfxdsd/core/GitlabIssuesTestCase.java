@@ -177,19 +177,6 @@ public final class GitlabIssuesTestCase {
     }
 
     /**
-     * GitlabIssues.getById(...) is not implemented yet.
-     */
-    @Test(expected = UnsupportedOperationException.class)
-    public void searchIsNotImplemented() {
-        new GitlabIssues(
-            Mockito.mock(JsonResources.class),
-            URI.create("https://gitlab.com/api/v4/projects/john%2Ftest/issues"),
-            Mockito.mock(Repo.class),
-            Mockito.mock(Storage.class)
-        ).search("", "");
-    }
-
-    /**
      * Iterating over all Gitlab issues is not allowed.
      */
     @Test(expected = IllegalStateException.class)
@@ -406,5 +393,224 @@ public final class GitlabIssuesTestCase {
             .repo("amihaiemil", "repo")
             .issues()
             .open("Issue for test", "Body of the test Issue...");
+    }
+
+    /**
+     * GitlabIssues.search(...) can search a issues by title and labels.
+     */
+    @Test
+    public void searchesIssuesByTitleAndLabels(){
+        final User user = Mockito.mock(User.class);
+        Mockito.when(user.username()).thenReturn("amihaiemil");
+        final MockJsonResources resources = new MockJsonResources(
+            req -> new MockJsonResources.MockResource(
+                HttpURLConnection.HTTP_OK,
+                Json.createArrayBuilder()
+                    .add(Json.createObjectBuilder()
+                            .add("iid", 1)
+                            .build()
+                    ).build()
+            )
+        );
+        final Issues found = new Gitlab(
+            user,
+            Mockito.mock(Storage.class),
+            resources
+        ).repo("amihaiemil", "repo")
+            .issues()
+            .search("hello world", "help wanted", "todo");
+
+        MatcherAssert.assertThat(found, Matchers.allOf(
+            Matchers.iterableWithSize(1),
+            Matchers.instanceOf(FoundIssues.class)
+        ));
+        MatcherAssert.assertThat(found.iterator().next().issueId(),
+            Matchers.equalTo("1"));
+        MatcherAssert.assertThat(resources
+                .requests()
+                .first()
+                .getMethod(),
+            Matchers.equalTo("GET")
+        );
+        MatcherAssert.assertThat(resources
+                .requests()
+                .first()
+                .getUri()
+                .toString(),
+            Matchers.equalTo("https://gitlab.com/api/v4/projects/"
+                + "amihaiemil%2Frepo/issues/?per_page=100"
+                + "&search=hello+world"
+                + "&labels=help+wanted,todo")
+        );
+    }
+
+    /**
+     * GitlabIssues.search(...) can search a issues by title text.
+     */
+    @Test
+    public void searchesIssuesByTitle() {
+        final User user = Mockito.mock(User.class);
+        Mockito.when(user.username()).thenReturn("amihaiemil");
+        final MockJsonResources resources = new MockJsonResources(
+            req -> new MockJsonResources.MockResource(
+                HttpURLConnection.HTTP_OK,
+                Json.createArrayBuilder()
+                    .add(Json.createObjectBuilder()
+                        .add("iid", 1)
+                        .build()
+                    ).build()
+            )
+        );
+        final Issues found = new Gitlab(
+            user,
+            Mockito.mock(Storage.class),
+            resources
+        ).repo("amihaiemil", "repo")
+            .issues()
+            .search("hello world");
+
+        MatcherAssert.assertThat(found, Matchers.allOf(
+            Matchers.iterableWithSize(1),
+            Matchers.instanceOf(FoundIssues.class)
+        ));
+        MatcherAssert.assertThat(found.iterator().next().issueId(),
+            Matchers.equalTo("1"));
+        MatcherAssert.assertThat(resources
+                .requests()
+                .first()
+                .getMethod(),
+            Matchers.equalTo("GET")
+        );
+        MatcherAssert.assertThat(resources
+                .requests()
+                .first()
+                .getUri()
+                .toString(),
+            Matchers.equalTo("https://gitlab.com/api/v4/projects/"
+                + "amihaiemil%2Frepo/issues/?per_page=100"
+                + "&search=hello+world")
+        );
+    }
+
+    /**
+     * GitlabIssues.search(...) can search a issues by labels.
+     */
+    @Test
+    public void searchesIssuesByLabels(){
+        final User user = Mockito.mock(User.class);
+        Mockito.when(user.username()).thenReturn("amihaiemil");
+        final MockJsonResources resources = new MockJsonResources(
+            req -> new MockJsonResources.MockResource(
+                HttpURLConnection.HTTP_OK,
+                Json.createArrayBuilder()
+                    .add(Json.createObjectBuilder()
+                        .add("iid", 1)
+                        .build()
+                    ).build()
+            )
+        );
+        final Issues found = new Gitlab(
+            user,
+            Mockito.mock(Storage.class),
+            resources
+        ).repo("amihaiemil", "repo")
+            .issues()
+            .search(null, "help wanted", "todo");
+
+        MatcherAssert.assertThat(found, Matchers.allOf(
+            Matchers.iterableWithSize(1),
+            Matchers.instanceOf(FoundIssues.class)
+        ));
+        MatcherAssert.assertThat(found.iterator().next().issueId(),
+            Matchers.equalTo("1"));
+        MatcherAssert.assertThat(resources
+                .requests()
+                .first()
+                .getMethod(),
+            Matchers.equalTo("GET")
+        );
+        MatcherAssert.assertThat(resources
+                .requests()
+                .first()
+                .getUri()
+                .toString(),
+            Matchers.equalTo("https://gitlab.com/api/v4/projects/"
+                + "amihaiemil%2Frepo/issues/?per_page=100"
+                + "&labels=help+wanted,todo")
+        );
+    }
+
+    /**
+     * GitlabIssues.search(...) can search a issues by labels.
+     */
+    @Test
+    public void searchesIssuesAllWhenTitleAndLabelsMissing(){
+        final User user = Mockito.mock(User.class);
+        Mockito.when(user.username()).thenReturn("amihaiemil");
+        final MockJsonResources resources = new MockJsonResources(
+            req -> new MockJsonResources.MockResource(
+                HttpURLConnection.HTTP_OK,
+                Json.createArrayBuilder()
+                    .add(Json.createObjectBuilder()
+                        .add("iid", 1)
+                        .build()
+                    ).build()
+            )
+        );
+        final Issues found = new Gitlab(
+            user,
+            Mockito.mock(Storage.class),
+            resources
+        ).repo("amihaiemil", "repo")
+            .issues()
+            .search(null);
+
+        MatcherAssert.assertThat(found, Matchers.allOf(
+            Matchers.iterableWithSize(1),
+            Matchers.instanceOf(FoundIssues.class)
+        ));
+        MatcherAssert.assertThat(found.iterator().next().issueId(),
+            Matchers.equalTo("1"));
+        MatcherAssert.assertThat(resources
+                .requests()
+                .first()
+                .getMethod(),
+            Matchers.equalTo("GET")
+        );
+        MatcherAssert.assertThat(resources
+                .requests()
+                .first()
+                .getUri()
+                .toString(),
+            Matchers.equalTo("https://gitlab.com/api/v4/projects/"
+                + "amihaiemil%2Frepo/issues/?per_page=100")
+        );
+    }
+
+    /**
+     * GitlabIssues.search(...) returns empty issues if result code is other
+     * than HTTP_OK.
+     */
+    @Test
+    public void searchIssuesReturnsError(){
+        final User user = Mockito.mock(User.class);
+        Mockito.when(user.username()).thenReturn("amihaiemil");
+        final MockJsonResources resources = new MockJsonResources(
+            req -> new MockJsonResources.MockResource(
+                HttpURLConnection.HTTP_UNAVAILABLE,
+                JsonValue.NULL
+            )
+        );
+        final Issues found = new Gitlab(
+            user,
+            Mockito.mock(Storage.class),
+            resources
+        ).repo("amihaiemil", "repo")
+            .issues()
+            .search(null);
+        MatcherAssert.assertThat(found, Matchers.allOf(
+            Matchers.emptyIterable(),
+            Matchers.instanceOf(FoundIssues.class)
+        ));
     }
 }
