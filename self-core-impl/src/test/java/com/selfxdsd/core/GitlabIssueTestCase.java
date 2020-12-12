@@ -491,19 +491,44 @@ public final class GitlabIssueTestCase {
             )
         );
     }
-    
+
     /**
-     * Issue.reopen() is not implemented yet.
+     * GitlabIssue.reopen() sends the right request.
      */
-    @Test(expected = UnsupportedOperationException.class)
-    public void reopenIsNotImplemented() {
-        new GitlabIssue(
-            URI.create("https://gitlab.com/api/v4/projects"
-                + "/john%2Ftest/issues/1"),
+    @Test
+    public void reopenSendsRightRequest() {
+        final MockJsonResources resources = new MockJsonResources(
+            req -> new MockJsonResources.MockResource(
+                HttpURLConnection.HTTP_OK,
+                Json.createObjectBuilder().build()
+            )
+        );
+        final URI uri = URI.create(
+            "https://gitlab.com/api/v4/projects"
+            + "/john%2Ftest/issues/1"
+        );
+        final Issue issue = new GitlabIssue(
+            uri,
             JsonObject.EMPTY_JSON_OBJECT,
             Mockito.mock(Storage.class),
-            Mockito.mock(JsonResources.class)
-        ).reopen();
+            resources
+        );
+        issue.reopen();
+        final MockJsonResources.MockRequest req = resources.requests().first();
+        MatcherAssert.assertThat(
+            req.getUri(), Matchers.equalTo(uri)
+        );
+        MatcherAssert.assertThat(
+            req.getMethod(), Matchers.equalTo("PUT")
+        );
+        MatcherAssert.assertThat(
+            req.getBody(),
+            Matchers.equalTo(
+                Json.createObjectBuilder()
+                    .add("state_event", "reopen")
+                    .build()
+            )
+        );
     }
     
     /**

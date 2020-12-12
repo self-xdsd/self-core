@@ -47,8 +47,6 @@ import java.net.URI;
  * @since 0.0.38
  * @todo #723:60min Implement and test method `unassign()` for
  *  GitlabIssue by following GithubIssue as model.
- * @todo #725:60min Implement and test method `reopen()` for
- *  GitlabIssue by following GithubIssue as model.
  * @todo #726:60min Start implementing GitlabComments by following
  *  GithubComments as model. These will be used by GitlabIssue.
  */
@@ -163,7 +161,7 @@ final class GitlabIssue implements Issue {
     public boolean assign(final String username) {
         LOG.debug(
             "Assigning user " + username + " to Issue ["
-                + this.issueUri + "]..."
+            + this.issueUri + "]..."
         );
         boolean assigned = false;
         final Integer userId = this.findUserId(username);
@@ -232,9 +230,32 @@ final class GitlabIssue implements Issue {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     * <br/>
+     * For Gitlab, reopening is done via
+     * <a href="https://docs.gitlab.com/ee/api/issues.html#edit-issue">
+     *     updating the issue</a> with `state_event` attribute set to `reopen`.
+     */
     @Override
     public void reopen() {
-        throw new UnsupportedOperationException("Not implemented yet");
+        LOG.debug(
+            "Reopening GitLab Issue [" + this.issueUri + "]..."
+        );
+        final Resource resource = this.resources.put(
+            this.issueUri,
+            Json.createObjectBuilder()
+                .add("state_event", "reopen")
+                .build()
+        );
+        if (resource.statusCode() == HttpURLConnection.HTTP_OK) {
+            LOG.debug("Issue reopened successfully!");
+        } else {
+            LOG.error(
+                "Problem while reopening Issue. "
+                + "Expected 200 OK, but got " + resource.statusCode()
+            );
+        }
     }
 
     @Override
