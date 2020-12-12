@@ -46,6 +46,11 @@ import java.util.stream.Collectors;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.39
+ * @todo #723:30min Similarly to how GithubIssueLabels.add(...) is implemented,
+ *  we should modify the add(...) method here to first add the labels to the
+ *  repository, so they are colored differently. At the moment, they will
+ *  automatically be created by Gitlab at Repo level, but they will always be
+ *  blue.
  */
 final class GitlabIssueLabels implements Labels {
 
