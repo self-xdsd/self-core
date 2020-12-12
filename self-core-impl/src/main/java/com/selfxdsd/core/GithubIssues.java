@@ -32,6 +32,8 @@ import org.slf4j.LoggerFactory;
 import javax.json.*;
 import java.net.HttpURLConnection;
 import java.net.URI;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -42,8 +44,6 @@ import java.util.List;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
- * @todo #777:60min In GithubIssues#search() text and labels must be url encoded
- *  when adding them to the search url.
  */
 final class GithubIssues implements Issues {
 
@@ -208,13 +208,15 @@ final class GithubIssues implements Issues {
 
         String query;
         if(text != null && !text.trim().isEmpty()) {
-            query = "q=" + text + "+repo:" + repoFullName;
+            query = "q=" + URLEncoder.encode(text,  StandardCharsets.UTF_8)
+                + "+repo:" + repoFullName;
         } else {
             query = "q=repo:" + repoFullName;
         }
 
         for(final String label : labels) {
-            query = query + "+label:" + label;
+            query = query + "+label:" + URLEncoder
+                .encode(label, StandardCharsets.UTF_8);
         }
 
         final URI search = URI

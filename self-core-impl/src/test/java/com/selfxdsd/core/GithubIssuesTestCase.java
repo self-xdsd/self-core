@@ -304,8 +304,9 @@ public final class GithubIssuesTestCase {
                         req.getUri().toString(),
                         Matchers.equalTo(
                             "https://api.github.com/search/issues?"
-                            + "q=test+repo:amihaiemil/repo+label:puzzle"
-                            + "&sort=created&order=desc&per_page=100"
+                                + "q=hello+world+repo:amihaiemil/repo+label:"
+                                + "help+wanted"
+                                + "&sort=created&order=desc&per_page=100"
                         )
                     );
                     return new MockJsonResources.MockResource(
@@ -334,7 +335,7 @@ public final class GithubIssuesTestCase {
         final Issues found = provider
             .repo("amihaiemil", "repo")
             .issues()
-            .search("test", "puzzle");
+            .search("hello world", "help wanted");
         MatcherAssert.assertThat(
             found, Matchers.iterableWithSize(3)
         );
