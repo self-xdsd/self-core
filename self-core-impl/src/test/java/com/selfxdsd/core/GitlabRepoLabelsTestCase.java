@@ -24,12 +24,10 @@ package com.selfxdsd.core;
 
 import com.selfxdsd.api.Label;
 import com.selfxdsd.api.Labels;
-import com.selfxdsd.api.Repo;
 import com.selfxdsd.core.mock.MockJsonResources;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
-import org.mockito.Mockito;
 
 import javax.json.Json;
 import javax.json.JsonObject;
@@ -67,7 +65,7 @@ public final class GitlabRepoLabelsTestCase {
         );
 
         final Iterable<Label> iterable = () -> new GitlabRepoLabels(
-            uri, resources, Mockito.mock(Repo.class)
+            uri, resources
         ).iterator();
 
         MatcherAssert.assertThat(
@@ -98,13 +96,8 @@ public final class GitlabRepoLabelsTestCase {
             "https://gitlab.com/api/v4/projects/"
             + "/amihaiemil%2Ftestrepo/labels"
         );
-        final JsonObject repoJson = Json.createObjectBuilder()
-            .add("id", 123)
-            .build();
-        final Repo repo = Mockito.mock(Repo.class);
-        Mockito.when(repo.json()).thenReturn(repoJson);
         final Labels repoLabels = new GitlabRepoLabels(
-            uri, resources, repo
+            uri, resources
         );
         MatcherAssert.assertThat(
             repoLabels.add("bugLabel"),
@@ -116,10 +109,6 @@ public final class GitlabRepoLabelsTestCase {
             request.getMethod(), Matchers.equalTo("POST")
         );
         final JsonObject body = (JsonObject) request.getBody();
-        MatcherAssert.assertThat(
-            body.getInt("id"),
-            Matchers.equalTo(123)
-        );
         MatcherAssert.assertThat(
             body.getString("name"),
             Matchers.equalTo("bugLabel")
@@ -156,7 +145,7 @@ public final class GitlabRepoLabelsTestCase {
         );
 
         new GitlabRepoLabels(
-            uri, resources, Mockito.mock(Repo.class)
+            uri, resources
         ).remove("bug");
 
         MatcherAssert.assertThat(

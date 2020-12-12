@@ -162,8 +162,7 @@ final class GitlabRepo extends BaseRepo {
     public Labels labels() {
         return new GitlabRepoLabels(
             URI.create(this.repoUri().toString() + "/labels"),
-            this.resources(),
-            this
+            this.resources()
         );
     }
 }

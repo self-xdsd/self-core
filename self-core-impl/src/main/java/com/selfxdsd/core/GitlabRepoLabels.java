@@ -24,7 +24,6 @@ package com.selfxdsd.core;
 
 import com.selfxdsd.api.Label;
 import com.selfxdsd.api.Labels;
-import com.selfxdsd.api.Repo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -63,24 +62,16 @@ final class GitlabRepoLabels implements Labels {
     private final JsonResources resources;
 
     /**
-     * Repo.
-     */
-    private final Repo repo;
-
-    /**
      * Ctor.
      * @param repoLabelsUri Repo Labels URI.
      * @param resources Resources.
-     * @param repo Repo.
      */
     GitlabRepoLabels(
         final URI repoLabelsUri,
-        final JsonResources resources,
-        final Repo repo
+        final JsonResources resources
     ) {
         this.resources = resources;
         this.repoLabelsUri = repoLabelsUri;
-        this.repo = repo;
     }
 
     @Override
@@ -94,7 +85,6 @@ final class GitlabRepoLabels implements Labels {
             final Resource resource = this.resources.post(
                 this.repoLabelsUri,
                 Json.createObjectBuilder()
-                    .add("id", this.repo.json().getInt("id"))
                     .add("name", name)
                     .add("color", "#" + this.randomColor())
                     .build()
