@@ -70,14 +70,42 @@ public final class GitlabIssueLabelsTestCase {
             labels.add("blue", "red", "green"),
             Matchers.is(Boolean.TRUE)
         );
-        MockJsonResources.MockRequest request = resources.requests().first();
-        MatcherAssert.assertThat(request.getUri(), Matchers.equalTo(uri));
+        MockJsonResources.MockRequest addBlueLabel = resources.requests()
+            .atIndex(0);
         MatcherAssert.assertThat(
-            request.getMethod(), Matchers.equalTo("PUT")
+            addBlueLabel.getUri(),
+            Matchers.equalTo(
+                URI.create(
+                    "https://gitlab.com/api/v4/projects/"
+                    + "/amihaiemil%2Ftestrepo/labels"
+                )
+            )
         );
-        final JsonObject body = (JsonObject) request.getBody();
         MatcherAssert.assertThat(
-            body.getString("add_labels"),
+            addBlueLabel.getMethod(), Matchers.equalTo("POST")
+        );
+        final JsonObject body = (JsonObject) addBlueLabel.getBody();
+        MatcherAssert.assertThat(
+            body.getString("name"),
+            Matchers.equalTo("blue")
+        );
+        MatcherAssert.assertThat(
+            body.getString("color").length(),
+            Matchers.equalTo(7)
+        );
+
+        MockJsonResources.MockRequest addIssueLabels = resources.requests()
+            .atIndex(3);
+        MatcherAssert.assertThat(
+            addIssueLabels.getUri(), Matchers.equalTo(uri)
+        );
+        MatcherAssert.assertThat(
+            addIssueLabels.getMethod(), Matchers.equalTo("PUT")
+        );
+        final JsonObject bodyAddIssueLabel = (JsonObject) addIssueLabels
+            .getBody();
+        MatcherAssert.assertThat(
+            bodyAddIssueLabel.getString("add_labels"),
             Matchers.equalTo("blue,red,green")
         );
     }
