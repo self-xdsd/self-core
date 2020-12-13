@@ -100,7 +100,6 @@ final class GitlabIssueLabels implements Labels {
         final boolean added;
         final String labels = Arrays.stream(names)
             .collect(Collectors.joining(","));
-        System.out.println("Issue Labels: " + this.uri.toString());
         LOG.debug(
             "Adding labels [" + labels + "] to GitLab Issue ["
             + this.uri + "]..."
