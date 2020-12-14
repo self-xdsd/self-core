@@ -76,6 +76,7 @@ public final class AssignTaskToIssueAssignee extends Intermediary {
                 + " assigned to Contributor @" + assignee
                 + " who was already assigned to the Issue."
             );
+            issue.labels().add("@" + assignee);
             final String comment = String.format(
                 project.language().reply("taskAssigned.comment"),
                 assignee,

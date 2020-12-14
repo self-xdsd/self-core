@@ -48,12 +48,14 @@ public final class AssignTaskToIssueAssigneeTestCase {
         final Contributor contributor = Mockito.mock(Contributor.class);
         Mockito.when(task.assign(contributor)).thenReturn(assigned);
 
+        final Labels issueLabels = Mockito.mock(Labels.class);
         final Issue issue = Mockito.mock(Issue.class);
         Mockito.when(issue.issueId()).thenReturn("123");
         Mockito.when(issue.assignee()).thenReturn("mihai");
         Mockito.when(issue.comments()).thenReturn(
             Mockito.mock(Comments.class)
         );
+        Mockito.when(issue.labels()).thenReturn(issueLabels);
 
         final Tasks ofProject = Mockito.mock(Tasks.class);
         Mockito.when(
@@ -83,6 +85,10 @@ public final class AssignTaskToIssueAssigneeTestCase {
         assignTask.perform(event);
 
         Mockito.verify(task, Mockito.times(1)).assign(contributor);
+        Mockito.verify(
+            issueLabels,
+            Mockito.times(1)
+        ).add("@mihai");
         Mockito.verify(next, Mockito.times(1)).perform(event);
     }
 
