@@ -1332,7 +1332,6 @@ public final class StoredProjectManagerTestCase {
         Mockito.verify(active, Mockito.times(1))
             .register(task, BigDecimal.valueOf(80.0)
                 .setScale(2, RoundingMode.HALF_UP));
-        Mockito.verify(all, Mockito.times(1)).remove(task);
         Mockito.verify(comments, Mockito.times(1)).post(Mockito.anyString());
     }
 

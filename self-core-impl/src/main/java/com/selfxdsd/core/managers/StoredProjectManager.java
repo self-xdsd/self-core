@@ -474,7 +474,6 @@ public final class StoredProjectManager implements ProjectManager {
                                 assignee.username()
                             )
                         );
-                        this.storage.tasks().remove(task);
                         if(issue.assignee() != null) {
                             issue.unassign(issue.assignee());
                         }
