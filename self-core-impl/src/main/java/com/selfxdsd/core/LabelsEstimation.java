@@ -47,7 +47,7 @@ final class LabelsEstimation implements Estimation {
      * Label regex.
      * @checkstyle LineLength (5 lines)
      */
-    private static final String ESTIMATION = "^([1-9]+[0-9]*)[ ]*(minutes|min|m)$";
+    private static final String ESTIMATION = "^([1-9][0-9]{0,5})[ ]*(minutes|min|m)$";
 
     /**
      * Maximum estimation allowed.

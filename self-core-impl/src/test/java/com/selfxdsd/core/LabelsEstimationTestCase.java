@@ -188,4 +188,90 @@ public final class LabelsEstimationTestCase {
             Matchers.equalTo(360)
         );
     }
+
+    /**
+     * Huge numbers are ignored and the default estimation is returned.
+     */
+    @Test
+    public void returnsDefaultOnHugeNumber() {
+        final Issue issue = Mockito.mock(Issue.class);
+        Mockito.when(issue.isPullRequest()).thenReturn(Boolean.TRUE);
+        final Label label = Mockito.mock(Label.class);
+        Mockito.when(label.name()).thenReturn(
+            "100000000000000000000000000000000 min"
+        );
+        final Labels labels = Mockito.mock(Labels.class);
+        Mockito.when(labels.iterator()).thenReturn(List.of(label).iterator());
+        Mockito.when(issue.labels()).thenReturn(labels);
+
+        final Estimation est = new LabelsEstimation(issue);
+
+        MatcherAssert.assertThat(
+            est.minutes(),
+            Matchers.equalTo(30)
+        );
+    }
+
+    /**
+     * Comma numbers are ignored and the default estimation is returned.
+     */
+    @Test
+    public void returnsDefaultOnCommaNumber() {
+        final Issue issue = Mockito.mock(Issue.class);
+        Mockito.when(issue.isPullRequest()).thenReturn(Boolean.TRUE);
+        final Label label = Mockito.mock(Label.class);
+        Mockito.when(label.name()).thenReturn("60.35 min");
+        final Labels labels = Mockito.mock(Labels.class);
+        Mockito.when(labels.iterator()).thenReturn(List.of(label).iterator());
+        Mockito.when(issue.labels()).thenReturn(labels);
+
+        final Estimation est = new LabelsEstimation(issue);
+
+        MatcherAssert.assertThat(
+            est.minutes(),
+            Matchers.equalTo(30)
+        );
+    }
+
+    /**
+     * Negative numbers are ignored and the default estimation is returned.
+     */
+    @Test
+    public void returnsDefaultOnNegativeNumber() {
+        final Issue issue = Mockito.mock(Issue.class);
+        Mockito.when(issue.isPullRequest()).thenReturn(Boolean.TRUE);
+        final Label label = Mockito.mock(Label.class);
+        Mockito.when(label.name()).thenReturn("-30 min");
+        final Labels labels = Mockito.mock(Labels.class);
+        Mockito.when(labels.iterator()).thenReturn(List.of(label).iterator());
+        Mockito.when(issue.labels()).thenReturn(labels);
+
+        final Estimation est = new LabelsEstimation(issue);
+
+        MatcherAssert.assertThat(
+            est.minutes(),
+            Matchers.equalTo(30)
+        );
+    }
+
+    /**
+     * Zero estimation is ignored and the default estimation is returned.
+     */
+    @Test
+    public void returnsDefaultOnZero() {
+        final Issue issue = Mockito.mock(Issue.class);
+        Mockito.when(issue.isPullRequest()).thenReturn(Boolean.TRUE);
+        final Label label = Mockito.mock(Label.class);
+        Mockito.when(label.name()).thenReturn("0 min");
+        final Labels labels = Mockito.mock(Labels.class);
+        Mockito.when(labels.iterator()).thenReturn(List.of(label).iterator());
+        Mockito.when(issue.labels()).thenReturn(labels);
+
+        final Estimation est = new LabelsEstimation(issue);
+
+        MatcherAssert.assertThat(
+            est.minutes(),
+            Matchers.equalTo(30)
+        );
+    }
 }
