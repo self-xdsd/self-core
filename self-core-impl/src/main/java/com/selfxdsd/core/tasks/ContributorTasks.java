@@ -18,6 +18,7 @@ import java.util.stream.Stream;
  * @author criske
  * @version $Id$
  * @since 0.0.1
+ * @checkstyle LineLength (200 lines)
  */
 public final class ContributorTasks implements Tasks {
 
@@ -65,8 +66,8 @@ public final class ContributorTasks implements Tasks {
                         final String provider) {
         return this.tasks.get()
             .filter(t -> t.issueId().equals(issueId)
-                && t.project().repoFullName().equals(repoFullName)
-                && t.project().provider().equals(provider))
+                && t.project().repoFullName().equalsIgnoreCase(repoFullName)
+                && t.project().provider().equalsIgnoreCase(provider))
             .findFirst()
             .orElse(null);
     }
@@ -88,8 +89,8 @@ public final class ContributorTasks implements Tasks {
     @Override
     public Task unassign(final Task task) {
         final boolean isOfContributor = task.assignee() != null
-            && task.assignee().username().equals(this.username)
-            && task.assignee().provider().equals(this.provider);
+            && task.assignee().username().equalsIgnoreCase(this.username)
+            && task.assignee().provider().equalsIgnoreCase(this.provider);
         if (!isOfContributor) {
             throw new TasksException.OfContributor
                 .NotFound(this.username, this.provider);
@@ -101,8 +102,8 @@ public final class ContributorTasks implements Tasks {
     public Tasks ofProject(final String repoFullName,
                            final String repoProvider) {
         final Supplier<Stream<Task>> ofProject = () -> tasks.get()
-            .filter(t -> t.project().repoFullName().equals(repoFullName)
-                && t.project().provider().equals(provider));
+            .filter(t -> t.project().repoFullName().equalsIgnoreCase(repoFullName)
+                && t.project().provider().equalsIgnoreCase(provider));
         return new ProjectTasks(repoFullName, provider, ofProject, storage);
     }
 
@@ -111,8 +112,8 @@ public final class ContributorTasks implements Tasks {
         final String username,
         final String provider
     ) {
-        if (this.username.equals(username)
-            && this.provider.equals(provider)) {
+        if (this.username.equalsIgnoreCase(username)
+            && this.provider.equalsIgnoreCase(provider)) {
             return this;
         }
         throw new TasksException.OfContributor.List(username, provider);
@@ -123,8 +124,8 @@ public final class ContributorTasks implements Tasks {
         final Supplier<Stream<Task>> tasksOf = () -> this.tasks
             .get()
             .filter(
-                t -> t.project().repoFullName().equals(id.getRepoFullName())
-                    && t.project().provider().equals(id.getProvider())
+                t -> t.project().repoFullName().equalsIgnoreCase(id.getRepoFullName())
+                    && t.project().provider().equalsIgnoreCase(id.getProvider())
                     && t.assignee().username()
                     .endsWith(id.getContributorUsername())
                     && t.role().equals(id.getRole()));

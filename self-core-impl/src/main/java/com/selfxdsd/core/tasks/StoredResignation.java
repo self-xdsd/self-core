@@ -112,7 +112,7 @@ public final class StoredResignation implements Resignation {
         }
         final Resignation other = (Resignation) obj;
         return this.contributor.username()
-            .equals(other.contributor().username()) && this.task
+            .equalsIgnoreCase(other.contributor().username()) && this.task
             .equals(other.task());
     }
 }

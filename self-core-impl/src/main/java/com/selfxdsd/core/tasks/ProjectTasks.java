@@ -40,6 +40,7 @@ import java.util.stream.Stream;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
+ * @checkstyle LineLength (200 lines)
  */
 public final class ProjectTasks implements Tasks {
 
@@ -90,15 +91,15 @@ public final class ProjectTasks implements Tasks {
     ) {
         return this.tasks.get().filter(
             task -> task.issueId().equals(issueId)
-                && task.project().repoFullName().equals(repoFullName)
-                && task.project().provider().equals(provider)
+                && task.project().repoFullName().equalsIgnoreCase(repoFullName)
+                && task.project().provider().equalsIgnoreCase(provider)
         ).findFirst().orElse(null);
     }
 
     @Override
     public Task register(final Issue issue) {
-        if(!this.repoFullName.equals(issue.repoFullName())
-            || !this.provider.equals(issue.provider())) {
+        if(!this.repoFullName.equalsIgnoreCase(issue.repoFullName())
+            || !this.provider.equalsIgnoreCase(issue.provider())) {
             throw new TasksException.OfProject.Add(
                 this.repoFullName,
                 this.provider
@@ -120,8 +121,8 @@ public final class ProjectTasks implements Tasks {
     @Override
     public Task unassign(final Task task) {
         final boolean isOfProject = task.project().repoFullName()
-            .equals(this.repoFullName) && task.project().provider()
-            .equals(this.provider);
+            .equalsIgnoreCase(this.repoFullName) && task.project().provider()
+            .equalsIgnoreCase(this.provider);
         if (!isOfProject) {
             throw new TasksException.OfProject.NotFound(
                 this.repoFullName,
@@ -136,8 +137,8 @@ public final class ProjectTasks implements Tasks {
         final String repoFullName,
         final String repoProvider
     ) {
-        if(this.repoFullName.equals(repoFullName)
-            && this.provider.equals(repoProvider)) {
+        if(this.repoFullName.equalsIgnoreCase(repoFullName)
+            && this.provider.equalsIgnoreCase(repoProvider)) {
             return this;
         }
         throw new TasksException.OfProject.List(repoFullName, repoProvider);
@@ -148,8 +149,8 @@ public final class ProjectTasks implements Tasks {
         final Supplier<Stream<Task>> ofContributor = () -> tasks
             .get()
             .filter(t -> t.assignee() != null
-                && t.assignee().username().equals(username)
-                && t.assignee().provider().equals(provider));
+                && t.assignee().username().equalsIgnoreCase(username)
+                && t.assignee().provider().equalsIgnoreCase(provider));
         return new ContributorTasks(username, provider, ofContributor, storage);
     }
 
@@ -157,8 +158,8 @@ public final class ProjectTasks implements Tasks {
     public Tasks ofContract(final Contract.Id id) {
         final Supplier<Stream<Task>> tasksOf = () -> this.tasks
             .get()
-            .filter(t -> t.project().repoFullName().equals(id.getRepoFullName())
-                && t.project().provider().equals(id.getProvider())
+            .filter(t -> t.project().repoFullName().equalsIgnoreCase(id.getRepoFullName())
+                && t.project().provider().equalsIgnoreCase(id.getProvider())
                 && t.assignee().username().endsWith(id.getContributorUsername())
                 && t.role().equals(id.getRole()));
         return new ContractTasks(id, tasksOf, this.storage);
@@ -168,8 +169,8 @@ public final class ProjectTasks implements Tasks {
     public Tasks unassigned() {
         final Supplier<Stream<Task>> unassigned = () -> tasks.get()
             .filter(t -> t.assignee() == null
-                && t.project().repoFullName().equals(repoFullName)
-                && t.project().provider().equals(provider));
+                && t.project().repoFullName().equalsIgnoreCase(repoFullName)
+                && t.project().provider().equalsIgnoreCase(provider));
         return new UnassignedTasks(unassigned, storage);
     }
 

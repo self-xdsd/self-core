@@ -239,9 +239,9 @@ public final class StoredProject implements Project {
             LOG.error("Problem while removing webhooks.");
         }
         final String user;
-        if(Provider.Names.GITHUB.equals(provider)) {
+        if(Provider.Names.GITHUB.equalsIgnoreCase(provider)) {
             user = this.projectManager.username();
-        } else if (Provider.Names.GITLAB.equals(provider)) {
+        } else if (Provider.Names.GITLAB.equalsIgnoreCase(provider)) {
             user = this.projectManager.userId();
         } else {
             throw new IllegalStateException(
@@ -338,7 +338,7 @@ public final class StoredProject implements Project {
             return false;
         }
         final Project other = (Project) obj;
-        return this.repoFullName.equals(other.repoFullName())
-            && this.provider().equals(other.provider());
+        return this.repoFullName.equalsIgnoreCase(other.repoFullName())
+            && this.provider().equalsIgnoreCase(other.provider());
     }
 }

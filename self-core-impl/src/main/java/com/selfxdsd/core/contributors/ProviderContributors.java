@@ -98,7 +98,7 @@ public final class ProviderContributors extends BasePaged
         final String username,
         final String provider
     ) {
-        if(!provider.equals(this.provider)) {
+        if(!provider.equalsIgnoreCase(this.provider)) {
             throw new ContributorsException.OfProvider.Add(this.provider);
         }
         return this.storage.contributors().register(username, provider);
@@ -113,8 +113,8 @@ public final class ProviderContributors extends BasePaged
         return this.contributors.get()
             .skip((page.getNumber() - 1) * page.getSize())
             .limit(page.getSize())
-            .filter(c -> c.username().equals(username)
-                && c.provider().equals(provider))
+            .filter(c -> c.username().equalsIgnoreCase(username)
+                && c.provider().equalsIgnoreCase(provider))
             .findFirst()
             .orElse(null);
     }
@@ -124,7 +124,7 @@ public final class ProviderContributors extends BasePaged
         final String repoFullName,
         final String repoProvider
     ) {
-        if(!this.provider.equals(repoProvider)) {
+        if(!this.provider.equalsIgnoreCase(repoProvider)) {
             throw new ContributorsException.OfProvider.List(this.provider);
         }
         final Project project = this.storage
@@ -144,7 +144,7 @@ public final class ProviderContributors extends BasePaged
 
     @Override
     public Contributors ofProvider(final String provider) {
-        if(!this.provider.equals(provider)) {
+        if(!this.provider.equalsIgnoreCase(provider)) {
             throw new ContributorsException.OfProvider.List(this.provider);
         }
         return this;

@@ -38,6 +38,7 @@ import java.util.stream.Stream;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
+ * @checkstyle LineLength (200 lines)
  * @todo #59:30min Implement and test method register(...).
  *  It should register the repo with respect to the fact that
  *  this is a User's Projects, meaning the given Repo has to
@@ -102,8 +103,8 @@ public final class UserProjects extends BasePaged implements Projects {
 
     @Override
     public Projects ownedBy(final User usr) {
-        if(this.user.username().equals(usr.username())
-            && this.user.provider().name().equals(usr.provider().name())) {
+        if(this.user.username().equalsIgnoreCase(usr.username())
+            && this.user.provider().name().equalsIgnoreCase(usr.provider().name())) {
             return this;
         }
         throw new IllegalStateException(
@@ -121,8 +122,8 @@ public final class UserProjects extends BasePaged implements Projects {
             .get()
             .skip((page.getNumber() - 1) * page.getSize())
             .limit(page.getSize())
-            .filter(p -> p.repoFullName().equals(repoFullName)
-                && p.provider().equals(repoProvider))
+            .filter(p -> p.repoFullName().equalsIgnoreCase(repoFullName)
+                && p.provider().equalsIgnoreCase(repoProvider))
             .findFirst()
             .orElse(null);
     }
@@ -135,8 +136,8 @@ public final class UserProjects extends BasePaged implements Projects {
     @Override
     public void remove(final Project project) {
         final User owner = project.owner();
-        if(this.user.username().equals(owner.username())
-            && this.user.provider().name().equals(owner.provider().name())) {
+        if(this.user.username().equalsIgnoreCase(owner.username())
+            && this.user.provider().name().equalsIgnoreCase(owner.provider().name())) {
             project.deactivate(project.repo());
         } else {
             throw new IllegalStateException(

@@ -265,10 +265,10 @@ public interface Contract {
             }
             final Id id = (Id) object;
             //@checkstyle LineLength (5 lines)
-            return this.repoFullName.equals(id.repoFullName)
-                && this.contributorUsername.equals(id.contributorUsername)
-                && this.provider.equals(id.provider)
-                && this.role.equals(id.role);
+            return this.repoFullName.equalsIgnoreCase(id.repoFullName)
+                && this.contributorUsername.equalsIgnoreCase(id.contributorUsername)
+                && this.provider.equalsIgnoreCase(id.provider)
+                && this.role.equalsIgnoreCase(id.role);
         }
 
         @Override

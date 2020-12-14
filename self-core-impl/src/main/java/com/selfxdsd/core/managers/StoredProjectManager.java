@@ -178,7 +178,7 @@ public final class StoredProjectManager implements ProjectManager {
     @Override
     public Provider provider() {
         final Provider provider;
-        if (this.provider.equals(Provider.Names.GITHUB)) {
+        if (this.provider.equalsIgnoreCase(Provider.Names.GITHUB)) {
             provider = new Github(new PmUser(this), this.storage);
         } else {
             provider = new Gitlab(new PmUser(this), this.storage);

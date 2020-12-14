@@ -208,7 +208,7 @@ public final class StoredContributor implements Contributor {
             return false;
         }
         final Contributor other = (Contributor) obj;
-        return this.username.equals(other.username())
-            && this.provider.equals(other.provider());
+        return this.username.equalsIgnoreCase(other.username())
+            && this.provider.equalsIgnoreCase(other.provider());
     }
 }

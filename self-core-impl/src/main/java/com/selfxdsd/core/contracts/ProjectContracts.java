@@ -91,8 +91,8 @@ public final class ProjectContracts implements Contracts {
         final String repoFullName,
         final String repoProvider
     ) {
-        if(this.repoFullName.equals(repoFullName)
-            && this.provider.equals(repoProvider)
+        if(this.repoFullName.equalsIgnoreCase(repoFullName)
+            && this.provider.equalsIgnoreCase(repoProvider)
         ) {
             return this;
         }
@@ -107,11 +107,11 @@ public final class ProjectContracts implements Contracts {
             .filter(contract -> contract
                 .contributor()
                 .username()
-                .equals(contributor.username())
+                .equalsIgnoreCase(contributor.username())
                 && contract
                 .contributor()
                 .provider()
-                .equals(contributor.provider()))
+                .equalsIgnoreCase(contributor.provider()))
             .collect(Collectors.toList());
         return new ContributorContracts(
             contributor, ofContributor::stream, this.storage
@@ -126,8 +126,8 @@ public final class ProjectContracts implements Contracts {
         final BigDecimal hourlyRate,
         final String role
     ) {
-        if(!this.repoFullName.equals(repoFullName)
-            || !this.provider.equals(provider)
+        if(!this.repoFullName.equalsIgnoreCase(repoFullName)
+            || !this.provider.equalsIgnoreCase(provider)
         ) {
             throw new ContractsException.OfProject.Add(this.repoFullName,
                 this.provider);
@@ -159,8 +159,8 @@ public final class ProjectContracts implements Contracts {
         final BigDecimal hourlyRate
     ) {
         final Contract.Id cid = contract.contractId();
-        if(!this.repoFullName.equals(cid.getRepoFullName())
-            || !this.provider.equals(cid.getProvider())
+        if(!this.repoFullName.equalsIgnoreCase(cid.getRepoFullName())
+            || !this.provider.equalsIgnoreCase(cid.getProvider())
         ) {
             throw new ContractsException.OfProject.Update(
                 this.repoFullName,
@@ -177,8 +177,8 @@ public final class ProjectContracts implements Contracts {
         final LocalDateTime time
     ) {
         final Contract.Id cid = contract.contractId();
-        if(!this.repoFullName.equals(cid.getRepoFullName())
-            || !this.provider.equals(cid.getProvider())
+        if(!this.repoFullName.equalsIgnoreCase(cid.getRepoFullName())
+            || !this.provider.equalsIgnoreCase(cid.getProvider())
         ) {
             throw new ContractsException.OfProject.Delete(
                 this.repoFullName,
@@ -199,8 +199,8 @@ public final class ProjectContracts implements Contracts {
     public void remove(final Contract contract) {
         final Contract.Id cid = contract.contractId();
         if (
-            !this.repoFullName.equals(cid.getRepoFullName())
-                || !this.provider.equals(cid.getProvider())
+            !this.repoFullName.equalsIgnoreCase(cid.getRepoFullName())
+                || !this.provider.equalsIgnoreCase(cid.getProvider())
         ) {
             throw new ContractsException.OfProject.Delete(
                 this.repoFullName,

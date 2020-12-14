@@ -120,7 +120,7 @@ public final class ProjectContributors extends BasePaged
         final String username,
         final String provider
     ) {
-        if(!provider.equals(this.provider)) {
+        if(!provider.equalsIgnoreCase(this.provider)) {
             throw new ContributorsException.OfProject
                 .Add(this.repoFullName, this.provider);
         }
@@ -146,8 +146,8 @@ public final class ProjectContributors extends BasePaged
         return this.contributors.get()
             .skip((page.getNumber() - 1) * page.getSize())
             .limit(page.getSize())
-            .filter(c -> c.username().equals(username)
-                && c.provider().equals(provider))
+            .filter(c -> c.username().equalsIgnoreCase(username)
+                && c.provider().equalsIgnoreCase(provider))
             .findFirst()
             .orElse(null);
     }
@@ -157,8 +157,8 @@ public final class ProjectContributors extends BasePaged
         final String repoFullName,
         final String repoProvider
     ) {
-        if(this.repoFullName.equals(repoFullName)
-            && this.provider.equals(repoProvider)) {
+        if(this.repoFullName.equalsIgnoreCase(repoFullName)
+            && this.provider.equalsIgnoreCase(repoProvider)) {
             return this;
         }
         throw new ContributorsException.OfProject
@@ -167,7 +167,7 @@ public final class ProjectContributors extends BasePaged
 
     @Override
     public Contributors ofProvider(final String provider) {
-        if(this.provider.equals(provider)) {
+        if(this.provider.equalsIgnoreCase(provider)) {
             return this;
         }
         throw new ContributorsException.OfProject
@@ -213,7 +213,7 @@ public final class ProjectContributors extends BasePaged
             .filter(
                 contributor -> {
                     if(task.assignee() != null) {
-                        return !contributor.username().equals(
+                        return !contributor.username().equalsIgnoreCase(
                             task.assignee().username()
                         );
                     }

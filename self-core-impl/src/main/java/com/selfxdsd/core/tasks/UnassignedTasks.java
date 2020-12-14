@@ -49,8 +49,8 @@ public final class UnassignedTasks implements Tasks {
         return this.tasks
             .get()
             .filter(t -> t.issueId().equals(issueId)
-                && t.project().repoFullName().equals(repoFullName)
-                && t.project().provider().equals(provider))
+                && t.project().repoFullName().equalsIgnoreCase(repoFullName)
+                && t.project().provider().equalsIgnoreCase(provider))
             .findFirst()
             .orElse(null);
     }
@@ -80,8 +80,8 @@ public final class UnassignedTasks implements Tasks {
                            final String repoProvider) {
         final Supplier<Stream<Task>> ofProject = () -> tasks.get()
             .filter(t -> t.assignee() == null
-                && t.project().repoFullName().equals(repoFullName)
-                && t.project().provider().equals(repoProvider));
+                && t.project().repoFullName().equalsIgnoreCase(repoFullName)
+                && t.project().provider().equalsIgnoreCase(repoProvider));
         return new ProjectTasks(repoFullName, repoProvider, ofProject, storage);
     }
 

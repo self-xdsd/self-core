@@ -55,8 +55,8 @@ public final class ContractTasks implements Tasks {
                         final String provider) {
         return this.tasks.get()
             .filter(t -> t.issueId().equals(issueId)
-                && t.project().repoFullName().equals(repoFullName)
-                && t.project().provider().equals(provider))
+                && t.project().repoFullName().equalsIgnoreCase(repoFullName)
+                && t.project().provider().equalsIgnoreCase(provider))
             .findFirst()
             .orElse(null);
     }
@@ -70,8 +70,8 @@ public final class ContractTasks implements Tasks {
     @Override
     public Tasks ofProject(final String repoFullName,
                            final String repoProvider) {
-        if (this.contractId.getRepoFullName().equals(repoFullName)
-            && this.contractId.getProvider().equals(repoProvider)) {
+        if (this.contractId.getRepoFullName().equalsIgnoreCase(repoFullName)
+            && this.contractId.getProvider().equalsIgnoreCase(repoProvider)) {
             return this;
         } else {
             throw new TasksException.OfProject.List(
@@ -84,8 +84,8 @@ public final class ContractTasks implements Tasks {
     @Override
     public Tasks ofContributor(final String username,
                                final String provider) {
-        if (this.contractId.getContributorUsername().equals(username)
-            && this.contractId.getProvider().equals(provider)) {
+        if (this.contractId.getContributorUsername().equalsIgnoreCase(username)
+            && this.contractId.getProvider().equalsIgnoreCase(provider)) {
             return this;
         } else {
             throw new TasksException.OfContributor.List(

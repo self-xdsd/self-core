@@ -105,9 +105,9 @@ public final class PmProjects extends BasePaged implements Projects {
             .limit(page.getSize())
             .filter(p -> {
                 final User owner = p.owner();
-                return owner.username().equals(user.username())
+                return owner.username().equalsIgnoreCase(user.username())
                     && owner.provider().name()
-                    .equals(user.provider().name());
+                    .equalsIgnoreCase(user.provider().name());
             });
         return new UserProjects(user, owned);
     }
@@ -120,8 +120,8 @@ public final class PmProjects extends BasePaged implements Projects {
         return this.projects.get()
             .skip((page.getNumber() - 1) * page.getSize())
             .limit(page.getSize())
-            .filter(p -> p.repoFullName().equals(repoFullName)
-                && p.provider().equals(repoProvider))
+            .filter(p -> p.repoFullName().equalsIgnoreCase(repoFullName)
+                && p.provider().equalsIgnoreCase(repoProvider))
             .findFirst()
             .orElse(null);
     }

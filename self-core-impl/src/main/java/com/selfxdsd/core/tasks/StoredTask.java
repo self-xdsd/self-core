@@ -36,6 +36,7 @@ import java.util.Objects;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
+ * @checkstyle LineLength (500 lines)
  */
 public final class StoredTask implements Task {
 
@@ -179,7 +180,7 @@ public final class StoredTask implements Task {
             );
         }
         final int deadlineDays;
-        if(Contract.Roles.REV.equals(this.role())) {
+        if(Contract.Roles.REV.equalsIgnoreCase(this.role())) {
             deadlineDays = 3;
         } else {
             deadlineDays = 10;
@@ -246,8 +247,8 @@ public final class StoredTask implements Task {
         final Task other = (Task) obj;
         final Project otherProject = other.project();
         return this.issueId.equals(other.issue().issueId())
-            && this.project().repoFullName().equals(otherProject.repoFullName())
-            && this.project().provider().equals(otherProject.provider());
+            && this.project().repoFullName().equalsIgnoreCase(otherProject.repoFullName())
+            && this.project().provider().equalsIgnoreCase(otherProject.provider());
     }
 
     /**

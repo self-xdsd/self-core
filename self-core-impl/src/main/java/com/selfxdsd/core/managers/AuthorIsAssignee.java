@@ -66,7 +66,7 @@ public final class AuthorIsAssignee extends PreconditionCheck {
         if(task == null || task.assignee() == null) {
             LOG.debug("There is no task or no assignee.");
             this.onFalse().perform(event);
-        } else if(task.assignee().username().equals(author)) {
+        } else if(task.assignee().username().equalsIgnoreCase(author)) {
             LOG.debug("Author is indeed the task assignee. Resigning...");
             this.onTrue().perform(event);
         } else {

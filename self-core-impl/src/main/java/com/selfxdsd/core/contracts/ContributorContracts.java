@@ -87,8 +87,9 @@ public final class ContributorContracts implements Contracts {
             .filter(
                 contract -> {
                     final Project project = contract.project();
-                    return project.repoFullName().equals(repoFullName)
-                        && project.provider().equals(repoProvider);
+                    //LineLength (1 line)
+                    return project.repoFullName().equalsIgnoreCase(repoFullName)
+                        && project.provider().equalsIgnoreCase(repoProvider);
                 }
             );
         return new ProjectContracts(
@@ -197,8 +198,8 @@ public final class ContributorContracts implements Contracts {
         final String username,
         final String provider
     ) {
-        return this.contributor.username().equals(username)
-            && this.contributor.provider().equals(provider);
+        return this.contributor.username().equalsIgnoreCase(username)
+            && this.contributor.provider().equalsIgnoreCase(provider);
     }
 
     /**

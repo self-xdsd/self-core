@@ -100,7 +100,7 @@ public final class StoredUser implements User {
     @Override
     public Provider provider() {
         final Provider provider;
-        if(this.provider.equals(Provider.Names.GITHUB)) {
+        if(this.provider.equalsIgnoreCase(Provider.Names.GITHUB)) {
             provider = new Github(this, this.storage);
         } else {
             provider = new Gitlab(this, this.storage);
@@ -134,7 +134,7 @@ public final class StoredUser implements User {
             return false;
         }
         final User other = (User) obj;
-        return this.username.equals(other.username())
-            && this.provider.equals(other.provider().name());
+        return this.username.equalsIgnoreCase(other.username())
+            && this.provider.equalsIgnoreCase(other.provider().name());
     }
 }
