@@ -63,7 +63,7 @@ public final class UserProjects extends BasePaged implements Projects {
      */
     public UserProjects(final User user,
                         final Supplier<Stream<Project>> projects) {
-        this(user, projects, new Page(1, 10));
+        this(user, projects, Page.all());
     }
 
     /**
