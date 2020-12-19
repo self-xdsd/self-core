@@ -151,8 +151,13 @@ final class GitlabRepo extends BaseRepo {
 
     @Override
     public Commits commits() {
-        throw new UnsupportedOperationException(
-            "Not yet implemented."
+        final URI uri = URI.create(
+            this.repoUri().toString() + "/repository/commits"
+        );
+        return new GitlabCommits(
+            this.resources(),
+            uri,
+            this.storage()
         );
     }
 

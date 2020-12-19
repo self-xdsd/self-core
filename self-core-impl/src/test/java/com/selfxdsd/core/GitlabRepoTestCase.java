@@ -198,4 +198,24 @@ public final class GitlabRepoTestCase {
             )
         );
     }
+
+    /**
+     * A GitlabRepo can return its commits.
+     */
+    @Test
+    public void returnsCommits() {
+        final Repo repo = new GitlabRepo(
+            Mockito.mock(JsonResources.class),
+            URI.create("https://gitlab.com/api/v4/projects/1"),
+            Mockito.mock(User.class),
+            Mockito.mock(Storage.class)
+        );
+        MatcherAssert.assertThat(
+            repo.commits(),
+            Matchers.allOf(
+                Matchers.notNullValue(),
+                Matchers.instanceOf(GitlabCommits.class)
+            )
+        );
+    }
 }
