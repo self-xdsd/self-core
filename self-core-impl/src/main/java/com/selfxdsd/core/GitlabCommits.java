@@ -132,7 +132,9 @@ final class GitlabCommits implements Commits {
             final JsonObject json = resource.asJsonArray().getJsonObject(0);
             latest = new GitlabCommit(
                 URI.create(
-                    this.commitsUri.toString() + "/" + json.getString("short_id")
+                    this.commitsUri.toString()
+                        + "/"
+                        + json.getString("short_id")
                 ),
                 json,
                 this.storage,
