@@ -36,7 +36,7 @@ import java.net.URI;
  * @author Ali Fellahi (fellahi.ali@gmail.com)
  * @version $Id$
  * @since 0.0.44
- * @todo: #806:60min finish the implementation of this class and write the
+ * @todo #806:60min finish the implementation of this class and write the
  *  appropriate tests. Check GithubCommit for inspirations, and the Gitlab
  *  api doc at https://docs.gitlab.com/ee/api/commits.html#get-a-single-commit.
  */
