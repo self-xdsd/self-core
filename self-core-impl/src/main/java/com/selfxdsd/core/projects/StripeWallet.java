@@ -30,7 +30,6 @@ import com.selfxdsd.core.Env;
 import com.selfxdsd.core.contracts.invoices.StoredInvoice;
 import com.stripe.Stripe;
 import com.stripe.exception.StripeException;
-import com.stripe.model.Address;
 import com.stripe.model.Customer;
 import com.stripe.model.PaymentIntent;
 import com.stripe.model.SetupIntent;
@@ -52,7 +51,6 @@ import java.util.Objects;
  * @version $Id$
  * @since 0.0.27
  * @checkstyle ExecutableStatementCount (1000 lines)
- * @checkstyle JavaNCSS (1000 lines)
  */
 public final class StripeWallet implements Wallet {
 
@@ -365,101 +363,9 @@ public final class StripeWallet implements Wallet {
         }
         Stripe.apiKey = apiToken;
         try {
-            final Customer customer = Customer.retrieve(this.identifier);
-            final Address address = customer.getAddress();
-            return new BillingInfo() {
-                @Override
-                public String legalName() {
-                    final String name;
-                    if(customer == null) {
-                        name = null;
-                    } else {
-                        name = customer.getName();
-                    }
-                    return name;
-                }
-
-                @Override
-                public String country() {
-                    final String country;
-                    if(address == null) {
-                        country = "";
-                    } else {
-                        country = address.getCountry();
-                    }
-                    return country;
-                }
-
-                @Override
-                public String address() {
-                    final String addr;
-                    if(address == null) {
-                        addr = "";
-                    } else {
-                        addr = address.getLine1();
-                    }
-                    return addr;
-                }
-
-                @Override
-                public String city() {
-                    final String city;
-                    if(address == null) {
-                        city = "";
-                    } else {
-                        city = address.getCity();
-                    }
-                    return city;
-                }
-
-                @Override
-                public String zipcode() {
-                    final String zipcode;
-                    if(address == null) {
-                        zipcode = "";
-                    } else {
-                        zipcode = address.getPostalCode();
-                    }
-                    return zipcode;
-                }
-
-                @Override
-                public String email() {
-                    final String email;
-                    if(customer == null) {
-                        email = null;
-                    } else {
-                        email = customer.getEmail();
-                    }
-                    return email;
-                }
-
-                @Override
-                public String other() {
-                    final String other;
-                    if(customer == null) {
-                        other = "";
-                    } else {
-                        other = customer.getMetadata().get("other");
-                    }
-                    return other;
-                }
-
-                @Override
-                public String toString() {
-                    final StringBuilder billingInfo = new StringBuilder();
-                    billingInfo
-                        .append(this.legalName() + "\n")
-                        .append(
-                            this.address() + "; "
-                            + this.zipcode() + " "
-                            + this.city() + "; "
-                            + this.country() + "\n"
-                        ).append(this.email() + "\n")
-                        .append(this.other());
-                    return billingInfo.toString();
-                }
-            };
+            return new CustomerBillingInfo(
+                Customer.retrieve(this.identifier)
+            );
         } catch (final StripeException ex) {
             throw new IllegalStateException(
                 "StripeException when fetching the Customer from Stripe",
