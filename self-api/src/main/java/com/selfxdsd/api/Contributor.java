@@ -82,4 +82,12 @@ public interface Contributor {
      *  a Stripe Account/PayoutMethod.
      */
     PayoutMethod createStripeAccount();
+
+    /**
+     * Billing information of this Contributor. This information will
+     * appear on the Invoices emitted by the Contributor to the Project,
+     * at the "From" section.
+     * @return BillingInfo.
+     */
+    BillingInfo billingInfo();
 }

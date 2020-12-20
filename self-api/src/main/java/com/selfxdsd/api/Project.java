@@ -132,6 +132,14 @@ public interface Project {
     Wallet createStripeWallet();
 
     /**
+     * Billing information of this Project. This information
+     * will appear on the invoices received from contributors at the
+     * "To" section.
+     * @return BillingInfo.
+     */
+    BillingInfo billingInfo();
+
+    /**
      * Self Storage.
      * @return Storage.
      */
