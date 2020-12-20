@@ -200,6 +200,11 @@ public final class StripePaymentMethodTestCase {
             }
 
             @Override
+            public BillingInfo billingInfo() {
+                return Mockito.mock(BillingInfo.class);
+            }
+
+            @Override
             public int hashCode() {
                 return Objects.hash(type, repoFullName, provider);
             }

@@ -30,6 +30,8 @@ import com.selfxdsd.core.Env;
 import com.selfxdsd.core.contracts.invoices.StoredInvoice;
 import com.stripe.Stripe;
 import com.stripe.exception.StripeException;
+import com.stripe.model.Address;
+import com.stripe.model.Customer;
 import com.stripe.model.PaymentIntent;
 import com.stripe.model.SetupIntent;
 import com.stripe.param.PaymentIntentCreateParams;
@@ -348,6 +350,103 @@ public final class StripeWallet implements Wallet {
     @Override
     public String identifier() {
         return this.identifier;
+    }
+
+    @Override
+    public BillingInfo billingInfo() {
+        final String apiToken = System.getenv(Env.STRIPE_API_TOKEN);
+        if(apiToken == null || apiToken.trim().isEmpty()) {
+            throw new IllegalStateException(
+                "Please specify the "
+                + Env.STRIPE_API_TOKEN
+                + " Environment Variable!"
+            );
+        }
+        Stripe.apiKey = apiToken;
+        try {
+            final Customer customer = Customer.retrieve(this.identifier);
+            final Address address = customer.getAddress();
+            return new BillingInfo() {
+                @Override
+                public String legalName() {
+                    return customer.getName();
+                }
+
+                @Override
+                public String country() {
+                    final String country;
+                    if(address == null) {
+                        country = "";
+                    } else {
+                        country = address.getCountry();
+                    }
+                    return country;
+                }
+
+                @Override
+                public String address() {
+                    final String addr;
+                    if(address == null) {
+                        addr = "";
+                    } else {
+                        addr = address.getLine1();
+                    }
+                    return addr;
+                }
+
+                @Override
+                public String city() {
+                    final String city;
+                    if(address == null) {
+                        city = "";
+                    } else {
+                        city = address.getCity();
+                    }
+                    return city;
+                }
+
+                @Override
+                public String zipcode() {
+                    final String zipcode;
+                    if(address == null) {
+                        zipcode = "";
+                    } else {
+                        zipcode = address.getPostalCode();
+                    }
+                    return zipcode;
+                }
+
+                @Override
+                public String email() {
+                    return customer.getEmail();
+                }
+
+                @Override
+                public String other() {
+                    return customer.getMetadata().get("other");
+                }
+
+                @Override
+                public String toString() {
+                    final StringBuilder billingInfo = new StringBuilder();
+                    billingInfo
+                        .append(this.legalName() + "\n")
+                        .append(
+                            this.address() + "; "
+                            + this.zipcode() + " "
+                            + this.city() + "; "
+                            + this.country() + "\n"
+                        ).append(this.email() + "\n")
+                        .append(this.other());
+                    return billingInfo.toString();
+                }
+            };
+        } catch (final StripeException ex) {
+            throw new IllegalStateException(
+                "StripeException when fetching the Customer from Stripe",
+                ex
+            );
+        }
     }
 
     @Override

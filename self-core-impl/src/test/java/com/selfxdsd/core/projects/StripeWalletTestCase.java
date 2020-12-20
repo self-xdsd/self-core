@@ -172,6 +172,20 @@ public final class StripeWalletTestCase {
     }
 
     /**
+     * StripeWallet.billingInfo() complains if the api token is not set.
+     */
+    @Test (expected = IllegalStateException.class)
+    public void billingInfoRequiresToken() {
+        new StripeWallet(
+            Mockito.mock(Storage.class),
+            Mockito.mock(Project.class),
+            BigDecimal.valueOf(1000),
+            "identifier",
+            Boolean.TRUE
+        ).billingInfo();
+    }
+
+    /**
      * Wallet.pay(...) throws if the Invoice is already paid.
      */
     @Test(expected = InvoiceException.AlreadyPaid.class)

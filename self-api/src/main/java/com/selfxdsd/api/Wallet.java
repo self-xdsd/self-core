@@ -114,6 +114,12 @@ public interface Wallet {
     String identifier();
 
     /**
+     * Billing info associated with this wallet.
+     * @return BillingInfo.
+     */
+    BillingInfo billingInfo();
+
+    /**
      * Possible wallet types.
      */
     class Type {
