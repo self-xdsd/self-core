@@ -47,11 +47,6 @@ import java.util.Objects;
  *  It should decide what kind of event has occurred and delegate it
  *  further to the ProjectManager who will deal with it. We still need
  *  the Issue Assigned case and Comment Created case.
- * @todo #803:60min Implement method billingInformation() here. It should
- *  look in Stripe, for the Customer representing this Project and take
- *  the data from there. If the Project has not set up their Stripe wallet.
- *  it should return a BillingInfo with the legalName equal to the Project's
- *  Github owner (user login or organization name).
  */
 public final class StoredProject implements Project {
 
@@ -332,9 +327,7 @@ public final class StoredProject implements Project {
 
     @Override
     public BillingInfo billingInfo() {
-        throw new UnsupportedOperationException(
-            "Not yet implemented."
-        );
+        return this.wallet().billingInfo();
     }
 
     @Override

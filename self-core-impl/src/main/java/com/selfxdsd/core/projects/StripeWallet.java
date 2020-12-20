@@ -30,6 +30,7 @@ import com.selfxdsd.core.Env;
 import com.selfxdsd.core.contracts.invoices.StoredInvoice;
 import com.stripe.Stripe;
 import com.stripe.exception.StripeException;
+import com.stripe.model.Customer;
 import com.stripe.model.PaymentIntent;
 import com.stripe.model.SetupIntent;
 import com.stripe.param.PaymentIntentCreateParams;
@@ -49,7 +50,7 @@ import java.util.Objects;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.27
- * @checkstyle ExecutableStatementCount (500 lines)
+ * @checkstyle ExecutableStatementCount (1000 lines)
  */
 public final class StripeWallet implements Wallet {
 
@@ -348,6 +349,29 @@ public final class StripeWallet implements Wallet {
     @Override
     public String identifier() {
         return this.identifier;
+    }
+
+    @Override
+    public BillingInfo billingInfo() {
+        final String apiToken = System.getenv(Env.STRIPE_API_TOKEN);
+        if(apiToken == null || apiToken.trim().isEmpty()) {
+            throw new IllegalStateException(
+                "Please specify the "
+                + Env.STRIPE_API_TOKEN
+                + " Environment Variable!"
+            );
+        }
+        Stripe.apiKey = apiToken;
+        try {
+            return new CustomerBillingInfo(
+                Customer.retrieve(this.identifier)
+            );
+        } catch (final StripeException ex) {
+            throw new IllegalStateException(
+                "StripeException when fetching the Customer from Stripe",
+                ex
+            );
+        }
     }
 
     @Override

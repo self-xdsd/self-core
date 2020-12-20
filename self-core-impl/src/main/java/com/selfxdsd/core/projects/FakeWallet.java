@@ -231,6 +231,51 @@ public final class FakeWallet implements Wallet {
     }
 
     @Override
+    public BillingInfo billingInfo() {
+        return new BillingInfo() {
+            @Override
+            public String legalName() {
+                return FakeWallet.this.project.repoFullName();
+            }
+
+            @Override
+            public String country() {
+                return "";
+            }
+
+            @Override
+            public String address() {
+                return FakeWallet.this.project.provider();
+            }
+
+            @Override
+            public String city() {
+                return "";
+            }
+
+            @Override
+            public String zipcode() {
+                return "";
+            }
+
+            @Override
+            public String email() {
+                return "";
+            }
+
+            @Override
+            public String other() {
+                return "";
+            }
+
+            @Override
+            public String toString() {
+                return "Project " + this.legalName() + " at " + this.address();
+            }
+        };
+    }
+
+    @Override
     public boolean equals(final Object other) {
         boolean equals;
         if (this == other) {

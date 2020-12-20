@@ -120,6 +120,58 @@ public final class FakeWalletTestCase {
     }
 
     /**
+     * The FakeWallet can return its BillingInfo.
+     */
+    @Test
+    public void returnsBillingInfo() {
+        final Project project = Mockito.mock(Project.class);
+        Mockito.when(project.repoFullName()).thenReturn("mihai/test");
+        Mockito.when(project.provider()).thenReturn(Provider.Names.GITHUB);
+        final Wallet fake = new FakeWallet(
+            Mockito.mock(Storage.class),
+            project,
+            BigDecimal.valueOf(1000),
+            "123FakeID",
+            Boolean.TRUE
+        );
+        final BillingInfo billing = fake.billingInfo();
+        MatcherAssert.assertThat(
+            billing.legalName(),
+            Matchers.equalTo("mihai/test")
+        );
+        MatcherAssert.assertThat(
+            billing.address(),
+            Matchers.equalTo(Provider.Names.GITHUB)
+        );
+        MatcherAssert.assertThat(
+            billing.country(),
+            Matchers.isEmptyString()
+        );
+        MatcherAssert.assertThat(
+            billing.city(),
+            Matchers.isEmptyString()
+        );
+        MatcherAssert.assertThat(
+            billing.zipcode(),
+            Matchers.isEmptyString()
+        );
+        MatcherAssert.assertThat(
+            billing.email(),
+            Matchers.isEmptyString()
+        );
+        MatcherAssert.assertThat(
+            billing.other(),
+            Matchers.isEmptyString()
+        );
+        MatcherAssert.assertThat(
+            billing.toString(),
+            Matchers.equalTo(
+                "Project mihai/test at " + Provider.Names.GITHUB
+            )
+        );
+    }
+
+    /**
      * The FakeWallet can return its "active" flag.
      */
     @Test
