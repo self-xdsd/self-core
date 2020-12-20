@@ -128,19 +128,24 @@ public final class FakeWallet implements Wallet {
         }
         LOG.debug(
             "[FAKE] Paying Invoice #" + invoice.invoiceId()
-                + " of Contract " + invoice.contract().contractId()
-                + "..."
+            + " of Contract " + invoice.contract().contractId()
+            + "..."
         );
+        final String uuid = UUID.randomUUID().toString().replace("-", "");
         final boolean paid = this.storage
             .invoices()
-            .registerAsPaid(new StoredInvoice(
-                invoice.invoiceId(),
-                invoice.contract(),
-                invoice.createdAt(),
-                LocalDateTime.now(),
-                UUID.randomUUID().toString().replace("-", ""),
-                this.storage
-            ));
+            .registerAsPaid(
+                new StoredInvoice(
+                    invoice.invoiceId(),
+                    invoice.contract(),
+                    invoice.createdAt(),
+                    LocalDateTime.now(),
+                    "not_paid_" + uuid,
+                    invoice.billedBy(),
+                    invoice.billedTo(),
+                    this.storage
+                )
+            );
         if (!paid) {
             throw new WalletPaymentException(
                 "Could not pay invoice #" + invoice.invoiceId()
