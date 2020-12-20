@@ -138,12 +138,24 @@ public final class StoredInvoice implements Invoice {
 
     @Override
     public String billedBy() {
-        throw new UnsupportedOperationException("Not yet implemented.");
+        final String billedBy;
+        if(this.billedBy != null && !this.billedBy.isEmpty()) {
+            billedBy = this.billedBy;
+        } else {
+            billedBy = this.contract.contributor().billingInfo().toString();
+        }
+        return billedBy;
     }
 
     @Override
     public String billedTo() {
-        throw new UnsupportedOperationException("Not yet implemented.");
+        final String billedTo;
+        if(this.billedTo != null && !this.billedTo.isEmpty()) {
+            billedTo = this.billedTo;
+        } else {
+            billedTo = this.contract.project().billingInfo().toString();
+        }
+        return billedTo;
     }
 
     @Override

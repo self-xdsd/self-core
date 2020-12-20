@@ -484,4 +484,107 @@ public final class StoredInvoiceTestCase {
             Matchers.equalTo(invoiceTwo.hashCode()));
     }
 
+    /**
+     * If the billedBy attribute is set in the constructor
+     * (not null and not empty), that's the value that should be
+     * returned.
+     */
+    @Test
+    public void returnsSetBilledBy() {
+        final Invoice invoice = new StoredInvoice(
+            1,
+            Mockito.mock(Contract.class),
+            LocalDateTime.now(),
+            LocalDateTime.now(),
+            "transacetionId123",
+            "mihai",
+            "vlad",
+            Mockito.mock(Storage.class)
+        );
+        MatcherAssert.assertThat(
+            invoice.billedBy(),
+            Matchers.equalTo("mihai")
+        );
+    }
+
+    /**
+     * If the billedTo attribute is set in the constructor
+     * (not null and not empty), that's the value that should be
+     * returned.
+     */
+    @Test
+    public void returnsSetBilledTo() {
+        final Invoice invoice = new StoredInvoice(
+            1,
+            Mockito.mock(Contract.class),
+            LocalDateTime.now(),
+            LocalDateTime.now(),
+            "transacetionId123",
+            "mihai",
+            "vlad",
+            Mockito.mock(Storage.class)
+        );
+        MatcherAssert.assertThat(
+            invoice.billedTo(),
+            Matchers.equalTo("vlad")
+        );
+    }
+
+    /**
+     * If the billedBy is not given as ctor parameter (set to null),
+     * then it should be read from the Contract.
+     */
+    @Test
+    public void returnsContractBilledBy() {
+        final BillingInfo info = Mockito.mock(BillingInfo.class);
+        Mockito.when(info.toString()).thenReturn("Contributor LLC");
+        final Contributor contributor = Mockito.mock(Contributor.class);
+        Mockito.when(contributor.billingInfo()).thenReturn(info);
+        final Contract contract = Mockito.mock(Contract.class);
+        Mockito.when(contract.contributor()).thenReturn(contributor);
+
+        final Invoice invoice = new StoredInvoice(
+            1,
+            contract,
+            LocalDateTime.now(),
+            LocalDateTime.now(),
+            "transacetionId123",
+            null,
+            "vlad",
+            Mockito.mock(Storage.class)
+        );
+        MatcherAssert.assertThat(
+            invoice.billedBy(),
+            Matchers.equalTo("Contributor LLC")
+        );
+    }
+
+    /**
+     * If the billedTo is not given as ctor parameter (set to null),
+     * then it should be read from the Contract.
+     */
+    @Test
+    public void returnsContractBilledTo() {
+        final BillingInfo info = Mockito.mock(BillingInfo.class);
+        Mockito.when(info.toString()).thenReturn("Project LLC");
+        final Project project = Mockito.mock(Project.class);
+        Mockito.when(project.billingInfo()).thenReturn(info);
+        final Contract contract = Mockito.mock(Contract.class);
+        Mockito.when(contract.project()).thenReturn(project);
+
+        final Invoice invoice = new StoredInvoice(
+            1,
+            contract,
+            LocalDateTime.now(),
+            LocalDateTime.now(),
+            "transacetionId123",
+            "mihai",
+            null,
+            Mockito.mock(Storage.class)
+        );
+        MatcherAssert.assertThat(
+            invoice.billedTo(),
+            Matchers.equalTo("Project LLC")
+        );
+    }
 }
