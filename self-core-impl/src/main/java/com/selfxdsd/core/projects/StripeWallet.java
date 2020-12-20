@@ -241,15 +241,17 @@ public final class StripeWallet implements Wallet {
                     .ofEpochSecond(paymentIntent.getCreated(),
                         0, OffsetDateTime.now().getOffset());
                 this.storage.invoices()
-                    .registerAsPaid(new StoredInvoice(
-                        invoice.invoiceId(),
-                        invoice.contract(),
-                        invoice.createdAt(),
-                        paymentDate,
-                        paymentIntent.getId(),
-                        null,
-                        null,
-                        this.storage)
+                    .registerAsPaid(
+                        new StoredInvoice(
+                            invoice.invoiceId(),
+                            invoice.contract(),
+                            invoice.createdAt(),
+                            paymentDate,
+                            paymentIntent.getId(),
+                            invoice.billedBy(),
+                            invoice.billedTo(),
+                            this.storage
+                        )
                     );
             } else {
                 LOG.error("[STRIPE] PaymentIntent status: " + status);
