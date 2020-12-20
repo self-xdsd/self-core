@@ -56,6 +56,18 @@ public interface Invoice {
     String transactionId();
 
     /**
+     * Who emitted the Invoice?
+     * @return String.
+     */
+    String billedBy();
+
+    /**
+     * For whom this invoice is for? (who should pay it).
+     * @return String.
+     */
+    String billedTo();
+
+    /**
      * Tasked invoiced here.
      * @return InvoicedTasks.
      */

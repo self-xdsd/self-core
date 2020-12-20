@@ -35,6 +35,8 @@ public final class StoredInvoiceTestCase {
             LocalDateTime.now(),
             LocalDateTime.now(),
             "transacetionId123",
+            "mihai",
+            "vlad",
             Mockito.mock(Storage.class)
         );
         assertThat(invoice.invoiceId(), is(1));
@@ -52,6 +54,8 @@ public final class StoredInvoiceTestCase {
             LocalDateTime.now(),
             LocalDateTime.now(),
             "transacetionId123",
+            "mihai",
+            "vlad",
             Mockito.mock(Storage.class)
         );
         assertThat(invoice.contract(), is(contract));
@@ -69,6 +73,8 @@ public final class StoredInvoiceTestCase {
             LocalDateTime.now(),
             LocalDateTime.now(),
             "transactionID",
+            "mihai",
+            "vlad",
             storage
         );
         final InvoicedTasks all = Mockito.mock(InvoicedTasks.class);
@@ -105,6 +111,8 @@ public final class StoredInvoiceTestCase {
             LocalDateTime.now(),
             LocalDateTime.now(),
             "transactionID",
+            "mihai",
+            "vlad",
             storage
         );
         final InvoicedTasks all = Mockito.mock(InvoicedTasks.class);
@@ -144,6 +152,8 @@ public final class StoredInvoiceTestCase {
             LocalDateTime.now(),
             LocalDateTime.now(),
             "transactionID",
+            "mihai",
+            "vlad",
             storage
         );
         final InvoicedTasks all = Mockito.mock(InvoicedTasks.class);
@@ -183,6 +193,8 @@ public final class StoredInvoiceTestCase {
             LocalDateTime.now(),
             LocalDateTime.now(),
             "transactionID",
+            "mihai",
+            "vlad",
             storage
         );
         final InvoicedTasks all = Mockito.mock(InvoicedTasks.class);
@@ -222,6 +234,8 @@ public final class StoredInvoiceTestCase {
             creationTime,
             LocalDateTime.now(),
             "transacetionId123",
+            "mihai",
+            "vlad",
             Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(
@@ -243,6 +257,8 @@ public final class StoredInvoiceTestCase {
             LocalDateTime.now(),
             paymentTime,
             "transactionId",
+            "mihai",
+            "vlad",
             storage
         );
         MatcherAssert.assertThat(
@@ -263,6 +279,8 @@ public final class StoredInvoiceTestCase {
             LocalDateTime.now(),
             paymentTime,
             "transactionId123",
+            "mihai",
+            "vlad",
             mock(Storage.class)
         );
         MatcherAssert.assertThat(
@@ -292,6 +310,8 @@ public final class StoredInvoiceTestCase {
             LocalDateTime.now(),
             LocalDateTime.now(),
             "transacetionId123",
+            "mihai",
+            "vlad",
             Mockito.mock(Storage.class)
         );
 
@@ -330,6 +350,8 @@ public final class StoredInvoiceTestCase {
             LocalDateTime.now(),
             LocalDateTime.now(),
             "transactionId123",
+            "mihai",
+            "vlad",
             Mockito.mock(Storage.class)
         );
 
@@ -381,6 +403,8 @@ public final class StoredInvoiceTestCase {
             LocalDateTime.now(),
             null,
             null,
+            "mihai",
+            "vlad",
             storage
         );
 
@@ -414,6 +438,8 @@ public final class StoredInvoiceTestCase {
             LocalDateTime.now(),
             LocalDateTime.now(),
             "transacetionId123",
+            "mihai",
+            "vlad",
             Mockito.mock(Storage.class)
         );
         final Invoice invoiceTwo = new StoredInvoice(
@@ -422,6 +448,8 @@ public final class StoredInvoiceTestCase {
             LocalDateTime.now(),
             LocalDateTime.now(),
             "transacetionId123",
+            "mihai",
+            "vlad",
             Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(invoice, Matchers.equalTo(invoiceTwo));
@@ -438,6 +466,8 @@ public final class StoredInvoiceTestCase {
             LocalDateTime.now(),
             LocalDateTime.now(),
             "transacetionId123",
+            "mihai",
+            "vlad",
             Mockito.mock(Storage.class)
         );
         final Invoice invoiceTwo = new StoredInvoice(
@@ -446,6 +476,8 @@ public final class StoredInvoiceTestCase {
             LocalDateTime.now(),
             LocalDateTime.now(),
             "transacetionId123",
+            "mihai",
+            "vlad",
             Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(invoice.hashCode(),

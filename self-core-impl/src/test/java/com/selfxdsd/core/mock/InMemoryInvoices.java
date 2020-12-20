@@ -72,6 +72,8 @@ public final class InMemoryInvoices implements Invoices {
             LocalDateTime.now(),
             null,
             null,
+            null,
+            null,
             this.storage
         );
         this.invoices.put(created.invoiceId(), created);

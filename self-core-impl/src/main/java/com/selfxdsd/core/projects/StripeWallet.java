@@ -247,6 +247,8 @@ public final class StripeWallet implements Wallet {
                         invoice.createdAt(),
                         paymentDate,
                         paymentIntent.getId(),
+                        null,
+                        null,
                         this.storage)
                     );
             } else {

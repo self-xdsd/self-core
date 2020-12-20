@@ -138,7 +138,9 @@ public final class FakeWallet implements Wallet {
                 invoice.contract(),
                 invoice.createdAt(),
                 LocalDateTime.now(),
-                UUID.randomUUID().toString().replace("-", ""),
+                "not_paid_" + UUID.randomUUID().toString().replace("-", ""),
+                null,
+                null,
                 this.storage
             ));
         if (!paid) {

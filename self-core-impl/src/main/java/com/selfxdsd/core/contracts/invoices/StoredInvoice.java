@@ -39,6 +39,16 @@ public final class StoredInvoice implements Invoice {
     private final String transactionId;
 
     /**
+     * Who emitted this Invoice?
+     */
+    private final String billedBy;
+
+    /**
+     * To whom is this Invoice billed? Who pays?
+     */
+    private final String billedTo;
+
+    /**
      * Self storage context.
      */
     private final Storage storage;
@@ -50,6 +60,8 @@ public final class StoredInvoice implements Invoice {
      * @param createdAt Invoice creation time.
      * @param paymentTime Time when this Invoice has been paid.
      * @param transactionId The payment's transaction ID.
+     * @param billedBy Who emitted the Invoice.
+     * @param billedTo Who pays it.
      * @param storage Self storage context.
      */
     public StoredInvoice(
@@ -58,6 +70,8 @@ public final class StoredInvoice implements Invoice {
         final LocalDateTime createdAt,
         final LocalDateTime paymentTime,
         final String transactionId,
+        final String billedBy,
+        final String billedTo,
         final Storage storage
     ) {
         this.id = id;
@@ -65,6 +79,8 @@ public final class StoredInvoice implements Invoice {
         this.createdAt = createdAt;
         this.paymentTime = paymentTime;
         this.transactionId = transactionId;
+        this.billedBy = billedBy;
+        this.billedTo = billedTo;
         this.storage = storage;
     }
 
@@ -118,6 +134,16 @@ public final class StoredInvoice implements Invoice {
     @Override
     public String transactionId() {
         return this.transactionId;
+    }
+
+    @Override
+    public String billedBy() {
+        throw new UnsupportedOperationException("Not yet implemented.");
+    }
+
+    @Override
+    public String billedTo() {
+        throw new UnsupportedOperationException("Not yet implemented.");
     }
 
     @Override
