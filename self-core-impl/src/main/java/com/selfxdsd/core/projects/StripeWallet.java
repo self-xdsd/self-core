@@ -51,7 +51,8 @@ import java.util.Objects;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.27
- * @checkstyle ExecutableStatementCount (500 lines)
+ * @checkstyle ExecutableStatementCount (1000 lines)
+ * @checkstyle JavaNCSS (1000 lines)
  */
 public final class StripeWallet implements Wallet {
 
@@ -369,7 +370,13 @@ public final class StripeWallet implements Wallet {
             return new BillingInfo() {
                 @Override
                 public String legalName() {
-                    return customer.getName();
+                    final String name;
+                    if(customer == null) {
+                        name = null;
+                    } else {
+                        name = customer.getName();
+                    }
+                    return name;
                 }
 
                 @Override
@@ -418,12 +425,24 @@ public final class StripeWallet implements Wallet {
 
                 @Override
                 public String email() {
-                    return customer.getEmail();
+                    final String email;
+                    if(customer == null) {
+                        email = null;
+                    } else {
+                        email = customer.getEmail();
+                    }
+                    return email;
                 }
 
                 @Override
                 public String other() {
-                    return customer.getMetadata().get("other");
+                    final String other;
+                    if(customer == null) {
+                        other = "";
+                    } else {
+                        other = customer.getMetadata().get("other");
+                    }
+                    return other;
                 }
 
                 @Override

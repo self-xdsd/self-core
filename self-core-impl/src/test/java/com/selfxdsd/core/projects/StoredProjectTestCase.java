@@ -95,6 +95,47 @@ public final class StoredProjectTestCase {
     }
 
     /**
+     * StoredProject can return its BillingInfo.
+     */
+    @Test
+    public void returnsBillingInfo() {
+        final BillingInfo info = Mockito.mock(BillingInfo.class);
+        Mockito.when(info.toString()).thenReturn("Project LLC");
+
+        final Wallet active = Mockito.mock(Wallet.class);
+        Mockito.when(active.billingInfo()).thenReturn(info);
+
+        final Wallets all = Mockito.mock(Wallets.class);
+        final Storage storage = Mockito.mock(Storage.class);
+        Mockito.when(storage.wallets()).thenReturn(all);
+
+        final Wallets ofProject = Mockito.mock(Wallets.class);
+        Mockito.when(ofProject.active()).thenReturn(active);
+
+        final Project project = new StoredProject(
+            Mockito.mock(User.class),
+            "john/test",
+            "wh123token",
+            Mockito.mock(ProjectManager.class),
+            storage
+        );
+        Mockito.when(all.ofProject(project)).thenReturn(ofProject);
+
+        final BillingInfo returned = project.billingInfo();
+        MatcherAssert.assertThat(
+            returned,
+            Matchers.allOf(
+                Matchers.notNullValue(),
+                Matchers.is(info)
+            )
+        );
+        MatcherAssert.assertThat(
+            returned.toString(),
+            Matchers.equalTo("Project LLC")
+        );
+    }
+
+    /**
      * StoredProject can return its webhook token.
      */
     @Test
