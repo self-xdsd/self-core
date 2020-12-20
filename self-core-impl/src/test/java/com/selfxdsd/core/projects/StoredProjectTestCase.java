@@ -369,7 +369,7 @@ public final class StoredProjectTestCase {
         Mockito.when(
             all.ofProject(project)
         ).thenReturn(ofProject);
-        project.createStripeWallet();
+        project.createStripeWallet(Mockito.mock(BillingInfo.class));
     }
 
     /**

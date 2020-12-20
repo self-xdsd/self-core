@@ -125,11 +125,14 @@ public interface Project {
 
     /**
      * Create a wallet.
+     * @param billingInfo Billing info. Data about the Customer,
+     *  to be sent to Stripe. This info will appear on the invoices
+     *  which the Project will receive from the contributors.
      * @return Wallet created Wallet.
      * @throws WalletAlreadyExistsException If the Wallet with
      *  the specified type already exists.
      */
-    Wallet createStripeWallet();
+    Wallet createStripeWallet(final BillingInfo billingInfo);
 
     /**
      * Billing information of this Project. This information

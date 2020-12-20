@@ -34,6 +34,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -263,7 +264,7 @@ public final class StoredProject implements Project {
     }
 
     @Override
-    public Wallet createStripeWallet() {
+    public Wallet createStripeWallet(final BillingInfo billingInfo) {
         LOG.debug(
             "Creating STRIPE wallet for Project " + this.repoFullName
             + " at " + this.provider() + "... "
@@ -290,16 +291,21 @@ public final class StoredProject implements Project {
         }
         Stripe.apiKey = apiToken;
         try {
-            final String email;
-            if(this.owner.email() != null) {
-                email = this.owner.email();
-            } else {
-                email = "";
-            }
             final Customer customer = Customer.create(
                 CustomerCreateParams.builder()
-                    .setName(this.owner.username())
-                    .setEmail(email)
+                    .setName(billingInfo.legalName())
+                    .setEmail(billingInfo.email())
+                    .setAddress(
+                        CustomerCreateParams.Address.builder()
+                            .setCountry(billingInfo.country())
+                            .setCity(billingInfo.city())
+                            .setLine1(billingInfo.address())
+                            .setPostalCode(billingInfo.zipcode())
+                            .build()
+                    )
+                    .setMetadata(
+                        Map.of("other", billingInfo.other())
+                    )
                     .setDescription(
                         this.repoFullName + " at " + this.provider()
                     )
