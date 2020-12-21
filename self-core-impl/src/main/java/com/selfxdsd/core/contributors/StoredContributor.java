@@ -42,10 +42,6 @@ import java.util.Objects;
  *  then the method should only return the Tasks from these contracts.
  *  Otherwise, it should return all the Tasks of the contributor, as it
  *  does now.
- * @todo #803:60min Implement method billingInfo() here. It should return the
- *  data from the Contributor's Stripe Account (payout method). If the
- *  contributor hasn't set up Stripe yet, it should return a BillingInfo with
- *  the legalName equal to the Contributor's username from the Provider.
  */
 public final class StoredContributor implements Contributor {
 
