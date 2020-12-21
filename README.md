@@ -31,14 +31,6 @@ you're following our code style and guidelines.
 
 It's better to make changes on a separate branch (derived from ``master``), so you won't have to cherry pick commits in case your PR is rejected.
 
-## Cash Bounties
-
-Some of the tickets have a cash bounty assigned to them. If you want to solve a ticket and get the bounty, tell me and I'll assign it to you. You will have 10 days to provide a PR and close the ticket. Pay attention: if the 10 days pass, I **might** take it away from you and give it to someone else -- if this happens, you won't get any cash. 
-
-**You don't have to solve the whole ticket!** Many times, it will happen that the ticket requires more effort than what the bounty is worth. If this is the case, solve the ticket only **partially** and leave "todo" markers in the code -- these will automatically be transformed into Github Issues. However, you will have to leave the code in a consistent state, the build has to pass always.
-
-More details [here](https://amihaiemil.com/2020/02/15/solve-github-issues-and-get-cash.html).
-
 ## LICENSE
 
 This product's code is open source. However, the [LICENSE](https://github.com/self-xdsd/self-core/blob/master/LICENSE) only allows you to read the code. Copying, downloading or forking the repo is strictly forbidden unless you are one of the project's contributors.
