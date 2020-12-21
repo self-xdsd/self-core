@@ -20,75 +20,66 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package com.selfxdsd.api;
+package com.selfxdsd.core.projects;
 
-import javax.json.JsonObject;
+import com.selfxdsd.api.BillingInfo;
+import com.stripe.model.Account;
 
 /**
- * A Contributor's payout method, how Self is going to
- * send them money.
+ * BillingInfo from Stripe Connected Account.
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
- * @since 0.0.22
+ * @since 0.0.44
+ * @todo #813:60min Implement and test this class. We should retrieve
+ *  the information from the Account, most likely from the Metadata attribute.
  */
-public interface PayoutMethod {
+public final class AccountBillingInfo implements BillingInfo {
 
     /**
-     * Contributor to whom this payout method belongs.
-     * @return Contributor.
+     * Stripe connected Account.
      */
-    Contributor contributor();
+    private final Account account;
 
     /**
-     * Type of this payout method.
-     * @return String.
+     * Ctor.
+     * @param account Stripe connected Account.
      */
-    String type();
+    public AccountBillingInfo(final Account account) {
+        this.account = account;
+    }
 
-    /**
-     * Is this payout method active or not?
-     * @return True or false.
-     */
-    boolean active();
+    @Override
+    public String legalName() {
+        return null;
+    }
 
-    /**
-     * Identifier.
-     * @return String.
-     */
-    String identifier();
+    @Override
+    public String country() {
+        return null;
+    }
 
-    /**
-     * BillingInfo associated with this Payout Method (data from the
-     * Stirpe Connected Account).
-     * @return BillingInfo.
-     */
-    BillingInfo billingInfo();
+    @Override
+    public String address() {
+        return null;
+    }
 
-    /**
-     * The whole PayoutMethod in JSON.
-     * This usually comes from the API of the payment processor.
-     * @return The PayoutMethod in JSON format.
-     */
-    JsonObject json();
+    @Override
+    public String city() {
+        return null;
+    }
 
-    /**
-     * Possible payout methods.
-     */
-    class Type {
+    @Override
+    public String zipcode() {
+        return null;
+    }
 
-        /**
-         * Hidden ctor.
-         */
-        private Type(){ }
+    @Override
+    public String email() {
+        return null;
+    }
 
-        /**
-         * Stripe.
-         */
-        public static final String STRIPE = "STRIPE";
-
-        /**
-         * Paypal.
-         */
-        public static final String PAYPAL = "PayPal";
+    @Override
+    public String other() {
+        return null;
     }
 }
