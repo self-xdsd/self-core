@@ -384,6 +384,63 @@ public final class StoredContributorTestCase {
     }
 
     /**
+     * StoredContributor can return its BillingInfo from the
+     * active PayoutMethod.
+     */
+    @Test
+    public void returnsBillingInfoOfActivePayoutMethod() {
+        final BillingInfo info = Mockito.mock(BillingInfo.class);
+        final PayoutMethod active = Mockito.mock(PayoutMethod.class);
+        Mockito.when(active.active()).thenReturn(Boolean.TRUE);
+        Mockito.when(active.billingInfo()).thenReturn(info);
+
+        final PayoutMethods ofContributor = Mockito.mock(PayoutMethods.class);
+        Mockito.when(ofContributor.iterator()).thenReturn(
+            List.of(active).iterator()
+        );
+
+        final PayoutMethods all = Mockito.mock(PayoutMethods.class);
+        final Storage storage = Mockito.mock(Storage.class);
+        Mockito.when(storage.payoutMethods()).thenReturn(all);
+
+        final Contributor contributor = new StoredContributor(
+            "amihaiemil", Provider.Names.GITHUB, storage
+        );
+        Mockito.when(all.ofContributor(contributor)).thenReturn(ofContributor);
+
+        MatcherAssert.assertThat(
+            contributor.billingInfo(),
+            Matchers.is(info)
+        );
+    }
+
+    /**
+     * StripeContributor returns its default BillingInfo if it has
+     * no PayoutMethods set up.
+     */
+    @Test
+    public void returnsDefaultBillingInfo() {
+        final PayoutMethods ofContributor = Mockito.mock(PayoutMethods.class);
+        Mockito.when(ofContributor.iterator()).thenReturn(
+            new ArrayList<PayoutMethod>().iterator()
+        );
+
+        final PayoutMethods all = Mockito.mock(PayoutMethods.class);
+        final Storage storage = Mockito.mock(Storage.class);
+        Mockito.when(storage.payoutMethods()).thenReturn(all);
+
+        final Contributor contributor = new StoredContributor(
+            "amihaiemil", Provider.Names.GITHUB, storage
+        );
+        Mockito.when(all.ofContributor(contributor)).thenReturn(ofContributor);
+
+        MatcherAssert.assertThat(
+            contributor.billingInfo().legalName(),
+            Matchers.is("amihaiemil")
+        );
+    }
+
+    /**
      * Mock a Contract for test.
      * @param contractId ID of he contract.
      * @return Contract mock.

@@ -22,9 +22,11 @@
  */
 package com.selfxdsd.core.contributors;
 
+import com.selfxdsd.api.BillingInfo;
 import com.selfxdsd.api.Contributor;
 import com.selfxdsd.api.PayoutMethod;
 import com.selfxdsd.core.Env;
+import com.selfxdsd.core.projects.AccountBillingInfo;
 import com.stripe.Stripe;
 import com.stripe.exception.StripeException;
 import com.stripe.model.Account;
@@ -90,6 +92,40 @@ public final class StripePayoutMethod implements PayoutMethod {
     @Override
     public String identifier() {
         return this.identifier;
+    }
+
+    @Override
+    public BillingInfo billingInfo() {
+        final String apiToken = System.getenv(Env.STRIPE_API_TOKEN);
+        if(apiToken == null || apiToken.trim().isEmpty()) {
+            throw new IllegalStateException(
+                "Please specify the "
+                + Env.STRIPE_API_TOKEN
+                + " Environment Variable!"
+            );
+        }
+        Stripe.apiKey = apiToken;
+        try {
+            final Account account = Account.retrieve(this.identifier);
+            System.out.println(
+                Json.createReader(
+                    new StringReader(
+                        account.getRawJsonObject().toString()
+                    )
+                ).readObject().toString()
+            );
+            return new AccountBillingInfo(
+                account
+            );
+        } catch (final StripeException ex) {
+            throw new IllegalStateException(
+                "Stripe threw an exception when trying to fetch the "
+                + "Stripe Connect Account of Contributor "
+                + this.contributor.username() + "/"
+                + this.contributor.provider() + ". ",
+                ex
+            );
+        }
     }
 
     @Override

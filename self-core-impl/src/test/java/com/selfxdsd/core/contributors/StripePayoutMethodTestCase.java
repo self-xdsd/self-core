@@ -130,4 +130,32 @@ public final class StripePayoutMethodTestCase {
             );
         }
     }
+
+
+    /**
+     * StoredContributor.billingInfo() should throw an ISE
+     * if the Stripe API token is not set.
+     */
+    @Test
+    public void billingInfoComplainsOnMissingKey() {
+        final PayoutMethod method = new StripePayoutMethod(
+            Mockito.mock(Contributor.class),
+            "acct_001",
+            Boolean.TRUE
+        );
+
+        try {
+            method.billingInfo();
+            Assert.fail("IllegalStateException was expected.");
+        } catch (final IllegalStateException ex) {
+            MatcherAssert.assertThat(
+                ex.getMessage(),
+                Matchers.equalTo(
+                "Please specify the "
+                    + Env.STRIPE_API_TOKEN
+                    + " Environment Variable!"
+                )
+            );
+        }
+    }
 }

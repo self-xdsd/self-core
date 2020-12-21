@@ -200,9 +200,55 @@ public final class StoredContributor implements Contributor {
 
     @Override
     public BillingInfo billingInfo() {
-        throw new UnsupportedOperationException(
-            "Not yet implemented."
-        );
+        final BillingInfo info;
+        PayoutMethod active = null;
+        for(final PayoutMethod method : this.payoutMethods()) {
+            if(method.active()) {
+                active = method;
+                break;
+            }
+        }
+        if(active != null) {
+            info = active.billingInfo();
+        } else {
+            info = new BillingInfo() {
+                @Override
+                public String legalName() {
+                    return StoredContributor.this.username;
+                }
+
+                @Override
+                public String country() {
+                    return "";
+                }
+
+                @Override
+                public String address() {
+                    return StoredContributor.this.provider;
+                }
+
+                @Override
+                public String city() {
+                    return "";
+                }
+
+                @Override
+                public String zipcode() {
+                    return "";
+                }
+
+                @Override
+                public String email() {
+                    return "";
+                }
+
+                @Override
+                public String other() {
+                    return "";
+                }
+            };
+        }
+        return info;
     }
 
     @Override
