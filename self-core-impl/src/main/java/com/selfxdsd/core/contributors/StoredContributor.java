@@ -242,6 +242,12 @@ public final class StoredContributor implements Contributor {
                 public String other() {
                     return "";
                 }
+
+                @Override
+                public String toString() {
+                    return "Contributor " + this.legalName()
+                        + " at " + this.address();
+                }
             };
         }
         return info;

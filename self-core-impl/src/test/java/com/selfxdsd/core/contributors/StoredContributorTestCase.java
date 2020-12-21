@@ -436,7 +436,11 @@ public final class StoredContributorTestCase {
 
         MatcherAssert.assertThat(
             contributor.billingInfo().legalName(),
-            Matchers.is("amihaiemil")
+            Matchers.equalTo("amihaiemil")
+        );
+        MatcherAssert.assertThat(
+            contributor.billingInfo().toString(),
+            Matchers.equalTo("Contributor amihaiemil at github")
         );
     }
 
