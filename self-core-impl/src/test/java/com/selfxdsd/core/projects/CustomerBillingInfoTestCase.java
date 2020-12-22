@@ -39,15 +39,20 @@ import java.util.Map;
 public final class CustomerBillingInfoTestCase {
 
     /**
-     * CustomerBillingInfo can be formatted nicely via toString().
+     * CustomerBillingInfo can be formatted nicely via toString(),
+     * if it's an individual (not a company).
      */
     @Test
-    public void formatsBillingInfo() {
+    public void formatsIndividualBillingInfo() {
         final Customer customer = new Customer();
         customer.setName("Mihai Andronache");
         customer.setEmail("amihaiemil@gmail.com");
         customer.setMetadata(
-            Map.of("other", "TVA Code: 12345")
+            Map.of(
+                "isCompany", "false",
+                "taxId", "VAT_ID_123",
+                "other", "C12345"
+            )
         );
         final Address address = new Address();
         address.setCountry("RO");
@@ -62,7 +67,43 @@ public final class CustomerBillingInfoTestCase {
                 "Mihai Andronache\n"
                 + "Str. Exemplu, nr 10; 400000 Cluj-Napoca; RO\n"
                 + "amihaiemil@gmail.com\n"
-                + "TVA Code: 12345"
+                + "VAT_ID_123\n"
+                + "C12345"
+            )
+        );
+    }
+
+    /**
+     * CustomerBillingInfo can be formatted nicely via toString(),
+     * if it's a company.
+     */
+    @Test
+    public void formatsCompanyBillingInfo() {
+        final Customer customer = new Customer();
+        customer.setName("Example Corp. LLC");
+        customer.setEmail("amihaiemil@gmail.com");
+        customer.setMetadata(
+            Map.of(
+                "isCompany", "true",
+                "taxId", "VAT_ID_123",
+                "other", "C12345"
+            )
+        );
+        final Address address = new Address();
+        address.setCountry("RO");
+        address.setCity("Cluj-Napoca");
+        address.setLine1("Str. Exemplu, nr 10");
+        address.setPostalCode("400000");
+        customer.setAddress(address);
+
+        MatcherAssert.assertThat(
+            new CustomerBillingInfo(customer).toString(),
+            Matchers.equalTo(
+                "Example Corp. LLC\n"
+                    + "Str. Exemplu, nr 10; 400000 Cluj-Napoca; RO\n"
+                    + "amihaiemil@gmail.com\n"
+                    + "VAT_ID_123\n"
+                    + "C12345"
             )
         );
     }

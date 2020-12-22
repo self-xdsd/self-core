@@ -49,7 +49,22 @@ public final class AccountBillingInfo implements BillingInfo {
     }
 
     @Override
+    public boolean isCompany() {
+        return false;
+    }
+
+    @Override
     public String legalName() {
+        return null;
+    }
+
+    @Override
+    public String firstName() {
+        return null;
+    }
+
+    @Override
+    public String lastName() {
         return null;
     }
 
@@ -75,6 +90,11 @@ public final class AccountBillingInfo implements BillingInfo {
 
     @Override
     public String email() {
+        return null;
+    }
+
+    @Override
+    public String taxId() {
         return null;
     }
 

@@ -234,8 +234,23 @@ public final class FakeWallet implements Wallet {
     public BillingInfo billingInfo() {
         return new BillingInfo() {
             @Override
+            public boolean isCompany() {
+                return true;
+            }
+
+            @Override
             public String legalName() {
                 return FakeWallet.this.project.repoFullName();
+            }
+
+            @Override
+            public String firstName() {
+                return "";
+            }
+
+            @Override
+            public String lastName() {
+                return "";
             }
 
             @Override
@@ -260,6 +275,11 @@ public final class FakeWallet implements Wallet {
 
             @Override
             public String email() {
+                return "";
+            }
+
+            @Override
+            public String taxId() {
                 return "";
             }
 
