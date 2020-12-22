@@ -34,6 +34,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -286,9 +287,22 @@ public final class StoredProject implements Project {
         }
         Stripe.apiKey = apiToken;
         try {
+            final Map<String, String> metadata = new HashMap<>();
+            metadata.put("isCompany", String.valueOf(billingInfo.isCompany()));
+            final String taxId = billingInfo.taxId();
+            if(taxId != null && !taxId.isEmpty()) {
+                metadata.put("taxId", taxId);
+            }
+            metadata.put("other", billingInfo.other());
+            final String name;
+            if(billingInfo.isCompany()) {
+                name = billingInfo.legalName();
+            } else {
+                name = billingInfo.firstName() + " " + billingInfo.legalName();
+            }
             final Customer customer = Customer.create(
                 CustomerCreateParams.builder()
-                    .setName(billingInfo.legalName())
+                    .setName(name)
                     .setEmail(billingInfo.email())
                     .setAddress(
                         CustomerCreateParams.Address.builder()
@@ -298,9 +312,7 @@ public final class StoredProject implements Project {
                             .setPostalCode(billingInfo.zipcode())
                             .build()
                     )
-                    .setMetadata(
-                        Map.of("other", billingInfo.other())
-                    )
+                    .setMetadata(metadata)
                     .setDescription(
                         this.repoFullName + " at " + this.provider()
                     )

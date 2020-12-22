@@ -212,7 +212,7 @@ public final class CustomerBillingInfo implements BillingInfo {
                 + this.city() + "; "
                 + this.country() + "\n"
             ).append(this.email() + "\n")
-            .append(this.taxId() + "\n")
+            .append(taxId + "\n")
             .append(this.other());
         return billingInfo.toString();
     }
