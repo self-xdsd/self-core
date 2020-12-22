@@ -26,6 +26,8 @@ import com.selfxdsd.api.BillingInfo;
 import com.stripe.model.Address;
 import com.stripe.model.Customer;
 
+import java.util.Map;
+
 /**
  * BillingInfo from Stripe Customer.
  * @author Mihai Andronache (amihaiemil@gmail.com)
@@ -54,14 +56,56 @@ public final class CustomerBillingInfo implements BillingInfo {
     }
 
     @Override
-    public String legalName() {
-        final String name;
+    public boolean isCompany() {
+        final boolean isCompany;
         if(this.customer == null) {
-            name = null;
+            isCompany = false;
         } else {
-            name = this.customer.getName();
+            final Map<String, String> metadata = this.customer.getMetadata();
+            if (metadata == null) {
+                isCompany = false;
+            } else {
+                isCompany = Boolean.valueOf(metadata.get("isCompany"));
+            }
+        }
+        return isCompany;
+    }
+
+    @Override
+    public String legalName() {
+        String name = "";
+        if(this.isCompany()) {
+            if (this.customer == null) {
+                name = null;
+            } else {
+                name = this.customer.getName();
+            }
         }
         return name;
+    }
+
+    @Override
+    public String firstName() {
+        String firstName = "";
+        if(!this.isCompany()) {
+            final String[] parts = this.customer.getName().split(" ");
+            for (int i = 0; i < parts.length; i++) {
+                if (i < parts.length - 1) {
+                    firstName = firstName + " " + parts[i];
+                }
+            }
+        }
+        return firstName.trim();
+    }
+
+    @Override
+    public String lastName() {
+        String lastName = "";
+        if(!this.isCompany()) {
+            final String[] parts = this.customer.getName().split(" ");
+            lastName = parts[parts.length -1];
+        }
+        return lastName;
     }
 
     @Override
@@ -120,12 +164,29 @@ public final class CustomerBillingInfo implements BillingInfo {
     }
 
     @Override
+    public String taxId() {
+        final String taxId;
+        final Map<String, String> metadata = this.customer.getMetadata();
+        if(metadata != null) {
+            taxId = metadata.get("taxId");
+        } else {
+            taxId = null;
+        }
+        return taxId;
+    }
+
+    @Override
     public String other() {
         final String other;
         if(this.customer == null) {
             other = "";
         } else {
-            other = this.customer.getMetadata().get("other");
+            final Map<String, String> metadata = this.customer.getMetadata();
+            if(metadata != null) {
+                other = metadata.get("other");
+            } else {
+                other = "";
+            }
         }
         return other;
     }
@@ -133,14 +194,25 @@ public final class CustomerBillingInfo implements BillingInfo {
     @Override
     public String toString() {
         final StringBuilder billingInfo = new StringBuilder();
+        final String name;
+        if(this.isCompany()) {
+            name = this.legalName();
+        } else {
+            name = this.firstName() + " " + this.lastName();
+        }
+        String taxId = this.taxId();
+        if(taxId == null) {
+            taxId = "";
+        }
         billingInfo
-            .append(this.legalName() + "\n")
+            .append(name + "\n")
             .append(
                 this.address() + "; "
                 + this.zipcode() + " "
                 + this.city() + "; "
                 + this.country() + "\n"
             ).append(this.email() + "\n")
+            .append(this.taxId() + "\n")
             .append(this.other());
         return billingInfo.toString();
     }

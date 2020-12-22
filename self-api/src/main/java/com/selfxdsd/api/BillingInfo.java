@@ -31,10 +31,30 @@ package com.selfxdsd.api;
 public interface BillingInfo {
 
     /**
-     * Legal name of the business or individual.
+     * Is it a company or an individual?
+     * @return True if company/business, false if individual.
+     */
+    boolean isCompany();
+
+    /**
+     * Legal name of the business.
      * @return String.
      */
     String legalName();
+
+    /**
+     * First name of the individual, if this represents
+     * the data of an individual.
+     * @return String.
+     */
+    String firstName();
+
+    /**
+     * Last name of the individual, if this represents the data
+     * of an individual.
+     * @return String.
+     */
+    String lastName();
 
     /**
      * Country.
@@ -65,6 +85,12 @@ public interface BillingInfo {
      * @return String.
      */
     String email();
+
+    /**
+     * Tax ID (for example VAT id).
+     * @return String.
+     */
+    String taxId();
 
     /**
      * Other info (e.g. company registration number).

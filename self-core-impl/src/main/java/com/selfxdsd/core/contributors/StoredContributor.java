@@ -209,8 +209,23 @@ public final class StoredContributor implements Contributor {
         } else {
             info = new BillingInfo() {
                 @Override
+                public boolean isCompany() {
+                    return true;
+                }
+
+                @Override
                 public String legalName() {
                     return StoredContributor.this.username;
+                }
+
+                @Override
+                public String firstName() {
+                    return "";
+                }
+
+                @Override
+                public String lastName() {
+                    return "";
                 }
 
                 @Override
@@ -235,6 +250,11 @@ public final class StoredContributor implements Contributor {
 
                 @Override
                 public String email() {
+                    return "";
+                }
+
+                @Override
+                public String taxId() {
                     return "";
                 }
 
