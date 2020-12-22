@@ -293,9 +293,15 @@ public final class StoredContributor implements Contributor {
     }
 
     /**
-     * Create AccountCreateParams for Stripe.
+     * Create AccountCreateParams for Stripe.<br><br>
+     *
+     * We duplicate almost all the info in the metadata field, so we
+     * can also retrieve it from Stripe. Otherwise, Stripe will not
+     * give us this info when fetching an Account.
+     *
      * @param info Billing info.
      * @return AccountCreateParams.
+     * @checkstyle ExecutableStatementCount (100 lines)
      */
     private AccountCreateParams accountParams(final BillingInfo info) {
         final AccountCreateParams.BusinessType businessType;
@@ -307,7 +313,8 @@ public final class StoredContributor implements Contributor {
             businessType = INDIVIDUAL;
             metadata.put("isCompany", "false");
         }
-        final AccountCreateParams.Builder account = AccountCreateParams.builder()
+        final AccountCreateParams.Builder account = AccountCreateParams
+            .builder()
             .setEmail(info.email())
             .setCountry(info.country())
             .setBusinessType(businessType)
