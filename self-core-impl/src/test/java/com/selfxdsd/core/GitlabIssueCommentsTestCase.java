@@ -37,6 +37,8 @@ import org.junit.Test;
  * Unit tests for {@link GitlabIssueComments}.
  *
  * @since 0.0.45
+ * @todo #726:30m Add tests for GilabIssueComments.post(...)
+ *  and GitlabIssueComments.received(...).
  */
 public final class GitlabIssueCommentsTestCase {
 
