@@ -17,7 +17,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author andreoss
  * @version $Id$
- * @since 0.0.41
+ * @since 0.0.45
  */
 final class GitlabIssueComments implements Comments {
 

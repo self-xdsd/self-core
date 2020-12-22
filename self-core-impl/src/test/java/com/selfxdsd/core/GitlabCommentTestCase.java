@@ -11,7 +11,7 @@ import org.junit.Test;
  * Unit tests for {@link GitlabComment}.
  *
  * @version $Id$
- * @since 0.0.41
+ * @since 0.0.45
  */
 public final class GitlabCommentTestCase {
 

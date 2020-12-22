@@ -32,7 +32,7 @@ import java.util.Iterator;
  * Invitations to a Gitlab Repo.
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
- * @since 0.0.41
+ * @since 0.0.45
  */
 final class GitlabRepoInvitations implements Invitations {
 

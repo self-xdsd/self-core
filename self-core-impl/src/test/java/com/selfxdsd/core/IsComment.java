@@ -10,7 +10,7 @@ import org.hamcrest.TypeSafeDiagnosingMatcher;
  * Matcher for {@link Comment}.
  *
  * @version $Id$
- * @since 0.0.41
+ * @since 0.0.45
  */
 public final class IsComment extends TypeSafeDiagnosingMatcher<Comment> {
 
