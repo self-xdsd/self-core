@@ -29,7 +29,10 @@ import com.stripe.Stripe;
 import com.stripe.exception.StripeException;
 import com.stripe.model.Account;
 import com.stripe.param.AccountCreateParams;
+import static com.stripe.param.AccountCreateParams.BusinessType.*;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -155,7 +158,7 @@ public final class StoredContributor implements Contributor {
     }
 
     @Override
-    public PayoutMethod createStripeAccount() {
+    public PayoutMethod createStripeAccount(final BillingInfo billingInfo) {
         final PayoutMethods methods = this.payoutMethods();
         for(final PayoutMethod method : methods) {
             if(method.type().equals(PayoutMethod.Type.STRIPE)) {
@@ -176,9 +179,7 @@ public final class StoredContributor implements Contributor {
         Stripe.apiKey = apiToken;
         try {
             final Account account = Account.create(
-                AccountCreateParams.builder()
-                    .setType(AccountCreateParams.Type.EXPRESS)
-                    .build()
+                this.accountParams(billingInfo)
             );
             return methods.register(
                 this,
@@ -289,5 +290,71 @@ public final class StoredContributor implements Contributor {
         final Contributor other = (Contributor) obj;
         return this.username.equalsIgnoreCase(other.username())
             && this.provider.equalsIgnoreCase(other.provider());
+    }
+
+    /**
+     * Create AccountCreateParams for Stripe.
+     * @param info Billing info.
+     * @return AccountCreateParams.
+     */
+    private AccountCreateParams accountParams(final BillingInfo info) {
+        final AccountCreateParams.BusinessType businessType;
+        final Map<String, String> metadata = new HashMap<>();
+        if(info.isCompany()) {
+            businessType = COMPANY;
+            metadata.put("isCompany", "true");
+        } else {
+            businessType = INDIVIDUAL;
+            metadata.put("isCompany", "false");
+        }
+        final AccountCreateParams.Builder account = AccountCreateParams.builder()
+            .setEmail(info.email())
+            .setCountry(info.country())
+            .setBusinessType(businessType)
+            .setType(AccountCreateParams.Type.EXPRESS);
+        if(businessType.equals(COMPANY)) {
+            account.setCompany(
+                AccountCreateParams.Company.builder()
+                    .setName(info.legalName())
+                    .setAddress(
+                        AccountCreateParams.Company.Address.builder()
+                            .setCountry(info.country())
+                            .setCity(info.city())
+                            .setLine1(info.address())
+                            .setPostalCode(info.zipcode())
+                            .build()
+                    )
+                .build()
+            );
+            metadata.put("legalName", info.legalName());
+        } else {
+            account.setIndividual(
+                AccountCreateParams.Individual.builder()
+                    .setFirstName(info.firstName())
+                    .setLastName(info.lastName())
+                    .setAddress(
+                        AccountCreateParams.Individual.Address.builder()
+                            .setCountry(info.country())
+                            .setCity(info.city())
+                            .setLine1(info.address())
+                            .setPostalCode(info.zipcode())
+                            .build()
+                    )
+                .build()
+            );
+            metadata.put("firstName", info.firstName());
+            metadata.put("lastName", info.lastName());
+        }
+        metadata.put("country", info.country());
+        metadata.put("city", info.city());
+        metadata.put("address", info.address());
+        metadata.put("zipCode", info.zipcode());
+        metadata.put("other", info.other());
+        final String taxId = info.taxId();
+        if(taxId != null && !taxId.isEmpty()) {
+            metadata.put("taxId", taxId);
+        }
+        account.setMetadata(metadata);
+        return account.build();
     }
 }

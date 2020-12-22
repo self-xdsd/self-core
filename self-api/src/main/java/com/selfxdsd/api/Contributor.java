@@ -76,12 +76,13 @@ public interface Contributor {
     /**
      * Create a Stripe Connect Account for this Contributor,
      * so we can pay them. The Connect Account will be linked
-     * to the Self's Platform Accoung on Stripe.
+     * to the Self's Platform Account on Stripe.
+     * @param billingInfo Info associated with the Stripe Account.
      * @return PayoutMethod.
      * @throws IllegalStateException If the Contributor alredy has
      *  a Stripe Account/PayoutMethod.
      */
-    PayoutMethod createStripeAccount();
+    PayoutMethod createStripeAccount(final BillingInfo billingInfo);
 
     /**
      * Billing information of this Contributor. This information will

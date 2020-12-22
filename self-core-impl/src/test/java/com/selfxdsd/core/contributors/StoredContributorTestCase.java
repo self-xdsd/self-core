@@ -309,7 +309,7 @@ public final class StoredContributorTestCase {
         Mockito.when(all.ofContributor(contributor)).thenReturn(ofContributor);
 
         try {
-            contributor.createStripeAccount();
+            contributor.createStripeAccount(Mockito.mock(BillingInfo.class));
             Assert.fail("IllegalStateException was expected.");
         } catch (final IllegalStateException ex) {
             Mockito.verify(ofContributor, Mockito.times(0)).register(
@@ -345,7 +345,7 @@ public final class StoredContributorTestCase {
         Mockito.when(all.ofContributor(contributor)).thenReturn(ofContributor);
 
         try {
-            contributor.createStripeAccount();
+            contributor.createStripeAccount(Mockito.mock(BillingInfo.class));
             Assert.fail("IllegalStateException was expected.");
         } catch (final IllegalStateException ex) {
             Mockito.verify(ofContributor, Mockito.times(0)).register(
