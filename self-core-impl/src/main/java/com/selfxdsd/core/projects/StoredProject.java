@@ -298,7 +298,7 @@ public final class StoredProject implements Project {
             if(billingInfo.isCompany()) {
                 name = billingInfo.legalName();
             } else {
-                name = billingInfo.firstName() + " " + billingInfo.legalName();
+                name = billingInfo.firstName() + " " + billingInfo.lastName();
             }
             final Customer customer = Customer.create(
                 CustomerCreateParams.builder()
