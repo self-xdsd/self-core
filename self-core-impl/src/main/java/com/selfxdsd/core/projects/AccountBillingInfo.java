@@ -25,81 +25,118 @@ package com.selfxdsd.core.projects;
 import com.selfxdsd.api.BillingInfo;
 import com.stripe.model.Account;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * BillingInfo from Stripe Connected Account.
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.44
- * @todo #813:60min Implement and test this class. We should retrieve
- *  the information from the Account, most likely from the Metadata attribute.
  */
 public final class AccountBillingInfo implements BillingInfo {
 
     /**
-     * Stripe connected Account.
+     * Stripe account.
      */
     private final Account account;
+
+    /**
+     * Metadata of the Stripe Connected Account.
+     */
+    private final Map<String, String> metadata;
 
     /**
      * Ctor.
      * @param account Stripe connected Account.
      */
     public AccountBillingInfo(final Account account) {
+        if(account.getMetadata() == null) {
+            this.metadata = new HashMap<>();
+        } else {
+            this.metadata = account.getMetadata();
+        }
         this.account = account;
     }
 
     @Override
     public boolean isCompany() {
-        return false;
+        return Boolean.valueOf(this.metadata.get("isCompany"));
     }
 
     @Override
     public String legalName() {
-        return null;
+        return this.metadata.get("legalName");
     }
 
     @Override
     public String firstName() {
-        return null;
+        return this.metadata.get("firstName");
     }
 
     @Override
     public String lastName() {
-        return null;
+        return this.metadata.get("lastName");
     }
 
     @Override
     public String country() {
-        return null;
+        return this.metadata.get("country");
     }
 
     @Override
     public String address() {
-        return null;
+        return this.metadata.get("address");
     }
 
     @Override
     public String city() {
-        return null;
+        return this.metadata.get("city");
     }
 
     @Override
     public String zipcode() {
-        return null;
+        return this.metadata.get("zipCode");
     }
 
     @Override
     public String email() {
-        return null;
+        return this.account.getEmail();
     }
 
     @Override
     public String taxId() {
-        return null;
+        return this.metadata.get("taxId");
     }
 
     @Override
     public String other() {
-        return null;
+        return this.metadata.get("other");
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder billingInfo = new StringBuilder();
+        final String name;
+        if(this.isCompany()) {
+            name = this.legalName();
+        } else {
+            name = this.firstName() + " " + this.lastName();
+        }
+        String taxId = this.taxId();
+        if(taxId == null) {
+            taxId = "";
+        }
+        billingInfo
+            .append(name + "\n")
+            .append(
+                this.address() + "; "
+                + this.zipcode() + " "
+                + this.city() + "; "
+                + this.country() + "\n"
+            ).append(this.email() + "\n")
+            .append(taxId + "\n")
+            .append(this.other());
+        return billingInfo.toString();
     }
 }
