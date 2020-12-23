@@ -45,8 +45,6 @@ import java.net.URI;
  * @author criske
  * @version $Id$
  * @since 0.0.38
- * @todo #726:60min Start implementing GitlabComments by following
- *  GithubComments as model. These will be used by GitlabIssue.
  */
 final class GitlabIssue implements Issue {
 
