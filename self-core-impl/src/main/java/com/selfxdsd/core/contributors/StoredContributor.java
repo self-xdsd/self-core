@@ -267,7 +267,7 @@ public final class StoredContributor implements Contributor {
                 @Override
                 public String toString() {
                     return "Contributor " + this.legalName()
-                        + " at " + this.address();
+                        + " at " + this.address() + ".";
                 }
             };
         }

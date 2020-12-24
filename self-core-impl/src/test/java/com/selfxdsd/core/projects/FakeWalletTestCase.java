@@ -166,7 +166,7 @@ public final class FakeWalletTestCase {
         MatcherAssert.assertThat(
             billing.toString(),
             Matchers.equalTo(
-                "Project mihai/test at " + Provider.Names.GITHUB
+                "Project mihai/test at " + Provider.Names.GITHUB + "."
             )
         );
     }

@@ -4,13 +4,13 @@ import com.selfxdsd.api.*;
 import com.selfxdsd.api.storage.Storage;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentCatalog;
-import org.apache.pdfbox.pdmodel.PDPageTree;
 import org.apache.pdfbox.pdmodel.interactive.form.PDAcroForm;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigDecimal;
-import java.net.URISyntaxException;
 import java.text.NumberFormat;
 import java.time.LocalDateTime;
 import java.util.Locale;
@@ -180,21 +180,9 @@ public final class StoredInvoice implements Invoice {
 
     @Override
     public File toPdf() throws IOException {
-        final PDDocument doc;
-        try {
-            doc = new PDDocument().load(
-                new File(
-                    this.getClass().getClassLoader()
-                        .getResource("invoice_template.pdf")
-                        .toURI()
-                )
-            );
-        } catch (final URISyntaxException ex) {
-            throw new IOException(
-                "Could not load invoice PDF template.",
-                ex
-            );
-        }
+        final PDDocument doc = new PDDocument().load(
+            this.getResourceAsFile("invoice_template.pdf")
+        );
         final PDDocumentCatalog docCatalog = doc.getDocumentCatalog();
         final PDAcroForm acroForm = docCatalog.getAcroForm();
 
@@ -204,6 +192,21 @@ public final class StoredInvoice implements Invoice {
         );
         acroForm.getField("billedBy").setValue(this.billedBy());
         acroForm.getField("billedTo").setValue(this.billedTo());
+        acroForm.getField("project").setValue(
+            this.contract.project().repoFullName()
+        );
+        acroForm.getField("role").setValue(
+            this.contract.role()
+        );
+        acroForm.getField("hourlyRate").setValue(
+            NumberFormat
+                .getCurrencyInstance(Locale.GERMANY)
+                .format(
+                    this.contract.hourlyRate()
+                        .divide(BigDecimal.valueOf(100))
+                )
+        );
+
         acroForm.getField("totalDue").setValue(
             NumberFormat
                 .getCurrencyInstance(Locale.GERMANY)
@@ -212,10 +215,10 @@ public final class StoredInvoice implements Invoice {
                         .divide(BigDecimal.valueOf(100))
                 )
         );
-        if(this.transactionId != null) {
-            acroForm.getField("transactionId").setValue(this.transactionId);
+        if(this.isPaid()) {
+            acroForm.getField("status").setValue("Paid");
         } else {
-            acroForm.getField("transactionId").setValue("not yet paid");
+            acroForm.getField("status").setValue("Active (not paid)");
         }
         final StringBuilder taskIds = new StringBuilder();
         final StringBuilder estimations = new StringBuilder();
@@ -284,5 +287,28 @@ public final class StoredInvoice implements Invoice {
     public boolean equals(final Object obj) {
         return this == obj || (obj instanceof Invoice
             && this.id == ((Invoice) obj).invoiceId());
+    }
+
+    /**
+     * Convenience method to get the PDF template resource as a File.
+     * @param resourcePath Name of the file.
+     * @throws IOException If something goes wrong.
+     * @return File.
+     */
+    private File getResourceAsFile(
+        final String resourcePath
+    ) throws IOException {
+        InputStream in = ClassLoader.getSystemClassLoader().getResourceAsStream(resourcePath);
+        File tempFile = File.createTempFile(String.valueOf(in.hashCode()), ".tmp");
+        tempFile.deleteOnExit();
+
+        try (FileOutputStream out = new FileOutputStream(tempFile)) {
+            byte[] buffer = new byte[1024];
+            int bytesRead;
+            while ((bytesRead = in.read(buffer)) != -1) {
+                out.write(buffer, 0, bytesRead);
+            }
+        }
+        return tempFile;
     }
 }

@@ -440,7 +440,7 @@ public final class StoredContributorTestCase {
         );
         MatcherAssert.assertThat(
             contributor.billingInfo().toString(),
-            Matchers.equalTo("Contributor amihaiemil at github")
+            Matchers.equalTo("Contributor amihaiemil at github.")
         );
     }
 

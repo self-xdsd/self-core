@@ -290,7 +290,8 @@ public final class FakeWallet implements Wallet {
 
             @Override
             public String toString() {
-                return "Project " + this.legalName() + " at " + this.address();
+                return "Project " + this.legalName()
+                    + " at " + this.address() + ".";
             }
         };
     }
