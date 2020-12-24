@@ -22,6 +22,9 @@ import java.util.Locale;
  * @since 0.0.3
  * @checkstyle ExecutableStatementCount (500 lines)
  * @checkstyle TrailingComment (500 lines)
+ * @todo #826:60min Modify the PDF template and the code in toPdf()
+ *  such that more tasks are written on more pages. At the moment
+ *  only 40 tasks are written to the 1-page PDF.
  */
 public final class StoredInvoice implements Invoice {
 
