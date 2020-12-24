@@ -2,8 +2,18 @@ package com.selfxdsd.core.contracts.invoices;
 
 import com.selfxdsd.api.*;
 import com.selfxdsd.api.storage.Storage;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDDocumentCatalog;
+import org.apache.pdfbox.pdmodel.PDPageTree;
+import org.apache.pdfbox.pdmodel.interactive.form.PDAcroForm;
+
+import java.io.File;
+import java.io.IOException;
 import java.math.BigDecimal;
+import java.net.URISyntaxException;
+import java.text.NumberFormat;
 import java.time.LocalDateTime;
+import java.util.Locale;
 
 /**
  * An Invoice stored in self.
@@ -166,6 +176,76 @@ public final class StoredInvoice implements Invoice {
     @Override
     public boolean isPaid() {
         return this.paymentTime != null && this.transactionId != null;
+    }
+
+    @Override
+    public File toPdf() throws IOException {
+        final PDDocument doc;
+        try {
+            doc = new PDDocument().load(
+                new File(
+                    this.getClass().getClassLoader()
+                        .getResource("invoice_template.pdf")
+                        .toURI()
+                )
+            );
+        } catch (final URISyntaxException ex) {
+            throw new IOException(
+                "Could not load invoice PDF template.",
+                ex
+            );
+        }
+        final PDDocumentCatalog docCatalog = doc.getDocumentCatalog();
+        final PDAcroForm acroForm = docCatalog.getAcroForm();
+
+        acroForm.getField("invoiceId").setValue("SLFX-" + this.id);
+        acroForm.getField("createdAt").setValue(
+            this.createdAt.toLocalDate().toString()
+        );
+        acroForm.getField("billedBy").setValue(this.billedBy());
+        acroForm.getField("billedTo").setValue(this.billedTo());
+        acroForm.getField("totalDue").setValue(
+            NumberFormat
+                .getCurrencyInstance(Locale.GERMANY)
+                .format(
+                    this.totalAmount()
+                        .divide(BigDecimal.valueOf(100))
+                )
+        );
+        if(this.transactionId != null) {
+            acroForm.getField("transactionId").setValue(this.transactionId);
+        } else {
+            acroForm.getField("transactionId").setValue("not yet paid");
+        }
+        final StringBuilder taskIds = new StringBuilder();
+        final StringBuilder estimations = new StringBuilder();
+        final StringBuilder values = new StringBuilder();
+        final StringBuilder commissions = new StringBuilder();
+
+        for(final InvoicedTask invoiced : this.tasks()) {
+            final Task task = invoiced.task();
+            taskIds.append(task.issueId()).append("\n");
+            estimations.append(task.estimation()).append("\n");
+            values.append(invoiced.value().divide(BigDecimal.valueOf(100)))
+                .append("\n");
+            commissions.append(
+                invoiced.commission().divide(BigDecimal.valueOf(100))
+            ).append("\n");
+        }
+
+        acroForm.getField("taskIds").setValue(taskIds.toString());
+        acroForm.getField("estimations").setValue(estimations.toString());
+        acroForm.getField("values").setValue(values.toString());
+        acroForm.getField("commissions").setValue(commissions.toString());
+
+        acroForm.flatten();
+
+        doc.addPage(docCatalog.getPages().get(0));
+
+        final File generated = new File("invoice_SLFX_"+ this.id + ".pdf");
+        doc.save(generated);
+        doc.close();
+        return generated;
     }
 
     @Override

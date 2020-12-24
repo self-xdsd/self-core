@@ -1,5 +1,7 @@
 package com.selfxdsd.api;
 
+import java.io.File;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -92,4 +94,11 @@ public interface Invoice {
      * @return Boolean
      */
     boolean isPaid();
+
+    /**
+     * Turn this invoice to a PDF file.
+     * @return PDF File.
+     * @throws IOException If any I/O problems.
+     */
+    File toPdf() throws IOException;
 }
