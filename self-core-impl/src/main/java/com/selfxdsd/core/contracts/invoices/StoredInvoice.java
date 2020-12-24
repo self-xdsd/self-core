@@ -20,6 +20,8 @@ import java.util.Locale;
  * @author criske
  * @version $Id$
  * @since 0.0.3
+ * @checkstyle ExecutableStatementCount (500 lines)
+ * @checkstyle TrailingComment (500 lines)
  */
 public final class StoredInvoice implements Invoice {
 
@@ -225,7 +227,15 @@ public final class StoredInvoice implements Invoice {
         final StringBuilder values = new StringBuilder();
         final StringBuilder commissions = new StringBuilder();
 
+        int count = 0;
         for(final InvoicedTask invoiced : this.tasks()) {
+            if(count == 40) {
+                taskIds.append("...");
+                estimations.append("...");
+                values.append("...");
+                commissions.append("...");
+                break;
+            }
             final Task task = invoiced.task();
             taskIds.append(task.issueId()).append("\n");
             estimations.append(task.estimation()).append("\n");
@@ -234,6 +244,7 @@ public final class StoredInvoice implements Invoice {
             commissions.append(
                 invoiced.commission().divide(BigDecimal.valueOf(100))
             ).append("\n");
+            count++;
         }
 
         acroForm.getField("taskIds").setValue(taskIds.toString());
@@ -244,8 +255,9 @@ public final class StoredInvoice implements Invoice {
         acroForm.flatten();
 
         doc.addPage(docCatalog.getPages().get(0));
+        doc.removePage(1); //remove trailing blank page
 
-        final File generated = new File("invoice_SLFX_"+ this.id + ".pdf");
+        final File generated = new File("invoice_slfx_"+ this.id + ".pdf");
         doc.save(generated);
         doc.close();
         return generated;
@@ -298,14 +310,17 @@ public final class StoredInvoice implements Invoice {
     private File getResourceAsFile(
         final String resourcePath
     ) throws IOException {
-        InputStream in = ClassLoader.getSystemClassLoader().getResourceAsStream(resourcePath);
-        File tempFile = File.createTempFile(String.valueOf(in.hashCode()), ".tmp");
+        final InputStream stream = ClassLoader.getSystemClassLoader()
+            .getResourceAsStream(resourcePath);
+        final File tempFile = File.createTempFile(
+            String.valueOf(stream.hashCode()), ".tmp"
+        );
         tempFile.deleteOnExit();
 
         try (FileOutputStream out = new FileOutputStream(tempFile)) {
             byte[] buffer = new byte[1024];
             int bytesRead;
-            while ((bytesRead = in.read(buffer)) != -1) {
+            while ((bytesRead = stream.read(buffer)) != -1) {
                 out.write(buffer, 0, bytesRead);
             }
         }
