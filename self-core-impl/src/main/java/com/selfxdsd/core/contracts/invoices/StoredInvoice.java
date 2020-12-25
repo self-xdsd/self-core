@@ -313,7 +313,7 @@ public final class StoredInvoice implements Invoice {
     private File getResourceAsFile(
         final String resourcePath
     ) throws IOException {
-        final InputStream stream = ClassLoader.getSystemClassLoader()
+        final InputStream stream = this.getClass().getClassLoader()
             .getResourceAsStream(resourcePath);
         final File tempFile = File.createTempFile(
             String.valueOf(stream.hashCode()), ".tmp"
