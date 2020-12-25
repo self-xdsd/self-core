@@ -356,7 +356,10 @@ public final class StoredContributor implements Contributor {
         metadata.put("city", info.city());
         metadata.put("address", info.address());
         metadata.put("zipCode", info.zipcode());
-        metadata.put("other", info.other());
+        final String other = info.other();
+        if(other != null && !other.isEmpty()) {
+            metadata.put("other", other);
+        }
         final String taxId = info.taxId();
         if(taxId != null && !taxId.isEmpty()) {
             metadata.put("taxId", taxId);

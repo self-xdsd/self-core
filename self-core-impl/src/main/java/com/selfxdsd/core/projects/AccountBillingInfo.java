@@ -127,6 +127,10 @@ public final class AccountBillingInfo implements BillingInfo {
         if(taxId == null) {
             taxId = "";
         }
+        String other = this.other();
+        if(other == null) {
+            other = "";
+        }
         billingInfo
             .append(name + "\n")
             .append(
@@ -136,7 +140,7 @@ public final class AccountBillingInfo implements BillingInfo {
                 + this.country() + "\n"
             ).append(this.email() + "\n")
             .append(taxId + "\n")
-            .append(this.other());
+            .append(other);
         return billingInfo.toString();
     }
 }
