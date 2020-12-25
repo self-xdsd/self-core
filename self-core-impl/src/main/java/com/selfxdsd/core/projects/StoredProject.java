@@ -44,6 +44,7 @@ import java.util.Objects;
  * @version $Id$
  * @since 0.0.1
  * @checkstyle ExecutableStatementCount (500 lines)
+ * @checkstyle CyclomaticComplexity (500 lines)
  * @todo #278:30min Continue implementation of the resolve(...) method.
  *  It should decide what kind of event has occurred and delegate it
  *  further to the ProjectManager who will deal with it. We still need
@@ -293,7 +294,10 @@ public final class StoredProject implements Project {
             if(taxId != null && !taxId.isEmpty()) {
                 metadata.put("taxId", taxId);
             }
-            metadata.put("other", billingInfo.other());
+            final String other = billingInfo.other();
+            if(other != null && !other.isEmpty()) {
+                metadata.put("other", other);
+            }
             final String name;
             if(billingInfo.isCompany()) {
                 name = billingInfo.legalName();
