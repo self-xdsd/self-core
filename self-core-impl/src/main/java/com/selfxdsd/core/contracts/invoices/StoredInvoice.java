@@ -185,7 +185,7 @@ public final class StoredInvoice implements Invoice {
 
     @Override
     public File toPdf() throws IOException {
-        final PDDocument doc = new PDDocument().load(
+        final PDDocument doc = PDDocument.load(
             this.getResourceAsFile("invoice_template.pdf")
         );
         final PDDocumentCatalog docCatalog = doc.getDocumentCatalog();
