@@ -22,6 +22,7 @@
  */
 package com.selfxdsd.core;
 
+import com.selfxdsd.api.Comment;
 import com.selfxdsd.api.Comments;
 import com.selfxdsd.core.mock.MockJsonResources;
 import java.io.StringReader;
@@ -29,16 +30,18 @@ import java.net.HttpURLConnection;
 import java.net.URI;
 import java.util.Map;
 import javax.json.Json;
+import javax.json.JsonObject;
+import javax.json.JsonValue;
+
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 /**
  * Unit tests for {@link GitlabIssueComments}.
  *
  * @since 0.0.45
- * @todo #726:30m Add tests for GilabIssueComments.post(...)
- *  and GitlabIssueComments.received(...).
  */
 public final class GitlabIssueCommentsTestCase {
 
@@ -108,4 +111,104 @@ public final class GitlabIssueCommentsTestCase {
         );
     }
 
+    /**
+     * GitlabIssueComments can post a comment.
+     */
+    @Test
+    public void canPostComment() {
+        final URI commentsUri = URI.create(
+            "https://gitlab.com/api/v4/projects/23128361/issues/1/notes"
+        );
+        final Comments comments = new GitlabIssueComments(
+            commentsUri,
+            new MockJsonResources(
+                req -> {
+                    MatcherAssert.assertThat(
+                        req.getMethod(),
+                        Matchers.equalTo("POST")
+                    );
+                    MatcherAssert.assertThat(
+                        req.getUri(),
+                        Matchers.equalTo(commentsUri)
+                    );
+                    MatcherAssert.assertThat(
+                        req.getBody(),
+                        Matchers.equalTo(
+                            Json.createObjectBuilder()
+                                .add("body", "thanks :)")
+                                .build()
+                        )
+                    );
+                    return new MockJsonResources.MockResource(
+                        HttpURLConnection.HTTP_CREATED,
+                        Json.createObjectBuilder()
+                            .add("id", "123")
+                            .add("body", "thanks :)")
+                            .build()
+                    );
+                }
+            )
+        );
+        Comment comment = comments.post("thanks :)");
+        MatcherAssert.assertThat(
+            comment,
+            Matchers.allOf(
+                Matchers.notNullValue(),
+                Matchers.instanceOf(GitlabComment.class)
+            )
+        );
+        MatcherAssert.assertThat(
+            comment.json(),
+            Matchers.equalTo(
+                Json.createObjectBuilder()
+                    .add("id", "123")
+                    .add("body", "thanks :)")
+                    .build()
+            )
+        );
+    }
+
+    /**
+     * GitlabIssueComments post may fail.
+     */
+    @Test(expected = IllegalStateException.class)
+    public void postCanFail() {
+        new GitlabIssueComments(
+            URI.create("test/uri"),
+            new MockJsonResources(
+                req -> new MockJsonResources.MockResource(
+                    HttpURLConnection.HTTP_INTERNAL_ERROR,
+                    JsonValue.NULL
+                )
+            )
+        ).post("nothing!");
+    }
+
+    /**
+     * Create a GitlabComment from received JSON.
+     */
+    @Test
+    public void canCreateCommentFromJson() {
+        final JsonObject json = Json.createObjectBuilder()
+            .add("id", "123")
+            .add("body", "thanks :)")
+            .build();
+
+        final Comment comment = new GitlabIssueComments(
+            URI.create("test/uri"),
+            Mockito.mock(JsonResources.class)
+        ).received(json);
+
+        MatcherAssert.assertThat(
+            comment,
+            Matchers.allOf(
+                Matchers.notNullValue(),
+                Matchers.instanceOf(GitlabComment.class)
+            )
+        );
+        MatcherAssert.assertThat(
+            comment.json(),
+            Matchers.equalTo(json)
+        );
+    }
 }
