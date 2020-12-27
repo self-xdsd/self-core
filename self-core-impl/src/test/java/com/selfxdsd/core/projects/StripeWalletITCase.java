@@ -82,9 +82,12 @@ public final class StripeWalletITCase {
             Mockito.when(invoice.invoiceId()).thenReturn(1);
             Mockito.when(invoice.createdAt()).thenReturn(now);
             Mockito.when(invoice.isPaid()).thenReturn(false);
-            Mockito.when(invoice.totalAmount()).thenReturn(BigDecimal.TEN);
-            Mockito.when(invoice.commission()).thenReturn(BigDecimal.ONE);
-            Mockito.when(invoice.amount()).thenReturn(BigDecimal.valueOf(9));
+            Mockito.when(invoice.totalAmount())
+                .thenReturn(BigDecimal.valueOf((108 + 1) * 100));
+            Mockito.when(invoice.commission()).thenReturn(BigDecimal
+                .valueOf(100));
+            Mockito.when(invoice.amount())
+                .thenReturn(BigDecimal.valueOf(108 * 100));
 
             final Contract contract = Mockito.mock(Contract.class);
             final Contributor contributor = Mockito.mock(Contributor.class);
@@ -114,7 +117,7 @@ public final class StripeWalletITCase {
             final Wallet stripe = new StripeWallet(
                 storage,
                 project,
-                BigDecimal.valueOf(1000),
+                BigDecimal.valueOf(1000 * 100),
                 "123StripeID",
                 Boolean.TRUE,
                 "stripe_24343"
@@ -141,7 +144,10 @@ public final class StripeWalletITCase {
             Mockito.verify(invoices, Mockito.times(1))
                 .registerAsPaid(Mockito.any(Invoice.class));
             Mockito.verify(ofProject, Mockito.times(1))
-                .updateCash(stripe, BigDecimal.valueOf(990));
+                .updateCash(stripe, BigDecimal
+                    .valueOf(1000 * 100)
+                    .subtract(BigDecimal.valueOf((108 + 1) * 100))
+                );
         }
     }
 

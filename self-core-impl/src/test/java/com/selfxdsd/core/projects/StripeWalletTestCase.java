@@ -213,13 +213,45 @@ public final class StripeWalletTestCase {
     }
 
     /**
+     * Wallet.pay(...) throws if the Invoice total amount is lower than 108
+     * euro.
+     */
+    @Test(expected = WalletPaymentException.class)
+    public void complainsIfInvoiceTotalAmountIsTooLow(){
+        final Invoice invoice = Mockito.mock(Invoice.class);
+        final Contract contract = Mockito.mock(Contract.class);
+        Mockito.when(contract.contractId()).thenReturn(
+            new Contract.Id(
+                "mihai/test",
+                "mihai",
+                "github",
+                "DEV"
+            )
+        );
+        Mockito.when(invoice.contract()).thenReturn(contract);
+        Mockito.when(invoice.isPaid()).thenReturn(false);
+        Mockito.when(invoice.amount()).thenReturn(BigDecimal.TEN);
+
+        new StripeWallet(
+            Mockito.mock(Storage.class),
+            Mockito.mock(Project.class),
+            BigDecimal.TEN,
+            "id",
+            true
+        ).pay(invoice);
+    }
+
+    /**
      * Wallet.pay(...) throws if the is no active payout method.
      */
     @Test(expected = WalletPaymentException.class)
     public void complainsIfThereIsNoActivePayout(){
         final Invoice invoice = Mockito.mock(Invoice.class);
         Mockito.when(invoice.isPaid()).thenReturn(false);
-        Mockito.when(invoice.totalAmount()).thenReturn(BigDecimal.TEN);
+        Mockito.when(invoice.amount()).thenReturn(BigDecimal
+            .valueOf(108 * 100));
+        Mockito.when(invoice.totalAmount()).thenReturn(BigDecimal
+            .valueOf(108 * 100));
 
         final Storage storage = Mockito.mock(Storage.class);
 
@@ -254,7 +286,10 @@ public final class StripeWalletTestCase {
     public void complainsIfThereIsNoActivePaymentMethod(){
         final Invoice invoice = Mockito.mock(Invoice.class);
         Mockito.when(invoice.isPaid()).thenReturn(false);
-        Mockito.when(invoice.totalAmount()).thenReturn(BigDecimal.TEN);
+        Mockito.when(invoice.amount()).thenReturn(BigDecimal
+            .valueOf(108 * 100));
+        Mockito.when(invoice.totalAmount()).thenReturn(BigDecimal
+            .valueOf(108 * 100));
 
         final Storage storage = Mockito.mock(Storage.class);
 
