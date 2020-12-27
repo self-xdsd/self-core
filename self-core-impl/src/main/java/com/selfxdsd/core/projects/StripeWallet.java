@@ -168,7 +168,7 @@ public final class StripeWallet implements Wallet {
             LOG.error("[STRIPE] In order to be paid, Invoice amount must"
                 + " be at least 108€.");
             throw new WalletPaymentException("In order to be paid, Invoice"
-                + " total amount must be at least 108€.");
+                + " amount must be at least 108€.");
         }
 
         final BigDecimal newLimit = this.limit.subtract(invoice.totalAmount());
