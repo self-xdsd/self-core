@@ -15,14 +15,14 @@ import javax.json.JsonObject;
 final class GitlabIssueComment implements Comment {
 
     /**
-     * Comment JSON as returned by Github's API.
+     * Comment JSON as returned by Gitlab's API.
      */
     private final JsonObject json;
 
     /**
      * Ctor.
      *
-     * @param json Comment JSON as returned by Github's API.
+     * @param json Comment JSON as returned by Gitlab's API.
      */
     GitlabIssueComment(final JsonObject json) {
         this.json = json;
