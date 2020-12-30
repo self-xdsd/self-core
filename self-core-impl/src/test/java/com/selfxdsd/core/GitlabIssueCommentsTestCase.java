@@ -154,7 +154,7 @@ public final class GitlabIssueCommentsTestCase {
             comment,
             Matchers.allOf(
                 Matchers.notNullValue(),
-                Matchers.instanceOf(GitlabComment.class)
+                Matchers.instanceOf(GitlabIssueComment.class)
             )
         );
         MatcherAssert.assertThat(
@@ -203,7 +203,7 @@ public final class GitlabIssueCommentsTestCase {
             comment,
             Matchers.allOf(
                 Matchers.notNullValue(),
-                Matchers.instanceOf(GitlabComment.class)
+                Matchers.instanceOf(GitlabIssueComment.class)
             )
         );
         MatcherAssert.assertThat(

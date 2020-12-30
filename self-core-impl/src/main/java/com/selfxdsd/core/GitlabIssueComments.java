@@ -59,7 +59,7 @@ final class GitlabIssueComments implements Comments {
             Json.createObjectBuilder().add("body", body).build()
         );
         if (resource.statusCode() == HttpURLConnection.HTTP_CREATED) {
-            return new GitlabComment(resource.asJsonObject());
+            return new GitlabIssueComment(resource.asJsonObject());
         } else {
             LOG.error(
                 "Expected status 201 CREATED, but got: [{}].",
@@ -76,7 +76,7 @@ final class GitlabIssueComments implements Comments {
 
     @Override
     public Comment received(final JsonObject comment) {
-        return new GitlabComment(comment);
+        return new GitlabIssueComment(comment);
     }
 
     @Override

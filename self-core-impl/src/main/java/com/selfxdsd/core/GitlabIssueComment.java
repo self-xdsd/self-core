@@ -4,7 +4,7 @@ import com.selfxdsd.api.Comment;
 import javax.json.JsonObject;
 
 /**
- * Gitlab Comment.
+ * Gitlab Issue Comment.
  *
  * <a href="https://docs.gitlab.com/ee/api/notes.html#get-single-issue-note">Notes API</a>
  *
@@ -12,7 +12,7 @@ import javax.json.JsonObject;
  * @version $Id$
  * @since 0.0.45
  */
-final class GitlabComment implements Comment {
+final class GitlabIssueComment implements Comment {
 
     /**
      * Comment JSON as returned by Github's API.
@@ -24,7 +24,7 @@ final class GitlabComment implements Comment {
      *
      * @param json Comment JSON as returned by Github's API.
      */
-    GitlabComment(final JsonObject json) {
+    GitlabIssueComment(final JsonObject json) {
         this.json = json;
     }
 

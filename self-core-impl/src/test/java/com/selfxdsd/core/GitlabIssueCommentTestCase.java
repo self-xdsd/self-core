@@ -8,12 +8,12 @@ import org.hamcrest.Matchers;
 import org.junit.Test;
 
 /**
- * Unit tests for {@link GitlabComment}.
+ * Unit tests for {@link GitlabIssueComment}.
  *
  * @version $Id$
  * @since 0.0.45
  */
-public final class GitlabCommentTestCase {
+public final class GitlabIssueCommentTestCase {
 
     /**
      * Extracts author, id and comment
@@ -22,7 +22,7 @@ public final class GitlabCommentTestCase {
     @Test
     public void returnsAuthor() {
         MatcherAssert.assertThat(
-            new GitlabComment(
+            new GitlabIssueComment(
                 Json.createObjectBuilder()
                     .add("id", 1)
                     .add(
@@ -50,7 +50,7 @@ public final class GitlabCommentTestCase {
             .add("id", 1)
             .add("body", "This is a comment")
             .build();
-        final Comment comment = new GitlabComment(json);
+        final Comment comment = new GitlabIssueComment(json);
         MatcherAssert.assertThat(
             comment.json(),
             Matchers.is(json)
