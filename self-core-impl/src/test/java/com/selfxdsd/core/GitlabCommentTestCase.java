@@ -28,7 +28,7 @@ public final class GitlabCommentTestCase {
                     .add(
                         "author",
                         Json.createObjectBuilder()
-                            .add("name", "andreoss")
+                            .add("username", "andreoss")
                     )
                     .add("body", "A comment")
                     .build()

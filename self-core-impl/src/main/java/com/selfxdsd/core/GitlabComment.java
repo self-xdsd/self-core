@@ -35,7 +35,7 @@ final class GitlabComment implements Comment {
 
     @Override
     public String author() {
-        return this.json.getJsonObject("author").getString("name");
+        return this.json.getJsonObject("author").getString("username");
     }
 
     @Override
