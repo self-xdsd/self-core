@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020, Self XDSD Contributors
+ * Copyright (c) 2020-2021, Self XDSD Contributors
  * All rights reserved.
  * <p>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
