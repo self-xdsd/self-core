@@ -209,12 +209,15 @@ public final class StoredProjectManager implements ProjectManager {
 
     @Override
     public BigDecimal commission(final BigDecimal value) {
-        return value
-            .multiply(BigDecimal
+        return value.multiply(
+            BigDecimal
                 .valueOf(this.percentage)
                 .setScale(2, RoundingMode.HALF_UP)
-                .divide(BigDecimal.valueOf(100)))
-            .setScale(2, RoundingMode.HALF_UP);
+        ).divide(
+            BigDecimal.valueOf(100),
+            0,
+            RoundingMode.HALF_UP
+        );
     }
 
     @Override
