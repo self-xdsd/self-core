@@ -150,23 +150,19 @@ public final class StoredProjectManagerTestCase {
         );
         MatcherAssert.assertThat(
             fixed.commission(BigDecimal.valueOf(1000)),
-            Matchers.equalTo(BigDecimal.valueOf(80.0)
-                .setScale(2, RoundingMode.HALF_UP))
+            Matchers.equalTo(BigDecimal.valueOf(80))
         );
         MatcherAssert.assertThat(
             fixed.commission(BigDecimal.valueOf(10000)),
-            Matchers.equalTo(BigDecimal.valueOf(800.0)
-                .setScale(2, RoundingMode.HALF_UP))
+            Matchers.equalTo(BigDecimal.valueOf(800))
         );
         MatcherAssert.assertThat(
             fixed.commission(BigDecimal.valueOf(100)),
-            Matchers.equalTo(BigDecimal.valueOf(8.0)
-                .setScale(2, RoundingMode.HALF_UP))
+            Matchers.equalTo(BigDecimal.valueOf(8))
         );
         MatcherAssert.assertThat(
             fixed.commission(BigDecimal.valueOf(10)),
-            Matchers.equalTo(BigDecimal.valueOf(0.8)
-                .setScale(2, RoundingMode.HALF_UP))
+            Matchers.equalTo(BigDecimal.valueOf(1))
         );
 
         final ProjectManager comma = new StoredProjectManager(
@@ -179,20 +175,20 @@ public final class StoredProjectManagerTestCase {
             Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(
-            comma.commission(BigDecimal.valueOf(1000)).toString(),
-            Matchers.equalTo("86.30")
+            comma.commission(BigDecimal.valueOf(1000)),
+            Matchers.equalTo(BigDecimal.valueOf(86))
         );
         MatcherAssert.assertThat(
-            comma.commission(BigDecimal.valueOf(10000)).toString(),
-            Matchers.equalTo("863.00")
+            comma.commission(BigDecimal.valueOf(10000)),
+            Matchers.equalTo(BigDecimal.valueOf(863))
         );
         MatcherAssert.assertThat(
-            comma.commission(BigDecimal.valueOf(100)).toString(),
-            Matchers.equalTo("8.63")
+            comma.commission(BigDecimal.valueOf(100)),
+            Matchers.equalTo(BigDecimal.valueOf(9))
         );
         MatcherAssert.assertThat(
-            comma.commission(BigDecimal.valueOf(10)).toString(),
-            Matchers.equalTo("0.86")
+            comma.commission(BigDecimal.valueOf(10)),
+            Matchers.equalTo(BigDecimal.valueOf(1))
         );
     }
 
@@ -1284,8 +1280,7 @@ public final class StoredProjectManagerTestCase {
         final InvoicedTask invoiced = Mockito.mock(InvoicedTask.class);
         final Invoice active = Mockito.mock(Invoice.class);
         Mockito.when(
-            active.register(task, BigDecimal.valueOf(80.0)
-                .setScale(2, RoundingMode.HALF_UP))
+            active.register(task, BigDecimal.valueOf(80))
         ).thenReturn(invoiced);
         final Invoices invoices = Mockito.mock(Invoices.class);
         Mockito.when(invoices.active()).thenReturn(active);
@@ -1330,8 +1325,7 @@ public final class StoredProjectManagerTestCase {
         Mockito.verify(contract, Mockito.times(1)).invoices();
         Mockito.verify(invoices, Mockito.times(1)).active();
         Mockito.verify(active, Mockito.times(1))
-            .register(task, BigDecimal.valueOf(80.0)
-                .setScale(2, RoundingMode.HALF_UP));
+            .register(task, BigDecimal.valueOf(80));
         Mockito.verify(comments, Mockito.times(1)).post(Mockito.anyString());
     }
 
