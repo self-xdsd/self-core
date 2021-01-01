@@ -22,44 +22,37 @@
  */
 package com.selfxdsd.core;
 
+import com.selfxdsd.api.Comment;
 import com.selfxdsd.api.Comments;
-import com.selfxdsd.api.Commit;
-import com.selfxdsd.api.storage.Storage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.json.Json;
 import javax.json.JsonObject;
+import java.net.HttpURLConnection;
 import java.net.URI;
+import java.util.Iterator;
 
 /**
- * A Commit in Gitlab repo.
+ * Comments of a Commit on Gitlab.<br>
  * @author Ali Fellahi (fellahi.ali@gmail.com)
  * @version $Id$
- * @since 0.0.44
+ * @since 0.0.49
+ * @see <a href="https://docs.gitlab.com/ee/api/commits.html#get-the-comments-of-a-commit">Gitlab API doc</a>
  */
-final class GitlabCommit implements Commit {
+final class GitlabCommitComments implements Comments {
 
     /**
      * Logger.
      */
     private static final Logger LOG = LoggerFactory.getLogger(
-        GitlabCommit.class
+        GitlabCommitComments.class
     );
 
     /**
-     * Commit base uri.
+     * Base Comments uri.
      */
-    private final URI commitUri;
-
-    /**
-     * Commit JSON as returned by Gitlab's API.
-     */
-    private final JsonObject json;
-
-    /**
-     * Self storage, in case we want to store something.
-     */
-    private final Storage storage;
+    private final URI commentsUri;
 
     /**
      * Gitlab's JSON Resources.
@@ -68,50 +61,48 @@ final class GitlabCommit implements Commit {
 
     /**
      * Ctor.
-     * @param commitUri Commit base URI.
-     * @param json Json Commit as returned by Gitlab's API.
-     * @param storage Storage.
+     *
+     * @param commentsUri Commit's comments URI.
      * @param resources Gitlab's JSON Resources.
      */
-    GitlabCommit(
-        final URI commitUri,
-        final JsonObject json,
-        final Storage storage,
+    GitlabCommitComments(
+        final URI commentsUri,
         final JsonResources resources
     ) {
-        this.commitUri = commitUri;
-        this.json = json;
-        this.storage = storage;
+        this.commentsUri = commentsUri;
         this.resources = resources;
     }
 
-
     @Override
-    public Comments comments() {
-        String commentsUri = this.commitUri.toString();
-        if (commentsUri.endsWith("/")) {
-            commentsUri += "comments";
-        } else {
-            commentsUri += "/comments";
-        }
-        return new GitlabCommitComments(
-            URI.create(commentsUri),
-            this.resources
+    public Comment post(final String body) {
+        LOG.debug("Posting Commit Comment to: [" + this.commentsUri + "].");
+        final Resource resource = this.resources.post(
+            this.commentsUri,
+            Json.createObjectBuilder().add("note", body).build()
         );
+        if (resource.statusCode() == HttpURLConnection.HTTP_CREATED) {
+            return new GitlabCommitComment(resource.asJsonObject());
+        } else {
+            LOG.error(
+                "Expected status 201 CREATED, but got: ["
+                + resource.statusCode() + "]."
+            );
+            throw new IllegalStateException(
+                "Gitlab Commit Comment was not created. Status is "
+                + resource.statusCode() + "."
+            );
+        }
     }
 
     @Override
-    public String author() {
-        return this.json.getString("author_name");
+    public Comment received(final JsonObject comment) {
+        return new GitlabCommitComment(comment);
     }
 
     @Override
-    public String shaRef() {
-        return this.json.getString("id");
-    }
-
-    @Override
-    public JsonObject json() {
-        return this.json;
+    public Iterator<Comment> iterator() {
+        throw new UnsupportedOperationException(
+            "Can't iterate over all the comments of a commit."
+        );
     }
 }
