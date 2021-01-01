@@ -271,8 +271,6 @@ public final class StripeWallet implements Wallet {
                 );
             }
         } catch (final StripeException ex) {
-            System.out.println("STRIP EXCEPTION CODE: " + ex.getCode());
-            System.out.println("STRIP EXCEPTION MESSAGE: " + ex.getMessage());
             this.rethrowStripeException(ex, invoice.invoiceId());
         }
         return this.updateCash(newLimit);
