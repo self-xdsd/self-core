@@ -38,6 +38,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
+import java.math.MathContext;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
@@ -171,8 +172,10 @@ public final class StripeWallet implements Wallet {
                 + " amount must be at least 108€.");
         }
 
-        final BigDecimal newLimit = this.limit.subtract(invoice.totalAmount());
-        if (newLimit.longValueExact() < 0L) {
+        final BigDecimal newLimit = this.limit.subtract(
+            invoice.totalAmount()
+        );
+        if (newLimit.longValue() < 0L) {
             LOG.error("[STRIPE] Not enough cash to pay Invoice.");
             throw new WalletPaymentException("No cash available in wallet "
                 + "for paying invoice #" + invoice.invoiceId()
