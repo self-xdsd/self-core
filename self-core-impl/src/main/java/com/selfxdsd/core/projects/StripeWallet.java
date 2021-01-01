@@ -164,11 +164,11 @@ public final class StripeWallet implements Wallet {
             throw new InvoiceException.AlreadyPaid(invoice);
         }
 
-        if (invoice.amount().longValueExact() < 108 * 100) {
+        if (invoice.totalAmount().longValueExact() < 108 * 100) {
             LOG.error("[STRIPE] In order to be paid, Invoice amount must"
-                + " be at least 108€.");
+                + " be at least 108 €.");
             throw new WalletPaymentException("In order to be paid, Invoice"
-                + " amount must be at least 108€.");
+                + " amount must be at least 108 €.");
         }
 
         final BigDecimal newLimit = this.limit.subtract(

@@ -78,13 +78,14 @@ public interface Invoice {
     BigDecimal totalAmount();
 
     /**
-     * The value of the invoiced tasks, without the PM's commission.
+     * The value of the invoiced tasks, without the PM's commission (what
+     * the Contributor will get).
      * @return BigDecimal.
      */
     BigDecimal amount();
 
     /**
-     * Value of the commission.
+     * Value of the PM's commission.
      * @return BigDecimal.
      */
     BigDecimal commission();
