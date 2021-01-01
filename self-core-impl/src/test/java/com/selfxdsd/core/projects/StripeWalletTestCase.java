@@ -230,7 +230,7 @@ public final class StripeWalletTestCase {
         );
         Mockito.when(invoice.contract()).thenReturn(contract);
         Mockito.when(invoice.isPaid()).thenReturn(false);
-        Mockito.when(invoice.amount()).thenReturn(BigDecimal.TEN);
+        Mockito.when(invoice.totalAmount()).thenReturn(BigDecimal.TEN);
 
         new StripeWallet(
             Mockito.mock(Storage.class),
