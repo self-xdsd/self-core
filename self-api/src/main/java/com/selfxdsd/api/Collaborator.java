@@ -32,24 +32,28 @@ import javax.json.JsonObject;
  */
 public interface Collaborator {
     /**
+     * The id of the Collaborator.
      *
      * @return Integer.
      */
     int collaboratorId();
 
     /**
+     * The username as registered in the provider's platform.
      *
      * @return String.
      */
     String username();
 
     /**
+     * The full name.
      *
      * @return String.
      */
     String name();
 
     /**
+     * The JSON representation as returned by the provider.
      *
      * @return JsonObject.
      */
