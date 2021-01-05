@@ -22,6 +22,7 @@
  */
 package com.selfxdsd.core;
 
+import com.selfxdsd.api.Collaborator;
 import com.selfxdsd.api.Collaborators;
 import com.selfxdsd.api.storage.Storage;
 import org.slf4j.Logger;
@@ -30,6 +31,7 @@ import org.slf4j.LoggerFactory;
 import javax.json.Json;
 import java.net.HttpURLConnection;
 import java.net.URI;
+import java.util.Iterator;
 
 /**
  * Github repo collaborators.
@@ -138,5 +140,12 @@ final class GithubCollaborators implements Collaborators {
             );
         }
         return result;
+    }
+
+    @Override
+    public Iterator<Collaborator> iterator() {
+        throw new UnsupportedOperationException(
+            "We can't iterate over a Github repo's collaborators for now."
+        );
     }
 }
