@@ -19,6 +19,8 @@ import java.util.stream.Collectors;
  * @author criske
  * @version $Id$
  * @since 0.0.13
+ * @todo #852:30min Write unit tests for the iterator()
+ *  happy and unhappy paths.
  */
 final class GitlabCollaborators implements Collaborators {
 
