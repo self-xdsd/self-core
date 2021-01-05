@@ -51,6 +51,11 @@ import java.util.Objects;
  * @version $Id$
  * @since 0.0.27
  * @checkstyle ExecutableStatementCount (1000 lines)
+ * @todo #853:90min After payment, when registering the Invoice as paid,
+ *  we should also send the VAT and save it on the Invoice as payment
+ *  indicator (together with payment time and transaction ID). Then, when
+ *  printing Self's invoice to the Contributor we will know whether the
+ *  Contributor was charged VAT or not.
  */
 public final class StripeWallet implements Wallet {
 
@@ -221,6 +226,11 @@ public final class StripeWallet implements Wallet {
                     + this.project.provider()
                 );
             }
+
+            final BigDecimal vat = this.calculateVat(
+                invoice.commission(),
+                payoutMethod.billingInfo()
+            );
             final PaymentIntent paymentIntent = PaymentIntent
                 .create(
                     PaymentIntentCreateParams.builder()
@@ -232,7 +242,10 @@ public final class StripeWallet implements Wallet {
                             PaymentIntentCreateParams.TransferData
                                 .builder()
                                 .setDestination(payoutMethod.identifier())
-                                .setAmount(invoice.amount().longValueExact())
+                                .setAmount(
+                                    invoice.amount().subtract(vat)
+                                        .longValueExact()
+                                )
                                 .build()
                         )
                         .setDescription(
@@ -433,5 +446,50 @@ public final class StripeWallet implements Wallet {
             + " for invoice #" + invoiceId + ": " + exception.getMessage(),
             exception
         );
+    }
+
+    /**
+     * Calculate the VAT for Self's commission.<br><br>
+     *
+     * If Contributor is from Romania, VAT is 19% always.<br><br>
+     *
+     * If Contributor is from other countries of the EU, VAT is 19%
+     * <b>unless</b> they provide a VAT number (TaxId), in which
+     * case it is 0.<br><br>
+     *
+     * If Contributor is from outside of the EU, VAT is 0.
+     *
+     * @param commission Self's commission.
+     * @param contributor BillingInfo of the Contributor.
+     * @return BigDecimal.
+     */
+    private BigDecimal calculateVat(
+        final BigDecimal commission,
+        final BillingInfo contributor
+    ) {
+        final BigDecimal calculated;
+        final String countryCode = contributor.country();
+        if(Country.isFromEu(countryCode)) {
+            final BigDecimal vat = commission.multiply(
+                BigDecimal.valueOf(19)
+            ).divide(
+                BigDecimal.valueOf(100),
+                0,
+                RoundingMode.HALF_UP
+            );
+            if(!"RO".equalsIgnoreCase(countryCode)) {
+                final String taxId = contributor.taxId();
+                if (taxId != null && !taxId.isEmpty()) {
+                    calculated = BigDecimal.valueOf(0);
+                } else {
+                    calculated = vat;
+                }
+            } else {
+                calculated = vat;
+            }
+        } else {
+            calculated = BigDecimal.valueOf(0);
+        }
+        return calculated;
     }
 }
