@@ -33,9 +33,9 @@ import javax.json.JsonObject;
 public interface Collaborator {
     /**
      *
-     * @return int.
+     * @return Integer.
      */
-    int id();
+    int collaboratorId();
 
     /**
      *
