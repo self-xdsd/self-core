@@ -28,7 +28,7 @@ package com.selfxdsd.api;
  * @version $Id$
  * @since 0.0.13
  */
-public interface Collaborators {
+public interface Collaborators extends Iterable<Collaborator> {
 
     /**
      * Invite a user to be a collaborator.
