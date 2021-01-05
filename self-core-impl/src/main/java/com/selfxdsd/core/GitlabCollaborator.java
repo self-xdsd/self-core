@@ -44,7 +44,7 @@ public final class GitlabCollaborator implements Collaborator {
      *
      * @param json Representation of Gitlab collaborator.
      */
-    public GitlabCollaborator(JsonObject json) {
+    public GitlabCollaborator(final JsonObject json) {
         this.json = json;
     }
 

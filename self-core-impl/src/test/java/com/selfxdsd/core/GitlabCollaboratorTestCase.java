@@ -22,16 +22,12 @@
  */
 package com.selfxdsd.core;
 
-import com.selfxdsd.api.Commit;
-import com.selfxdsd.api.storage.Storage;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
-import org.mockito.Mockito;
 
 import javax.json.Json;
 import javax.json.JsonObject;
-import java.net.URI;
 
 /**
  * Unit tests for {@link GitlabCollaborator}.

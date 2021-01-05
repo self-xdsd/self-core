@@ -135,8 +135,8 @@ final class GitlabCollaborators implements Collaborators {
     @Override
     public Iterator<Collaborator> iterator() {
         LOG.debug(
-            "Fetching Gitlab's repo collaborators " +
-            "from [" + this.collaboratorsUri.toString() + "]."
+            "Fetching Gitlab's repo collaborators "
+                + "from [" + this.collaboratorsUri.toString() + "]."
         );
         final Resource response = this.resources.get(this.collaboratorsUri);
         final List<Collaborator> collaborators;
@@ -148,9 +148,9 @@ final class GitlabCollaborators implements Collaborators {
                 .collect(Collectors.toList());
         } else {
             throw new IllegalStateException(
-                "Unable to fetch Gitlab collaborators" +
-                " from [" + this.collaboratorsUri.toString() + "]," +
-                " 200 was expected but we got " + response.statusCode()
+                "Unable to fetch Gitlab collaborators"
+                    + " from [" + this.collaboratorsUri.toString() + "],"
+                    + " 200 was expected but we got " + response.statusCode()
             );
         }
         return collaborators.iterator();
