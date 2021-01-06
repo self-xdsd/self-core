@@ -54,6 +54,14 @@ public interface Invoice {
     String transactionId();
 
     /**
+     * VAT which Self takes from the Contributor.
+     * @return BigDecimal. It will always be 0 until the
+     *  Invoice is paid. When the Invoice is paid, we set
+     *  this value for later reference.
+     */
+    BigDecimal contributorVat();
+
+    /**
      * Who emitted the Invoice?
      * @return String.
      */
