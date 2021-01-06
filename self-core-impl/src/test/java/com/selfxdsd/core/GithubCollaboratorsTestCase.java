@@ -34,6 +34,7 @@ import org.mockito.Mockito;
 import javax.json.Json;
 import javax.json.JsonValue;
 import java.net.HttpURLConnection;
+import java.net.URI;
 
 /**
  * Unit tests for {@link GithubCollaborators}.
@@ -304,4 +305,15 @@ public final class GithubCollaboratorsTestCase {
         );
     }
 
+    /**
+     * {@link GithubCollaborators} can't iterate over collaborators.
+     */
+    @Test(expected = UnsupportedOperationException.class)
+    public void cantIterateOverCollaborators() {
+        new GithubCollaborators(
+            Mockito.mock(JsonResources.class),
+            URI.create("test"),
+            Mockito.mock(Storage.class)
+        ).iterator();
+    }
 }

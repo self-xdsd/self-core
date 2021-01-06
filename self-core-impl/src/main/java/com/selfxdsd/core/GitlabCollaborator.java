@@ -20,29 +20,51 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package com.selfxdsd.api;
+package com.selfxdsd.core;
+
+import com.selfxdsd.api.Collaborator;
+
+import javax.json.JsonObject;
 
 /**
- * Repo collaborators.
- * @author Mihai Andronache (amihaiemil@gmail.com)
+ * Gitlab collaborator.
+ * @author Ali Fellahi (fellahi.ali@gmail.com)
  * @version $Id$
- * @since 0.0.13
+ * @since 0.0.49
  */
-public interface Collaborators extends Iterable<Collaborator> {
+public final class GitlabCollaborator implements Collaborator {
 
     /**
-     * Invite a user to be a collaborator.
-     * @param username Username.
-     * @return True or false, whether the invitations
-     *  was successful or not.
+     * JSON representation of Gitlab collaborator.
      */
-    boolean invite(final String username);
+    private final JsonObject json;
 
     /**
-     * Remove a user from the repository.
-     * @param username Username.
-     * @return True or false.
+     * Ctor.
+     *
+     * @param json Representation of Gitlab collaborator.
      */
-    boolean remove(final String username);
+    public GitlabCollaborator(final JsonObject json) {
+        this.json = json;
+    }
 
+    @Override
+    public int collaboratorId() {
+        return json.getInt("id");
+    }
+
+    @Override
+    public String username() {
+        return json.getString("username");
+    }
+
+    @Override
+    public String name() {
+        return json.getString("name");
+    }
+
+    @Override
+    public JsonObject json() {
+        return json;
+    }
 }

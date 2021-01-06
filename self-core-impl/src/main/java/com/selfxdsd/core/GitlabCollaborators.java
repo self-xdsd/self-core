@@ -1,19 +1,26 @@
 package com.selfxdsd.core;
 
+import com.selfxdsd.api.Collaborator;
 import com.selfxdsd.api.Collaborators;
 import com.selfxdsd.api.storage.Storage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.json.Json;
+import javax.json.JsonObject;
 import java.net.HttpURLConnection;
 import java.net.URI;
+import java.util.Iterator;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Gitlab repo collaborators.
  * @author criske
  * @version $Id$
  * @since 0.0.13
+ * @todo #852:30min Write unit tests for the iterator()
+ *  happy and unhappy paths.
  */
 final class GitlabCollaborators implements Collaborators {
 
@@ -125,4 +132,28 @@ final class GitlabCollaborators implements Collaborators {
         return result;
     }
 
+    @Override
+    public Iterator<Collaborator> iterator() {
+        LOG.debug(
+            "Fetching Gitlab's repo collaborators "
+                + "from [" + this.collaboratorsUri.toString() + "]."
+        );
+        final Resource response = this.resources.get(this.collaboratorsUri);
+        final List<Collaborator> collaborators;
+        if (response.statusCode() == HttpURLConnection.HTTP_OK) {
+            collaborators = response.asJsonArray()
+                .stream()
+                .map(JsonObject.class::cast)
+                .map(GitlabCollaborator::new)
+                .collect(Collectors.toList());
+        } else {
+            LOG.error(
+                "Unable to fetch Gitlab collaborators"
+                    + " from [" + this.collaboratorsUri.toString() + "],"
+                    + " 200 was expected but we got " + response.statusCode()
+            );
+            collaborators = List.of();
+        }
+        return collaborators.iterator();
+    }
 }

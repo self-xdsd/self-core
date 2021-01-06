@@ -22,27 +22,40 @@
  */
 package com.selfxdsd.api;
 
+import javax.json.JsonObject;
+
 /**
- * Repo collaborators.
- * @author Mihai Andronache (amihaiemil@gmail.com)
+ * Repo collaborator.
+ * @author Ali Fellahi (fellahi.ali@gmail.com)
  * @version $Id$
- * @since 0.0.13
+ * @since 0.0.49
  */
-public interface Collaborators extends Iterable<Collaborator> {
+public interface Collaborator {
+    /**
+     * The id of the Collaborator.
+     *
+     * @return Integer.
+     */
+    int collaboratorId();
 
     /**
-     * Invite a user to be a collaborator.
-     * @param username Username.
-     * @return True or false, whether the invitations
-     *  was successful or not.
+     * The username as registered in the provider's platform.
+     *
+     * @return String.
      */
-    boolean invite(final String username);
+    String username();
 
     /**
-     * Remove a user from the repository.
-     * @param username Username.
-     * @return True or false.
+     * The full name.
+     *
+     * @return String.
      */
-    boolean remove(final String username);
+    String name();
 
+    /**
+     * The JSON representation as returned by the provider.
+     *
+     * @return JsonObject.
+     */
+    JsonObject json();
 }
