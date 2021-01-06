@@ -35,7 +35,6 @@ public final class StoredInvoiceTestCase {
             LocalDateTime.now(),
             LocalDateTime.now(),
             "transacetionId123",
-            BigDecimal.valueOf(0),
             "mihai",
             "vlad",
             Mockito.mock(Storage.class)
@@ -55,7 +54,6 @@ public final class StoredInvoiceTestCase {
             LocalDateTime.now(),
             LocalDateTime.now(),
             "transacetionId123",
-            BigDecimal.valueOf(0),
             "mihai",
             "vlad",
             Mockito.mock(Storage.class)
@@ -75,7 +73,6 @@ public final class StoredInvoiceTestCase {
             LocalDateTime.now(),
             LocalDateTime.now(),
             "transactionID",
-            BigDecimal.valueOf(0),
             "mihai",
             "vlad",
             storage
@@ -114,7 +111,6 @@ public final class StoredInvoiceTestCase {
             LocalDateTime.now(),
             LocalDateTime.now(),
             "transactionID",
-            BigDecimal.valueOf(0),
             "mihai",
             "vlad",
             storage
@@ -156,7 +152,6 @@ public final class StoredInvoiceTestCase {
             LocalDateTime.now(),
             LocalDateTime.now(),
             "transactionID",
-            BigDecimal.valueOf(0),
             "mihai",
             "vlad",
             storage
@@ -198,7 +193,6 @@ public final class StoredInvoiceTestCase {
             LocalDateTime.now(),
             LocalDateTime.now(),
             "transactionID",
-            BigDecimal.valueOf(0),
             "mihai",
             "vlad",
             storage
@@ -240,7 +234,6 @@ public final class StoredInvoiceTestCase {
             creationTime,
             LocalDateTime.now(),
             "transacetionId123",
-            BigDecimal.valueOf(0),
             "mihai",
             "vlad",
             Mockito.mock(Storage.class)
@@ -264,7 +257,6 @@ public final class StoredInvoiceTestCase {
             LocalDateTime.now(),
             paymentTime,
             "transactionId",
-            BigDecimal.valueOf(0),
             "mihai",
             "vlad",
             storage
@@ -287,7 +279,6 @@ public final class StoredInvoiceTestCase {
             LocalDateTime.now(),
             paymentTime,
             "transactionId123",
-            BigDecimal.valueOf(0),
             "mihai",
             "vlad",
             mock(Storage.class)
@@ -295,29 +286,6 @@ public final class StoredInvoiceTestCase {
         MatcherAssert.assertThat(
             invoice.transactionId(),
             Matchers.is("transactionId123")
-        );
-    }
-
-    /**
-     * A StoredInvoice can return its contributor VAT.
-     */
-    @Test
-    public void hasContributorVat() {
-        final LocalDateTime paymentTime = LocalDateTime.now();
-        final Invoice invoice = new StoredInvoice(
-            1,
-            Mockito.mock(Contract.class),
-            LocalDateTime.now(),
-            paymentTime,
-            "transactionId123",
-            BigDecimal.valueOf(15),
-            "mihai",
-            "vlad",
-            mock(Storage.class)
-        );
-        MatcherAssert.assertThat(
-            invoice.contributorVat(),
-            Matchers.equalTo(BigDecimal.valueOf(15))
         );
     }
 
@@ -342,7 +310,6 @@ public final class StoredInvoiceTestCase {
             LocalDateTime.now(),
             LocalDateTime.now(),
             "transacetionId123",
-            BigDecimal.valueOf(0),
             "mihai",
             "vlad",
             Mockito.mock(Storage.class)
@@ -383,7 +350,6 @@ public final class StoredInvoiceTestCase {
             LocalDateTime.now(),
             LocalDateTime.now(),
             "transactionId123",
-            BigDecimal.valueOf(0),
             "mihai",
             "vlad",
             Mockito.mock(Storage.class)
@@ -437,7 +403,6 @@ public final class StoredInvoiceTestCase {
             LocalDateTime.now(),
             null,
             null,
-            BigDecimal.valueOf(0),
             "mihai",
             "vlad",
             storage
@@ -473,7 +438,6 @@ public final class StoredInvoiceTestCase {
             LocalDateTime.now(),
             LocalDateTime.now(),
             "transacetionId123",
-            BigDecimal.valueOf(0),
             "mihai",
             "vlad",
             Mockito.mock(Storage.class)
@@ -484,7 +448,6 @@ public final class StoredInvoiceTestCase {
             LocalDateTime.now(),
             LocalDateTime.now(),
             "transacetionId123",
-            BigDecimal.valueOf(0),
             "mihai",
             "vlad",
             Mockito.mock(Storage.class)
@@ -503,7 +466,6 @@ public final class StoredInvoiceTestCase {
             LocalDateTime.now(),
             LocalDateTime.now(),
             "transacetionId123",
-            BigDecimal.valueOf(0),
             "mihai",
             "vlad",
             Mockito.mock(Storage.class)
@@ -514,7 +476,6 @@ public final class StoredInvoiceTestCase {
             LocalDateTime.now(),
             LocalDateTime.now(),
             "transacetionId123",
-            BigDecimal.valueOf(0),
             "mihai",
             "vlad",
             Mockito.mock(Storage.class)
@@ -536,7 +497,6 @@ public final class StoredInvoiceTestCase {
             LocalDateTime.now(),
             LocalDateTime.now(),
             "transacetionId123",
-            BigDecimal.valueOf(0),
             "mihai",
             "vlad",
             Mockito.mock(Storage.class)
@@ -560,7 +520,6 @@ public final class StoredInvoiceTestCase {
             LocalDateTime.now(),
             LocalDateTime.now(),
             "transacetionId123",
-            BigDecimal.valueOf(0),
             "mihai",
             "vlad",
             Mockito.mock(Storage.class)
@@ -590,7 +549,6 @@ public final class StoredInvoiceTestCase {
             LocalDateTime.now(),
             LocalDateTime.now(),
             "transacetionId123",
-            BigDecimal.valueOf(0),
             null,
             "vlad",
             Mockito.mock(Storage.class)
@@ -620,7 +578,6 @@ public final class StoredInvoiceTestCase {
             LocalDateTime.now(),
             LocalDateTime.now(),
             "transacetionId123",
-            BigDecimal.valueOf(0),
             "mihai",
             null,
             Mockito.mock(Storage.class)

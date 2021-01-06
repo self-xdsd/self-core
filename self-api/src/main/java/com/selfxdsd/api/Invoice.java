@@ -6,6 +6,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 /**
+ * Invoice emitted by the Contributor to the Project.
  * Represents all the completed tasks by a contributor in a contract.
  * An invoice is active until payment is done.
  * A contract has at most one active invoice.
@@ -52,14 +53,6 @@ public interface Invoice {
      * @return String or null if it's not paid.
      */
     String transactionId();
-
-    /**
-     * VAT which Self takes from the Contributor.
-     * @return BigDecimal. It will always be 0 until the
-     *  Invoice is paid. When the Invoice is paid, we set
-     *  this value for later reference.
-     */
-    BigDecimal contributorVat();
 
     /**
      * Who emitted the Invoice?
