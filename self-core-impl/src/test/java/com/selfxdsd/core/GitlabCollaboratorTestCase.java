@@ -33,7 +33,7 @@ import javax.json.JsonObject;
  * Unit tests for {@link GitlabCollaborator}.
  * @author Ali Fellahi (fellahi.ali@gmail.com)
  * @version $Id$
- * @since 0p.0.49
+ * @since 0.0.49
  */
 public final class GitlabCollaboratorTestCase {
 
