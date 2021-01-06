@@ -147,11 +147,12 @@ final class GitlabCollaborators implements Collaborators {
                 .map(GitlabCollaborator::new)
                 .collect(Collectors.toList());
         } else {
-            throw new IllegalStateException(
+            LOG.error(
                 "Unable to fetch Gitlab collaborators"
                     + " from [" + this.collaboratorsUri.toString() + "],"
                     + " 200 was expected but we got " + response.statusCode()
             );
+            collaborators = List.of();
         }
         return collaborators.iterator();
     }
