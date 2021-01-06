@@ -140,7 +140,8 @@ public final class FakeWallet implements Wallet {
                     invoice.contract(),
                     invoice.createdAt(),
                     LocalDateTime.now(),
-                    "not_paid_" + uuid,
+                    "fake_payment_" + uuid,
+                    BigDecimal.valueOf(0),
                     invoice.billedBy(),
                     invoice.billedTo(),
                     this.storage

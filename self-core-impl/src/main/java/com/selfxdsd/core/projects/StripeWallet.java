@@ -51,11 +51,6 @@ import java.util.Objects;
  * @version $Id$
  * @since 0.0.27
  * @checkstyle ExecutableStatementCount (1000 lines)
- * @todo #853:90min After payment, when registering the Invoice as paid,
- *  we should also send the VAT and save it on the Invoice as payment
- *  indicator (together with payment time and transaction ID). Then, when
- *  printing Self's invoice to the Contributor we will know whether the
- *  Contributor was charged VAT or not.
  */
 public final class StripeWallet implements Wallet {
 
@@ -271,6 +266,7 @@ public final class StripeWallet implements Wallet {
                             invoice.createdAt(),
                             paymentDate,
                             paymentIntent.getId(),
+                            vat,
                             invoice.billedBy(),
                             invoice.billedTo(),
                             this.storage
