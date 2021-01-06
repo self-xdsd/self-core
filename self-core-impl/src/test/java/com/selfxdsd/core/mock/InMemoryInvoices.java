@@ -5,7 +5,6 @@ import com.selfxdsd.api.storage.Storage;
 import com.selfxdsd.core.contracts.invoices.ContractInvoices;
 import com.selfxdsd.core.contracts.invoices.StoredInvoice;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.StreamSupport;
@@ -73,7 +72,6 @@ public final class InMemoryInvoices implements Invoices {
             LocalDateTime.now(),
             null,
             null,
-            BigDecimal.valueOf(0),
             null,
             null,
             this.storage

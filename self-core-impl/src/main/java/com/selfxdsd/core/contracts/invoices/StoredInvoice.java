@@ -54,11 +54,6 @@ public final class StoredInvoice implements Invoice {
     private final String transactionId;
 
     /**
-     * The VAT which Self XDSD takes from the Contributor.
-     */
-    private final BigDecimal contributorVat;
-
-    /**
      * Who emitted this Invoice?
      */
     private final String billedBy;
@@ -80,7 +75,6 @@ public final class StoredInvoice implements Invoice {
      * @param createdAt Invoice creation time.
      * @param paymentTime Time when this Invoice has been paid.
      * @param transactionId The payment's transaction ID.
-     * @param contributorVat The VAT which Self takes from the Contributor.
      * @param billedBy Who emitted the Invoice.
      * @param billedTo Who pays it.
      * @param storage Self storage context.
@@ -91,7 +85,6 @@ public final class StoredInvoice implements Invoice {
         final LocalDateTime createdAt,
         final LocalDateTime paymentTime,
         final String transactionId,
-        final BigDecimal contributorVat,
         final String billedBy,
         final String billedTo,
         final Storage storage
@@ -101,7 +94,6 @@ public final class StoredInvoice implements Invoice {
         this.createdAt = createdAt;
         this.paymentTime = paymentTime;
         this.transactionId = transactionId;
-        this.contributorVat = contributorVat;
         this.billedBy = billedBy;
         this.billedTo = billedTo;
         this.storage = storage;
@@ -157,11 +149,6 @@ public final class StoredInvoice implements Invoice {
     @Override
     public String transactionId() {
         return this.transactionId;
-    }
-
-    @Override
-    public BigDecimal contributorVat() {
-        return this.contributorVat;
     }
 
     @Override

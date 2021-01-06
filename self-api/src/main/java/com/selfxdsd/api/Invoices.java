@@ -8,6 +8,8 @@ package com.selfxdsd.api;
  * @todo #552:45min. Finish writing custom Self Exception for Invoices
  *  (InvoicesException). Also include the already written InvoiceException
  *  into InvoicesExceptions as InvoicesException.Single.
+ * @todo #858:30min Modify method registerAsPaid(Invoice), to also accept
+ *  the vat as parameter. It will become registerAsPaid(Invoice, BigDecimal).
  */
 public interface Invoices extends Iterable<Invoice> {
 
