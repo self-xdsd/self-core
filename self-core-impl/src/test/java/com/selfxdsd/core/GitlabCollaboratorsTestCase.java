@@ -32,7 +32,10 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import javax.json.Json;
+import javax.json.JsonObject;
+import java.io.StringReader;
 import java.net.HttpURLConnection;
+import java.net.URI;
 
 /**
  * Unit tests for {@link GitlabCollaborators}.
@@ -289,4 +292,69 @@ public final class GitlabCollaboratorsTestCase {
         );
     }
 
+    /**
+     * GitlabCollaborators can iterate over repo collaborators.
+     */
+    @Test
+    public void canIterateOverCollaborators(){
+        final GitlabCollaborators collaborators = new GitlabCollaborators(
+            new MockJsonResources(req -> {
+                MatcherAssert.assertThat(
+                    req.getUri().toString(),
+                    Matchers.equalTo("../projects/id/members")
+                );
+                MatcherAssert.assertThat(
+                    req.getMethod(),
+                    Matchers.equalTo("GET")
+                );
+                return new MockJsonResources.MockResource(
+                    HttpURLConnection.HTTP_OK,
+                    Json.createReader(
+                        new StringReader(
+                            "[ {\"id\" : \"1\"}, {\"id\" : \"2\"} ]"
+                        )
+                    ).readArray()
+                );
+            }),
+            URI.create("../projects/id/members"),
+            Mockito.mock(Storage.class)
+        );
+        MatcherAssert.assertThat(
+            collaborators,
+            Matchers.iterableWithSize(2)
+        );
+        MatcherAssert.assertThat(
+            collaborators.iterator().next(),
+            Matchers.instanceOf(GitlabCollaborator.class)
+        );
+    }
+
+    /**
+     * GitlabCollaborators can iterate over repo collaborators.
+     */
+    @Test
+    public void emptyCollaborators(){
+        final GitlabCollaborators collaborators = new GitlabCollaborators(
+            new MockJsonResources(req -> {
+                MatcherAssert.assertThat(
+                    req.getUri().toString(),
+                    Matchers.equalTo("../projects/id/members")
+                );
+                MatcherAssert.assertThat(
+                    req.getMethod(),
+                    Matchers.equalTo("GET")
+                );
+                return new MockJsonResources.MockResource(
+                    HttpURLConnection.HTTP_INTERNAL_ERROR,
+                    JsonObject.NULL
+                );
+            }),
+            URI.create("../projects/id/members"),
+            Mockito.mock(Storage.class)
+        );
+        MatcherAssert.assertThat(
+            collaborators,
+            Matchers.emptyIterable()
+        );
+    }
 }
