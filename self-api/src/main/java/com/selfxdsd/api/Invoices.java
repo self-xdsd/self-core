@@ -10,6 +10,8 @@ import java.math.BigDecimal;
  * @todo #552:45min. Finish writing custom Self Exception for Invoices
  *  (InvoicesException). Also include the already written InvoiceException
  *  into InvoicesExceptions as InvoicesException.Single.
+ * @todo #867:90min Implement the PlatformInvoice. This will represent the
+ *  invoices emitted by Self XDSD to the Contributors.
  */
 public interface Invoices extends Iterable<Invoice> {
 
