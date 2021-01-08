@@ -1,5 +1,7 @@
 package com.selfxdsd.api;
 
+import java.math.BigDecimal;
+
 /**
  * Invoices of a contract.
  * @author criske
@@ -8,8 +10,8 @@ package com.selfxdsd.api;
  * @todo #552:45min. Finish writing custom Self Exception for Invoices
  *  (InvoicesException). Also include the already written InvoiceException
  *  into InvoicesExceptions as InvoicesException.Single.
- * @todo #858:30min Modify method registerAsPaid(Invoice), to also accept
- *  the vat as parameter. It will become registerAsPaid(Invoice, BigDecimal).
+ * @todo #867:90min Implement the PlatformInvoice. This will represent the
+ *  invoices emitted by Self XDSD to the Contributors.
  */
 public interface Invoices extends Iterable<Invoice> {
 
@@ -45,7 +47,10 @@ public interface Invoices extends Iterable<Invoice> {
     /**
      * Register an Invoice as paid.
      * @param invoice Paid invoice.
+     * @param contributorVat Vat which Self takes from the Contributor.
      * @return True or false, depending on whether the operation succeeded.
      */
-    boolean registerAsPaid(final Invoice invoice);
+    boolean registerAsPaid(
+        final Invoice invoice, final BigDecimal contributorVat
+    );
 }

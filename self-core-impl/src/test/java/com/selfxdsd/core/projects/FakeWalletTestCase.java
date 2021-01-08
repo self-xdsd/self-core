@@ -395,8 +395,12 @@ public final class FakeWalletTestCase {
 
         final Invoices invoices = Mockito.mock(Invoices.class);
         Mockito.when(storage.invoices()).thenReturn(invoices);
-        Mockito.when(invoices.registerAsPaid(Mockito.any(Invoice.class)))
-            .thenReturn(true);
+        Mockito.when(
+            invoices.registerAsPaid(
+                Mockito.any(Invoice.class),
+                Mockito.any(BigDecimal.class)
+            )
+        ).thenReturn(true);
 
         final Wallet updated = new FakeWallet(
             storage,
@@ -412,7 +416,10 @@ public final class FakeWalletTestCase {
         final ArgumentCaptor<Invoice> paidInvoiceCapture = ArgumentCaptor
             .forClass(Invoice.class);
         Mockito.verify(invoices, Mockito.times(1))
-            .registerAsPaid(paidInvoiceCapture.capture());
+            .registerAsPaid(
+                paidInvoiceCapture.capture(),
+                Mockito.any(BigDecimal.class)
+            );
         final Invoice paidInvoice = paidInvoiceCapture.getValue();
 
         MatcherAssert.assertThat(paidInvoice.isPaid(), Matchers.is(true));
@@ -446,8 +453,12 @@ public final class FakeWalletTestCase {
         final Storage storage = Mockito.mock(Storage.class);
         final Invoices invoices = Mockito.mock(Invoices.class);
         Mockito.when(storage.invoices()).thenReturn(invoices);
-        Mockito.when(invoices.registerAsPaid(Mockito.any(Invoice.class)))
-            .thenReturn(false);
+        Mockito.when(
+            invoices.registerAsPaid(
+                Mockito.any(Invoice.class),
+                Mockito.any(BigDecimal.class)
+            )
+        ).thenReturn(false);
 
         new FakeWallet(
             storage,

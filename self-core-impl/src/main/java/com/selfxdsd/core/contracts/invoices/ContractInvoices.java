@@ -27,6 +27,7 @@ import com.selfxdsd.api.Invoice;
 import com.selfxdsd.api.Invoices;
 import com.selfxdsd.api.storage.Storage;
 
+import java.math.BigDecimal;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.function.Supplier;
@@ -89,13 +90,15 @@ public final class ContractInvoices implements Invoices {
     }
 
     @Override
-    public boolean registerAsPaid(final Invoice invoice) {
+    public boolean registerAsPaid(
+        final Invoice invoice, final BigDecimal contributorVat
+    ) {
         if(!invoice.contract().contractId().equals(this.contractId)){
             throw new IllegalStateException(
                 "The given Invoice belongs to another contract."
             );
         }
-        return this.storage.invoices().registerAsPaid(invoice);
+        return this.storage.invoices().registerAsPaid(invoice, contributorVat);
     }
 
     @Override
