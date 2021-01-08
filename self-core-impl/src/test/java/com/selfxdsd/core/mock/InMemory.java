@@ -151,6 +151,11 @@ public final class InMemory implements Storage {
         throw new UnsupportedOperationException("Not implemented yet!");
     }
 
+    @Override
+    public PlatformInvoices platformInvoices() {
+        throw new UnsupportedOperationException("Not implemented yet!");
+    }
+
     /**
      * Nothing to close, this is an in-memory storage.
      */

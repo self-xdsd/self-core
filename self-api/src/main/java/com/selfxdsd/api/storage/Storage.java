@@ -103,4 +103,10 @@ public interface Storage extends AutoCloseable {
      * @return PaymentMethods.
      */
     PaymentMethods paymentMethods();
+
+    /**
+     * Get the platform invoices Storage API.
+     * @return PlatformInvoices.
+     */
+    PlatformInvoices platformInvoices();
 }
