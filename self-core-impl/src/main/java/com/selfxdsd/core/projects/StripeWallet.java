@@ -269,7 +269,8 @@ public final class StripeWallet implements Wallet {
                             invoice.billedBy(),
                             invoice.billedTo(),
                             this.storage
-                        )
+                        ),
+                        vat
                     );
             } else {
                 LOG.error("[STRIPE] PaymentIntent status: " + status);

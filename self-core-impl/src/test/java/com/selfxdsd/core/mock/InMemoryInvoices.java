@@ -5,6 +5,7 @@ import com.selfxdsd.api.storage.Storage;
 import com.selfxdsd.core.contracts.invoices.ContractInvoices;
 import com.selfxdsd.core.contracts.invoices.StoredInvoice;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.StreamSupport;
@@ -54,7 +55,10 @@ public final class InMemoryInvoices implements Invoices {
     }
 
     @Override
-    public boolean registerAsPaid(final Invoice invoice) {
+    public boolean registerAsPaid(
+        final Invoice invoice,
+        final BigDecimal contributorVat
+    ) {
         this.invoices.put(invoice.invoiceId(), invoice);
         return true;
     }

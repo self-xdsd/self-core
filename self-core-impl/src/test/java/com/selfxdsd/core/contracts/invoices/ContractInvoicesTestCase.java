@@ -31,6 +31,8 @@ import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.mockito.Mockito;
+
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -203,6 +205,7 @@ public final class ContractInvoicesTestCase {
      */
     @Test
     public void registersPaidInvoice() {
+        final BigDecimal contributorVat = BigDecimal.valueOf(3);
         final Invoice invoice = Mockito.mock(Invoice.class);
         final Contract contract = Mockito.mock(Contract.class);
         Mockito.when(invoice.contract()).thenReturn(contract);
@@ -216,7 +219,9 @@ public final class ContractInvoicesTestCase {
         Mockito.when(contract.contractId()).thenReturn(contractId);
 
         final Invoices all = Mockito.mock(Invoices.class);
-        Mockito.when(all.registerAsPaid(invoice)).thenReturn(Boolean.TRUE);
+        Mockito.when(
+            all.registerAsPaid(invoice, contributorVat)
+        ).thenReturn(Boolean.TRUE);
         final Storage storage = Mockito.mock(Storage.class);
         Mockito.when(storage.invoices()).thenReturn(all);
 
@@ -227,7 +232,7 @@ public final class ContractInvoicesTestCase {
         );
 
         MatcherAssert.assertThat(
-            invoices.registerAsPaid(invoice),
+            invoices.registerAsPaid(invoice, contributorVat),
             Matchers.is(Boolean.TRUE)
         );
     }
@@ -238,6 +243,7 @@ public final class ContractInvoicesTestCase {
      */
     @Test (expected = IllegalStateException.class)
     public void registerPaidInvoiceComplainsOnDifferentContract() {
+        final BigDecimal contributorVat = BigDecimal.valueOf(3);
         final Invoice invoice = Mockito.mock(Invoice.class);
         final Contract contract = Mockito.mock(Contract.class);
         Mockito.when(invoice.contract()).thenReturn(contract);
@@ -257,7 +263,9 @@ public final class ContractInvoicesTestCase {
         );
 
         final Invoices all = Mockito.mock(Invoices.class);
-        Mockito.when(all.registerAsPaid(invoice)).thenReturn(Boolean.TRUE);
+        Mockito.when(
+            all.registerAsPaid(invoice, contributorVat)
+        ).thenReturn(Boolean.TRUE);
         final Storage storage = Mockito.mock(Storage.class);
         Mockito.when(storage.invoices()).thenReturn(all);
 
@@ -268,7 +276,7 @@ public final class ContractInvoicesTestCase {
         );
 
         MatcherAssert.assertThat(
-            invoices.registerAsPaid(invoice),
+            invoices.registerAsPaid(invoice, contributorVat),
             Matchers.is(Boolean.TRUE)
         );
     }

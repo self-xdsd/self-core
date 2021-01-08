@@ -144,7 +144,8 @@ public final class FakeWallet implements Wallet {
                     invoice.billedBy(),
                     invoice.billedTo(),
                     this.storage
-                )
+                ),
+                BigDecimal.valueOf(0)
             );
         if (!paid) {
             throw new WalletPaymentException(

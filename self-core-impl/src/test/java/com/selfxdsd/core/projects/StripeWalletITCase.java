@@ -142,7 +142,10 @@ public final class StripeWalletITCase {
             stripe.pay(invoice);
 
             Mockito.verify(invoices, Mockito.times(1))
-                .registerAsPaid(Mockito.any(Invoice.class));
+                .registerAsPaid(
+                    Mockito.any(Invoice.class),
+                    Mockito.any(BigDecimal.class)
+                );
             Mockito.verify(ofProject, Mockito.times(1))
                 .updateCash(stripe, BigDecimal
                     .valueOf(1000 * 100)
