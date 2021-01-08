@@ -32,13 +32,16 @@ import java.time.LocalDateTime;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.50
+ * @todo #886:90min Provide a PDF template for this invoice and then the
+ *  method toPdf() which should print out the PDF, similarly to how
+ *  Invoice.toPdf() works now.
  */
 public interface PlatformInvoice {
 
     /**
      * The internal id of the PlatformInvoice.
      * @checkstyle MethodName (5 lines)
-     * @return Integer
+     * @return Integer.
      */
     int id();
 
@@ -105,7 +108,7 @@ public interface PlatformInvoice {
     Invoice invoice();
 
     /**
-     * Transaction id of the payment.
+     * Transaction ID (id of the payment).
      * @return String, never null.
      */
     String transactionId();
