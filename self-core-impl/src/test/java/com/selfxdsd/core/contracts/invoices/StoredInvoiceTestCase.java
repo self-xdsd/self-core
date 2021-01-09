@@ -587,4 +587,93 @@ public final class StoredInvoiceTestCase {
             Matchers.equalTo("Project LLC")
         );
     }
+
+    /**
+     * The PlatformInvoice is null if the Invoice is not paid (active).
+     */
+    @Test
+    public void noPlatformInvoiceIfActive() {
+        final Storage storage = Mockito.mock(Storage.class);
+        Mockito.when(storage.platformInvoices()).thenThrow(
+            new IllegalStateException(
+                "PlatformInvoices storage should not be called!"
+            )
+        );
+        final Invoice invoice = new StoredInvoice(
+            1,
+            Mockito.mock(Contract.class),
+            LocalDateTime.now(),
+            null,
+            null,
+            "mihai",
+            "vlad",
+            storage
+        );
+        MatcherAssert.assertThat(
+            invoice.platformInvoice(),
+            Matchers.nullValue()
+        );
+    }
+
+    /**
+     * The PlatformInvoice is null if the Invoice has been paid with
+     * the FakeWallet (transactionId starts with "fake_payment_".
+     */
+    @Test
+    public void noPlatformInvoiceIfFakePayment() {
+        final Storage storage = Mockito.mock(Storage.class);
+        Mockito.when(storage.platformInvoices()).thenThrow(
+            new IllegalStateException(
+                "PlatformInvoices storage should not be called!"
+            )
+        );
+        final Invoice invoice = new StoredInvoice(
+            1,
+            Mockito.mock(Contract.class),
+            LocalDateTime.now(),
+            LocalDateTime.now(),
+            "fake_payment_123",
+            "mihai",
+            "vlad",
+            storage
+        );
+        MatcherAssert.assertThat(
+            invoice.platformInvoice(),
+            Matchers.nullValue()
+        );
+    }
+
+    /**
+     * The PlatformInvoice is returned if the Invoice is paid
+     * with a real wallet.
+     */
+    @Test
+    public void returnsPlatformInvoiceIfRealPayment() {
+        final PlatformInvoice found = Mockito.mock(PlatformInvoice.class);
+
+        final LocalDateTime payment = LocalDateTime.now();
+        final String transactionId = "transaction123";
+
+        final Storage storage = Mockito.mock(Storage.class);
+        final PlatformInvoices all = Mockito.mock(PlatformInvoices.class);
+        Mockito.when(storage.platformInvoices()).thenReturn(all);
+
+        Mockito.when(all.getByPayment(transactionId, payment))
+            .thenReturn(found);
+
+        final Invoice invoice = new StoredInvoice(
+            1,
+            Mockito.mock(Contract.class),
+            LocalDateTime.now(),
+            payment,
+            transactionId,
+            "mihai",
+            "vlad",
+            storage
+        );
+        MatcherAssert.assertThat(
+            invoice.platformInvoice(),
+            Matchers.is(found)
+        );
+    }
 }
