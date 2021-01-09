@@ -617,7 +617,7 @@ public final class StoredInvoiceTestCase {
 
     /**
      * The PlatformInvoice is null if the Invoice has been paid with
-     * the FakeWallet (transactionId starts with "fake_payment_".
+     * the FakeWallet (transactionId starts with "fake_payment_").
      */
     @Test
     public void noPlatformInvoiceIfFakePayment() {
