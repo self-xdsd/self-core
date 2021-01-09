@@ -98,6 +98,13 @@ public interface Invoice {
     boolean isPaid();
 
     /**
+     * Get the corresponding platform invoice (it exists only if this
+     * Invoice has been paid with a real wallet).
+     * @return PlatformInvoice or null if it doesn't exist.
+     */
+    PlatformInvoice platformInvoice();
+
+    /**
      * Turn this invoice to a PDF file.
      * @return PDF File.
      * @throws IOException If any I/O problems.

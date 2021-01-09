@@ -184,6 +184,23 @@ public final class StoredInvoice implements Invoice {
     }
 
     @Override
+    public PlatformInvoice platformInvoice() {
+        final PlatformInvoice found;
+        if(this.isPaid()) {
+            if(this.transactionId.startsWith("fake_payment_")) {
+                found = null;
+            } else {
+                found = this.storage.platformInvoices().getByPayment(
+                    this.transactionId, this.paymentTime
+                );
+            }
+        } else {
+            found = null;
+        }
+        return found;
+    }
+
+    @Override
     public File toPdf() throws IOException {
         final PDDocument doc = PDDocument.load(
             this.getResourceAsFile("invoice_template.pdf")
