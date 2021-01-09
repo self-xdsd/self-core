@@ -22,6 +22,8 @@
  */
 package com.selfxdsd.api;
 
+import java.time.LocalDateTime;
+
 /**
  * Platform invoices.
  * @author Mihai Andronache (amihaiemil@gmail.com)
@@ -37,4 +39,18 @@ public interface PlatformInvoices extends Iterable<PlatformInvoice> {
      */
     PlatformInvoice getById(final int id);
 
+    /**
+     * Get a PlatformInvoice by the payment coordinates. TransactionId and
+     * paymentTime should actually be the primary key of the PlatformInvoice.
+     * They are not because of technical reasons (the corresponding Invoice can
+     * be deleted, whereas a PlatformInvoice should never be deleted).
+     *
+     * @param transactionId String transaction (payment) id.
+     * @param paymentTime Payment time.
+     * @return PlatformInvoice or null if it's not found.
+     */
+    PlatformInvoice getByPayment(
+        final String transactionId,
+        final LocalDateTime paymentTime
+    );
 }
