@@ -22,6 +22,8 @@
  */
 package com.selfxdsd.api;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -32,9 +34,6 @@ import java.time.LocalDateTime;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.50
- * @todo #886:90min Provide a PDF template for this invoice and then the
- *  method toPdf() which should print out the PDF, similarly to how
- *  Invoice.toPdf() works now.
  */
 public interface PlatformInvoice {
 
@@ -118,4 +117,11 @@ public interface PlatformInvoice {
      * @return LocalDateTime, never null.
      */
     LocalDateTime paymentTime();
+
+    /**
+     * Turn this PlatformInvoice into PDF.
+     * @param outputStream Stream where the PDF will be written.
+     * @throws IOException If something goes wrong.
+     */
+    void toPdf(final OutputStream outputStream) throws IOException;
 }

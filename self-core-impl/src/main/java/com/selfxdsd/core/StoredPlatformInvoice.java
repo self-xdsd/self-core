@@ -25,15 +25,25 @@ package com.selfxdsd.core;
 import com.selfxdsd.api.Invoice;
 import com.selfxdsd.api.PlatformInvoice;
 import com.selfxdsd.api.storage.Storage;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDDocumentCatalog;
+import org.apache.pdfbox.pdmodel.interactive.form.PDAcroForm;
 
+import java.io.*;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.text.NumberFormat;
 import java.time.LocalDateTime;
+import java.util.Locale;
 
 /**
  * PlatformInvoice stored in Self.
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.50
+ * @checkstyle TrailingComment (500 lines)
+ * @todo #894:30min Add the eurToRon constructor parameter to this
+ *  class. This value will be a column in the DB.
  */
 public final class StoredPlatformInvoice implements PlatformInvoice {
 
@@ -76,6 +86,12 @@ public final class StoredPlatformInvoice implements PlatformInvoice {
      * ID of the corresponding Invoice.
      */
     private final int invoiceId;
+
+    /**
+     * Euro to RON exchange rage. For instance, if this
+     * value is 478, it means 1 EUR = 4,87 RON.
+     */
+    private final BigDecimal eurToRon = BigDecimal.valueOf(487);
 
     /**
      * Self storage.
@@ -154,5 +170,117 @@ public final class StoredPlatformInvoice implements PlatformInvoice {
     @Override
     public LocalDateTime paymentTime() {
         return this.paymentTime;
+    }
+
+    @Override
+    public void toPdf(final OutputStream outputStream) throws IOException {
+        final PDDocument doc = PDDocument.load(
+            this.getResourceAsFile("platform_invoice_template.pdf")
+        );
+        final PDDocumentCatalog docCatalog = doc.getDocumentCatalog();
+        final PDAcroForm acroForm = docCatalog.getAcroForm();
+
+        acroForm.getField("invoiceId").setValue(this.serialNumber());
+        acroForm.getField("createdAt").setValue(
+            this.createdAt.toLocalDate().toString()
+        );
+        acroForm.getField("billedBy").setValue(this.billedBy());
+        acroForm.getField("billedTo").setValue(this.billedTo());
+        acroForm.getField("commission_text").setValue(
+            "Commission for Invoice/Comision pt. Factura SLFX" + this.invoiceId
+        );
+        acroForm.getField("commission_value").setValue(
+            NumberFormat
+                .getCurrencyInstance(Locale.GERMANY)
+                .format(
+                    this.commission.divide(BigDecimal.valueOf(100))
+                )
+            + " / "
+            + this.euroToRon(this.commission).toString().replace('.', ',')
+            + " RON"
+        );
+        if(this.vat.compareTo(BigDecimal.valueOf(0)) == 1) {
+            acroForm.getField("vat_text").setValue("VAT/TVA (19%)");
+            acroForm.getField("vat_value").setValue(
+                NumberFormat
+                    .getCurrencyInstance(Locale.GERMANY)
+                    .format(
+                        this.vat.divide(BigDecimal.valueOf(100))
+                    )
+                + " / "
+                + this.euroToRon(this.vat).toString().replace('.', ',')
+                + " RON"
+            );
+        }
+        acroForm.getField("totalDue").setValue(
+            NumberFormat
+                .getCurrencyInstance(Locale.GERMANY)
+                .format(
+                    this.totalAmount()
+                        .divide(BigDecimal.valueOf(100))
+                )
+            + " / "
+            + this.euroToRon(this.totalAmount()).toString().replace('.', ',')
+            + " RON"
+        );
+
+        acroForm.getField("exchangeRate").setValue(
+            "1 EUR = " + this.eurToRon.divide(
+                BigDecimal.valueOf(100),
+                2,
+                RoundingMode.HALF_UP
+            ).toString().replace('.', ',')+ " RON"
+        );
+
+        acroForm.getField("paidAt").setValue(
+            this.paymentTime.toLocalDate().toString()
+        );
+
+        acroForm.flatten();
+
+        doc.addPage(docCatalog.getPages().get(0));
+        doc.removePage(1); //remove trailing blank page
+
+        doc.save(outputStream);
+        doc.close();
+    }
+
+    /**
+     * Convert Euro to RON.
+     * @param euro Value in EUR.
+     * @return Value in RON.
+     */
+    private BigDecimal euroToRon(final BigDecimal euro) {
+        return euro.multiply(this.eurToRon).divide(
+            BigDecimal.valueOf(10000),
+            2,
+            RoundingMode.HALF_UP
+        );
+    }
+
+    /**
+     * Convenience method to get the PDF template resource as a File.
+     * @param resourcePath Name of the file.
+     * @throws IOException If something goes wrong.
+     * @return File.
+     */
+    private File getResourceAsFile(
+        final String resourcePath
+    ) throws IOException {
+        final InputStream stream = this.getClass().getClassLoader()
+            .getResourceAsStream(resourcePath);
+        final File tempFile = File.createTempFile(
+            String.valueOf(stream.hashCode()), ".tmp"
+        );
+        tempFile.deleteOnExit();
+
+        try (FileOutputStream out = new FileOutputStream(tempFile)) {
+            byte[] buffer = new byte[1024];
+            int bytesRead;
+            while ((bytesRead = stream.read(buffer)) != -1) {
+                out.write(buffer, 0, bytesRead);
+            }
+        }
+        return tempFile;
     }
 }
