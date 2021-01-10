@@ -274,6 +274,9 @@ public final class StripeWallet implements Wallet {
                     );
             } else {
                 LOG.error("[STRIPE] PaymentIntent status: " + status);
+                LOG.error("[STRIPE] Cancelling PaymentIntent...");
+                paymentIntent.cancel();
+                LOG.error("[STRIPE] PaymentIntent successfully cancelled.");
                 throw new WalletPaymentException(
                     "Could not pay invoice #" + invoice.invoiceId() + " due to"
                     + " Stripe payment intent status \"" + status + "\""
