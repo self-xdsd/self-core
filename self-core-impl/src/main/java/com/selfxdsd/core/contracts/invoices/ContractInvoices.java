@@ -91,14 +91,18 @@ public final class ContractInvoices implements Invoices {
 
     @Override
     public boolean registerAsPaid(
-        final Invoice invoice, final BigDecimal contributorVat
+        final Invoice invoice,
+        final BigDecimal contributorVat,
+        final BigDecimal eurToRon
     ) {
         if(!invoice.contract().contractId().equals(this.contractId)){
             throw new IllegalStateException(
                 "The given Invoice belongs to another contract."
             );
         }
-        return this.storage.invoices().registerAsPaid(invoice, contributorVat);
+        return this.storage.invoices().registerAsPaid(
+            invoice, contributorVat, eurToRon
+        );
     }
 
     @Override

@@ -144,6 +144,7 @@ public final class StripeWalletITCase {
             Mockito.verify(invoices, Mockito.times(1))
                 .registerAsPaid(
                     Mockito.any(Invoice.class),
+                    Mockito.any(BigDecimal.class),
                     Mockito.any(BigDecimal.class)
                 );
             Mockito.verify(ofProject, Mockito.times(1))

@@ -46,9 +46,13 @@ public interface Invoices extends Iterable<Invoice> {
      * Register an Invoice as paid.
      * @param invoice Paid invoice.
      * @param contributorVat Vat which Self takes from the Contributor.
+     * @param eurToRon Euro to RON (Romanian Leu) conversion rate.
+     *  For example, if the value is 487, it means 1 EUR = 4,87 RON.
      * @return True or false, depending on whether the operation succeeded.
      */
     boolean registerAsPaid(
-        final Invoice invoice, final BigDecimal contributorVat
+        final Invoice invoice,
+        final BigDecimal contributorVat,
+        final BigDecimal eurToRon
     );
 }
