@@ -398,6 +398,7 @@ public final class FakeWalletTestCase {
         Mockito.when(
             invoices.registerAsPaid(
                 Mockito.any(Invoice.class),
+                Mockito.any(BigDecimal.class),
                 Mockito.any(BigDecimal.class)
             )
         ).thenReturn(true);
@@ -418,6 +419,7 @@ public final class FakeWalletTestCase {
         Mockito.verify(invoices, Mockito.times(1))
             .registerAsPaid(
                 paidInvoiceCapture.capture(),
+                Mockito.any(BigDecimal.class),
                 Mockito.any(BigDecimal.class)
             );
         final Invoice paidInvoice = paidInvoiceCapture.getValue();
@@ -456,6 +458,7 @@ public final class FakeWalletTestCase {
         Mockito.when(
             invoices.registerAsPaid(
                 Mockito.any(Invoice.class),
+                Mockito.any(BigDecimal.class),
                 Mockito.any(BigDecimal.class)
             )
         ).thenReturn(false);

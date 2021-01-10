@@ -57,7 +57,8 @@ public final class InMemoryInvoices implements Invoices {
     @Override
     public boolean registerAsPaid(
         final Invoice invoice,
-        final BigDecimal contributorVat
+        final BigDecimal contributorVat,
+        final BigDecimal eurToRon
     ) {
         this.invoices.put(invoice.invoiceId(), invoice);
         return true;
