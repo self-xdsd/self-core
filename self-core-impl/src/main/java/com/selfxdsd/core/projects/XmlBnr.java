@@ -47,6 +47,7 @@ import java.net.http.HttpResponse;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.51
+ * @checkstyle ReturnCount (200 lines)
  */
 final class XmlBnr implements Bnr {
 
@@ -75,7 +76,10 @@ final class XmlBnr implements Bnr {
                 );
             return readEurFromXml(response.body());
         } catch (final IOException | InterruptedException ex) {
-            LOG.error("[BNR] Could not get EUR-RON exchange rate: ", ex.getMessage());
+            LOG.error(
+                "[BNR] Could not get EUR-RON exchange rate: ",
+                ex.getMessage()
+            );
             LOG.error("[BNR] Returning 487 as default exchange rate.");
             return BigDecimal.valueOf(487);
         }

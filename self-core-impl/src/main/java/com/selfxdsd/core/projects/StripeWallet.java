@@ -51,9 +51,6 @@ import java.util.Objects;
  * @version $Id$
  * @since 0.0.27
  * @checkstyle ExecutableStatementCount (1000 lines)
- * @todo #891:60min At the moment the registered EUR to RON exchange
- *  rate is always 487 (1 EUR = 4,87 RON). Let's read it from somewhere,
- *  probably using API of the BNR (Romanian National Bank).
  */
 public final class StripeWallet implements Wallet {
 
@@ -274,7 +271,7 @@ public final class StripeWallet implements Wallet {
                             this.storage
                         ),
                         vat,
-                        BigDecimal.valueOf(487)
+                        new XmlBnr().euroToRon()
                     );
             } else {
                 LOG.error("[STRIPE] PaymentIntent status: " + status);
