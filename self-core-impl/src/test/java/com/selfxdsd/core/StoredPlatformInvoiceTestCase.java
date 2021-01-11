@@ -56,6 +56,7 @@ public final class StoredPlatformInvoiceTestCase {
             "transactionId123",
             LocalDateTime.now(),
             10,
+            BigDecimal.valueOf(487),
             Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(
@@ -79,6 +80,7 @@ public final class StoredPlatformInvoiceTestCase {
             "transactionId123",
             LocalDateTime.now(),
             10,
+            BigDecimal.valueOf(487),
             Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(
@@ -101,6 +103,7 @@ public final class StoredPlatformInvoiceTestCase {
             "transactionId123",
             LocalDateTime.now(),
             10,
+            BigDecimal.valueOf(487),
             Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(
@@ -123,6 +126,7 @@ public final class StoredPlatformInvoiceTestCase {
             "transactionId123",
             LocalDateTime.now(),
             10,
+            BigDecimal.valueOf(487),
             Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(
@@ -145,6 +149,7 @@ public final class StoredPlatformInvoiceTestCase {
             "transactionId123",
             LocalDateTime.now(),
             10,
+            BigDecimal.valueOf(487),
             Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(
@@ -167,6 +172,7 @@ public final class StoredPlatformInvoiceTestCase {
             "transactionId123",
             LocalDateTime.now(),
             10,
+            BigDecimal.valueOf(487),
             Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(
@@ -190,6 +196,7 @@ public final class StoredPlatformInvoiceTestCase {
             "transactionId123",
             paidAt,
             10,
+            BigDecimal.valueOf(487),
             Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(
@@ -219,6 +226,7 @@ public final class StoredPlatformInvoiceTestCase {
             "transactionId123",
             LocalDateTime.now(),
             10,
+            BigDecimal.valueOf(487),
             storage
         );
         MatcherAssert.assertThat(
@@ -241,6 +249,7 @@ public final class StoredPlatformInvoiceTestCase {
             "transactionId123",
             LocalDateTime.now(),
             10,
+            BigDecimal.valueOf(487),
             Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(
@@ -263,6 +272,7 @@ public final class StoredPlatformInvoiceTestCase {
             "transactionId123",
             LocalDateTime.now(),
             10,
+            BigDecimal.valueOf(487),
             Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(
@@ -285,6 +295,7 @@ public final class StoredPlatformInvoiceTestCase {
             "transactionId123",
             LocalDateTime.now(),
             10,
+            BigDecimal.valueOf(487),
             Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(

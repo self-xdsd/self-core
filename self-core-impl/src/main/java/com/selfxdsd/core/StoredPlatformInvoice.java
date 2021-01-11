@@ -42,8 +42,6 @@ import java.util.Locale;
  * @version $Id$
  * @since 0.0.50
  * @checkstyle TrailingComment (500 lines)
- * @todo #894:30min Add the eurToRon constructor parameter to this
- *  class. This value will be a column in the DB.
  */
 public final class StoredPlatformInvoice implements PlatformInvoice {
 
@@ -91,7 +89,7 @@ public final class StoredPlatformInvoice implements PlatformInvoice {
      * Euro to RON exchange rage. For instance, if this
      * value is 478, it means 1 EUR = 4,87 RON.
      */
-    private final BigDecimal eurToRon = BigDecimal.valueOf(487);
+    private final BigDecimal eurToRon;
 
     /**
      * Self storage.
@@ -108,6 +106,7 @@ public final class StoredPlatformInvoice implements PlatformInvoice {
      * @param transactionId Transaction (payment) ID.
      * @param paymentTime Payment timestamp.
      * @param invoiceId ID of the corresponding Invoice.
+     * @param eurToRon Euro to RON exchange rate.
      * @param storage Self Storage.
      */
     public StoredPlatformInvoice(
@@ -119,6 +118,7 @@ public final class StoredPlatformInvoice implements PlatformInvoice {
         final String transactionId,
         final LocalDateTime paymentTime,
         final int invoiceId,
+        final BigDecimal eurToRon,
         final Storage storage
     ) {
         this.id = id;
@@ -129,6 +129,7 @@ public final class StoredPlatformInvoice implements PlatformInvoice {
         this.transactionId = transactionId;
         this.paymentTime = paymentTime;
         this.invoiceId = invoiceId;
+        this.eurToRon = eurToRon;
         this.storage = storage;
     }
 
