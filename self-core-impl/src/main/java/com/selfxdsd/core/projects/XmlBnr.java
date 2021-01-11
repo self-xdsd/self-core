@@ -29,10 +29,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.io.StringReader;
 import java.math.BigDecimal;
@@ -48,6 +46,7 @@ import java.net.http.HttpResponse;
  * @version $Id$
  * @since 0.0.51
  * @checkstyle ReturnCount (200 lines)
+ * @checkstyle IllegalCatch (200 lines)
  */
 final class XmlBnr implements Bnr {
 
@@ -107,15 +106,15 @@ final class XmlBnr implements Bnr {
                 if("EUR".equalsIgnoreCase(name)) {
                     final String text = rate.getTextContent();
                     LOG.info("[BNR] Found EUR-RON exchange rate: " + text);
-                    LOG.info("[BNR] Rounding Half-Up to 2 decimals.");
-                    return new BigDecimal(
-                        text
-                    ).setScale(2, RoundingMode.HALF_UP);
+                    LOG.info("[BNR] Rounding Half-Up.");
+                    return new BigDecimal(text)
+                        .setScale(2, RoundingMode.HALF_UP)
+                        .multiply(BigDecimal.valueOf(100));
                 }
             }
             LOG.warn("[BNR] EUR-RON not found! Returning 487 as default.");
             return BigDecimal.valueOf(487);
-        } catch (final SAXException | IOException | ParserConfigurationException ex) {
+        } catch (final Exception ex) {
             LOG.error("[BNR] Exception while parsing XML: ", ex.getMessage());
             LOG.error("[BNR] Returning 487 as default exchange rate.");
             return BigDecimal.valueOf(487);
