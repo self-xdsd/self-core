@@ -78,6 +78,10 @@ abstract class BaseSelf implements Self {
         return this.storage.projects();
     }
 
+    @Override
+    public PlatformInvoices platformInvoices(){
+        return this.storage.platformInvoices();
+    }
 
     @Override
     public Contributors contributors() {
