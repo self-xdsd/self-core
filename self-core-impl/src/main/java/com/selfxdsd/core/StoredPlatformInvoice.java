@@ -42,6 +42,7 @@ import java.util.Locale;
  * @version $Id$
  * @since 0.0.50
  * @checkstyle TrailingComment (500 lines)
+ * @checkstyle ExecutableStatementCount (500 lines)
  */
 public final class StoredPlatformInvoice implements PlatformInvoice {
 
@@ -187,8 +188,12 @@ public final class StoredPlatformInvoice implements PlatformInvoice {
         );
         acroForm.getField("billedBy").setValue(this.billedBy());
         acroForm.getField("billedTo").setValue(this.billedTo());
+        String invoiceIdPrint = "";
+        if(this.invoiceId > 0) {
+            invoiceIdPrint = " SLFX-" + this.invoiceId;
+        }
         acroForm.getField("commission_text").setValue(
-            "Commission for Invoice/Comision pt. Factura SLFX" + this.invoiceId
+            "Commission for Invoice/Comision pt. Factura" + invoiceIdPrint
         );
         acroForm.getField("commission_value").setValue(
             NumberFormat
