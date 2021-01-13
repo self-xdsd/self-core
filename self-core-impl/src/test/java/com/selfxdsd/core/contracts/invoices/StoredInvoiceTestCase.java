@@ -2,6 +2,15 @@ package com.selfxdsd.core.contracts.invoices;
 
 import com.selfxdsd.api.*;
 import com.selfxdsd.api.storage.Storage;
+import com.selfxdsd.core.StoredUser;
+import com.selfxdsd.core.contracts.StoredContract;
+import com.selfxdsd.core.contributors.StoredContributor;
+import com.selfxdsd.core.managers.StoredProjectManager;
+import com.selfxdsd.core.mock.InMemory;
+import com.selfxdsd.core.projects.StoredProject;
+import com.selfxdsd.core.tasks.*;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -674,6 +683,82 @@ public final class StoredInvoiceTestCase {
         MatcherAssert.assertThat(
             invoice.platformInvoice(),
             Matchers.is(found)
+        );
+    }
+
+    /**
+     * The stream of a pdf file is returned.
+     * @throws IOException If unable to create file
+     */
+    @Test
+    public void returnsOutputOfPdfFile() throws IOException {
+        final Storage storage = new InMemory();
+        final StoredProject project = new StoredProject(
+            new StoredUser(
+                "owner",
+                "owner@example.com",
+                "ARC",
+                "github",
+                storage
+            ),
+            "repo",
+            "token-1234",
+            new StoredProjectManager(
+                0,
+                "1234",
+                "pm",
+                "github",
+                "token-1235",
+                0.20,
+                storage
+            ),
+            storage
+        );
+        final Invoice invoice = new StoredInvoice(
+            1,
+            new StoredContract(
+                project,
+                new StoredContributor(
+                    "contributor",
+                    "contributor@example.com",
+                    storage
+                ),
+                BigDecimal.ZERO,
+                "DEV",
+                LocalDateTime.now(),
+                storage
+            ),
+            LocalDateTime.now(),
+            LocalDateTime.now(),
+            "transaction123",
+            "mihai",
+            "contributro",
+            storage
+        );
+        storage
+            .invoices()
+            .registerAsPaid(
+                invoice,
+                BigDecimal.ZERO,
+                BigDecimal.ONE
+            );
+        storage
+            .invoicedTasks()
+            .register(
+                invoice,
+                new StoredTask(
+                    project,
+                    "#1234",
+                    "DEV", 30,
+                    storage
+                ),
+                BigDecimal.ZERO
+            );
+        final ByteArrayOutputStream out = new ByteArrayOutputStream();
+        invoice.toPdf(out);
+        MatcherAssert.assertThat(
+            out.size(),
+            Matchers.greaterThan(0)
         );
     }
 }

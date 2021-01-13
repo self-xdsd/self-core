@@ -1,7 +1,7 @@
 package com.selfxdsd.api;
 
-import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -106,8 +106,8 @@ public interface Invoice {
 
     /**
      * Turn this invoice to a PDF file.
-     * @return PDF File.
+     * @param out Output
      * @throws IOException If any I/O problems.
      */
-    File toPdf() throws IOException;
+    void toPdf(OutputStream out) throws IOException;
 }

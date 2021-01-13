@@ -99,7 +99,12 @@ public final class StripeWalletITCase {
                 .mock(PayoutMethods.class);
             final PayoutMethods payoutsOfContrib = Mockito
                 .mock(PayoutMethods.class);
+            final BillingInfo billingInfo = Mockito.mock(BillingInfo.class);
+            Mockito.when(billingInfo.country())
+                .thenReturn("RO");
             final PayoutMethod payoutMethod = Mockito.mock(PayoutMethod.class);
+            Mockito.when(payoutMethod.billingInfo())
+                .thenReturn(billingInfo);
             final PaymentMethods allPaymentMethods = Mockito
                 .mock(PaymentMethods.class);
             final PaymentMethods paymentsOfWallet = Mockito

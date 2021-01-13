@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.time.LocalDateTime;
@@ -201,7 +202,7 @@ public final class StoredInvoice implements Invoice {
     }
 
     @Override
-    public File toPdf() throws IOException {
+    public void toPdf(final OutputStream out) throws IOException {
         final PDDocument doc = PDDocument.load(
             this.getResourceAsFile("invoice_template.pdf")
         );
@@ -277,10 +278,8 @@ public final class StoredInvoice implements Invoice {
         doc.addPage(docCatalog.getPages().get(0));
         doc.removePage(1); //remove trailing blank page
 
-        final File generated = new File("invoice_slfx_"+ this.id + ".pdf");
-        doc.save(generated);
+        doc.save(out);
         doc.close();
-        return generated;
     }
 
     @Override
@@ -295,7 +294,7 @@ public final class StoredInvoice implements Invoice {
     @Override
     public BigDecimal amount() {
         BigDecimal revenue = BigDecimal.valueOf(0);
-        for(final InvoicedTask task : this.tasks()) {
+        for (final InvoicedTask task : this.tasks()) {
             revenue = revenue.add(task.value());
         }
         return revenue;
