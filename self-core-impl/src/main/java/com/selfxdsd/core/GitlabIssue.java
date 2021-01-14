@@ -226,9 +226,19 @@ final class GitlabIssue implements Issue {
         return this.json;
     }
 
+    /**
+     * {@inheritDoc}
+     * <br/>
+     * For Gitlab, more about Issue Comments
+     * <a href="https://docs.gitlab.com/ee/api/notes.html#list-project-issue-notes">
+     *     here</a>.
+     */
     @Override
     public Comments comments() {
-        throw new UnsupportedOperationException("Not implemented yet");
+        return new DoNotRepeat(new GitlabIssueComments(
+            URI.create(this.issueUri + "/notes"),
+            this.resources
+        ));
     }
 
     /**
