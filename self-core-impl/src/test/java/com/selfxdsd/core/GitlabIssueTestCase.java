@@ -22,6 +22,7 @@
  */
 package com.selfxdsd.core;
 
+import com.selfxdsd.api.Comments;
 import com.selfxdsd.api.Contract;
 import com.selfxdsd.api.Estimation;
 import com.selfxdsd.api.Issue;
@@ -258,17 +259,30 @@ public final class GitlabIssueTestCase {
     }
 
     /**
-     *GitlabIssue.comments() is not implemented yet.
+     *GitlabIssue.comments() has comments.
      */
-    @Test(expected = UnsupportedOperationException.class)
-    public void commentsIsNotImplemented(){
-        new GitlabIssue(
+    @Test
+    public void hasComments() {
+        final MockJsonResources resources = new MockJsonResources(
+            req -> new MockJsonResources.MockResource(200, JsonValue
+                .EMPTY_JSON_ARRAY)
+        );
+        final Comments comments = new GitlabIssue(
             URI.create("https://gitlab.com/api/v4/projects"
                 + "/john%2Ftest/issues/1"),
             JsonObject.EMPTY_JSON_OBJECT,
             Mockito.mock(Storage.class),
-            Mockito.mock(JsonResources.class)
+            resources
         ).comments();
+
+        comments.iterator();
+
+        final MockJsonResources.MockRequest req = resources.requests().first();
+        MatcherAssert.assertThat(req.getUri(), Matchers
+            .equalTo(URI.create("https://gitlab.com/api/v4/projects"
+                + "/john%2Ftest/issues/1/notes")));
+        MatcherAssert.assertThat(comments, Matchers
+            .instanceOf(DoNotRepeat.class));
     }
 
     /**
