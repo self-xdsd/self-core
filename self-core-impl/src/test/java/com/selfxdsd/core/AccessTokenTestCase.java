@@ -31,8 +31,8 @@ public final class AccessTokenTestCase {
     public void representsGitlabAccessToken(){
         final AccessToken token = new AccessToken.Gitlab("gitlab123");
         MatcherAssert.assertThat(token.header(),
-            Matchers.equalTo("Private-Token"));
+            Matchers.equalTo("Authorization"));
         MatcherAssert.assertThat(token.value(),
-            Matchers.equalTo("gitlab123"));
+            Matchers.equalTo("Bearer gitlab123"));
     }
 }

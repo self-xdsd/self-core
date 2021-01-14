@@ -75,12 +75,12 @@ public interface AccessToken {
 
         @Override
         public String header() {
-            return "Private-Token";
+            return "Authorization";
         }
 
         @Override
         public String value() {
-            return this.value;
+            return "Bearer " + this.value;
         }
     }
 }

@@ -205,7 +205,7 @@ public final class GitlabIssuesTestCase {
                 req -> {
                     MatcherAssert.assertThat(
                         req.getAccessToken().value(),
-                        Matchers.equalTo("gitlab123")
+                        Matchers.equalTo("Bearer gitlab123")
                     );
                     MatcherAssert.assertThat(
                         req.getMethod(),
@@ -356,7 +356,7 @@ public final class GitlabIssuesTestCase {
                 req -> {
                     MatcherAssert.assertThat(
                         req.getAccessToken().value(),
-                        Matchers.equalTo("gitlab123")
+                        Matchers.equalTo("Bearer gitlab123")
                     );
                     MatcherAssert.assertThat(
                         req.getMethod(),
