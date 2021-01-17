@@ -134,7 +134,7 @@ final class GitlabCollaborators implements Collaborators {
     public Iterator<Collaborator> iterator() {
         LOG.debug(
             "Fetching Gitlab's repo collaborators "
-                + "from [" + this.collaboratorsUri.toString() + "]."
+            + "from [" + this.collaboratorsUri.toString() + "]."
         );
         final Resource response = this.resources.get(this.collaboratorsUri);
         final List<Collaborator> collaborators;
@@ -147,8 +147,9 @@ final class GitlabCollaborators implements Collaborators {
         } else {
             LOG.error(
                 "Unable to fetch Gitlab collaborators"
-                    + " from [" + this.collaboratorsUri.toString() + "],"
-                    + " 200 was expected but we got " + response.statusCode()
+                + " from [" + this.collaboratorsUri.toString() + "],"
+                + " 200 was expected but we got " + response.statusCode() + ". "
+                + "Returning empty list."
             );
             collaborators = List.of();
         }
