@@ -157,6 +157,7 @@ final class GitlabRepo extends BaseRepo {
         return new GitlabCommits(
             this.resources(),
             uri,
+            this.collaborators(),
             this.storage()
         );
     }

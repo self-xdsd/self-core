@@ -22,10 +22,7 @@
  */
 package com.selfxdsd.core;
 
-import com.selfxdsd.api.Commit;
-import com.selfxdsd.api.Commits;
-import com.selfxdsd.api.Repo;
-import com.selfxdsd.api.User;
+import com.selfxdsd.api.*;
 import com.selfxdsd.api.storage.Storage;
 import com.selfxdsd.core.mock.MockJsonResources;
 import org.hamcrest.MatcherAssert;
@@ -54,6 +51,7 @@ public final class GitlabCommitsTestCase {
         final Commits commits = new GitlabCommits(
             Mockito.mock(JsonResources.class),
             URI.create("commits_uri"),
+            Mockito.mock(Collaborators.class),
             Mockito.mock(Storage.class)
         );
         commits.iterator();
@@ -131,6 +129,7 @@ public final class GitlabCommitsTestCase {
                 }
             ),
             URI.create("commits_uri"),
+            Mockito.mock(Collaborators.class),
             Mockito.mock(Storage.class)
         );
         final Commit found = commits.getCommit("bad_ref");
@@ -164,6 +163,7 @@ public final class GitlabCommitsTestCase {
                 }
             ),
             URI.create("commits_uri"),
+            Mockito.mock(Collaborators.class),
             Mockito.mock(Storage.class)
         );
         commits.getCommit("123");
@@ -196,6 +196,7 @@ public final class GitlabCommitsTestCase {
                 }
             ),
             URI.create("commits_uri"),
+            Mockito.mock(Collaborators.class),
             Mockito.mock(Storage.class)
         );
         final Commit found = commits.latest();
@@ -235,6 +236,7 @@ public final class GitlabCommitsTestCase {
                 }
             ),
             URI.create("commits_uri"),
+            Mockito.mock(Collaborators.class),
             Mockito.mock(Storage.class)
         );
         commits.latest();

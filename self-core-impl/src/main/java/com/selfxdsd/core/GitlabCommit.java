@@ -22,8 +22,7 @@
  */
 package com.selfxdsd.core;
 
-import com.selfxdsd.api.Comments;
-import com.selfxdsd.api.Commit;
+import com.selfxdsd.api.*;
 import com.selfxdsd.api.storage.Storage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,6 +61,11 @@ final class GitlabCommit implements Commit {
     private final Storage storage;
 
     /**
+     * Repo Collaborators.
+     */
+    private final Collaborators collaborators;
+
+    /**
      * Gitlab's JSON Resources.
      */
     private final JsonResources resources;
@@ -70,17 +74,20 @@ final class GitlabCommit implements Commit {
      * Ctor.
      * @param commitUri Commit base URI.
      * @param json Json Commit as returned by Gitlab's API.
+     * @param collaborators Repo Collaborators.
      * @param storage Storage.
      * @param resources Gitlab's JSON Resources.
      */
     GitlabCommit(
         final URI commitUri,
         final JsonObject json,
+        final Collaborators collaborators,
         final Storage storage,
         final JsonResources resources
     ) {
         this.commitUri = commitUri;
         this.json = json;
+        this.collaborators = collaborators;
         this.storage = storage;
         this.resources = resources;
     }
@@ -100,9 +107,24 @@ final class GitlabCommit implements Commit {
         );
     }
 
+    /**
+     * {@inheritDoc}
+     * <br/>
+     * We have to iterate over Collaborators to get the author's userId,
+     * because it is not contained in the Commit JSON.
+     * More <a href="https://gitlab.com/gitlab-org/gitlab/-/issues/20924">here</a>.
+     */
     @Override
     public String author() {
-        return this.json.getString("author_name");
+        final String authorName = this.json.getString("author_name", "");
+        String author = "";
+        for(final Collaborator collaborator : this.collaborators) {
+            if(authorName.equalsIgnoreCase(collaborator.name())) {
+                author = collaborator.username();
+                break;
+            }
+        }
+        return author;
     }
 
     @Override

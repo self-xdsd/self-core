@@ -22,7 +22,7 @@
  */
 package com.selfxdsd.core;
 
-import com.selfxdsd.api.Commit;
+import com.selfxdsd.api.*;
 import com.selfxdsd.api.storage.Storage;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -32,6 +32,8 @@ import org.mockito.Mockito;
 import javax.json.Json;
 import javax.json.JsonObject;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Unit tests for {@link GitlabCommit}.
@@ -50,6 +52,7 @@ public final class GitlabCommitTestCase {
         final Commit commit = new GitlabCommit(
             URI.create("../projects/id/repository/commits/sha"),
             json,
+            Mockito.mock(Collaborators.class),
             Mockito.mock(Storage.class),
             Mockito.mock(JsonResources.class)
         );
@@ -60,24 +63,57 @@ public final class GitlabCommitTestCase {
     }
 
     /**
-     * GitlabCommit can return its author.
+     * GitlabCommit can return its author's username by
+     * iterating over Collaborators.
      */
     @Test
-    public void returnsAuthor() {
-        final JsonObject json = Json.createObjectBuilder()
-            .add("author_name", "alilo")
-            .build();
+    public void authorFoundInCollaborators() {
+        final Collaborator mihai = Mockito.mock(Collaborator.class);
+        Mockito.when(mihai.name()).thenReturn("Mihai A.");
+        Mockito.when(mihai.username()).thenReturn("amihaiemil");
+        final Collaborators collaborators = Mockito.mock(Collaborators.class);
+        Mockito.when(collaborators.iterator()).thenReturn(
+            List.of(mihai).iterator()
+        );
         final Commit commit = new GitlabCommit(
             URI.create("../projects/id/repository/commits/sha"),
-            json,
+            Json.createObjectBuilder()
+                .add("author_name", "Mihai A.")
+                .build(),
+            collaborators,
             Mockito.mock(Storage.class),
             Mockito.mock(JsonResources.class)
         );
         MatcherAssert.assertThat(
             commit.author(),
-            Matchers.equalTo("alilo")
+            Matchers.equalTo("amihaiemil")
         );
     }
+
+    /**
+     * GitlabCommit returns empty string if its author is not found.
+     */
+    @Test
+    public void authorNotFound() {
+        final Collaborators collaborators = Mockito.mock(Collaborators.class);
+        Mockito.when(collaborators.iterator()).thenReturn(
+            new ArrayList<Collaborator>().iterator()
+        );
+        final Commit commit = new GitlabCommit(
+            URI.create("../projects/id/repository/commits/sha"),
+            Json.createObjectBuilder()
+                .add("author_name", "Mihai A.")
+                .build(),
+            collaborators,
+            Mockito.mock(Storage.class),
+            Mockito.mock(JsonResources.class)
+        );
+        MatcherAssert.assertThat(
+            commit.author(),
+            Matchers.equalTo("")
+        );
+    }
+
 
     /**
      * GitlabCommit can return its SHA ref.
@@ -90,6 +126,7 @@ public final class GitlabCommitTestCase {
         final Commit commit = new GitlabCommit(
             URI.create("../projects/id/repository/commits/sha"),
             json,
+            Mockito.mock(Collaborators.class),
             Mockito.mock(Storage.class),
             Mockito.mock(JsonResources.class)
         );
@@ -107,6 +144,7 @@ public final class GitlabCommitTestCase {
         final Commit commit = new GitlabCommit(
             URI.create("../projects/id/repository/commits/sha"),
             Mockito.mock(JsonObject.class),
+            Mockito.mock(Collaborators.class),
             Mockito.mock(Storage.class),
             Mockito.mock(JsonResources.class)
         );
