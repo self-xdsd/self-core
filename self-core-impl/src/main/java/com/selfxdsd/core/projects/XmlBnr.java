@@ -31,7 +31,6 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
 import javax.xml.parsers.DocumentBuilderFactory;
-import java.io.IOException;
 import java.io.StringReader;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -60,7 +59,22 @@ final class XmlBnr implements Bnr {
     /**
      * BNR exchange rate URI.
      */
-    private final URI uri = URI.create("https://www.bnr.ro/nbrfxrates.xml");
+    private final URI uri;
+
+    /**
+     * Ctor. Uses BNR's real API by default.
+     */
+    XmlBnr() {
+        this(URI.create("https://www.bnr.ro/nbrfxrates.xml"));
+    }
+
+    /**
+     * Ctor.
+     * @param uri API Uri.
+     */
+    XmlBnr(final URI uri) {
+        this.uri = uri;
+    }
 
     @Override
     public BigDecimal euroToRon() {
@@ -74,7 +88,7 @@ final class XmlBnr implements Bnr {
                     HttpResponse.BodyHandlers.ofString()
                 );
             return readEurFromXml(response.body());
-        } catch (final IOException | InterruptedException ex) {
+        } catch (final Exception ex) {
             LOG.error(
                 "[BNR] Could not get EUR-RON exchange rate: ",
                 ex.getMessage()
