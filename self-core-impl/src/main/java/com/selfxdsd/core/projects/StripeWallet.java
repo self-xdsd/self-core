@@ -431,7 +431,7 @@ public final class StripeWallet implements Wallet {
         if("authentication_required".equalsIgnoreCase(code)) {
             throw new WalletPaymentException(
                 "Payment cannot be made because the card "
-                + "requires authentication (not yet implemented)."
+                + "requires authentication."
             );
         }
         if("card_declined".equalsIgnoreCase(code)) {
