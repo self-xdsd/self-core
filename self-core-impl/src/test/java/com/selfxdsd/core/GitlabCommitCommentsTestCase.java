@@ -22,6 +22,7 @@
  */
 package com.selfxdsd.core;
 
+import com.selfxdsd.api.Collaborators;
 import com.selfxdsd.api.Comment;
 import com.selfxdsd.api.Comments;
 import com.selfxdsd.api.storage.Storage;
@@ -79,6 +80,7 @@ public final class GitlabCommitCommentsTestCase {
         final GitlabCommit commit = new GitlabCommit(
             URI.create("../projects/id/repository/commits/sha"),
             Mockito.mock(JsonObject.class),
+            Mockito.mock(Collaborators.class),
             Mockito.mock(Storage.class),
             new MockJsonResources(
                 req -> {

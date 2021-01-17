@@ -123,6 +123,7 @@ final class GitlabCommits implements Commits {
             commit = new GitlabCommit(
                 commitUri,
                 jsonObject,
+                this.collaborators,
                 this.storage,
                 this.resources
             );
@@ -146,6 +147,7 @@ final class GitlabCommits implements Commits {
                         + json.getString("short_id")
                 ),
                 json,
+                this.collaborators,
                 this.storage,
                 this.resources
             );

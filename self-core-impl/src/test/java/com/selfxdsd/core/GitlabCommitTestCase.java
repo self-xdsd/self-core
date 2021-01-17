@@ -22,6 +22,7 @@
  */
 package com.selfxdsd.core;
 
+import com.selfxdsd.api.Collaborators;
 import com.selfxdsd.api.Commit;
 import com.selfxdsd.api.storage.Storage;
 import org.hamcrest.MatcherAssert;
@@ -50,6 +51,7 @@ public final class GitlabCommitTestCase {
         final Commit commit = new GitlabCommit(
             URI.create("../projects/id/repository/commits/sha"),
             json,
+            Mockito.mock(Collaborators.class),
             Mockito.mock(Storage.class),
             Mockito.mock(JsonResources.class)
         );
@@ -70,6 +72,7 @@ public final class GitlabCommitTestCase {
         final Commit commit = new GitlabCommit(
             URI.create("../projects/id/repository/commits/sha"),
             json,
+            Mockito.mock(Collaborators.class),
             Mockito.mock(Storage.class),
             Mockito.mock(JsonResources.class)
         );
@@ -90,6 +93,7 @@ public final class GitlabCommitTestCase {
         final Commit commit = new GitlabCommit(
             URI.create("../projects/id/repository/commits/sha"),
             json,
+            Mockito.mock(Collaborators.class),
             Mockito.mock(Storage.class),
             Mockito.mock(JsonResources.class)
         );
@@ -107,6 +111,7 @@ public final class GitlabCommitTestCase {
         final Commit commit = new GitlabCommit(
             URI.create("../projects/id/repository/commits/sha"),
             Mockito.mock(JsonObject.class),
+            Mockito.mock(Collaborators.class),
             Mockito.mock(Storage.class),
             Mockito.mock(JsonResources.class)
         );

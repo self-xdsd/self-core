@@ -22,6 +22,7 @@
  */
 package com.selfxdsd.core;
 
+import com.selfxdsd.api.Collaborators;
 import com.selfxdsd.api.Comments;
 import com.selfxdsd.api.Commit;
 import com.selfxdsd.api.storage.Storage;
@@ -62,6 +63,11 @@ final class GitlabCommit implements Commit {
     private final Storage storage;
 
     /**
+     * Repo Collaborators.
+     */
+    private final Collaborators collaborators;
+
+    /**
      * Gitlab's JSON Resources.
      */
     private final JsonResources resources;
@@ -70,17 +76,20 @@ final class GitlabCommit implements Commit {
      * Ctor.
      * @param commitUri Commit base URI.
      * @param json Json Commit as returned by Gitlab's API.
+     * @param collaborators Repo Collaborators.
      * @param storage Storage.
      * @param resources Gitlab's JSON Resources.
      */
     GitlabCommit(
         final URI commitUri,
         final JsonObject json,
+        final Collaborators collaborators,
         final Storage storage,
         final JsonResources resources
     ) {
         this.commitUri = commitUri;
         this.json = json;
+        this.collaborators = collaborators;
         this.storage = storage;
         this.resources = resources;
     }
