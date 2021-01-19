@@ -121,7 +121,7 @@ public final class InMemoryProjects extends BasePaged implements Projects{
             .skip((page.getNumber() - 1) * page.getSize())
             .limit(page.getSize())
             .filter(p -> p.projectManager().id() == projectManagerId);
-        return new PmProjects(projectManagerId, assigned);
+        return new PmProjects(projectManagerId, assigned, this.storage);
     }
 
     @Override
