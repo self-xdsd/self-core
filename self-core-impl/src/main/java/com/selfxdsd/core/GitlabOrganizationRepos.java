@@ -53,7 +53,7 @@ final class GitlabOrganizationRepos implements Repos {
                             final JsonResources resources,
                             final Storage storage) {
         this.uri = URI.create("https://gitlab.com/api/v4/groups/"
-            + organizationId + "/projects?simple=true&owned=true");
+            + organizationId + "/projects?owned=true");
         this.owner = owner;
         this.resources = resources;
         this.storage = storage;
