@@ -25,6 +25,7 @@ package com.selfxdsd.core;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.util.Iterator;
+import javax.json.JsonArray;
 import javax.json.JsonObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -129,15 +130,22 @@ final class GithubCommits implements Commits {
         final Resource resource = this.resources.get(this.commitsUri);
         final Commit latest;
         if (resource.statusCode() == HttpURLConnection.HTTP_OK) {
-            final JsonObject json = resource.asJsonArray().getJsonObject(0);
-            latest = new GithubCommit(
-                URI.create(
-                    this.commitsUri.toString() + "/" + json.getString("sha")
-                ),
-                json,
-                this.storage,
-                this.resources
-            );
+            final JsonArray commits = resource.asJsonArray();
+            if (commits.isEmpty()) {
+                latest = null;
+                LOG.debug("Latest Commit not found, returning null.");
+            } else {
+                final JsonObject json = commits.getJsonObject(0);
+                latest = new GithubCommit(
+                    URI.create(
+                        this.commitsUri.toString()
+                            + "/" + json.getString("sha")
+                    ),
+                    json,
+                    this.storage,
+                    this.resources
+                );
+            }
         } else {
             throw new IllegalStateException(
                 "List of Repo Commits returned " + resource.statusCode()

@@ -22,18 +22,19 @@
  */
 package com.selfxdsd.core;
 
-import java.net.HttpURLConnection;
-import java.net.URI;
-import javax.json.Json;
-
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
-import org.junit.Test;
-import org.mockito.Mockito;
 import com.selfxdsd.api.Commit;
 import com.selfxdsd.api.Commits;
 import com.selfxdsd.api.storage.Storage;
 import com.selfxdsd.core.mock.MockJsonResources;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.Test;
+import org.mockito.Mockito;
+
+import javax.json.Json;
+import javax.json.JsonValue;
+import java.net.HttpURLConnection;
+import java.net.URI;
 
 /**
  * Unit tests for {@link GithubCommits}.
@@ -215,6 +216,28 @@ public final class GithubCommitsTestCase {
         MatcherAssert.assertThat(
             found.shaRef(),
             Matchers.equalTo("123")
+        );
+    }
+
+    /**
+     * GithubCommits.latest() can return null if there are no commits.
+     */
+    @Test
+    public void getLatestCommitNull() {
+        final Commits commits = new GithubCommits(
+            new MockJsonResources(
+                req -> new MockJsonResources.MockResource(
+                    HttpURLConnection.HTTP_OK,
+                    JsonValue.EMPTY_JSON_ARRAY
+                )
+            ),
+            URI.create("commits_uri"),
+            Mockito.mock(Storage.class)
+        );
+        final Commit found = commits.latest();
+        MatcherAssert.assertThat(
+            found,
+            Matchers.nullValue()
         );
     }
 

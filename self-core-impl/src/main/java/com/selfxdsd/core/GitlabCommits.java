@@ -29,6 +29,7 @@ import com.selfxdsd.api.storage.Storage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.json.JsonArray;
 import javax.json.JsonObject;
 import java.net.HttpURLConnection;
 import java.net.URI;
@@ -139,18 +140,23 @@ final class GitlabCommits implements Commits {
         final Resource resource = this.resources.get(this.commitsUri);
         final Commit latest;
         if (resource.statusCode() == HttpURLConnection.HTTP_OK) {
-            final JsonObject json = resource.asJsonArray().getJsonObject(0);
-            latest = new GitlabCommit(
-                URI.create(
-                    this.commitsUri.toString()
-                        + "/"
-                        + json.getString("short_id")
-                ),
-                json,
-                this.collaborators,
-                this.storage,
-                this.resources
-            );
+            final JsonArray commits = resource.asJsonArray();
+            if (commits.isEmpty()) {
+                latest = null;
+                LOG.debug("Latest Commit not found, returning null.");
+            } else {
+                final JsonObject json = commits.getJsonObject(0);
+                latest = new GitlabCommit(
+                    URI.create(
+                        this.commitsUri.toString()
+                            + "/" + json.getString("short_id")
+                    ),
+                    json,
+                    this.collaborators,
+                    this.storage,
+                    this.resources
+                );
+            }
         } else {
             throw new IllegalStateException(
                 "Fetch repo commits returned " + resource.statusCode()

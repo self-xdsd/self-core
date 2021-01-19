@@ -214,6 +214,29 @@ public final class GitlabCommitsTestCase {
     }
 
     /**
+     * GitlabCommits.latest() can return null if there are no commits.
+     */
+    @Test
+    public void getLatestCommitNull() {
+        final Commits commits = new GitlabCommits(
+            new MockJsonResources(
+                req -> new MockJsonResources.MockResource(
+                    HttpURLConnection.HTTP_OK,
+                    JsonValue.EMPTY_JSON_ARRAY
+                )
+            ),
+            URI.create("commits_uri"),
+            Mockito.mock(Collaborators.class),
+            Mockito.mock(Storage.class)
+        );
+        final Commit found = commits.latest();
+        MatcherAssert.assertThat(
+            found,
+            Matchers.nullValue()
+        );
+    }
+
+    /**
      * GitlabCommits.latest() throws ISE if the HTTP response is not 200 OK.
      */
     @Test(expected = IllegalStateException.class)

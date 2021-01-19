@@ -39,7 +39,7 @@ public interface Commits extends Iterable<Commit> {
 
     /**
      * Get the latest Commit (the newest one).
-     * @return Commit.
+     * @return Commit or null if there are no commits.
      */
     Commit latest();
 }
