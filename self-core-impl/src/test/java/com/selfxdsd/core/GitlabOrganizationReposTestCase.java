@@ -31,7 +31,7 @@ public final class GitlabOrganizationReposTestCase {
             r -> {
                 MatcherAssert.assertThat(r.getUri().toString(),
                     Matchers.equalTo("https://gitlab.com/api/v4/groups"
-                        + "/1/projects?simple=true&owned=true"));
+                        + "/1/projects?owned=true"));
                 return new MockResource(200, Json
                     .createArrayBuilder()
                     .add(Json.createObjectBuilder()
