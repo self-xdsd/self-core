@@ -124,7 +124,7 @@ public final class PmProjects extends BasePaged implements Projects {
                     && owner.provider().name()
                     .equalsIgnoreCase(user.provider().name());
             });
-        return new UserProjects(user, owned);
+        return new UserProjects(user, owned, this.storage);
     }
 
     @Override

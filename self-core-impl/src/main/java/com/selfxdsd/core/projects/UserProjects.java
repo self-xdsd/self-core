@@ -24,6 +24,7 @@ package com.selfxdsd.core.projects;
 
 import com.selfxdsd.api.*;
 import com.selfxdsd.api.storage.Paged;
+import com.selfxdsd.api.storage.Storage;
 import com.selfxdsd.core.BasePaged;
 
 import java.util.Iterator;
@@ -57,27 +58,41 @@ public final class UserProjects extends BasePaged implements Projects {
     private final Supplier<Stream<Project>> projects;
 
     /**
+     * Self Storage.
+     */
+    private final Storage storage;
+
+    /**
      * Constructor.
      * @param user The user.
      * @param projects The user's projects.
+     * @param storage Self Storage.
      */
-    public UserProjects(final User user,
-                        final Supplier<Stream<Project>> projects) {
-        this(user, projects, Page.all());
+    public UserProjects(
+        final User user,
+        final Supplier<Stream<Project>> projects,
+        final Storage storage
+    ) {
+        this(user, projects, storage, Page.all());
     }
 
     /**
      * Constructor.
      * @param user The user.
      * @param projects The user's projects.
+     * @param storage Self Storage.
      * @param page Current page.
      */
-    public UserProjects(final User user,
-                        final Supplier<Stream<Project>> projects,
-                        final Page page) {
+    public UserProjects(
+        final User user,
+        final Supplier<Stream<Project>> projects,
+        final Storage storage,
+        final Page page
+    ) {
         super(page, () -> (int) projects.get().count());
         this.user = user;
         this.projects = projects;
+        this.storage = storage;
     }
 
     @Override
@@ -130,7 +145,7 @@ public final class UserProjects extends BasePaged implements Projects {
 
     @Override
     public Projects page(final Paged.Page page) {
-        return new UserProjects(this.user, this.projects, page);
+        return new UserProjects(this.user, this.projects, this.storage, page);
     }
 
     @Override

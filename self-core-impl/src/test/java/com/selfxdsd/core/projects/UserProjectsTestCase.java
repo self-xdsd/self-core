@@ -24,6 +24,7 @@ package com.selfxdsd.core.projects;
 
 import com.selfxdsd.api.*;
 import com.selfxdsd.api.storage.Paged;
+import com.selfxdsd.api.storage.Storage;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -52,7 +53,9 @@ public final class UserProjectsTestCase {
         list.add(this.projectAssignedTo(3));
         list.add(this.projectAssignedTo(2));
         final Projects projects = new UserProjects(
-            Mockito.mock(User.class), list::stream
+            Mockito.mock(User.class),
+            list::stream,
+            Mockito.mock(Storage.class)
         );
 
         MatcherAssert.assertThat(
@@ -71,7 +74,9 @@ public final class UserProjectsTestCase {
         list.add(Mockito.mock(Project.class));
         list.add(Mockito.mock(Project.class));
         final Projects projects = new UserProjects(
-            Mockito.mock(User.class), list::stream
+            Mockito.mock(User.class),
+            list::stream,
+            Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(projects, Matchers.iterableWithSize(3));
     }
@@ -86,7 +91,9 @@ public final class UserProjectsTestCase {
         list.add(Mockito.mock(Project.class));
         list.add(Mockito.mock(Project.class));
         final Projects projects = new UserProjects(
-            Mockito.mock(User.class), list::stream
+            Mockito.mock(User.class),
+            list::stream,
+            Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(projects.page(new Paged.Page(1, 2)),
             Matchers.iterableWithSize(2));
@@ -101,7 +108,8 @@ public final class UserProjectsTestCase {
     public void ownedByReturnsItself() {
         final Projects projects = new UserProjects(
             this.mockUser("mihai", "github"),
-            Stream::empty
+            Stream::empty,
+            Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(
             projects.ownedBy(this.mockUser("mihai", "github")),
@@ -117,7 +125,8 @@ public final class UserProjectsTestCase {
     public void ownedByComplainsOnDifferendUser() {
         final Projects projects = new UserProjects(
             this.mockUser("mihai", "github"),
-            Stream::empty
+            Stream::empty,
+            Mockito.mock(Storage.class)
         );
         projects.ownedBy(this.mockUser("vlad", "github"));
     }
@@ -132,7 +141,8 @@ public final class UserProjectsTestCase {
             () -> List.of(
                 mockProject("mihai/test", "github"),
                 mockProject("mihai/test2", "github")
-            ).stream()
+            ).stream(),
+            Mockito.mock(Storage.class)
         );
         final Project found = projects.getProjectById("mihai/test", "github");
         MatcherAssert.assertThat(
@@ -157,7 +167,8 @@ public final class UserProjectsTestCase {
                 mockProject("mihai/test2", "github"),
                 mockProject("mihai/test3", "github"),
                 mockProject("mihai/test4", "github")
-            ).stream()
+            ).stream(),
+            Mockito.mock(Storage.class)
         );
         final Project found = projects
             .page(new Paged.Page(2, 2))
@@ -178,7 +189,9 @@ public final class UserProjectsTestCase {
     @Test
     public void projectByIdNotFound() {
         final Projects projects = new UserProjects(
-            this.mockUser("mihai", "github"), Stream::empty
+            this.mockUser("mihai", "github"),
+            Stream::empty,
+            Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(
             projects.getProjectById("mihai/test", "github"),
@@ -193,12 +206,14 @@ public final class UserProjectsTestCase {
     @Test
     public void existingProjectByIdNotFoundInPage() {
         final Projects projects = new UserProjects(
-            this.mockUser("mihai", "github"), () -> List.of(
-            mockProject("mihai/test", "github"),
-            mockProject("mihai/test2", "github"),
-            mockProject("mihai/test3", "github"),
-            mockProject("mihai/test4", "github")
-        ).stream()
+            this.mockUser("mihai", "github"),
+            () -> List.of(
+                mockProject("mihai/test", "github"),
+                mockProject("mihai/test2", "github"),
+                mockProject("mihai/test3", "github"),
+                mockProject("mihai/test4", "github")
+            ).stream(),
+            Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(
             projects
@@ -221,7 +236,8 @@ public final class UserProjectsTestCase {
                 mockProject("mihai/test2", "github"),
                 mockProject("mihai/test3", "github"),
                 mockProject("mihai/test4", "github")
-            ).stream()
+            ).stream(),
+            Mockito.mock(Storage.class)
         );
         final Project toRemove = mockProject("mihai/test", "github");
         final Repo repo = Mockito.mock(Repo.class);
@@ -245,7 +261,8 @@ public final class UserProjectsTestCase {
                 mockProject("mihai/test2", "github"),
                 mockProject("mihai/test3", "github"),
                 mockProject("mihai/test4", "github")
-            ).stream()
+            ).stream(),
+            Mockito.mock(Storage.class)
         );
         final Project toRemove = mockProject("mihai/test", "github");
         final Repo repo = Mockito.mock(Repo.class);

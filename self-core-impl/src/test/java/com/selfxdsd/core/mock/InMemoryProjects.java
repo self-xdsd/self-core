@@ -138,7 +138,7 @@ public final class InMemoryProjects extends BasePaged implements Projects{
                     && owner.provider().name()
                     .equals(user.provider().name());
             });
-        return new UserProjects(user, owned);
+        return new UserProjects(user, owned, this.storage);
     }
 
     @Override
