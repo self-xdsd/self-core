@@ -113,7 +113,7 @@ public final class UserProjects extends BasePaged implements Projects {
             .skip((page.getNumber() - 1) * page.getSize())
             .limit(page.getSize())
             .filter(p -> p.projectManager().id() == projectManagerId);
-        return new PmProjects(projectManagerId, assigned, null);
+        return new PmProjects(projectManagerId, assigned, this.storage);
     }
 
     @Override
