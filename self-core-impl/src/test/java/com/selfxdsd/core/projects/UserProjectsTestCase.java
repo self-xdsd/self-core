@@ -24,6 +24,7 @@ package com.selfxdsd.core.projects;
 
 import com.selfxdsd.api.*;
 import com.selfxdsd.api.storage.Paged;
+import com.selfxdsd.api.storage.Storage;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -52,7 +53,9 @@ public final class UserProjectsTestCase {
         list.add(this.projectAssignedTo(3));
         list.add(this.projectAssignedTo(2));
         final Projects projects = new UserProjects(
-            Mockito.mock(User.class), list::stream
+            Mockito.mock(User.class),
+            list::stream,
+            Mockito.mock(Storage.class)
         );
 
         MatcherAssert.assertThat(
@@ -71,7 +74,9 @@ public final class UserProjectsTestCase {
         list.add(Mockito.mock(Project.class));
         list.add(Mockito.mock(Project.class));
         final Projects projects = new UserProjects(
-            Mockito.mock(User.class), list::stream
+            Mockito.mock(User.class),
+            list::stream,
+            Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(projects, Matchers.iterableWithSize(3));
     }
@@ -86,7 +91,9 @@ public final class UserProjectsTestCase {
         list.add(Mockito.mock(Project.class));
         list.add(Mockito.mock(Project.class));
         final Projects projects = new UserProjects(
-            Mockito.mock(User.class), list::stream
+            Mockito.mock(User.class),
+            list::stream,
+            Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(projects.page(new Paged.Page(1, 2)),
             Matchers.iterableWithSize(2));
@@ -101,7 +108,8 @@ public final class UserProjectsTestCase {
     public void ownedByReturnsItself() {
         final Projects projects = new UserProjects(
             this.mockUser("mihai", "github"),
-            Stream::empty
+            Stream::empty,
+            Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(
             projects.ownedBy(this.mockUser("mihai", "github")),
@@ -117,7 +125,8 @@ public final class UserProjectsTestCase {
     public void ownedByComplainsOnDifferendUser() {
         final Projects projects = new UserProjects(
             this.mockUser("mihai", "github"),
-            Stream::empty
+            Stream::empty,
+            Mockito.mock(Storage.class)
         );
         projects.ownedBy(this.mockUser("vlad", "github"));
     }
@@ -127,83 +136,94 @@ public final class UserProjectsTestCase {
      */
     @Test
     public void projectByIdFound() {
+        final User user = this.mockUser("mihai", "github");
+
+        final Project project = Mockito.mock(Project.class);
+        Mockito.when(project.owner()).thenReturn(user);
+        final Projects all = Mockito.mock(Projects.class);
+        Mockito.when(
+            all.getProjectById("mihai/test", "github")
+        ).thenReturn(project);
+
+        final Storage storage = Mockito.mock(Storage.class);
+        Mockito.when(storage.projects()).thenReturn(all);
+
         final Projects projects = new UserProjects(
-            this.mockUser("mihai", "github"),
+            user,
             () -> List.of(
                 mockProject("mihai/test", "github"),
                 mockProject("mihai/test2", "github")
-            ).stream()
+            ).stream(),
+            storage
         );
         final Project found = projects.getProjectById("mihai/test", "github");
         MatcherAssert.assertThat(
-            found.repoFullName(),
-            Matchers.equalTo("mihai/test")
-        );
-        MatcherAssert.assertThat(
-            found.provider(),
-            Matchers.equalTo("github")
+            found,
+            Matchers.is(project)
         );
     }
 
     /**
-     * Should find a project by it's id in a page.
+     * A Project is found but it belongs to another User so the
+     * method should return null.
      */
     @Test
-    public void projectByIdFoundInPage() {
+    public void projectByIdFoundButHasOtherOwner() {
+        final User mihai = this.mockUser("mihai", "github");
+        final User vlad = this.mockUser("vlad", "github");
+
+        final Project project = Mockito.mock(Project.class);
+        Mockito.when(project.owner()).thenReturn(vlad);
+        final Projects all = Mockito.mock(Projects.class);
+        Mockito.when(
+            all.getProjectById("vlad/test", "github")
+        ).thenReturn(project);
+
+        final Storage storage = Mockito.mock(Storage.class);
+        Mockito.when(storage.projects()).thenReturn(all);
+
         final Projects projects = new UserProjects(
-            this.mockUser("mihai", "github"),
+            mihai,
             () -> List.of(
                 mockProject("mihai/test", "github"),
-                mockProject("mihai/test2", "github"),
-                mockProject("mihai/test3", "github"),
-                mockProject("mihai/test4", "github")
-            ).stream()
+                mockProject("mihai/test2", "github")
+            ).stream(),
+            storage
         );
-        final Project found = projects
-            .page(new Paged.Page(2, 2))
-            .getProjectById("mihai/test3", "github");
+        final Project found = projects.getProjectById("vlad/test", "github");
         MatcherAssert.assertThat(
-            found.repoFullName(),
-            Matchers.equalTo("mihai/test3")
-        );
-        MatcherAssert.assertThat(
-            found.provider(),
-            Matchers.equalTo("github")
+            found,
+            Matchers.nullValue()
         );
     }
+
 
     /**
      * Should return null is project is not found by id.
      */
     @Test
     public void projectByIdNotFound() {
-        final Projects projects = new UserProjects(
-            this.mockUser("mihai", "github"), Stream::empty
-        );
-        MatcherAssert.assertThat(
-            projects.getProjectById("mihai/test", "github"),
-            Matchers.nullValue()
-        );
-    }
+        final User user = this.mockUser("mihai", "github");
 
-    /**
-     * Should return null if project is not found by id in the page, even
-     * though it exists overall.
-     */
-    @Test
-    public void existingProjectByIdNotFoundInPage() {
+        final Projects all = Mockito.mock(Projects.class);
+        Mockito.when(
+            all.getProjectById("mihai/test", "github")
+        ).thenReturn(null);
+
+        final Storage storage = Mockito.mock(Storage.class);
+        Mockito.when(storage.projects()).thenReturn(all);
+
         final Projects projects = new UserProjects(
-            this.mockUser("mihai", "github"), () -> List.of(
-            mockProject("mihai/test", "github"),
-            mockProject("mihai/test2", "github"),
-            mockProject("mihai/test3", "github"),
-            mockProject("mihai/test4", "github")
-        ).stream()
+            user,
+            () -> List.of(
+                mockProject("mihai/test", "github"),
+                mockProject("mihai/test2", "github")
+            ).stream(),
+            storage
         );
+        final Project found = projects.getProjectById("mihai/test", "github");
         MatcherAssert.assertThat(
-            projects
-                .page(new Paged.Page(2, 2))
-                .getProjectById("mihai/test", "github"),
+            found,
             Matchers.nullValue()
         );
     }
@@ -221,7 +241,8 @@ public final class UserProjectsTestCase {
                 mockProject("mihai/test2", "github"),
                 mockProject("mihai/test3", "github"),
                 mockProject("mihai/test4", "github")
-            ).stream()
+            ).stream(),
+            Mockito.mock(Storage.class)
         );
         final Project toRemove = mockProject("mihai/test", "github");
         final Repo repo = Mockito.mock(Repo.class);
@@ -245,7 +266,8 @@ public final class UserProjectsTestCase {
                 mockProject("mihai/test2", "github"),
                 mockProject("mihai/test3", "github"),
                 mockProject("mihai/test4", "github")
-            ).stream()
+            ).stream(),
+            Mockito.mock(Storage.class)
         );
         final Project toRemove = mockProject("mihai/test", "github");
         final Repo repo = Mockito.mock(Repo.class);

@@ -24,6 +24,7 @@ package com.selfxdsd.core.projects;
 
 import com.selfxdsd.api.*;
 import com.selfxdsd.api.storage.Paged;
+import com.selfxdsd.api.storage.Storage;
 import com.selfxdsd.core.BasePaged;
 
 import java.util.Iterator;
@@ -57,27 +58,41 @@ public final class UserProjects extends BasePaged implements Projects {
     private final Supplier<Stream<Project>> projects;
 
     /**
+     * Self Storage.
+     */
+    private final Storage storage;
+
+    /**
      * Constructor.
      * @param user The user.
      * @param projects The user's projects.
+     * @param storage Self Storage.
      */
-    public UserProjects(final User user,
-                        final Supplier<Stream<Project>> projects) {
-        this(user, projects, Page.all());
+    public UserProjects(
+        final User user,
+        final Supplier<Stream<Project>> projects,
+        final Storage storage
+    ) {
+        this(user, projects, storage, Page.all());
     }
 
     /**
      * Constructor.
      * @param user The user.
      * @param projects The user's projects.
+     * @param storage Self Storage.
      * @param page Current page.
      */
-    public UserProjects(final User user,
-                        final Supplier<Stream<Project>> projects,
-                        final Page page) {
+    public UserProjects(
+        final User user,
+        final Supplier<Stream<Project>> projects,
+        final Storage storage,
+        final Page page
+    ) {
         super(page, () -> (int) projects.get().count());
         this.user = user;
         this.projects = projects;
+        this.storage = storage;
     }
 
     @Override
@@ -98,7 +113,7 @@ public final class UserProjects extends BasePaged implements Projects {
             .skip((page.getNumber() - 1) * page.getSize())
             .limit(page.getSize())
             .filter(p -> p.projectManager().id() == projectManagerId);
-        return new PmProjects(projectManagerId, assigned);
+        return new PmProjects(projectManagerId, assigned, this.storage);
     }
 
     @Override
@@ -113,24 +128,37 @@ public final class UserProjects extends BasePaged implements Projects {
         );
     }
 
+    /**
+     * {@inheritDoc}
+     * <br>
+     * Instead of parsing the owner from the repoFullName and matching
+     * it with the encapsulated User first, we do it the other way around:
+     * we first select the Project and then match the owner.<br>
+     *
+     * This is because the repo can belong to an Organization, in which case
+     * the parsed owner (from the repoFullName) will differ from the User's
+     * username. On the other hand, the owner saved in the DB when a Project
+     * is registered is always the User who activated it in the first place.
+     */
     @Override
     public Project getProjectById(
         final String repoFullName, final String repoProvider
     ) {
-        final Page page = super.current();
-        return projects
-            .get()
-            .skip((page.getNumber() - 1) * page.getSize())
-            .limit(page.getSize())
-            .filter(p -> p.repoFullName().equalsIgnoreCase(repoFullName)
-                && p.provider().equalsIgnoreCase(repoProvider))
-            .findFirst()
-            .orElse(null);
+        Project found = this.storage.projects().getProjectById(
+            repoFullName, repoProvider
+        );
+        if(found != null) {
+            final String ownerUsername = found.owner().username();
+            if(!ownerUsername.equalsIgnoreCase(this.user.username())) {
+                found = null;
+            }
+        }
+        return found;
     }
 
     @Override
     public Projects page(final Paged.Page page) {
-        return new UserProjects(this.user, this.projects, page);
+        return new UserProjects(this.user, this.projects, this.storage, page);
     }
 
     @Override

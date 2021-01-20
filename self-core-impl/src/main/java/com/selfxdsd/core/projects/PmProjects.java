@@ -24,6 +24,7 @@ package com.selfxdsd.core.projects;
 
 import com.selfxdsd.api.*;
 import com.selfxdsd.api.storage.Paged;
+import com.selfxdsd.api.storage.Storage;
 import com.selfxdsd.core.BasePaged;
 
 import java.util.Iterator;
@@ -52,27 +53,41 @@ public final class PmProjects extends BasePaged implements Projects {
     private final Supplier<Stream<Project>> projects;
 
     /**
+     * Self Storage.
+     */
+    private final Storage storage;
+
+    /**
      * Constructor.
      * @param pmId ID of the manager.
      * @param projects Projects to choose from.
+     * @param storage Self Storage.
      */
-    public PmProjects(final int pmId,
-                      final Supplier<Stream<Project>> projects) {
-        this(pmId, projects, Page.all());
+    public PmProjects(
+        final int pmId,
+        final Supplier<Stream<Project>> projects,
+        final Storage storage
+    ) {
+        this(pmId, projects, storage, Page.all());
     }
 
     /**
      * Constructor.
      * @param pmId ID of the manager.
      * @param projects Projects to choose from.
+     * @param storage Self Storage.
      * @param page Current Page.
      */
-    public PmProjects(final int pmId,
-                      final Supplier<Stream<Project>> projects,
-                      final Page page) {
+    public PmProjects(
+        final int pmId,
+        final Supplier<Stream<Project>> projects,
+        final Storage storage,
+        final Page page
+    ) {
         super(page, () -> (int) projects.get().count());
         this.pmId = pmId;
         this.projects = projects;
+        this.storage = storage;
     }
 
     @Override
@@ -109,7 +124,7 @@ public final class PmProjects extends BasePaged implements Projects {
                     && owner.provider().name()
                     .equalsIgnoreCase(user.provider().name());
             });
-        return new UserProjects(user, owned);
+        return new UserProjects(user, owned, this.storage);
     }
 
     @Override
@@ -128,7 +143,7 @@ public final class PmProjects extends BasePaged implements Projects {
 
     @Override
     public Projects page(final Paged.Page page) {
-        return new PmProjects(this.pmId, this.projects, page);
+        return new PmProjects(this.pmId, this.projects, this.storage, page);
     }
 
     @Override

@@ -24,6 +24,7 @@ package com.selfxdsd.core.projects;
 
 import com.selfxdsd.api.*;
 import com.selfxdsd.api.storage.Paged;
+import com.selfxdsd.api.storage.Storage;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -49,7 +50,9 @@ public final class PmProjectsTestCase {
      */
     @Test(expected = IllegalStateException.class)
     public void registerIsForbidden() {
-        final Projects projects = new PmProjects(1, Stream::empty);
+        final Projects projects = new PmProjects(
+            1, Stream::empty, Mockito.mock(Storage.class)
+        );
         projects.register(
             Mockito.mock(Repo.class),
             Mockito.mock(ProjectManager.class),
@@ -62,7 +65,9 @@ public final class PmProjectsTestCase {
      */
     @Test
     public void assignedToReturnsItself() {
-        final Projects projects = new PmProjects(1, Stream::empty);
+        final Projects projects = new PmProjects(
+            1, Stream::empty, Mockito.mock(Storage.class)
+        );
         MatcherAssert.assertThat(
             projects.assignedTo(1), Matchers.is(projects)
         );
@@ -74,7 +79,9 @@ public final class PmProjectsTestCase {
      */
     @Test(expected = IllegalStateException.class)
     public void assignedToComplainsOnDifferendId() {
-        final Projects projects = new PmProjects(1, Stream::empty);
+        final Projects projects = new PmProjects(
+            1, Stream::empty, Mockito.mock(Storage.class)
+        );
         projects.assignedTo(2);
     }
 
@@ -87,7 +94,9 @@ public final class PmProjectsTestCase {
         list.add(Mockito.mock(Project.class));
         list.add(Mockito.mock(Project.class));
         list.add(Mockito.mock(Project.class));
-        final Projects projects = new PmProjects(1, list::stream);
+        final Projects projects = new PmProjects(
+            1, list::stream, Mockito.mock(Storage.class)
+        );
         MatcherAssert.assertThat(projects, Matchers.iterableWithSize(3));
     }
 
@@ -102,7 +111,9 @@ public final class PmProjectsTestCase {
         list.add(this.projectOwnedBy("vlad", "github"));
         list.add(this.projectOwnedBy("mihai", "gitlab"));
         list.add(this.projectOwnedBy("mihai", "github"));
-        final Projects projects = new PmProjects(1, list::stream);
+        final Projects projects = new PmProjects(
+            1, list::stream, Mockito.mock(Storage.class)
+        );
         MatcherAssert.assertThat(
             projects.ownedBy(
                 this.mockUser("mihai", "github")
@@ -138,7 +149,8 @@ public final class PmProjectsTestCase {
             () -> List.of(
                 mockProject("john/test", "github"),
                 mockProject("john/test2", "github")
-            ).stream()
+            ).stream(),
+            Mockito.mock(Storage.class)
         );
         final Project found = projects.getProjectById("john/test", "github");
         MatcherAssert.assertThat(
@@ -156,7 +168,9 @@ public final class PmProjectsTestCase {
      */
     @Test
     public void projectByIdNotFound() {
-        final Projects projects = new PmProjects(1, Stream::empty);
+        final Projects projects = new PmProjects(
+            1, Stream::empty, Mockito.mock(Storage.class)
+        );
         MatcherAssert.assertThat(
             projects.getProjectById("mihai/missing", "github"),
             Matchers.nullValue()
@@ -171,7 +185,9 @@ public final class PmProjectsTestCase {
         final Projects projects = new PmProjects(1, () -> IntStream
             .rangeClosed(1, 14)
             .mapToObj(i -> mockProject("repo-" + i,
-                Provider.Names.GITHUB)));
+                Provider.Names.GITHUB)),
+            Mockito.mock(Storage.class)
+        );
         //initial page has all available records
         MatcherAssert.assertThat(projects, Matchers.iterableWithSize(14));
         MatcherAssert.assertThat(projects.page(new Paged.Page(2, 5)),
@@ -189,7 +205,9 @@ public final class PmProjectsTestCase {
      */
     @Test
     public void iterateEmptyPageWorks(){
-        final Projects projects = new PmProjects(1, Stream::empty);
+        final Projects projects = new PmProjects(
+            1, Stream::empty, Mockito.mock(Storage.class)
+        );
         MatcherAssert.assertThat(projects, Matchers.emptyIterable());
     }
 
@@ -201,8 +219,9 @@ public final class PmProjectsTestCase {
         new PmProjects(1, () -> IntStream
             .rangeClosed(1, 10)
             .mapToObj(i -> mockProject("repo-" + i,
-                Provider.Names.GITHUB)))
-            .page(new Paged.Page(5, 10));
+                Provider.Names.GITHUB)),
+            Mockito.mock(Storage.class)
+        ).page(new Paged.Page(5, 10));
     }
 
     /**
@@ -213,8 +232,9 @@ public final class PmProjectsTestCase {
         new PmProjects(1, () -> IntStream
             .rangeClosed(1, 10)
             .mapToObj(i -> mockProject("repo-" + i,
-                Provider.Names.GITHUB)))
-            .page(new Paged.Page(0, 10));
+                Provider.Names.GITHUB)),
+            Mockito.mock(Storage.class)
+        ).page(new Paged.Page(0, 10));
     }
 
     /**
@@ -225,9 +245,11 @@ public final class PmProjectsTestCase {
         final Project found = new PmProjects(1, () -> IntStream
             .rangeClosed(1, 14)
             .mapToObj(i -> mockProject("repo-" + i,
-                Provider.Names.GITHUB)))
-            .page(new Paged.Page(2, 5))
-            .getProjectById("repo-7", Provider.Names.GITHUB);
+                Provider.Names.GITHUB)),
+            Mockito.mock(Storage.class)
+        ).page(new Paged.Page(2, 5)).getProjectById(
+            "repo-7", Provider.Names.GITHUB
+        );
         MatcherAssert.assertThat(
             found.repoFullName(),
             Matchers.equalTo("repo-7")
@@ -244,12 +266,15 @@ public final class PmProjectsTestCase {
      */
     @Test
     public void existingProjectNotFoundByIdInPage(){
-        final Project found = new PmProjects(1, () -> IntStream
+        final Project found = new PmProjects(
+            1, () -> IntStream
             .rangeClosed(1, 14)
             .mapToObj(i -> mockProject("repo-" + i,
-                Provider.Names.GITHUB)))
-            .page(new Paged.Page(2, 5))
-            .getProjectById("repo-1", Provider.Names.GITHUB);
+                Provider.Names.GITHUB)),
+            Mockito.mock(Storage.class)
+        ).page(new Paged.Page(2, 5)).getProjectById(
+            "repo-1", Provider.Names.GITHUB
+        );
         MatcherAssert.assertThat(found, Matchers.nullValue());
     }
 
@@ -265,7 +290,9 @@ public final class PmProjectsTestCase {
         list.add(this.projectOwnedBy("vlad", "github"));
         list.add(this.projectOwnedBy("mihai", "gitlab"));
         list.add(this.projectOwnedBy("mihai", "github"));
-        final Projects projects = new PmProjects(1, list::stream);
+        final Projects projects = new PmProjects(
+            1, list::stream, Mockito.mock(Storage.class)
+        );
         MatcherAssert.assertThat(
             projects.page(new Paged.Page(1, 3))
                 .ownedBy(this.mockUser("mihai", "github")),
@@ -289,7 +316,9 @@ public final class PmProjectsTestCase {
         list.add(this.projectOwnedBy("vlad", "github"));
         list.add(this.projectOwnedBy("mihai", "gitlab"));
         list.add(this.projectOwnedBy("mihai", "github"));
-        final Projects projects = new PmProjects(1, list::stream);
+        final Projects projects = new PmProjects(
+            1, list::stream, Mockito.mock(Storage.class)
+        );
 
         final Project toRemove = this.projectOwnedBy("mihai", "github");
         final Repo repo = Mockito.mock(Repo.class);
@@ -313,7 +342,9 @@ public final class PmProjectsTestCase {
         list.add(this.projectOwnedBy("vlad", "github"));
         list.add(this.projectOwnedBy("mihai", "gitlab"));
         list.add(this.projectOwnedBy("mihai", "github"));
-        final Projects projects = new PmProjects(1, list::stream);
+        final Projects projects = new PmProjects(
+            1, list::stream, Mockito.mock(Storage.class)
+        );
 
         final Project toRemove = this.projectOwnedBy("mihai", "github");
         final Repo repo = Mockito.mock(Repo.class);
