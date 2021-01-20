@@ -135,21 +135,14 @@ public final class StoredContributor implements Contributor {
         final String provider,
         final String role
     ) {
-        final Contract.Id searched = new Contract.Id(
-            repoFullName,
-            this.username,
-            provider,
-            role
+        return this.storage.contracts().findById(
+            new Contract.Id(
+                repoFullName,
+                this.username,
+                provider,
+                role
+            )
         );
-        Contract found = null;
-        for(final Contract contract : this.contracts()) {
-            final Contract.Id contractId = contract.contractId();
-            if(contractId.equals(searched)) {
-                found = contract;
-                break;
-            }
-        }
-        return found;
     }
 
     @Override
