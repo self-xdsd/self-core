@@ -128,19 +128,32 @@ public final class UserProjects extends BasePaged implements Projects {
         );
     }
 
+    /**
+     * {@inheritDoc}
+     * <br>
+     * Instead of parsing the owner from the repoFullName and matching
+     * it with the encapsulated User first, we do it the other way around:
+     * we first select the Project and then match the owner.<br>
+     *
+     * This is because the repo can belong to an Organization, in which case
+     * the parsed owner (from the repoFullName) will differ from the User's
+     * username. On the other hand, the owner saved in the DB when a Project
+     * is registered is always the User who activated it in the first place.
+     */
     @Override
     public Project getProjectById(
         final String repoFullName, final String repoProvider
     ) {
-        final Page page = super.current();
-        return projects
-            .get()
-            .skip((page.getNumber() - 1) * page.getSize())
-            .limit(page.getSize())
-            .filter(p -> p.repoFullName().equalsIgnoreCase(repoFullName)
-                && p.provider().equalsIgnoreCase(repoProvider))
-            .findFirst()
-            .orElse(null);
+        Project found = this.storage.projects().getProjectById(
+            repoFullName, repoProvider
+        );
+        if(found != null) {
+            final String ownerUsername = found.owner().username();
+            if(!ownerUsername.equalsIgnoreCase(this.user.username())) {
+                found = null;
+            }
+        }
+        return found;
     }
 
     @Override
