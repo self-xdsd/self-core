@@ -168,51 +168,40 @@ public final class StoredContributorTestCase {
      */
     @Test
     public void returnsFoundContract() {
-        final List<Contract> list = new ArrayList<>();
-        list.add(
-            this.mockContract(
-                new Contract.Id(
-                    "john/test",
-                    "mihai",
-                    "github",
-                    "DEV"
-                )
+        final Contract contract = this.mockContract(
+            new Contract.Id(
+                "john/repo",
+                "mihai",
+                Provider.Names.GITHUB,
+                Contract.Roles.DEV
             )
         );
-        list.add(
-            this.mockContract(
+        final Contracts all = Mockito.mock(Contracts.class);
+        Mockito.when(
+            all.findById(
                 new Contract.Id(
-                    "john/test2",
+                    "john/repo",
                     "mihai",
-                    "github",
-                    "DEV"
+                    Provider.Names.GITHUB,
+                    Contract.Roles.DEV
                 )
             )
-        );
-        list.add(
-            this.mockContract(
-                new Contract.Id(
-                    "john/test2",
-                    "mihai",
-                    "github",
-                    "DEV"
-                )
-            )
-        );
-        final Contracts contracts = Mockito.mock(Contracts.class);
-        Mockito.when(contracts.iterator()).thenReturn(list.iterator());
+        ).thenReturn(contract);
+        final Storage storage = Mockito.mock(Storage.class);
+        Mockito.when(storage.contracts()).thenReturn(all);
         final Contributor contributor = new StoredContributor(
             "mihai",
             Provider.Names.GITHUB,
-            contracts,
-            Mockito.mock(Storage.class)
+            storage
         );
         final Contract found = contributor.contract(
-            "john/test2", "github", "DEV"
+            "john/repo",
+            Provider.Names.GITHUB,
+            Contract.Roles.DEV
         );
         MatcherAssert.assertThat(
-            found.contractId(),
-            Matchers.equalTo(list.get(1).contractId())
+            found,
+            Matchers.is(contract)
         );
     }
 
@@ -222,62 +211,28 @@ public final class StoredContributorTestCase {
      */
     @Test
     public void returnsNullOnMissingContract() {
-        final List<Contract> list = new ArrayList<>();
-        list.add(
-            this.mockContract(
+        final Contracts all = Mockito.mock(Contracts.class);
+        Mockito.when(
+            all.findById(
                 new Contract.Id(
-                    "john/test",
+                    "john/repo",
                     "mihai",
-                    "github",
-                    "REV"
+                    Provider.Names.GITHUB,
+                    Contract.Roles.DEV
                 )
             )
-        );
-        list.add(
-            this.mockContract(
-                new Contract.Id(
-                    "john/test2",
-                    "mihai",
-                    "github",
-                    "REV"
-                )
-            )
-        );
-        final Contracts contracts = Mockito.mock(Contracts.class);
-        Mockito.when(contracts.iterator()).thenReturn(list.iterator());
+        ).thenReturn(null);
+        final Storage storage = Mockito.mock(Storage.class);
+        Mockito.when(storage.contracts()).thenReturn(all);
         final Contributor contributor = new StoredContributor(
             "mihai",
             Provider.Names.GITHUB,
-            contracts,
-            Mockito.mock(Storage.class)
+            storage
         );
         final Contract found = contributor.contract(
-            "john/test", "github", "DEV"
-        );
-        MatcherAssert.assertThat(
-            found,
-            Matchers.nullValue()
-        );
-    }
-
-    /**
-     * Contributor.contract(...) returns null, since no Contract
-     * is found because the Contributor has no contracts.
-     */
-    @Test
-    public void returnsNullOnMissingContractNoContracts() {
-        final Contracts contracts = Mockito.mock(Contracts.class);
-        Mockito.when(contracts.iterator()).thenReturn(
-            new ArrayList<Contract>().iterator()
-        );
-        final Contributor contributor = new StoredContributor(
-            "mihai",
+            "john/repo",
             Provider.Names.GITHUB,
-            contracts,
-            Mockito.mock(Storage.class)
-        );
-        final Contract found = contributor.contract(
-            "john/test2", "github", "DEV"
+            Contract.Roles.DEV
         );
         MatcherAssert.assertThat(
             found,
