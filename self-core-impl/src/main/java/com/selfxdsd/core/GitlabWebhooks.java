@@ -104,6 +104,9 @@ final class GitlabWebhooks implements Webhooks {
                 .add("url", System.getenv(Env.WEBHOOK_BASE_URL) + "/gitlab/"
                     + project.repoFullName())
                 .add("issues_events", true)
+                .add("merge_requests_events", true)
+                .add("note_events", true)
+                .add("push_events ", true)
                 .add("token", project.webHookToken())
                 .build()
         );
