@@ -72,6 +72,9 @@ public final class GitlabWebhooksTestCase {
                             .add("url", "null/gitlab/"
                                 + "amihaiemil/repo")
                             .add("issues_events", true)
+                            .add("merge_requests_events", true)
+                            .add("note_events", true)
+                            .add("push_events ", true)
                             .add("token", "webhook_tok333n")
                             .build()
                         )
