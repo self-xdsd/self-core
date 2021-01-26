@@ -380,13 +380,13 @@ public final class StoredTaskTestCase {
             "issueId123",
             Contract.Roles.DEV,
             45,
-            false,
+            true,
             Mockito.mock(Storage.class)
         );
 
         MatcherAssert.assertThat(
             task.isPullRequest(),
-            Matchers.equalTo(Boolean.FALSE)
+            Matchers.equalTo(Boolean.TRUE)
         );
     }
 
@@ -427,7 +427,18 @@ public final class StoredTaskTestCase {
             false,
             Mockito.mock(Storage.class)
         );
+        final Task taskThree = new StoredTask(
+            project,
+            "123",
+            "DEV",
+            120,
+            true,
+            Mockito.mock(Storage.class)
+        );
         MatcherAssert.assertThat(task, Matchers.equalTo(taskTwo));
+        MatcherAssert.assertThat(task, Matchers.not(
+            Matchers.equalTo(taskThree)
+        ));
     }
 
     /**
@@ -464,8 +475,19 @@ public final class StoredTaskTestCase {
             120,
             false
         );
+        final Task taskThree = new StoredTask(
+            contract,
+            "123",
+            Mockito.mock(Storage.class),
+            LocalDateTime.now(),
+            LocalDateTime.now().plusDays(10),
+            120,
+            true
+        );
         MatcherAssert.assertThat(task.hashCode(),
             Matchers.equalTo(taskTwo.hashCode()));
+        MatcherAssert.assertThat(task.hashCode(),
+            Matchers.not(Matchers.equalTo(taskThree.hashCode())));
     }
 
     /**

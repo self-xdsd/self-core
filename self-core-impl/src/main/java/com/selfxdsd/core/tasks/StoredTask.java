@@ -248,6 +248,7 @@ public final class StoredTask implements Task {
     @Override
     public int hashCode() {
         return Objects.hash(this.issueId,
+            this.isPullRequest,
             this.contract.project().repoFullName(),
             this.contract.project().provider());
     }
@@ -263,6 +264,7 @@ public final class StoredTask implements Task {
         final Task other = (Task) obj;
         final Project otherProject = other.project();
         return this.issueId.equals(other.issue().issueId())
+            && this.isPullRequest == other.isPullRequest()
             && this.project().repoFullName().equalsIgnoreCase(otherProject.repoFullName())
             && this.project().provider().equalsIgnoreCase(otherProject.provider());
     }
