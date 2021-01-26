@@ -160,6 +160,26 @@ public final class GitlabRepoTestCase {
     }
 
     /**
+     * A GitlabRepo can return its Pull Requests.
+     */
+    @Test
+    public void returnsPullRequests() {
+        final Repo repo = new GitlabRepo(
+            Mockito.mock(JsonResources.class),
+            URI.create("http://localhost:8080/repos/mihai/test/"),
+            Mockito.mock(User.class),
+            Mockito.mock(Storage.class)
+        );
+        MatcherAssert.assertThat(
+            repo.pullRequests(),
+            Matchers.allOf(
+                Matchers.notNullValue(),
+                Matchers.instanceOf(GitlabIssues.class)
+            )
+        );
+    }
+
+    /**
      * A GitlabRepo can return its Labels.
      */
     @Test

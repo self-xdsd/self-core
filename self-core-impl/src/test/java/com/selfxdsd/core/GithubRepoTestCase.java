@@ -61,6 +61,46 @@ public final class GithubRepoTestCase {
     }
 
     /**
+     * A GithubRepo can return its Issues.
+     */
+    @Test
+    public void returnsIssues() {
+        final Repo repo = new GithubRepo(
+            Mockito.mock(JsonResources.class),
+            URI.create("http://localhost:8080/repos/mihai/test/"),
+            Mockito.mock(User.class),
+            Mockito.mock(Storage.class)
+        );
+        MatcherAssert.assertThat(
+            repo.issues(),
+            Matchers.allOf(
+                Matchers.notNullValue(),
+                Matchers.instanceOf(GithubIssues.class)
+            )
+        );
+    }
+
+    /**
+     * A GithubRepo can return its Pull Requests.
+     */
+    @Test
+    public void returnsPullRequests() {
+        final Repo repo = new GithubRepo(
+            Mockito.mock(JsonResources.class),
+            URI.create("http://localhost:8080/repos/mihai/test/"),
+            Mockito.mock(User.class),
+            Mockito.mock(Storage.class)
+        );
+        MatcherAssert.assertThat(
+            repo.pullRequests(),
+            Matchers.allOf(
+                Matchers.notNullValue(),
+                Matchers.instanceOf(GithubIssues.class)
+            )
+        );
+    }
+
+    /**
      * A GithubRepo can return its collaborators.
      */
     @Test
