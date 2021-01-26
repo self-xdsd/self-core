@@ -157,9 +157,9 @@ public final class GitlabIssueLabelsTestCase {
             .add(
                 "labels",
                 Json.createArrayBuilder()
-                    .add(Json.createObjectBuilder().add("name", "blue"))
-                    .add(Json.createObjectBuilder().add("name", "green"))
-                    .add(Json.createObjectBuilder().add("name", "red"))
+                    .add("blue")
+                    .add("green")
+                    .add("red")
             ).build();
         final Labels labels = new GitlabIssueLabels(
             URI.create(
