@@ -111,4 +111,10 @@ public interface Task {
      * @return Integer estimation in minutes.
      */
     int estimation();
+
+    /**
+     * Flags if this task is a PR.
+     * @return Boolean.
+     */
+    boolean isPullRequest();
 }
