@@ -71,6 +71,12 @@ public interface Repo {
     Issues issues();
 
     /**
+     * The repo's Pull Requests.
+     * @return Issues.
+     */
+    Issues pullRequests();
+
+    /**
      * The repo's collaborators.
      * @return Collaborators.
      */

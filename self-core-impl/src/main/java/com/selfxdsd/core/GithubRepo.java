@@ -109,6 +109,23 @@ final class GithubRepo extends BaseRepo {
         );
     }
 
+    /**
+     * {@inheritDoc}
+     * <br/>
+     * In the case of Github, the Pull Requests API is
+     * identical with the Issues API (Github does not differentiate
+     * between issues and pull requests).
+     */
+    @Override
+    public Issues pullRequests() {
+        return new GithubIssues(
+            this.resources(),
+            URI.create(this.repoUri().toString() + "/issues"),
+            this,
+            this.storage()
+        );
+    }
+
     @Override
     public Collaborators collaborators() {
         return new GithubCollaborators(

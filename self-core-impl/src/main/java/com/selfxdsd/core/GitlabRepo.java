@@ -131,6 +131,23 @@ final class GitlabRepo extends BaseRepo {
         );
     }
 
+    /**
+     * {@inheritDoc}
+     * <br/>
+     * Unlike Github, GitLab differentiates between Issues and
+     * Pull Requests (called Merge Requests). The two APIs have different
+     * URI paths.
+     */
+    @Override
+    public Issues pullRequests() {
+        return new GitlabIssues(
+            this.resources(),
+            URI.create(this.repoUri().toString() +"/merge_requests"),
+            this,
+            this.storage()
+        );
+    }
+
     @Override
     public Collaborators collaborators() {
         final URI uri = URI.create(this.repoUri().toString() +"/members");
