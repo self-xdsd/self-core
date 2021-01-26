@@ -29,6 +29,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.json.Json;
 import javax.json.JsonObject;
+import javax.json.JsonString;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.util.ArrayList;
@@ -152,10 +153,16 @@ final class GitlabIssueLabels implements Labels {
     @Override
     public Iterator<Label> iterator() {
         final List<Label> labels = new ArrayList<>();
-        final List<JsonObject> array = this.issue.getJsonArray("labels")
-            .getValuesAs(JsonObject.class);
-        for(final JsonObject label : array) {
-            labels.add(new GitlabLabel(label));
+        final List<JsonString> array = this.issue.getJsonArray("labels")
+            .getValuesAs(JsonString.class);
+        for(final JsonString label : array) {
+            labels.add(
+                new GitlabLabel(
+                    Json.createObjectBuilder()
+                        .add("name", label.getString())
+                        .build()
+                )
+            );
         }
         return labels.iterator();
     }
