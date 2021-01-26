@@ -66,6 +66,11 @@ public final class StoredTask implements Task {
     private final int estimation;
 
     /**
+     * Flags if this task is a PR.
+     */
+    private final boolean isPullRequest;
+
+    /**
      * Self Storage.
      */
     private final Storage storage;
@@ -76,6 +81,7 @@ public final class StoredTask implements Task {
      * @param issueId Id of the Issue that this task represents.
      * @param role Role.
      * @param estimation Estimation in minutes.
+     * @param isPullRequest Flags if this task is a PR.
      * @param storage Storage.
      */
     public StoredTask(
@@ -83,6 +89,7 @@ public final class StoredTask implements Task {
         final String issueId,
         final String role,
         final int estimation,
+        final boolean isPullRequest,
         final Storage storage
     ) {
         this(
@@ -91,7 +98,8 @@ public final class StoredTask implements Task {
             storage,
             null,
             null,
-            estimation
+            estimation,
+            isPullRequest
         );
     }
 
@@ -103,6 +111,7 @@ public final class StoredTask implements Task {
      * @param assignmentDate Timestamp when this task has been assigned.
      * @param deadline Deadline by when this task should be finished.
      * @param estimation Estimation in minutes.
+     * @param isPullRequest Flags if this task is a PR.
      */
     public StoredTask(
         final Contract contract,
@@ -110,7 +119,8 @@ public final class StoredTask implements Task {
         final Storage storage,
         final LocalDateTime assignmentDate,
         final LocalDateTime deadline,
-        final int estimation
+        final int estimation,
+        final boolean isPullRequest
     ) {
         this.contract = contract;
         this.issueId = issueId;
@@ -118,6 +128,7 @@ public final class StoredTask implements Task {
         this.assignmentDate = assignmentDate;
         this.deadline = deadline;
         this.estimation = estimation;
+        this.isPullRequest = isPullRequest;
     }
 
     @Override
@@ -230,8 +241,14 @@ public final class StoredTask implements Task {
     }
 
     @Override
+    public boolean isPullRequest() {
+        return this.isPullRequest;
+    }
+
+    @Override
     public int hashCode() {
         return Objects.hash(this.issueId,
+            this.isPullRequest,
             this.contract.project().repoFullName(),
             this.contract.project().provider());
     }
@@ -247,6 +264,7 @@ public final class StoredTask implements Task {
         final Task other = (Task) obj;
         final Project otherProject = other.project();
         return this.issueId.equals(other.issue().issueId())
+            && this.isPullRequest == other.isPullRequest()
             && this.project().repoFullName().equalsIgnoreCase(otherProject.repoFullName())
             && this.project().provider().equalsIgnoreCase(otherProject.provider());
     }
