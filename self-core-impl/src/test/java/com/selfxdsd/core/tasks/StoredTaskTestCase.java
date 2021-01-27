@@ -118,10 +118,11 @@ public final class StoredTaskTestCase {
     }
 
     /**
-     * StoredTask can return its Issue.
+     * StoredTask can return its Issue from the Issues API, if
+     * it's NOT a Pull Request.
      */
     @Test
-    public void returnsIssue() {
+    public void returnsIssueFromIssues() {
         final Issue issue = Mockito.mock(Issue.class);
         final Issues all = Mockito.mock(Issues.class);
         Mockito.when(all.getById("123")).thenReturn(issue);
@@ -143,6 +144,38 @@ public final class StoredTaskTestCase {
             Contract.Roles.DEV,
             60,
             false,
+            Mockito.mock(Storage.class)
+        );
+        MatcherAssert.assertThat(task.issue(), Matchers.is(issue));
+    }
+
+    /**
+     * StoredTask can return its Issue from the Pull Requests API, if
+     * it IS a Pull Request.
+     */
+    @Test
+    public void returnsIssueFromPullRequests() {
+        final Issue issue = Mockito.mock(Issue.class);
+        final Issues prs = Mockito.mock(Issues.class);
+        Mockito.when(prs.getById("123")).thenReturn(issue);
+        final Repo repo = Mockito.mock(Repo.class);
+        Mockito.when(repo.pullRequests()).thenReturn(prs);
+        final Project project = Mockito.mock(Project.class);
+        Mockito.when(project.repoFullName()).thenReturn("john/test");
+
+        final Provider provider = Mockito.mock(Provider.class);
+        Mockito.when(provider.repo("john", "test")).thenReturn(repo);
+        final ProjectManager manager = Mockito.mock(ProjectManager.class);
+        Mockito.when(manager.provider()).thenReturn(provider);
+
+        Mockito.when(project.projectManager()).thenReturn(manager);
+
+        final Task task = new StoredTask(
+            project,
+            "123",
+            Contract.Roles.DEV,
+            60,
+            true,
             Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(task.issue(), Matchers.is(issue));
