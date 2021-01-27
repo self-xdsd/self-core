@@ -135,14 +135,25 @@ public final class StoredTask implements Task {
     public Issue issue() {
         final Project project = this.contract.project();
         final String repoFullName = project.repoFullName();
-        return project
-            .projectManager()
-            .provider()
-            .repo(
-                repoFullName.substring(0, repoFullName.indexOf("/")),
-                repoFullName.substring(repoFullName.indexOf("/") + 1)
-            ).issues()
-            .getById(this.issueId);
+        final Issues issues;
+        if(this.isPullRequest) {
+            issues = project
+                .projectManager()
+                .provider()
+                .repo(
+                    repoFullName.substring(0, repoFullName.indexOf("/")),
+                    repoFullName.substring(repoFullName.indexOf("/") + 1)
+                ).pullRequests();
+        } else {
+            issues = project
+                .projectManager()
+                .provider()
+                .repo(
+                    repoFullName.substring(0, repoFullName.indexOf("/")),
+                    repoFullName.substring(repoFullName.indexOf("/") + 1)
+                ).issues();
+        }
+        return issues.getById(this.issueId);
     }
 
     @Override
@@ -263,7 +274,7 @@ public final class StoredTask implements Task {
         }
         final Task other = (Task) obj;
         final Project otherProject = other.project();
-        return this.issueId.equals(other.issue().issueId())
+        return this.issueId.equals(other.issueId())
             && this.isPullRequest == other.isPullRequest()
             && this.project().repoFullName().equalsIgnoreCase(otherProject.repoFullName())
             && this.project().provider().equalsIgnoreCase(otherProject.provider());
