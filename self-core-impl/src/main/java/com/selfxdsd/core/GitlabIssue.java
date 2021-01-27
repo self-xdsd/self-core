@@ -328,8 +328,16 @@ final class GitlabIssue implements Issue {
      * @return User id or null if not found.
      */
     private Integer findUserId(final String username) {
-        final String projectPrefix = this.issueUri.toString()
-            .split("/issues")[0];
+        final String[] path = this.issueUri.getRawPath().split("/");
+        final String projectPrefix = String
+            .format("%s://%s/%s/%s/%s/%s",
+                this.issueUri.getScheme(),
+                this.issueUri.getAuthority(),
+                path[1],
+                path[2],
+                path[3],
+                path[4]
+            );
         final URI projectMembersUri = URI.create(projectPrefix
             + "/search?scope=users&search=" + username);
         final Resource resource = this.resources.get(projectMembersUri);
