@@ -360,6 +360,57 @@ public final class GitlabIssueTestCase {
     }
 
     /**
+     *GitlabIssue.assign(...) is successful when issue is a merge request.
+     */
+    @Test
+    public void assignIsSuccessfulWhenIssueIsMergeRequest() {
+        final MockJsonResources resources = new MockJsonResources((req) -> {
+            final JsonValue body;
+            if (req.getUri().toString()
+                .endsWith("search?scope=users&search=john")) {
+                body = Json
+                    .createArrayBuilder()
+                    .add(Json.createObjectBuilder()
+                        .add("id", 1)
+                        .add("username", "john")
+                        .build())
+                    .build();
+            } else {
+                body = JsonValue.NULL;
+            }
+            return new MockJsonResources.MockResource(200, body);
+        });
+
+        boolean assigned = new GitlabIssue(
+            URI.create("https://gitlab.com/api/v4/projects"
+                + "/john%2Ftest/merge_requests/1"),
+            JsonObject.EMPTY_JSON_OBJECT,
+            Mockito.mock(Storage.class),
+            resources
+        ).assign("john");
+
+        final MockJsonResources.MockRequests requests = resources.requests();
+        //checking GET "members" request
+        MatcherAssert.assertThat(requests.first().getUri().toString(),
+            Matchers.equalTo("https://gitlab.com/api/v4/projects"
+                + "/john%2Ftest/search?scope=users&search=john"));
+        MatcherAssert.assertThat(requests.first().getMethod(), Matchers
+            .equalTo("GET"));
+        //checking PUT "assign" request
+        MatcherAssert.assertThat(requests.atIndex(1).getUri().toString(),
+            Matchers.equalTo("https://gitlab.com/api/v4/projects"
+                + "/john%2Ftest/merge_requests/1"));
+        MatcherAssert.assertThat(requests.atIndex(1).getMethod(), Matchers
+            .equalTo("PUT"));
+        MatcherAssert.assertThat(requests.atIndex(1).getBody(), Matchers
+            .equalTo(Json.createObjectBuilder()
+                .add("assignee_id", 1)
+                .build()));
+
+        MatcherAssert.assertThat(assigned, Matchers.is(true));
+    }
+
+    /**
      *GitlabIssue.assign(...) fails if assign response is not OK.
      */
     @Test
