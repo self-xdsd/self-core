@@ -169,8 +169,8 @@ public final class ContributorTasksTestCase {
 
         final Task task = Mockito.mock(Task.class);
         Mockito.when(task.issueId()).thenReturn("1");
-
         Mockito.when(task.project()).thenReturn(project);
+        Mockito.when(task.isPullRequest()).thenReturn(Boolean.TRUE);
 
         final Storage storage = Mockito.mock(Storage.class);
 
@@ -178,7 +178,9 @@ public final class ContributorTasksTestCase {
             "mihai", Provider.Names.GITHUB,
             List.of(task)::stream,
             storage
-        ).getById("1", "mihai/repo", Provider.Names.GITHUB);
+        ).getById(
+            "1", "mihai/repo", Provider.Names.GITHUB, Boolean.TRUE
+        );
         MatcherAssert.assertThat(found, Matchers.is(task));
     }
 
@@ -202,7 +204,7 @@ public final class ContributorTasksTestCase {
             "mihai", Provider.Names.GITHUB,
             List.of(task)::stream,
             storage
-        ).getById("2", "mihai/repo", Provider.Names.GITHUB);
+        ).getById("2", "mihai/repo", Provider.Names.GITHUB, Boolean.TRUE);
         MatcherAssert.assertThat(found, Matchers.nullValue());
     }
 

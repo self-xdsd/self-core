@@ -320,7 +320,8 @@ public final class StoredProjectManager implements ProjectManager {
             .getById(
                 issue.issueId(),
                 issue.repoFullName(),
-                issue.provider()
+                issue.provider(),
+                issue.isPullRequest()
             );
         if(task == null) {
             project.tasks().register(issue);

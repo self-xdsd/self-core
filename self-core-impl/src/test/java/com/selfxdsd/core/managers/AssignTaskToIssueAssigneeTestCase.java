@@ -60,7 +60,7 @@ public final class AssignTaskToIssueAssigneeTestCase {
         final Tasks ofProject = Mockito.mock(Tasks.class);
         Mockito.when(
             ofProject.getById(
-                "123", "mihai/test", Provider.Names.GITHUB
+                "123", "mihai/test", Provider.Names.GITHUB, Boolean.FALSE
             )
         ).thenReturn(task);
         final Contributors contributors = Mockito.mock(Contributors.class);
@@ -104,7 +104,7 @@ public final class AssignTaskToIssueAssigneeTestCase {
         final Tasks ofProject = Mockito.mock(Tasks.class);
         Mockito.when(
             ofProject.getById(
-                "123", "mihai/test", Provider.Names.GITHUB
+                "123", "mihai/test", Provider.Names.GITHUB, Boolean.FALSE
             )
         ).thenReturn(null);
 

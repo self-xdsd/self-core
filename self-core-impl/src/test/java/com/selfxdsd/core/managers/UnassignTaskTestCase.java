@@ -49,7 +49,7 @@ public final class UnassignTaskTestCase {
 
         final Tasks tasks = Mockito.mock(Tasks.class);
         Mockito.when(
-            tasks.getById("1", "john/test", "github")
+            tasks.getById("1", "john/test", "github", Boolean.FALSE)
         ).thenReturn(null);
         final Project project = Mockito.mock(Project.class);
         Mockito.when(project.repoFullName()).thenReturn("john/test");
@@ -82,7 +82,7 @@ public final class UnassignTaskTestCase {
 
         final Tasks tasks = Mockito.mock(Tasks.class);
         Mockito.when(
-            tasks.getById("1", "john/test", "github")
+            tasks.getById("1", "john/test", "github", Boolean.FALSE)
         ).thenReturn(task);
         final Project project = Mockito.mock(Project.class);
         Mockito.when(project.repoFullName()).thenReturn("john/test");
@@ -115,7 +115,7 @@ public final class UnassignTaskTestCase {
 
         final Tasks tasks = Mockito.mock(Tasks.class);
         Mockito.when(
-            tasks.getById("1", "john/test", "github")
+            tasks.getById("1", "john/test", "github", Boolean.FALSE)
         ).thenReturn(task);
         final Project project = Mockito.mock(Project.class);
         Mockito.when(project.repoFullName()).thenReturn("john/test");

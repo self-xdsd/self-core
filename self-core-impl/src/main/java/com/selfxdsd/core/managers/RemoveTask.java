@@ -23,6 +23,7 @@
 package com.selfxdsd.core.managers;
 
 import com.selfxdsd.api.Event;
+import com.selfxdsd.api.Issue;
 import com.selfxdsd.api.Project;
 import com.selfxdsd.api.Task;
 import com.selfxdsd.api.pm.Intermediary;
@@ -56,10 +57,14 @@ public final class RemoveTask extends Intermediary {
 
     @Override
     public void perform(final Event event) {
-        final String issueId = event.issue().issueId();
+        final Issue issue = event.issue();
+        final String issueId = issue.issueId();
         final Project project = event.project();
         final Task task = project.tasks().getById(
-            issueId, project.repoFullName(), project.provider()
+            issueId,
+            project.repoFullName(),
+            project.provider(),
+            issue.isPullRequest()
         );
         if(task == null) {
             LOG.debug(

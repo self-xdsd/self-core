@@ -49,7 +49,7 @@ public final class InMemoryTasksTestCase {
     public void getsByIdNotFound() {
         final Tasks tasks = new InMemoryTasks(Mockito.mock(Storage.class));
         MatcherAssert.assertThat(
-            tasks.getById("missing", "john/test", "github"),
+            tasks.getById("missing", "john/test", "github", Boolean.FALSE),
             Matchers.nullValue()
         );
     }
@@ -73,6 +73,7 @@ public final class InMemoryTasksTestCase {
             project.provider(),
             Contract.Roles.DEV
         );
+        Mockito.when(issue.isPullRequest()).thenReturn(Boolean.TRUE);
         MatcherAssert.assertThat(storage.tasks(), Matchers.iterableWithSize(0));
 
         final Task registered = storage.tasks().register(issue);
@@ -87,7 +88,10 @@ public final class InMemoryTasksTestCase {
         );
         MatcherAssert.assertThat(
             storage.tasks().getById(
-                issue.issueId(), issue.repoFullName(), issue.provider()
+                issue.issueId(),
+                issue.repoFullName(),
+                issue.provider(),
+                issue.isPullRequest()
             ),
             Matchers.is(registered)
         );
@@ -228,10 +232,15 @@ public final class InMemoryTasksTestCase {
         final Task task = storage.tasks().register(issue);
         MatcherAssert.assertThat(storage.tasks().remove(task),
             Matchers.is(Boolean.TRUE));
-        MatcherAssert.assertThat(storage.tasks().getById(
-            task.issueId(),
-            task.project().repoFullName(),
-            task.project().provider()), Matchers.nullValue());
+        MatcherAssert.assertThat(
+            storage.tasks().getById(
+                task.issueId(),
+                task.project().repoFullName(),
+                task.project().provider(),
+                task.isPullRequest()
+            ),
+            Matchers.nullValue()
+        );
     }
 
     /**

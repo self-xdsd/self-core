@@ -57,7 +57,10 @@ public final class AssignTaskToIssueAssignee extends Intermediary {
         final String issueId = issue.issueId();
         final Project project = event.project();
         final Task task = project.tasks().getById(
-            issueId, project.repoFullName(), project.provider()
+            issueId,
+            project.repoFullName(),
+            project.provider(),
+            issue.isPullRequest()
         );
         if(task == null) {
             LOG.debug(

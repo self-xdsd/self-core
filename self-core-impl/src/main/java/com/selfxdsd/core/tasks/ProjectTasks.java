@@ -87,12 +87,14 @@ public final class ProjectTasks implements Tasks {
     public Task getById(
         final String issueId,
         final String repoFullName,
-        final String provider
+        final String provider,
+        final boolean isPullRequest
     ) {
         return this.tasks.get().filter(
             task -> task.issueId().equals(issueId)
                 && task.project().repoFullName().equalsIgnoreCase(repoFullName)
                 && task.project().provider().equalsIgnoreCase(provider)
+                && task.isPullRequest() == isPullRequest
         ).findFirst().orElse(null);
     }
 
@@ -179,7 +181,9 @@ public final class ProjectTasks implements Tasks {
         boolean contains = this.getById(
             task.issueId(),
             task.project().repoFullName(),
-            task.project().provider()) != null;
+            task.project().provider(),
+            task.isPullRequest()
+        ) != null;
         if (!contains) {
             throw new TasksException.OfProject.NotFound(
                 this.repoFullName,

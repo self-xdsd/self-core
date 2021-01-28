@@ -53,7 +53,7 @@ public final class TaskIsRegisteredTestCase {
 
         final Tasks tasks = Mockito.mock(Tasks.class);
         Mockito.when(
-            tasks.getById("123", "john/test", "github")
+            tasks.getById("123", "john/test", "github", Boolean.FALSE)
         ).thenReturn(Mockito.mock(Task.class));
         Mockito.when(project.tasks()).thenReturn(tasks);
 
@@ -83,7 +83,7 @@ public final class TaskIsRegisteredTestCase {
 
         final Tasks tasks = Mockito.mock(Tasks.class);
         Mockito.when(
-            tasks.getById("123", "john/test", "github")
+            tasks.getById("123", "john/test", "github", Boolean.FALSE)
         ).thenReturn(null);
         Mockito.when(project.tasks()).thenReturn(tasks);
 

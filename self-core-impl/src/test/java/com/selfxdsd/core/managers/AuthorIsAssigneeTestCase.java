@@ -47,7 +47,7 @@ public final class AuthorIsAssigneeTestCase {
         Mockito.when(project.provider()).thenReturn("github");
         final Tasks tasks = Mockito.mock(Tasks.class);
         Mockito.when(
-            tasks.getById("1", "john/test", "github")
+            tasks.getById("1", "john/test", "github", Boolean.FALSE)
         ).thenReturn(null);
         Mockito.when(project.tasks()).thenReturn(tasks);
 
@@ -84,7 +84,7 @@ public final class AuthorIsAssigneeTestCase {
         Mockito.when(project.provider()).thenReturn("github");
         final Tasks tasks = Mockito.mock(Tasks.class);
         Mockito.when(
-            tasks.getById("1", "john/test", "github")
+            tasks.getById("1", "john/test", "github", Boolean.FALSE)
         ).thenReturn(task);
         Mockito.when(project.tasks()).thenReturn(tasks);
 
@@ -123,7 +123,7 @@ public final class AuthorIsAssigneeTestCase {
         Mockito.when(project.provider()).thenReturn("github");
         final Tasks tasks = Mockito.mock(Tasks.class);
         Mockito.when(
-            tasks.getById("1", "john/test", "github")
+            tasks.getById("1", "john/test", "github", Boolean.FALSE)
         ).thenReturn(task);
         Mockito.when(project.tasks()).thenReturn(tasks);
 
@@ -164,7 +164,7 @@ public final class AuthorIsAssigneeTestCase {
         Mockito.when(project.provider()).thenReturn("github");
         final Tasks tasks = Mockito.mock(Tasks.class);
         Mockito.when(
-            tasks.getById("1", "john/test", "github")
+            tasks.getById("1", "john/test", "github", Boolean.FALSE)
         ).thenReturn(task);
         Mockito.when(project.tasks()).thenReturn(tasks);
 

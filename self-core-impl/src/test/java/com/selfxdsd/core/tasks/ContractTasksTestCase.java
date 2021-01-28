@@ -186,10 +186,17 @@ public final class ContractTasksTestCase {
         Mockito.when(project.provider()).thenReturn("github");
         Mockito.when(project.repoFullName()).thenReturn("john/repo");
         Mockito.when(task.project()).thenReturn(project);
+        Mockito.when(task.isPullRequest()).thenReturn(Boolean.FALSE);
 
-        MatcherAssert.assertThat(tasks
-                .getById("123", "john/repo", "github"),
-            Matchers.is(task));
+        MatcherAssert.assertThat(
+            tasks.getById(
+                "123",
+                "john/repo",
+                "github",
+                Boolean.FALSE
+            ),
+            Matchers.is(task)
+        );
     }
 
     /**
@@ -202,7 +209,12 @@ public final class ContractTasksTestCase {
                 "github", "dev"),
             Stream::empty,
             Mockito.mock(Storage.class)
-        ).getById("123", "john/repo", "github");
+        ).getById(
+            "123",
+            "john/repo",
+            "github",
+            Boolean.TRUE
+        );
 
         MatcherAssert.assertThat(task, Matchers.nullValue());
     }

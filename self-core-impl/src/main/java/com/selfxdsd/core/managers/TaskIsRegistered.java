@@ -67,7 +67,8 @@ public final class TaskIsRegistered extends PreconditionCheck {
         final Task registered = project.tasks().getById(
             issue.issueId(),
             project.repoFullName(),
-            project.provider()
+            project.provider(),
+            issue.isPullRequest()
         );
         if(registered != null) {
             LOG.debug(

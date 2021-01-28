@@ -22,10 +22,7 @@
  */
 package com.selfxdsd.core.managers;
 
-import com.selfxdsd.api.Event;
-import com.selfxdsd.api.Language;
-import com.selfxdsd.api.Project;
-import com.selfxdsd.api.Task;
+import com.selfxdsd.api.*;
 import com.selfxdsd.api.pm.Conversation;
 import com.selfxdsd.api.pm.Step;
 import org.slf4j.Logger;
@@ -67,10 +64,12 @@ public final class Status implements Conversation {
             final String reply;
             final Project project = event.project();
             final Language language = project.language();
+            final Issue issue = event.issue();
             final Task task = project.tasks().getById(
-                event.issue().issueId(),
+                issue.issueId(),
                 project.repoFullName(),
-                project.provider()
+                project.provider(),
+                issue.isPullRequest()
             );
             if(task == null) {
                 if (event.issue().isClosed()) {

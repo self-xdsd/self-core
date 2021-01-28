@@ -48,7 +48,7 @@ public final class StatusTestCase {
     public void repliesTaskNotRegistered() {
         final Tasks tasks = Mockito.mock(Tasks.class);
         Mockito.when(
-            tasks.getById("1", "john/test", "github")
+            tasks.getById("1", "john/test", "github", Boolean.FALSE)
         ).thenReturn(null);
         final Project project = Mockito.mock(Project.class);
         Mockito.when(project.tasks()).thenReturn(tasks);
@@ -90,7 +90,7 @@ public final class StatusTestCase {
     public void repliesTaskNotRegisteredAndIssueClosed() {
         final Tasks tasks = Mockito.mock(Tasks.class);
         Mockito.when(
-            tasks.getById("1", "john/test", "github")
+            tasks.getById("1", "john/test", "github", Boolean.FALSE)
         ).thenReturn(null);
         final Project project = Mockito.mock(Project.class);
         Mockito.when(project.tasks()).thenReturn(tasks);
@@ -145,7 +145,7 @@ public final class StatusTestCase {
         Mockito.when(task.assignee()).thenReturn(null);
         final Tasks tasks = Mockito.mock(Tasks.class);
         Mockito.when(
-            tasks.getById("1", "john/test", "github")
+            tasks.getById("1", "john/test", "github", Boolean.FALSE)
         ).thenReturn(task);
         final Project project = Mockito.mock(Project.class);
         Mockito.when(project.tasks()).thenReturn(tasks);
@@ -191,7 +191,7 @@ public final class StatusTestCase {
         Mockito.when(task.assignee()).thenReturn(assignee);
         final Tasks tasks = Mockito.mock(Tasks.class);
         Mockito.when(
-            tasks.getById("1", "john/test", "github")
+            tasks.getById("1", "john/test", "github", Boolean.FALSE)
         ).thenReturn(task);
         final Project project = Mockito.mock(Project.class);
         Mockito.when(project.tasks()).thenReturn(tasks);
