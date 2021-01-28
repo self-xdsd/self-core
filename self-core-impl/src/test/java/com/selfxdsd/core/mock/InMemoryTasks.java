@@ -72,9 +72,12 @@ public final class InMemoryTasks implements Tasks {
     public Task getById(
         final String issueId,
         final String repoFullName,
-        final String provider
+        final String provider,
+        final boolean isPullRequest
     ) {
-        return this.tasks.get(new TaskKey(issueId, repoFullName, provider));
+        return this.tasks.get(
+            new TaskKey(issueId, repoFullName, provider, isPullRequest)
+        );
     }
 
     @Override
@@ -100,7 +103,8 @@ public final class InMemoryTasks implements Tasks {
                 new TaskKey(
                     issue.issueId(),
                     issue.repoFullName(),
-                    issue.provider()
+                    issue.provider(),
+                    issue.isPullRequest()
                 ),
                 newTask
             );
@@ -117,7 +121,8 @@ public final class InMemoryTasks implements Tasks {
         final TaskKey key = new TaskKey(
             task.issueId(),
             task.project().repoFullName(),
-            task.project().provider()
+            task.project().provider(),
+            task.isPullRequest()
         );
         final LocalDateTime assignmentDate = LocalDateTime.now();
         final Task assigned = new StoredTask(
@@ -138,7 +143,8 @@ public final class InMemoryTasks implements Tasks {
         final TaskKey key = new TaskKey(
             task.issueId(),
             task.project().repoFullName(),
-            task.project().provider()
+            task.project().provider(),
+            task.isPullRequest()
         );
         final Task unassigned = new StoredTask(
             task.project(),
@@ -199,7 +205,8 @@ public final class InMemoryTasks implements Tasks {
         final TaskKey key = new TaskKey(
             task.issueId(),
             task.project().repoFullName(),
-            task.project().provider()
+            task.project().provider(),
+            task.isPullRequest()
         );
         return tasks.remove(key) != null;
     }
@@ -225,20 +232,28 @@ public final class InMemoryTasks implements Tasks {
         private final String provider;
 
         /**
+         * Is it a PR?
+         */
+        private final boolean isPullRequest;
+
+        /**
          * Constructor.
          *
          * @param issueId Given Issue ID.
          * @param repoFullName Repo full name.
          * @param provider Given provider.
+         * @param isPullRequest Is it a PR?
          */
         TaskKey(
             final String issueId,
             final String repoFullName,
-            final String provider
+            final String provider,
+            final boolean isPullRequest
         ) {
             this.issueId = issueId;
             this.repoFullName = repoFullName;
             this.provider = provider;
+            this.isPullRequest = isPullRequest;
         }
 
         @Override
@@ -252,7 +267,8 @@ public final class InMemoryTasks implements Tasks {
             final TaskKey taskKey = (TaskKey) object;
             return this.issueId.equals(taskKey.issueId)
                 && this.provider.equals(taskKey.provider)
-                && this.repoFullName.equals(taskKey.repoFullName);
+                && this.repoFullName.equals(taskKey.repoFullName)
+                && this.isPullRequest == taskKey.isPullRequest;
         }
 
         @Override
@@ -260,7 +276,8 @@ public final class InMemoryTasks implements Tasks {
             return Objects.hash(
                 this.issueId,
                 this.provider,
-                this.repoFullName
+                this.repoFullName,
+                this.isPullRequest
             );
         }
     }

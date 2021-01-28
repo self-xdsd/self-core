@@ -95,7 +95,7 @@ public final class DeregisterTestCase {
         MatcherAssert.assertThat(
             "Task should be removed from storage",
             storage.tasks()
-                .getById("1", "john/test", "github"),
+                .getById("1", "john/test", "github", Boolean.FALSE),
             Matchers.nullValue());
         Mockito.verify(issue.comments(), Mockito.times(1))
             .post("> Deregister please!\n\n"
@@ -147,7 +147,7 @@ public final class DeregisterTestCase {
         MatcherAssert.assertThat(
             "Task should not be removed from storage",
             storage.tasks()
-                .getById("1", "john/test", "github"),
+                .getById("1", "john/test", "github", Boolean.FALSE),
             Matchers.notNullValue());
         Mockito.verify(issue.comments(), Mockito.times(1))
             .post("> Deregister please!\n\n"

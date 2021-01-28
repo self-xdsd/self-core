@@ -35,12 +35,14 @@ public interface Tasks extends Iterable<Task> {
      * @param issueId Issue ID from Github, Gitlab etc.
      * @param repoFullName Repo full name.
      * @param provider Provider name.
+     * @param isPullRequest Is it a Pull Request or an Issue?
      * @return Task or null if not found.
      */
     Task getById(
         final String issueId,
         final String repoFullName,
-        final String provider
+        final String provider,
+        final boolean isPullRequest
     );
 
     /**

@@ -471,7 +471,7 @@ public final class StoredProjectManagerTestCase {
         final Project project = Mockito.mock(Project.class);
         final Tasks tasks = Mockito.mock(Tasks.class);
         Mockito.when(
-            tasks.getById("1", "mihai/test", "github")
+            tasks.getById("1", "mihai/test", "github", Boolean.FALSE)
         ).thenReturn(null);
         Mockito.when(project.tasks()).thenReturn(tasks);
         Mockito.when(project.language()).thenReturn(new English());
@@ -546,7 +546,7 @@ public final class StoredProjectManagerTestCase {
         final Project project = Mockito.mock(Project.class);
         final Tasks tasks = Mockito.mock(Tasks.class);
         Mockito.when(
-            tasks.getById("1", "mihai/test", "github")
+            tasks.getById("1", "mihai/test", "github", Boolean.FALSE)
         ).thenReturn(null);
         Mockito.when(project.tasks()).thenReturn(tasks);
         Mockito.when(project.language()).thenReturn(new English());
@@ -614,7 +614,7 @@ public final class StoredProjectManagerTestCase {
         final Project project = Mockito.mock(Project.class);
         final Tasks tasks = Mockito.mock(Tasks.class);
         Mockito.when(
-            tasks.getById("1", "mihai/test", "github")
+            tasks.getById("1", "mihai/test", "github", Boolean.FALSE)
         ).thenReturn(null);
         Mockito.when(project.tasks()).thenReturn(tasks);
         Mockito.when(project.language()).thenReturn(new English());
@@ -686,7 +686,7 @@ public final class StoredProjectManagerTestCase {
         final Project project = Mockito.mock(Project.class);
         final Tasks tasks = Mockito.mock(Tasks.class);
         Mockito.when(
-            tasks.getById("1", "mihai/test", "github")
+            tasks.getById("1", "mihai/test", "github", Boolean.FALSE)
         ).thenReturn(null);
         Mockito.when(project.tasks()).thenReturn(tasks);
         Mockito.when(project.language()).thenReturn(new English());
@@ -753,7 +753,7 @@ public final class StoredProjectManagerTestCase {
         Mockito.when(issue.comments()).thenReturn(comments);
 
         final Tasks all = Mockito.mock(Tasks.class);
-        Mockito.when(all.getById("1", "mihai/test", "github"))
+        Mockito.when(all.getById("1", "mihai/test", "github", Boolean.FALSE))
             .thenReturn(Mockito.mock(Task.class));
         Mockito.when(all.register(issue)).thenThrow(
             new IllegalStateException(

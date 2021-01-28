@@ -61,13 +61,17 @@ public final class ContributorTasks implements Tasks {
     }
 
     @Override
-    public Task getById(final String issueId,
-                        final String repoFullName,
-                        final String provider) {
+    public Task getById(
+        final String issueId,
+        final String repoFullName,
+        final String provider,
+        final boolean isPullRequest
+    ) {
         return this.tasks.get()
             .filter(t -> t.issueId().equals(issueId)
                 && t.project().repoFullName().equalsIgnoreCase(repoFullName)
-                && t.project().provider().equalsIgnoreCase(provider))
+                && t.project().provider().equalsIgnoreCase(provider)
+                && t.isPullRequest() == isPullRequest)
             .findFirst()
             .orElse(null);
     }
@@ -146,7 +150,9 @@ public final class ContributorTasks implements Tasks {
         boolean contains = this.getById(
             task.issueId(),
             task.project().repoFullName(),
-            task.project().provider()) != null;
+            task.project().provider(),
+            task.isPullRequest()
+        ) != null;
         if (!contains) {
             throw new TasksException.OfContributor.NotFound(
                 this.username,

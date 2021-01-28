@@ -52,7 +52,7 @@ public final class RemoveTaskTestCase {
 
         final Tasks tasks = Mockito.mock(Tasks.class);
         Mockito.when(
-            tasks.getById("1", "john/test", "github")
+            tasks.getById("1", "john/test", "github", Boolean.FALSE)
         ).thenReturn(null);
         final Project project = Mockito.mock(Project.class);
         Mockito.when(project.repoFullName()).thenReturn("john/test");
@@ -87,11 +87,11 @@ public final class RemoveTaskTestCase {
         final Step remove = new RemoveTask(Mockito.mock(Step.class));
 
         MatcherAssert.assertThat(storage.tasks().getById(
-            "1", "john/test", "github"
+            "1", "john/test", "github", Boolean.FALSE
         ), Matchers.notNullValue());
         remove.perform(event);
         MatcherAssert.assertThat(storage.tasks().getById(
-            "1", "john/test", "github"
+            "1", "john/test", "github", Boolean.FALSE
         ), Matchers.nullValue());
     }
 

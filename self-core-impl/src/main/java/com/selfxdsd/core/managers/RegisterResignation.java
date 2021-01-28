@@ -60,10 +60,14 @@ public final class RegisterResignation extends Intermediary {
 
     @Override
     public void perform(final Event event) {
-        final String issueId = event.issue().issueId();
+        final Issue issue = event.issue();
+        final String issueId = issue.issueId();
         final Project project = event.project();
         final Task task = project.tasks().getById(
-            issueId, project.repoFullName(), project.provider()
+            issueId,
+            project.repoFullName(),
+            project.provider(),
+            issue.isPullRequest()
         );
         if(task == null || task.assignee() == null) {
             LOG.debug(

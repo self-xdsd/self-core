@@ -47,7 +47,7 @@ public final class UnassignedTaskTestCase {
             Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(
-            tasks.getById("123", "john/test", "github"),
+            tasks.getById("123", "john/test", "github", Boolean.FALSE),
             Matchers.nullValue()
         );
     }
@@ -76,7 +76,7 @@ public final class UnassignedTaskTestCase {
             Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(
-            tasks.getById("123first", "john/test", "github"),
+            tasks.getById("123first", "john/test", "github", Boolean.FALSE),
             Matchers.is(first)
         );
     }

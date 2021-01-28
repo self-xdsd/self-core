@@ -23,6 +23,7 @@
 package com.selfxdsd.core.managers;
 
 import com.selfxdsd.api.Event;
+import com.selfxdsd.api.Issue;
 import com.selfxdsd.api.Project;
 import com.selfxdsd.api.Task;
 import com.selfxdsd.api.pm.PreconditionCheck;
@@ -57,11 +58,13 @@ public final class AuthorIsAssignee extends PreconditionCheck {
     @Override
     public void perform(final Event event) {
         final Project project = event.project();
+        final Issue issue = event.issue();
         final String author = event.comment().author();
         final Task task = project.tasks().getById(
-            event.issue().issueId(),
+            issue.issueId(),
             project.repoFullName(),
-            project.provider()
+            project.provider(),
+            issue.isPullRequest()
         );
         if(task == null || task.assignee() == null) {
             LOG.debug("There is no task or no assignee.");
