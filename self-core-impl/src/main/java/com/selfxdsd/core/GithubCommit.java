@@ -92,7 +92,14 @@ final class GithubCommit implements Commit {
 
     @Override
     public String author() {
-        return this.json.getJsonObject("author").getString("login");
+        final String username;
+        final JsonObject author = this.json.getJsonObject("author");
+        if(author == null) {
+            username = "";
+        } else {
+            username = author.getString("login", "");
+        }
+        return username;
     }
 
     @Override

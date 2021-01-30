@@ -83,6 +83,52 @@ public final class GithubCommitTestCase {
     }
 
     /**
+     * GithubCommit can return an empty author is the 'author'
+     * JsonObject is missing from the Commit json.
+     */
+    @Test
+    public void returnsEmptyAuthorOnMissingAuthorJsonObject() {
+        final JsonObject json = Json.createObjectBuilder()
+            .add("sha", "123ref")
+            .build();
+        final Commit commit = new GithubCommit(
+            URI.create("localhost:8080/repos/mihai/test/commits/123ref"),
+            json,
+            Mockito.mock(Storage.class),
+            Mockito.mock(JsonResources.class)
+        );
+        MatcherAssert.assertThat(
+            commit.author(),
+            Matchers.equalTo("")
+        );
+    }
+
+    /**
+     * GithubCommit can return an empty author is the 'author'
+     * JsonObject is present in the Commit json BUT it does not
+     * have the 'login' attribute.
+     */
+    @Test
+    public void returnsEmptyAuthorOnMissingLoginAttribute() {
+        final JsonObject json = Json.createObjectBuilder()
+            .add("sha", "123ref")
+            .add(
+                "author",
+                Json.createObjectBuilder().add("name", "Mihai A.")
+            ).build();
+        final Commit commit = new GithubCommit(
+            URI.create("localhost:8080/repos/mihai/test/commits/123ref"),
+            json,
+            Mockito.mock(Storage.class),
+            Mockito.mock(JsonResources.class)
+        );
+        MatcherAssert.assertThat(
+            commit.author(),
+            Matchers.equalTo("")
+        );
+    }
+
+    /**
      * GithubCommit can return its SHA ref.
      */
     @Test
