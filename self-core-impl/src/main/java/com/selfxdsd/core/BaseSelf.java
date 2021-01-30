@@ -30,6 +30,8 @@ import com.selfxdsd.api.storage.Storage;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
+ * @todo #948:90min Implement and test the authenticate(String) method,
+ *  once we have the ApiTokens implemented for the User.
  */
 abstract class BaseSelf implements Self {
 
@@ -66,6 +68,11 @@ abstract class BaseSelf implements Self {
             signedUp = new Authenticated(signedUp, login.accessToken());
         }
         return signedUp;
+    }
+
+    @Override
+    public User authenticate(final String personalAccessToken) {
+        throw new UnsupportedOperationException("Not yet implemented.");
     }
 
     @Override

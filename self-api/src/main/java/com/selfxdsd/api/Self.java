@@ -40,6 +40,13 @@ public interface Self extends AutoCloseable {
     User login(final Login login);
 
     /**
+     * Authenticate the User based on their personal access token.
+     * @param personalAccessToken String personal access token.
+     * @return User or null if it's not found.
+     */
+    User authenticate(final String personalAccessToken);
+
+    /**
      * Project managers working for Self.
      * @return ProjectManagers.
      */
