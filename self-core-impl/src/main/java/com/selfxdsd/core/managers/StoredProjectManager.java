@@ -630,5 +630,10 @@ public final class StoredProjectManager implements ProjectManager {
                 "The PM is never a Contributor."
             );
         }
+
+        @Override
+        public Admin asAdmin() {
+            return null;
+        }
     }
 }

@@ -59,12 +59,6 @@ public interface Self extends AutoCloseable {
     Projects projects();
 
     /**
-     * PlatformInvoices in Self.
-     * @return PlatformInvoices.
-     */
-    PlatformInvoices platformInvoices();
-
-    /**
      * Contributors in Self.
      * @return Contributors.
      */

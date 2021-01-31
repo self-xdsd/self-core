@@ -66,4 +66,11 @@ public interface User {
      * @return Contributor or null, if this User is not one.
      */
     Contributor asContributor();
+
+    /**
+     * Returns the Admin if this User is one.
+     * @return Admin or null, if this User is not one.
+     * @todo: implement asAdmin method in all successors.
+     */
+    Admin asAdmin();
 }
