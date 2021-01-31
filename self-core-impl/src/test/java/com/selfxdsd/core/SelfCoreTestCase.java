@@ -89,7 +89,11 @@ public final class SelfCoreTestCase {
         final Login githubLogin = new GithubLogin(
                 "amihaiemil", "amihaiemil@gmail.com", "gh123token"
         );
-        MatcherAssert.assertThat(self.login(githubLogin).asAdmin().platformInvoices(), Matchers.is(all));
+        MatcherAssert.assertThat(
+                self.login(githubLogin)
+                        .asAdmin()
+                        .platformInvoices(),
+                Matchers.is(all));
     }
 
     /**
