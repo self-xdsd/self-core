@@ -86,11 +86,6 @@ abstract class BaseSelf implements Self {
     }
 
     @Override
-    public PlatformInvoices platformInvoices(){
-        return this.storage.platformInvoices();
-    }
-
-    @Override
     public Contributors contributors() {
         return this.storage.contributors();
     }
@@ -152,6 +147,11 @@ abstract class BaseSelf implements Self {
         @Override
         public Contributor asContributor() {
             return this.user.asContributor();
+        }
+
+        @Override
+        public Admin asAdmin() {
+            return this.user.asAdmin();
         }
 
     }

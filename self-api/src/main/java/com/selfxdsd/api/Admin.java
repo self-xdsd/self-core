@@ -23,45 +23,18 @@
 package com.selfxdsd.api;
 
 /**
- * The Self Platform. This is the highest abstraction.
- * @author Mihai Andronache (amihaiemil@gmail.com)
+ * Admin user in Self XDSD.
+ * @author Nikita Monokov (nmonokov@gmail.com)
  * @version $Id$
- * @since 0.0.1
+ * @since 0.0.61
+ * @todo #946:60min Implement and test Admin user class.
  */
-public interface Self extends AutoCloseable {
+public interface Admin {
 
     /**
-     * Get the User authenticated via a {@link Login} strategy.
-     * This strategy might be a github login, gitlab login or any
-     * other platform login used by Self clients.
-     * @param login Login strategy
-     * @return An authenticated User.
+     * PlatformInvoices as Admin user.
+     * @return PlatformInvoices.
      */
-    User login(final Login login);
-
-    /**
-     * Authenticate the User based on their personal access token.
-     * @param personalAccessToken String personal access token.
-     * @return User or null if it's not found.
-     */
-    User authenticate(final String personalAccessToken);
-
-    /**
-     * Project managers working for Self.
-     * @return ProjectManagers.
-     */
-    ProjectManagers projectManagers();
-
-    /**
-     * Projects in Self.
-     * @return Projects.
-     */
-    Projects projects();
-
-    /**
-     * Contributors in Self.
-     * @return Contributors.
-     */
-    Contributors contributors();
+    PlatformInvoices platformInvoices();
 
 }

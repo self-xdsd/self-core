@@ -121,6 +121,11 @@ public final class StoredUser implements User {
     }
 
     @Override
+    public Admin asAdmin() {
+        throw new UnsupportedOperationException("Not yet implemented.");
+    }
+
+    @Override
     public int hashCode() {
         return Objects.hash(this.username, this.provider);
     }

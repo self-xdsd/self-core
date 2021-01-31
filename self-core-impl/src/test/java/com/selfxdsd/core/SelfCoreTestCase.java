@@ -65,16 +65,35 @@ public final class SelfCoreTestCase {
     }
 
     /**
-     * SelfCore can give us its PlatformInvoices.
+     * SelfCore can give us its PlatformInvoices when the User is an Admin.
      */
     @Test
     public void returnsPlatformInvoices() {
         final PlatformInvoices all = Mockito.mock(PlatformInvoices.class);
         final Storage storage = Mockito.mock(Storage.class);
-        Mockito.when(storage.platformInvoices()).thenReturn(all);
+        final User user = Mockito.mock(User.class);
+        final Users users = Mockito.mock(Users.class);
+        Mockito.when(storage.users()).thenReturn(users);
+        Mockito.when(
+                users.signUp(
+                        Mockito.anyString(),
+                        Mockito.anyString(),
+                        Mockito.anyString(),
+                        Mockito.anyString()))
+                .thenReturn(user);
+        final Admin admin = Mockito.mock(Admin.class);
+        Mockito.when(user.asAdmin()).thenReturn(admin);
+        Mockito.when(admin.platformInvoices()).thenReturn(all);
 
         final Self self = new SelfCore(storage);
-        MatcherAssert.assertThat(self.platformInvoices(), Matchers.is(all));
+        final Login githubLogin = new GithubLogin(
+                "amihaiemil", "amihaiemil@gmail.com", "gh123token"
+        );
+        MatcherAssert.assertThat(
+                self.login(githubLogin)
+                        .asAdmin()
+                        .platformInvoices(),
+                Matchers.is(all));
     }
 
     /**
