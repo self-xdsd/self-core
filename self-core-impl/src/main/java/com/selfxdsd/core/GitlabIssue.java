@@ -299,7 +299,9 @@ final class GitlabIssue implements Issue {
 
     @Override
     public boolean isClosed() {
-        return "closed".equalsIgnoreCase(this.json.getString("state"));
+        final String state = this.json.getString("state", "");
+        return "closed".equalsIgnoreCase(state)
+            || "merged".equalsIgnoreCase(state);
     }
 
     @Override
