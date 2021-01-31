@@ -633,7 +633,7 @@ public final class StoredProjectManager implements ProjectManager {
 
         @Override
         public Admin asAdmin() {
-            return null;
+            throw new UnsupportedOperationException("Not yet implemented.");
         }
     }
 }

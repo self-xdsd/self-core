@@ -122,7 +122,7 @@ public final class StoredUser implements User {
 
     @Override
     public Admin asAdmin() {
-        return null;
+        throw new UnsupportedOperationException("Not yet implemented.");
     }
 
     @Override
