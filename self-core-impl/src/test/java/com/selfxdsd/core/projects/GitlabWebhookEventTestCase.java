@@ -293,6 +293,42 @@ public final class GitlabWebhookEventTestCase {
     }
 
     /**
+     * The Issue from an Issue event is cached.
+     */
+    @Test
+    public void issueFromIssueEventIsCached() {
+        final Project project = Mockito.mock(Project.class);
+        final Issue issue = this.mockIssue(project, "1", Boolean.FALSE);
+
+        final Event gitlabEvent = new GitlabWebhookEvent(
+            project,
+            "Issue Hook",
+            Json.createObjectBuilder()
+                .add(
+                    "object_attributes",
+                    Json.createObjectBuilder()
+                        .add("iid", 1)
+                        .add("action", "open")
+                ).build().toString()
+        );
+        MatcherAssert.assertThat(
+            gitlabEvent.issue(),
+            Matchers.is(issue)
+        );
+        MatcherAssert.assertThat(
+            gitlabEvent.issue(),
+            Matchers.is(issue)
+        );
+        MatcherAssert.assertThat(
+            gitlabEvent.issue(),
+            Matchers.is(issue)
+        );
+        Mockito.verify(
+            project.projectManager(), Mockito.times(1)
+        ).provider();
+    }
+
+    /**
      * We can retrieve the Issue from an Merge Request Hook event.
      */
     @Test
@@ -315,6 +351,42 @@ public final class GitlabWebhookEventTestCase {
             gitlabEvent.issue(),
             Matchers.is(issue)
         );
+    }
+
+    /**
+     * Issue from MR Event is cached.
+     */
+    @Test
+    public void issueFromMergeRequestEventIsCached() {
+        final Project project = Mockito.mock(Project.class);
+        final Issue issue = this.mockIssue(project, "1", Boolean.TRUE);
+
+        final Event gitlabEvent = new GitlabWebhookEvent(
+            project,
+            "Merge Request Hook",
+            Json.createObjectBuilder()
+                .add(
+                    "object_attributes",
+                    Json.createObjectBuilder()
+                        .add("iid", 1)
+                        .add("action", "open")
+                ).build().toString()
+        );
+        MatcherAssert.assertThat(
+            gitlabEvent.issue(),
+            Matchers.is(issue)
+        );
+        MatcherAssert.assertThat(
+            gitlabEvent.issue(),
+            Matchers.is(issue)
+        );
+        MatcherAssert.assertThat(
+            gitlabEvent.issue(),
+            Matchers.is(issue)
+        );
+        Mockito.verify(
+            project.projectManager(), Mockito.times(1)
+        ).provider();
     }
 
     /**
@@ -347,6 +419,46 @@ public final class GitlabWebhookEventTestCase {
     }
 
     /**
+     * Issue from an Issue Comment event is cached.
+     */
+    @Test
+    public void issueFromIssueCommentIsCached() {
+        final Project project = Mockito.mock(Project.class);
+        final Issue issue = this.mockIssue(project, "1", Boolean.FALSE);
+
+        final Event gitlabEvent = new GitlabWebhookEvent(
+            project,
+            "Note Hook",
+            Json.createObjectBuilder()
+                .add(
+                    "object_attributes",
+                    Json.createObjectBuilder()
+                        .add("noteable_type", "Issue")
+                )
+                .add(
+                    "issue",
+                    Json.createObjectBuilder()
+                        .add("iid", 1)
+                ).build().toString()
+        );
+        MatcherAssert.assertThat(
+            gitlabEvent.issue(),
+            Matchers.is(issue)
+        );
+        MatcherAssert.assertThat(
+            gitlabEvent.issue(),
+            Matchers.is(issue)
+        );
+        MatcherAssert.assertThat(
+            gitlabEvent.issue(),
+            Matchers.is(issue)
+        );
+        Mockito.verify(
+            project.projectManager(), Mockito.times(1)
+        ).provider();
+    }
+
+    /**
      * We can retrieve the Issue from an merge request comment event.
      */
     @Test
@@ -373,6 +485,46 @@ public final class GitlabWebhookEventTestCase {
             gitlabEvent.issue(),
             Matchers.is(issue)
         );
+    }
+
+    /**
+     * Issue from MR Comment Event is cached.
+     */
+    @Test
+    public void issueFromMergeRequestCommentIsCached() {
+        final Project project = Mockito.mock(Project.class);
+        final Issue issue = this.mockIssue(project, "1", Boolean.TRUE);
+
+        final Event gitlabEvent = new GitlabWebhookEvent(
+            project,
+            "Note Hook",
+            Json.createObjectBuilder()
+                .add(
+                    "object_attributes",
+                    Json.createObjectBuilder()
+                        .add("noteable_type", "MergeRequest")
+                )
+                .add(
+                    "merge_request",
+                    Json.createObjectBuilder()
+                        .add("iid", 1)
+                ).build().toString()
+        );
+        MatcherAssert.assertThat(
+            gitlabEvent.issue(),
+            Matchers.is(issue)
+        );
+        MatcherAssert.assertThat(
+            gitlabEvent.issue(),
+            Matchers.is(issue)
+        );
+        MatcherAssert.assertThat(
+            gitlabEvent.issue(),
+            Matchers.is(issue)
+        );
+        Mockito.verify(
+            project.projectManager(), Mockito.times(1)
+        ).provider();
     }
 
     /**

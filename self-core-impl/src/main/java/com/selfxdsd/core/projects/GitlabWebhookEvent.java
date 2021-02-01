@@ -54,6 +54,12 @@ final class GitlabWebhookEvent implements Event {
     private final JsonObject event;
 
     /**
+     * Cached Issue. We need this until we will be able to "receive"
+     * Issues from this event via GitlabIssues.receive (ticket self-core/961).
+     */
+    private Issue issue;
+
+    /**
      * Ctor.
      * @param project Project where the event happened.
      * @param type Type.
@@ -104,56 +110,57 @@ final class GitlabWebhookEvent implements Event {
 
     @Override
     public Issue issue() {
-        final String iid;
-        boolean mergeRequest = false;
-        if("Issue Hook".equalsIgnoreCase(this.type)
-            || "Merge Request Hook".equalsIgnoreCase(this.type)) {
-            if("Merge Request Hook".equalsIgnoreCase(this.type)) {
-                mergeRequest = true;
-            }
-            iid = String.valueOf(
-                this.event.getJsonObject("object_attributes")
-                    .getInt("iid")
-            );
-        } else if("Note Hook".equalsIgnoreCase(this.type)) {
-            final String noteableType = this.event.getJsonObject(
-                "object_attributes"
-            ).getString("noteable_type", "");
-            if("Issue".equalsIgnoreCase(noteableType)) {
+        if(this.issue == null) {
+            final String iid;
+            boolean mergeRequest = false;
+            if ("Issue Hook".equalsIgnoreCase(this.type)
+                || "Merge Request Hook".equalsIgnoreCase(this.type)) {
+                if ("Merge Request Hook".equalsIgnoreCase(this.type)) {
+                    mergeRequest = true;
+                }
                 iid = String.valueOf(
-                    this.event.getJsonObject("issue")
+                    this.event.getJsonObject("object_attributes")
                         .getInt("iid")
                 );
-            } else if("MergeRequest".equalsIgnoreCase(noteableType)){
-                iid = String.valueOf(
-                    this.event.getJsonObject("merge_request")
-                        .getInt("iid")
-                );
-                mergeRequest = true;
+            } else if ("Note Hook".equalsIgnoreCase(this.type)) {
+                final String noteableType = this.event.getJsonObject(
+                    "object_attributes"
+                ).getString("noteable_type", "");
+                if ("Issue".equalsIgnoreCase(noteableType)) {
+                    iid = String.valueOf(
+                        this.event.getJsonObject("issue")
+                            .getInt("iid")
+                    );
+                } else if ("MergeRequest".equalsIgnoreCase(noteableType)) {
+                    iid = String.valueOf(
+                        this.event.getJsonObject("merge_request")
+                            .getInt("iid")
+                    );
+                    mergeRequest = true;
+                } else {
+                    iid = null;
+                }
             } else {
                 iid = null;
             }
-        } else {
-            iid = null;
-        }
-        final Issue issue;
-        if(iid != null) {
-            final String repoFullName = this.project.repoFullName();
-            if(mergeRequest) {
-                issue = this.project.projectManager().provider().repo(
-                    repoFullName.split("/")[0],
-                    repoFullName.split("/")[1]
-                ).pullRequests().getById(iid);
+            if (iid != null) {
+                final String repoFullName = this.project.repoFullName();
+                if (mergeRequest) {
+                    this.issue = this.project.projectManager().provider().repo(
+                        repoFullName.split("/")[0],
+                        repoFullName.split("/")[1]
+                    ).pullRequests().getById(iid);
+                } else {
+                    this.issue = this.project.projectManager().provider().repo(
+                        repoFullName.split("/")[0],
+                        repoFullName.split("/")[1]
+                    ).issues().getById(iid);
+                }
             } else {
-                issue = this.project.projectManager().provider().repo(
-                    repoFullName.split("/")[0],
-                    repoFullName.split("/")[1]
-                ).issues().getById(iid);
+                this.issue = null;
             }
-        } else {
-            issue = null;
         }
-        return issue;
+        return this.issue;
     }
 
     @Override
