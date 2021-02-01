@@ -622,11 +622,29 @@ public final class GitlabIssueTestCase {
      * GitlabIssue can return its state flag.
      */
     @Test
-    public void returnsIsClosedTrue() {
+    public void returnsIsClosedTrueWhenClosed() {
         final Issue issue = new GitlabIssue(
             URI.create("https://gitlab.com/api/v4/projects"
                 + "/john%2Ftest/issues/1"),
             Json.createObjectBuilder().add("state", "closed").build(),
+            Mockito.mock(Storage.class),
+            Mockito.mock(JsonResources.class)
+        );
+        MatcherAssert.assertThat(
+            issue.isClosed(),
+            Matchers.is(Boolean.TRUE)
+        );
+    }
+
+    /**
+     * GitlabIssue can return its state flag.
+     */
+    @Test
+    public void returnsIsClosedTrueWhenMerged() {
+        final Issue issue = new GitlabIssue(
+            URI.create("https://gitlab.com/api/v4/projects"
+                + "/john%2Ftest/issues/1"),
+            Json.createObjectBuilder().add("state", "merged").build(),
             Mockito.mock(Storage.class),
             Mockito.mock(JsonResources.class)
         );

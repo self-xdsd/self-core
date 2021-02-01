@@ -133,4 +133,21 @@ public final class AuthenticatedTestCase {
             Matchers.is(contributor)
         );
     }
+
+    /**
+     * Should return the Admin from the underlying User.
+     */
+    @Test
+    public void returnsAdmin() {
+        final User user = Mockito.mock(User.class);
+        final Admin admin = Mockito.mock(Admin.class);
+        Mockito.when(user.asAdmin()).thenReturn(admin);
+        final BaseSelf.Authenticated authenticated =
+            new BaseSelf.Authenticated(user, "tok3n");
+
+        MatcherAssert.assertThat(
+            authenticated.asAdmin(),
+            Matchers.is(admin)
+        );
+    }
 }

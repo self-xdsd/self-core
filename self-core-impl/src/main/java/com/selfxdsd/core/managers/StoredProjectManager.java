@@ -630,5 +630,12 @@ public final class StoredProjectManager implements ProjectManager {
                 "The PM is never a Contributor."
             );
         }
+
+        @Override
+        public Admin asAdmin() {
+            throw new UnsupportedOperationException(
+                "A Project Manager can never be an Admin!"
+            );
+        }
     }
 }

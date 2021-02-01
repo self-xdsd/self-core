@@ -23,53 +23,17 @@
 package com.selfxdsd.api;
 
 /**
- * User.
- * @author Mihai Andronache (amihaiemil@gmail.com)
+ * Admin user in Self XDSD.
+ * @author Nikita Monokov (nmonokov@gmail.com)
  * @version $Id$
- * @since 0.0.1
+ * @since 0.0.61
  */
-public interface User {
+public interface Admin {
 
     /**
-     * User's name.
-     * @return String.
+     * PlatformInvoices as Admin user.
+     * @return PlatformInvoices.
      */
-    String username();
+    PlatformInvoices platformInvoices();
 
-    /**
-     * User's email address.
-     * @return String.
-     */
-    String email();
-
-    /**
-     * User's role in Self (simple user, admin etc).
-     * @return String.
-     */
-    String role();
-
-    /**
-     * Provider. Github, Bitbucket, Gitlab etc.
-     * @return String.
-     */
-    Provider provider();
-
-    /**
-     * A User's projects (activated repositories), managed
-     * by the platform.
-     * @return Projects.
-     */
-    Projects projects();
-
-    /**
-     * Returns the Contributor if this User is one.
-     * @return Contributor or null, if this User is not one.
-     */
-    Contributor asContributor();
-
-    /**
-     * Returns the Admin if this User is one.
-     * @return Admin or null, if this User is not one.
-     */
-    Admin asAdmin();
 }
