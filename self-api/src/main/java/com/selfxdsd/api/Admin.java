@@ -27,7 +27,6 @@ package com.selfxdsd.api;
  * @author Nikita Monokov (nmonokov@gmail.com)
  * @version $Id$
  * @since 0.0.61
- * @todo #946:60min Implement and test Admin user class.
  */
 public interface Admin {
 

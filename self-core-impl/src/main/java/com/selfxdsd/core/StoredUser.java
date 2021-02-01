@@ -122,7 +122,13 @@ public final class StoredUser implements User {
 
     @Override
     public Admin asAdmin() {
-        throw new UnsupportedOperationException("Not yet implemented.");
+        final Admin admin;
+        if("admin".equalsIgnoreCase(this.role)) {
+            admin = () -> StoredUser.this.storage.platformInvoices();
+        } else {
+            admin = null;
+        }
+        return admin;
     }
 
     @Override

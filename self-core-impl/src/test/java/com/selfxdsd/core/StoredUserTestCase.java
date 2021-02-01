@@ -218,4 +218,51 @@ public final class StoredUserTestCase {
             Matchers.equalTo(userTwo.hashCode()));
     }
 
+    /**
+     * It can return the Admin object if the role is admin.
+     */
+    @Test
+    public void returnsAdminWhenRoleIsAdmin() {
+        final Storage storage = Mockito.mock(Storage.class);
+        final PlatformInvoices invoices = Mockito.mock(PlatformInvoices.class);
+        Mockito.when(storage.platformInvoices()).thenReturn(invoices);
+
+        final User mihai = new StoredUser(
+            "mihai",
+            "amihaiemil@gmail.com",
+            "admin",
+            Provider.Names.GITHUB,
+            storage
+        );
+
+        final Admin admin = mihai.asAdmin();
+        MatcherAssert.assertThat(
+            admin,
+            Matchers.notNullValue()
+        );
+        MatcherAssert.assertThat(
+            admin.platformInvoices(),
+            Matchers.is(invoices)
+        );
+        Mockito.verify(storage, Mockito.times(1)).platformInvoices();
+    }
+
+    /**
+     * Admin is null if the role is not admin.
+     */
+    @Test
+    public void returnsNullAdminWhenRoleIsNotAdmin() {
+        final User mihai = new StoredUser(
+            "mihai",
+            "amihaiemil@gmail.com",
+            "user",
+            Provider.Names.GITHUB,
+            Mockito.mock(Storage.class)
+        );
+
+        MatcherAssert.assertThat(
+            mihai.asAdmin(),
+            Matchers.nullValue()
+        );
+    }
 }
