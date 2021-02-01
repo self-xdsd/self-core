@@ -633,7 +633,9 @@ public final class StoredProjectManager implements ProjectManager {
 
         @Override
         public Admin asAdmin() {
-            throw new UnsupportedOperationException("Not yet implemented.");
+            throw new UnsupportedOperationException(
+                "A Project Manager can never be an Admin!"
+            );
         }
     }
 }

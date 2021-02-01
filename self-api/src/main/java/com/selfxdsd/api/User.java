@@ -70,7 +70,6 @@ public interface User {
     /**
      * Returns the Admin if this User is one.
      * @return Admin or null, if this User is not one.
-     * @todo #946:30min implement asAdmin method in all successors.
      */
     Admin asAdmin();
 }
