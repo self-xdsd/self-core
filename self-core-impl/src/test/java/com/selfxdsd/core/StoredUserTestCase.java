@@ -139,7 +139,6 @@ public final class StoredUserTestCase {
         final Projects all = Mockito.mock(Projects.class);
         Mockito.when(all.ownedBy(ghUser)).thenReturn(owned);
         Mockito.when(storage.projects()).thenReturn(all);
-
         MatcherAssert.assertThat(
             ghUser.projects(),
             Matchers.is(owned)

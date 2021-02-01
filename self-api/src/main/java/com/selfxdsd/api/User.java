@@ -72,4 +72,11 @@ public interface User {
      * @return Admin or null, if this User is not one.
      */
     Admin asAdmin();
+
+    /**
+     * User's API tokens.
+     *
+     * @return ApiTokens.
+     */
+    ApiTokens apiTokens();
 }
