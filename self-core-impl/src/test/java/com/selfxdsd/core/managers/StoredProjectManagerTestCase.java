@@ -245,6 +245,17 @@ public final class StoredProjectManagerTestCase {
     }
 
     /**
+     * A PM can never be admin.
+     */
+    @Test(expected = UnsupportedOperationException.class)
+    public void asAdminUnsupported() {
+        final User pmUser = new StoredProjectManager.PmUser(
+            Mockito.mock(ProjectManager.class)
+        );
+        pmUser.asAdmin();
+    }
+
+    /**
      * PmUser returns its assigned projects.
      */
     @Test
