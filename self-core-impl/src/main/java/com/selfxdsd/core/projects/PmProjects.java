@@ -96,9 +96,10 @@ public final class PmProjects extends BasePaged implements Projects {
         final ProjectManager manager,
         final String webHookToken
     ) {
-        throw new IllegalStateException(
+        throw new UnsupportedOperationException(
             "Projects of a PM are immutable, "
-                + "can't register a new one here."
+            + "can't register a new one here. "
+            + "Use Repo.activate()."
         );
     }
 

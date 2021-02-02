@@ -40,10 +40,6 @@ import java.util.stream.Stream;
  * @version $Id$
  * @since 0.0.1
  * @checkstyle LineLength (200 lines)
- * @todo #59:30min Implement and test method register(...).
- *  It should register the repo with respect to the fact that
- *  this is a User's Projects, meaning the given Repo has to
- *  belong to this User, the PM has to work for the same provider etc.
  */
 public final class UserProjects extends BasePaged implements Projects {
 
@@ -102,7 +98,9 @@ public final class UserProjects extends BasePaged implements Projects {
         final String webHookToken
     ) {
         throw new UnsupportedOperationException(
-            "Not yet implemented. Use Repo.activate()."
+            "Projects of a User are immutable, "
+            + "can't register a new one here. "
+            + "Use Repo.activate()."
         );
     }
 
