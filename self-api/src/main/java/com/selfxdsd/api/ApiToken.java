@@ -42,11 +42,11 @@ public interface ApiToken {
     String name();
 
     /**
-     * Secret key.
+     * The value of token.
      *
-     * @return Byte array.
+     * @return String.
      */
-    byte[] secret();
+    String token();
 
     /**
      * The expiration date.

@@ -25,7 +25,6 @@ package com.selfxdsd.core;
 import com.selfxdsd.api.ApiToken;
 import com.selfxdsd.api.storage.Storage;
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.Objects;
 
 /**
@@ -48,9 +47,9 @@ public final class StoredApiToken implements ApiToken {
     private final String name;
 
     /**
-     * Secret.
+     * Token.
      */
-    private final byte[] secret;
+    private final String token;
 
     /**
      * Expiration date.
@@ -68,12 +67,12 @@ public final class StoredApiToken implements ApiToken {
     public StoredApiToken(
         final Storage storage,
         final String name,
-        final byte[] secret,
+        final String secret,
         final LocalDateTime expiration
     ) {
         this.storage = storage;
         this.name = name;
-        this.secret = secret;
+        this.token = secret;
         this.expiration = expiration;
     }
 
@@ -84,8 +83,8 @@ public final class StoredApiToken implements ApiToken {
     }
 
     @Override
-    public byte[] secret() {
-        return Arrays.copyOf(this.secret, this.secret.length);
+    public String token() {
+        return this.token;
     }
 
     @Override
@@ -103,7 +102,7 @@ public final class StoredApiToken implements ApiToken {
         } else {
             final StoredApiToken that = (StoredApiToken) other;
             result = Objects.equals(name, that.name)
-                && Arrays.equals(secret, that.secret)
+                && Objects.equals(token, that.token)
                 && Objects.equals(expiration, that.expiration);
         }
         return result;
@@ -114,7 +113,7 @@ public final class StoredApiToken implements ApiToken {
         return Objects.hash(
             this.expiration,
             this.name,
-            Arrays.hashCode(this.secret)
+            this.token
         );
     }
 }

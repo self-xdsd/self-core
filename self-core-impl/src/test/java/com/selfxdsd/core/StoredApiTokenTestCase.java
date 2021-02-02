@@ -27,7 +27,6 @@ import com.selfxdsd.api.storage.Storage;
 import java.time.LocalDateTime;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
-import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -44,7 +43,7 @@ public final class StoredApiTokenTestCase {
             new StoredApiToken(
                 Mockito.mock(Storage.class),
                 "gh",
-                new byte[]{'p', 'a', 's', 's'},
+                "pass",
                 LocalDateTime.MAX
             ).name(),
             Matchers.is("gh")
@@ -60,7 +59,7 @@ public final class StoredApiTokenTestCase {
             new StoredApiToken(
                 Mockito.mock(Storage.class),
                 "gh",
-                new byte[]{'p', 'a', 's', 's'},
+                "pass",
                 LocalDateTime.MAX
             ).expiration(),
             Matchers.is(LocalDateTime.MAX)
@@ -68,18 +67,18 @@ public final class StoredApiTokenTestCase {
     }
 
     /**
-     * Returns secret.
+     * Returns token.
      */
     @Test
-    public void returnsSecret() {
-        Assert.assertArrayEquals(
-            new byte[]{'p', 'a', 's', 's'},
+    public void returnsToken() {
+        MatcherAssert.assertThat(
             new StoredApiToken(
                 Mockito.mock(Storage.class),
                 "gh",
-                new byte[]{'p', 'a', 's', 's'},
+                "pass",
                 LocalDateTime.MAX
-            ).secret()
+            ).token(),
+            Matchers.is("pass")
         );
     }
 
@@ -91,13 +90,13 @@ public final class StoredApiTokenTestCase {
         final ApiToken first = new StoredApiToken(
             Mockito.mock(Storage.class),
             "user",
-            new byte[]{'p', 'a', 's', 's'},
+            "pass",
             LocalDateTime.MAX
         );
         final ApiToken second = new StoredApiToken(
             Mockito.mock(Storage.class),
             "user",
-            new byte[]{'p', 'a', 's', 's'},
+            "pass",
             LocalDateTime.MAX
         );
         MatcherAssert.assertThat(
@@ -118,13 +117,13 @@ public final class StoredApiTokenTestCase {
         final ApiToken first = new StoredApiToken(
             Mockito.mock(Storage.class),
             "user",
-            new byte[]{'p', 'a', 's', 's'},
+            "pass",
             LocalDateTime.MAX
         );
         final ApiToken second = new StoredApiToken(
             Mockito.mock(Storage.class),
             "user",
-            new byte[]{'p', 'a', 'x', 'x'},
+            "paxx",
             LocalDateTime.MAX
         );
         MatcherAssert.assertThat(
