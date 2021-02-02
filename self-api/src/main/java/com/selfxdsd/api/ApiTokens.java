@@ -20,10 +20,13 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
- package com.selfxdsd.api;
+package com.selfxdsd.api;
 
 /**
  * API Tokens.
+ *
+ * @todo #947:30m Add method ApiTokens#getById(String token) which
+ *  returns ApiToken.
  *
  * @author Andrei Osipov (andreoss@sdf.org)
  * @version $Id$

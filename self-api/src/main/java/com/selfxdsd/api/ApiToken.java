@@ -27,6 +27,8 @@ import java.time.LocalDateTime;
 /**
  * API Token.
  *
+ * @todo #947:30m Add method ApiToken#owner() which will return User.
+ *
  * @author Andrei Osipov (andreoss@sdf.org)
  * @version $Id$
  * @since 0.0.61

@@ -19,7 +19,8 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- */package com.selfxdsd.core;
+ */
+package com.selfxdsd.core;
 
 import com.selfxdsd.api.ApiToken;
 import com.selfxdsd.api.storage.Storage;
@@ -59,6 +60,7 @@ public final class StoredApiToken implements ApiToken {
     /**
      * Ctor.
      *
+     * @param storage The storage.
      * @param name Name of token.
      * @param secret Value of token.
      * @param expiration Expiration date.
