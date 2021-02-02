@@ -641,7 +641,7 @@ public final class StoredProjectManager implements ProjectManager {
         @Override
         public ApiTokens apiTokens() {
             throw new UnsupportedOperationException(
-                "#apiTokens() is NYI"
+                "#apiTokens() is not yet implemented"
             );
         }
     }

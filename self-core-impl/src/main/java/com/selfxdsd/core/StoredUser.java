@@ -134,7 +134,7 @@ public final class StoredUser implements User {
     @Override
     public ApiTokens apiTokens() {
         throw new UnsupportedOperationException(
-            "#apiTokens is NYI"
+            "#apiTokens is not yet implemented"
         );
     }
 

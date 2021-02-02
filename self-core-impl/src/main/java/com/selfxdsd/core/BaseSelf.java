@@ -157,7 +157,7 @@ abstract class BaseSelf implements Self {
         @Override
         public ApiTokens apiTokens() {
             throw new UnsupportedOperationException(
-               "#apiTokens is NYU"
+               "#apiTokens is not yet implemented"
             );
         }
 
