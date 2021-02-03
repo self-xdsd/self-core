@@ -75,11 +75,7 @@ public interface User {
 
     /**
      * User's API tokens.
-     *
      * @return ApiTokens.
-     * @todo #947:30min This method was left unimplemented.
-     *  Start implementing this methods and add additional
-     *  implementations of ApiToken/ApiTokens where needed.
      */
     ApiTokens apiTokens();
 }
