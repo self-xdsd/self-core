@@ -23,7 +23,7 @@
 package com.selfxdsd.api;
 
 /**
- * API Tokens.
+ * Tokens used to access Self XDSD's RESTful API.
  *
  * @author Andrei Osipov (andreoss@sdf.org)
  * @version $Id$

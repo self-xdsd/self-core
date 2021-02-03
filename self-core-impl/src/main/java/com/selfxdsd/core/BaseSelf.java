@@ -156,9 +156,7 @@ abstract class BaseSelf implements Self {
 
         @Override
         public ApiTokens apiTokens() {
-            throw new UnsupportedOperationException(
-               "#apiTokens is not yet implemented"
-            );
+            return this.user.apiTokens();
         }
 
     }
