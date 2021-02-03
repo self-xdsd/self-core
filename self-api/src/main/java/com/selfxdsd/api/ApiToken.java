@@ -25,9 +25,7 @@ package com.selfxdsd.api;
 import java.time.LocalDateTime;
 
 /**
- * API Token.
- *
- * @todo #947:30m Add method ApiToken#owner() which will return User.
+ * A User's API Token.
  *
  * @author Andrei Osipov (andreoss@sdf.org)
  * @version $Id$
@@ -54,4 +52,10 @@ public interface ApiToken {
      * @return LocalDateTime.
      */
     LocalDateTime expiration();
+
+    /**
+     * User who owns this ApiToken.
+     * @return User.
+     */
+    User owner();
 }
