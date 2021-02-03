@@ -154,6 +154,13 @@ abstract class BaseSelf implements Self {
             return this.user.asAdmin();
         }
 
+        @Override
+        public ApiTokens apiTokens() {
+            throw new UnsupportedOperationException(
+               "#apiTokens is not yet implemented"
+            );
+        }
+
     }
 
 }

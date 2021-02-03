@@ -22,64 +22,36 @@
  */
 package com.selfxdsd.api;
 
+import java.time.LocalDateTime;
+
 /**
- * User.
- * @author Mihai Andronache (amihaiemil@gmail.com)
+ * API Token.
+ *
+ * @todo #947:30m Add method ApiToken#owner() which will return User.
+ *
+ * @author Andrei Osipov (andreoss@sdf.org)
  * @version $Id$
- * @since 0.0.1
+ * @since 0.0.61
  */
-public interface User {
-
+public interface ApiToken {
     /**
-     * User's name.
-     * @return String.
-     */
-    String username();
-
-    /**
-     * User's email address.
-     * @return String.
-     */
-    String email();
-
-    /**
-     * User's role in Self (simple user, admin etc).
-     * @return String.
-     */
-    String role();
-
-    /**
-     * Provider. Github, Bitbucket, Gitlab etc.
-     * @return String.
-     */
-    Provider provider();
-
-    /**
-     * A User's projects (activated repositories), managed
-     * by the platform.
-     * @return Projects.
-     */
-    Projects projects();
-
-    /**
-     * Returns the Contributor if this User is one.
-     * @return Contributor or null, if this User is not one.
-     */
-    Contributor asContributor();
-
-    /**
-     * Returns the Admin if this User is one.
-     * @return Admin or null, if this User is not one.
-     */
-    Admin asAdmin();
-
-    /**
-     * User's API tokens.
+     * The name of token.
      *
-     * @return ApiTokens.
-     * @todo #947:30min This method was left unimplemented.
-     *  Start implementing this methods and add additional
-     *  implementations of ApiToken/ApiTokens where needed.
+     * @return String.
      */
-    ApiTokens apiTokens();
+    String name();
+
+    /**
+     * The value of token.
+     *
+     * @return String.
+     */
+    String token();
+
+    /**
+     * The expiration date.
+     *
+     * @return LocalDateTime.
+     */
+    LocalDateTime expiration();
 }
