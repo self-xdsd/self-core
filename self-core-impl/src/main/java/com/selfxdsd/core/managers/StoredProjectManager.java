@@ -641,7 +641,7 @@ public final class StoredProjectManager implements ProjectManager {
         @Override
         public ApiTokens apiTokens() {
             throw new UnsupportedOperationException(
-                "#apiTokens() is not yet implemented"
+                "A Project Manager does not have any ApiTokens!"
             );
         }
     }

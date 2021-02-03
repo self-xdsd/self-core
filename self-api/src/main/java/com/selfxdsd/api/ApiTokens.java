@@ -23,16 +23,21 @@
 package com.selfxdsd.api;
 
 /**
- * API Tokens.
- *
- * @todo #947:30m Add method ApiTokens#getById(String token) which
- *  returns ApiToken.
+ * Tokens used to access Self XDSD's RESTful API.
  *
  * @author Andrei Osipov (andreoss@sdf.org)
  * @version $Id$
  * @since 0.0.61
  */
 public interface ApiTokens extends Iterable<ApiToken> {
+
+    /**
+     * Get an ApiToken by its ID (which is its actual value).
+     * @param token String token.
+     * @return ApiToken or null if it's not found.
+     */
+    ApiToken getById(final String token);
+
     /**
      * API tokens of a user.
      *

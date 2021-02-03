@@ -23,6 +23,7 @@
 package com.selfxdsd.core;
 
 import com.selfxdsd.api.ApiToken;
+import com.selfxdsd.api.User;
 import com.selfxdsd.api.storage.Storage;
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -57,23 +58,31 @@ public final class StoredApiToken implements ApiToken {
     private final LocalDateTime expiration;
 
     /**
+     * Owner of this ApiToken.
+     */
+    private final User user;
+
+    /**
      * Ctor.
      *
      * @param storage The storage.
      * @param name Name of token.
      * @param secret Value of token.
      * @param expiration Expiration date.
+     * @param owner User who owns this ApiToken.
      */
     public StoredApiToken(
         final Storage storage,
         final String name,
         final String secret,
-        final LocalDateTime expiration
+        final LocalDateTime expiration,
+        final User owner
     ) {
         this.storage = storage;
         this.name = name;
         this.token = secret;
         this.expiration = expiration;
+        this.user = owner;
     }
 
 
@@ -90,6 +99,11 @@ public final class StoredApiToken implements ApiToken {
     @Override
     public LocalDateTime expiration() {
         return this.expiration;
+    }
+
+    @Override
+    public User owner() {
+        return this.user;
     }
 
     @Override

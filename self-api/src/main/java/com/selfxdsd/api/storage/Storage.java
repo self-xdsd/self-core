@@ -109,4 +109,10 @@ public interface Storage extends AutoCloseable {
      * @return PlatformInvoices.
      */
     PlatformInvoices platformInvoices();
+
+    /**
+     * Get the ApiTokens Storage API.
+     * @return ApiTokens.
+     */
+    ApiTokens apiTokens();
 }

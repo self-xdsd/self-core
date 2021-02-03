@@ -133,9 +133,7 @@ public final class StoredUser implements User {
 
     @Override
     public ApiTokens apiTokens() {
-        throw new UnsupportedOperationException(
-            "#apiTokens is not yet implemented"
-        );
+        return this.storage.apiTokens().ofUser(this);
     }
 
     @Override
