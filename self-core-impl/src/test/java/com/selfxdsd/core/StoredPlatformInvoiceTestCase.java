@@ -277,7 +277,16 @@ public final class StoredPlatformInvoiceTestCase {
         );
         MatcherAssert.assertThat(
             invoice.billedBy(),
-            Matchers.equalTo("Self XDSD S.R.L.")
+            Matchers.equalTo(
+                new StringBuilder()
+                    .append("SC Extremely Distributed Technologies SRL\n\n")
+                    .append("Transilvaniei St. 18, bl. U2, ap. 111\n")
+                    .append("Oradea, Romania\n\n")
+                    .append("Nr. ORC/Reg. Number: J05/197/2021\n")
+                    .append("Cod TVA/VAT Code: RO43621869\n")
+                    .append("EUID: ROONRC.J05/197/2021")
+                    .toString()
+            )
         );
     }
 

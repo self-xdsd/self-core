@@ -66,10 +66,18 @@ public interface PlatformInvoice {
     /**
      * Billed by. This should always contain the billing info
      * of the company behind Self XDSD.
+     * @checkstyle LineLength (20 lines).
      * @return String
      */
     default String billedBy() {
-        return "Self XDSD S.R.L.";
+        return new StringBuilder()
+            .append("SC Extremely Distributed Technologies SRL\n\n")
+            .append("Transilvaniei St. 18, bl. U2, ap. 111\n")
+            .append("Oradea, Romania\n\n")
+            .append("Nr. ORC/Reg. Number: J05/197/2021\n")
+            .append("Cod TVA/VAT Code: RO43621869\n")
+            .append("EUID: ROONRC.J05/197/2021")
+            .toString();
     }
 
     /**
