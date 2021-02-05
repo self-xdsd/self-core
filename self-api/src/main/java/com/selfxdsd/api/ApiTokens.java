@@ -28,6 +28,12 @@ package com.selfxdsd.api;
  * @author Andrei Osipov (andreoss@sdf.org)
  * @version $Id$
  * @since 0.0.61
+ * @todo #951:60min Implement method ApiTokens.register(name, token,
+ *  expiration,User), which should register a new token. Also implement
+ *  method User.register(name, token expiration) which should forward the call
+ *  to the method in ApiTokens with this User.
+ * @todo #951:60min Implement and test method ApiTokens.remove(token) which
+ *  should remove the token if it exists.
  */
 public interface ApiTokens extends Iterable<ApiToken> {
 
