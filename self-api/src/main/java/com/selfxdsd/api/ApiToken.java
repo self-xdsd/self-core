@@ -58,4 +58,10 @@ public interface ApiToken {
      * @return User.
      */
     User owner();
+
+    /**
+     * Removes this ApiToken from storage.
+     * @return Boolean.
+     */
+    boolean remove();
 }

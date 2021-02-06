@@ -23,6 +23,7 @@
 package com.selfxdsd.core;
 
 import com.selfxdsd.api.ApiToken;
+import com.selfxdsd.api.ApiTokens;
 import com.selfxdsd.api.User;
 import com.selfxdsd.api.storage.Storage;
 import java.time.LocalDateTime;
@@ -159,6 +160,28 @@ public final class StoredApiTokenTestCase {
         MatcherAssert.assertThat(
             first.hashCode(),
             Matchers.not(second.hashCode())
+        );
+    }
+
+    /**
+     * ApiToken.remove() should remove the token from storage.
+     */
+    @Test
+    public void shouldRemoveFromStorage() {
+        final Storage storage = Mockito.mock(Storage.class);
+        final StoredApiToken token = new StoredApiToken(
+            storage,
+            "gh",
+            "pass",
+            LocalDateTime.MAX,
+            Mockito.mock(User.class)
+        );
+        Mockito.when(storage.apiTokens())
+            .thenReturn(Mockito.mock(ApiTokens.class));
+        Mockito.when(storage.apiTokens().remove(token)).thenReturn(true);
+        MatcherAssert.assertThat(
+            token.remove(),
+            Matchers.is(true)
         );
     }
 }

@@ -51,4 +51,11 @@ public interface ApiTokens extends Iterable<ApiToken> {
      * @return ApiTokens.
      */
     ApiTokens ofUser(final User user);
+
+    /**
+     * Removes an ApiToken from storage.
+     * @param token ApiToken.
+     * @return True if token was successfully removed.
+     */
+    boolean remove(final ApiToken token);
 }

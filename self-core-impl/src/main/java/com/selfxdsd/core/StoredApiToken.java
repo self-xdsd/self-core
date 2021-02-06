@@ -107,6 +107,11 @@ public final class StoredApiToken implements ApiToken {
     }
 
     @Override
+    public boolean remove() {
+        return this.storage.apiTokens().remove(this);
+    }
+
+    @Override
     public boolean equals(final Object other) {
         final boolean result;
         if (this == other) {
