@@ -83,4 +83,35 @@ public interface AccessToken {
             return "Bearer " + this.value;
         }
     }
+
+    /**
+     * A Bitbucket <a href="https://developer.atlassian.com/bitbucket/api/2/reference/meta/authentication#make-requests">access token</a>.
+     *
+     */
+    class Bitbucket implements AccessToken {
+
+        /**
+         * Header value.
+         */
+        private final String value;
+
+        /**
+         * Ctor.
+         *
+         * @param value Header value.
+         */
+        public Bitbucket(final String value) {
+            this.value = value;
+        }
+
+        @Override
+        public String header() {
+            return "Authorization";
+        }
+
+        @Override
+        public String value() {
+            return "Bearer " + this.value;
+        }
+    }
 }
