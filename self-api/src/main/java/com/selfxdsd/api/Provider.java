@@ -82,5 +82,10 @@ public interface Provider {
          * Gitlab provider.
          */
         public static final String GITLAB = "gitlab";
+
+        /**
+         * Bitbucket provider.
+         */
+        public static final String BITBUCKET = "bitbucket";
     }
 }

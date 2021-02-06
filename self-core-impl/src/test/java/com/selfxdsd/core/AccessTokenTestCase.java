@@ -35,4 +35,17 @@ public final class AccessTokenTestCase {
         MatcherAssert.assertThat(token.value(),
             Matchers.equalTo("Bearer gitlab123"));
     }
+
+    /**
+     * Bitbucket token representation.
+     */
+    @Test
+    public void representsBitbucketAccessToken(){
+        final AccessToken token = new AccessToken
+            .Bitbucket("bitbucket123");
+        MatcherAssert.assertThat(token.header(),
+            Matchers.equalTo("Authorization"));
+        MatcherAssert.assertThat(token.value(),
+            Matchers.equalTo("Bearer bitbucket123"));
+    }
 }
