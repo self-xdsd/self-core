@@ -83,7 +83,7 @@ public final class Bitbucket implements Provider {
      * Constructor.
      * @param user Authenticated user.
      * @param storage Storage where we might save some stuff.
-     * @param resources Github's JSON resources.
+     * @param resources Bitbucket's JSON resources.
      */
     public Bitbucket(
         final User user, final Storage storage,
