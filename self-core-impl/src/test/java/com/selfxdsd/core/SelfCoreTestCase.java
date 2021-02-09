@@ -29,6 +29,8 @@ import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import java.time.LocalDateTime;
+
 /**
  * Unit tests for {@link SelfCore}.
  *
@@ -109,5 +111,76 @@ public final class SelfCoreTestCase {
         final Self self = new SelfCore(storage);
         self.close();
         Mockito.verify(storage, Mockito.times(1)).close();
+    }
+
+    /**
+     * The authenticate(token) method returns null if the token does not
+     * exist.
+     */
+    @Test
+    public void userNullWhenApiTokenIsMissing() {
+        final Storage storage = Mockito.mock(Storage.class);
+        final ApiTokens all = Mockito.mock(ApiTokens.class);
+        Mockito.when(all.getById("token123")).thenReturn(null);
+        Mockito.when(storage.apiTokens()).thenReturn(all);
+
+        final Self self = new SelfCore(storage);
+
+        MatcherAssert.assertThat(
+            self.authenticate("token123"),
+            Matchers.nullValue()
+        );
+    }
+
+    /**
+     * The authenticate(token) method returns null if the token exists,
+     * but it is expired.
+     */
+    @Test
+    public void userNullWhenApiTokenExpired() {
+        final LocalDateTime now = LocalDateTime.now();
+
+        final Storage storage = Mockito.mock(Storage.class);
+        final ApiTokens all = Mockito.mock(ApiTokens.class);
+
+        final ApiToken token = Mockito.mock(ApiToken.class);
+        Mockito.when(token.expiration()).thenReturn(now.plusHours(1));
+
+        Mockito.when(all.getById("token123")).thenReturn(token);
+        Mockito.when(storage.apiTokens()).thenReturn(all);
+
+        final Self self = new SelfCore(storage);
+
+        MatcherAssert.assertThat(
+            self.authenticate("token123"),
+            Matchers.nullValue()
+        );
+    }
+
+    /**
+     * The authenticate(token) method returns the User if the ApiToken
+     * exists and the expiration is before now.
+     */
+    @Test
+    public void userExistsWhenApiTokenBeforeNow() {
+        final User user = Mockito.mock(User.class);
+        final LocalDateTime now = LocalDateTime.now();
+
+        final Storage storage = Mockito.mock(Storage.class);
+        final ApiTokens all = Mockito.mock(ApiTokens.class);
+
+        final ApiToken token = Mockito.mock(ApiToken.class);
+        Mockito.when(token.owner()).thenReturn(user);
+        Mockito.when(token.expiration()).thenReturn(now.minusHours(1));
+
+        Mockito.when(all.getById("token123")).thenReturn(token);
+        Mockito.when(storage.apiTokens()).thenReturn(all);
+
+        final Self self = new SelfCore(storage);
+
+        MatcherAssert.assertThat(
+            self.authenticate("token123"),
+            Matchers.is(user)
+        );
     }
 }

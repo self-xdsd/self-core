@@ -22,60 +22,46 @@
  */
 package com.selfxdsd.api;
 
+import java.time.LocalDateTime;
+
 /**
- * User.
- * @author Mihai Andronache (amihaiemil@gmail.com)
+ * A User's API Token.
+ *
+ * @author Andrei Osipov (andreoss@sdf.org)
  * @version $Id$
- * @since 0.0.1
+ * @since 0.0.61
  */
-public interface User {
-
+public interface ApiToken {
     /**
-     * User's name.
+     * The name of token.
+     *
      * @return String.
      */
-    String username();
+    String name();
 
     /**
-     * User's email address.
+     * The value of token.
+     *
      * @return String.
      */
-    String email();
+    String token();
 
     /**
-     * User's role in Self (simple user, admin etc).
-     * @return String.
+     * The expiration date.
+     *
+     * @return LocalDateTime.
      */
-    String role();
+    LocalDateTime expiration();
 
     /**
-     * Provider. Github, Bitbucket, Gitlab etc.
-     * @return String.
+     * User who owns this ApiToken.
+     * @return User.
      */
-    Provider provider();
+    User owner();
 
     /**
-     * A User's projects (activated repositories), managed
-     * by the platform.
-     * @return Projects.
+     * Removes this ApiToken from storage.
+     * @return Boolean.
      */
-    Projects projects();
-
-    /**
-     * Returns the Contributor if this User is one.
-     * @return Contributor or null, if this User is not one.
-     */
-    Contributor asContributor();
-
-    /**
-     * Returns the Admin if this User is one.
-     * @return Admin or null, if this User is not one.
-     */
-    Admin asAdmin();
-
-    /**
-     * User's API tokens.
-     * @return ApiTokens.
-     */
-    ApiTokens apiTokens();
+    boolean remove();
 }

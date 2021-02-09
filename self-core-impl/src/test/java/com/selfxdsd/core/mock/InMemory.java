@@ -156,6 +156,11 @@ public final class InMemory implements Storage {
         throw new UnsupportedOperationException("Not implemented yet!");
     }
 
+    @Override
+    public ApiTokens apiTokens() {
+        throw new UnsupportedOperationException("Not implemented yet!");
+    }
+
     /**
      * Nothing to close, this is an in-memory storage.
      */

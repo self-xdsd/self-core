@@ -25,13 +25,13 @@ package com.selfxdsd.core;
 import com.selfxdsd.api.*;
 import com.selfxdsd.api.storage.Storage;
 
+import java.time.LocalDateTime;
+
 /**
  * Base Self implementation.
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
- * @todo #948:90min Implement and test the authenticate(String) method,
- *  once we have the ApiTokens implemented for the User.
  */
 abstract class BaseSelf implements Self {
 
@@ -71,8 +71,16 @@ abstract class BaseSelf implements Self {
     }
 
     @Override
-    public User authenticate(final String personalAccessToken) {
-        throw new UnsupportedOperationException("Not yet implemented.");
+    public User authenticate(final String token) {
+        final User authenticated;
+        final ApiToken apiToken = this.storage.apiTokens().getById(token);
+        if(apiToken != null
+            && apiToken.expiration().isBefore(LocalDateTime.now())) {
+            authenticated = apiToken.owner();
+        } else {
+            authenticated = null;
+        }
+        return authenticated;
     }
 
     @Override
@@ -152,6 +160,11 @@ abstract class BaseSelf implements Self {
         @Override
         public Admin asAdmin() {
             return this.user.asAdmin();
+        }
+
+        @Override
+        public ApiTokens apiTokens() {
+            return this.user.apiTokens();
         }
 
     }

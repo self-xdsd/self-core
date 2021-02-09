@@ -637,5 +637,12 @@ public final class StoredProjectManager implements ProjectManager {
                 "A Project Manager can never be an Admin!"
             );
         }
+
+        @Override
+        public ApiTokens apiTokens() {
+            throw new UnsupportedOperationException(
+                "A Project Manager does not have any ApiTokens!"
+            );
+        }
     }
 }

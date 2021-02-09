@@ -48,8 +48,8 @@ public final class PmProjectsTestCase {
      * Registering a new Repo within a PM's Projects is
      * not allowed.
      */
-    @Test(expected = IllegalStateException.class)
-    public void registerIsForbidden() {
+    @Test(expected = UnsupportedOperationException.class)
+    public void registerIsUnsupported() {
         final Projects projects = new PmProjects(
             1, Stream::empty, Mockito.mock(Storage.class)
         );

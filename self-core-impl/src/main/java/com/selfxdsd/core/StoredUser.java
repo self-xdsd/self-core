@@ -123,12 +123,17 @@ public final class StoredUser implements User {
     @Override
     public Admin asAdmin() {
         final Admin admin;
-        if("admin".equalsIgnoreCase(this.role)) {
+        if ("admin".equalsIgnoreCase(this.role)) {
             admin = () -> StoredUser.this.storage.platformInvoices();
         } else {
             admin = null;
         }
         return admin;
+    }
+
+    @Override
+    public ApiTokens apiTokens() {
+        return this.storage.apiTokens().ofUser(this);
     }
 
     @Override

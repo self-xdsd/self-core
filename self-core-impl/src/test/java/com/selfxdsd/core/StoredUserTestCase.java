@@ -139,9 +139,32 @@ public final class StoredUserTestCase {
         final Projects all = Mockito.mock(Projects.class);
         Mockito.when(all.ownedBy(ghUser)).thenReturn(owned);
         Mockito.when(storage.projects()).thenReturn(all);
-
         MatcherAssert.assertThat(
             ghUser.projects(),
+            Matchers.is(owned)
+        );
+    }
+
+    /**
+     * StoredUser can return its ApiTokens.
+     */
+    @Test
+    public void returnsApiTokens() {
+        final Storage storage = Mockito.mock(Storage.class);
+        final User ghUser = new StoredUser(
+            "amihaiemil",
+            "amihaiemil@gmail.com",
+            "user",
+            Provider.Names.GITHUB,
+            storage
+        );
+
+        final ApiTokens owned = Mockito.mock(ApiTokens.class);
+        final ApiTokens all = Mockito.mock(ApiTokens.class);
+        Mockito.when(all.ofUser(ghUser)).thenReturn(owned);
+        Mockito.when(storage.apiTokens()).thenReturn(all);
+        MatcherAssert.assertThat(
+            ghUser.apiTokens(),
             Matchers.is(owned)
         );
     }

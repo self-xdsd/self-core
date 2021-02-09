@@ -118,6 +118,23 @@ public final class UserProjectsTestCase {
     }
 
     /**
+     * Cannot register a new Project in UserProjects.
+     */
+    @Test(expected = UnsupportedOperationException.class)
+    public void registerIsUnsupported() {
+        final Projects projects = new UserProjects(
+            this.mockUser("mihai", "github"),
+            Stream::empty,
+            Mockito.mock(Storage.class)
+        );
+        projects.register(
+            Mockito.mock(Repo.class),
+            Mockito.mock(ProjectManager.class),
+            "wtoken123"
+        );
+    }
+
+    /**
      * Method ownedBy() throws an exception if the specified id
      * is the one of a different User.
      */

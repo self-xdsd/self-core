@@ -23,59 +23,37 @@
 package com.selfxdsd.api;
 
 /**
- * User.
- * @author Mihai Andronache (amihaiemil@gmail.com)
+ * Tokens used to access Self XDSD's RESTful API.
+ *
+ * @author Andrei Osipov (andreoss@sdf.org)
  * @version $Id$
- * @since 0.0.1
+ * @since 0.0.61
+ * @todo #951:60min Implement method ApiTokens.register(name, token,
+ *  expiration,User), which should register a new token. Also implement
+ *  method User.register(name, token expiration) which should forward the call
+ *  to the method in ApiTokens with this User.
  */
-public interface User {
+public interface ApiTokens extends Iterable<ApiToken> {
 
     /**
-     * User's name.
-     * @return String.
+     * Get an ApiToken by its ID (which is its actual value).
+     * @param token String token.
+     * @return ApiToken or null if it's not found.
      */
-    String username();
+    ApiToken getById(final String token);
 
     /**
-     * User's email address.
-     * @return String.
-     */
-    String email();
-
-    /**
-     * User's role in Self (simple user, admin etc).
-     * @return String.
-     */
-    String role();
-
-    /**
-     * Provider. Github, Bitbucket, Gitlab etc.
-     * @return String.
-     */
-    Provider provider();
-
-    /**
-     * A User's projects (activated repositories), managed
-     * by the platform.
-     * @return Projects.
-     */
-    Projects projects();
-
-    /**
-     * Returns the Contributor if this User is one.
-     * @return Contributor or null, if this User is not one.
-     */
-    Contributor asContributor();
-
-    /**
-     * Returns the Admin if this User is one.
-     * @return Admin or null, if this User is not one.
-     */
-    Admin asAdmin();
-
-    /**
-     * User's API tokens.
+     * API tokens of a user.
+     *
+     * @param user User.
      * @return ApiTokens.
      */
-    ApiTokens apiTokens();
+    ApiTokens ofUser(final User user);
+
+    /**
+     * Removes an ApiToken from storage.
+     * @param token ApiToken.
+     * @return True if token was successfully removed.
+     */
+    boolean remove(final ApiToken token);
 }

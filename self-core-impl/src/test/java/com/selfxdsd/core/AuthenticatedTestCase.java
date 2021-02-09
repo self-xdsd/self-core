@@ -150,4 +150,21 @@ public final class AuthenticatedTestCase {
             Matchers.is(admin)
         );
     }
+
+    /**
+     * Should return the ApiTokens from the underlying User.
+     */
+    @Test
+    public void returnsApiTokens() {
+        final User user = Mockito.mock(User.class);
+        final ApiTokens tokens = Mockito.mock(ApiTokens.class);
+        Mockito.when(user.apiTokens()).thenReturn(tokens);
+        final BaseSelf.Authenticated authenticated =
+            new BaseSelf.Authenticated(user, "tok3n");
+
+        MatcherAssert.assertThat(
+            authenticated.apiTokens(),
+            Matchers.is(tokens)
+        );
+    }
 }
