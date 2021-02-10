@@ -168,8 +168,14 @@ abstract class BaseSelf implements Self {
         }
 
         @Override
-        public ApiToken register(final String name, final String token, final LocalDateTime expiration) {
-            return this.user.apiTokens().register(name, token,expiration, this.user);
+        public ApiToken register(
+            final String name,
+            final String token,
+            final LocalDateTime expiration
+        ) {
+            return this.user
+                .apiTokens()
+                .register(name, token, expiration, this.user);
         }
     }
 

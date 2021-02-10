@@ -27,7 +27,6 @@ import java.time.LocalDateTime;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
-import org.mockito.MockSettings;
 import org.mockito.Mockito;
 
 /**
@@ -296,7 +295,10 @@ public final class StoredUserTestCase {
      */
     @Test
     public void registersNewApiToken() {
-        final Storage storage = Mockito.mock(Storage.class, Mockito.RETURNS_DEEP_STUBS);
+        final Storage storage = Mockito.mock(
+            Storage.class,
+            Mockito.RETURNS_DEEP_STUBS
+        );
         final User user = new StoredUser(
             "amihaiemil",
             "amihaiemil@gmail.com",

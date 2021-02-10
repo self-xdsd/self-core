@@ -138,7 +138,11 @@ public final class StoredUser implements User {
     }
 
     @Override
-    public ApiToken register(final String name, final String token, final LocalDateTime expiration) {
+    public ApiToken register(
+        final String name,
+        final String token,
+        final LocalDateTime expiration
+    ) {
         return this.storage.apiTokens().register(name, token, expiration, this);
     }
 
