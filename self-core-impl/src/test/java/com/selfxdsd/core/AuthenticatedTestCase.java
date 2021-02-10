@@ -177,9 +177,7 @@ public final class AuthenticatedTestCase {
     public void registersNewApiToken() {
         final Storage storage = Mockito.mock(
             Storage.class,
-            Mockito.withSettings()
-                .verboseLogging()
-                .defaultAnswer(Mockito.RETURNS_DEEP_STUBS)
+            Mockito.RETURNS_DEEP_STUBS
         );
         final User original = new StoredUser(
             "amihaiemil",
