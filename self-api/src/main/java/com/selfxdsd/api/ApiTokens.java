@@ -30,10 +30,6 @@ import java.time.LocalDateTime;
  * @author Andrei Osipov (andreoss@sdf.org)
  * @version $Id$
  * @since 0.0.61
- * @todo #951:60min Implement method ApiTokens.register(name, token,
- *  expiration,User), which should register a new token. Also implement
- *  method User.register(name, token expiration) which should forward the call
- *  to the method in ApiTokens with this User.
  */
 public interface ApiTokens extends Iterable<ApiToken> {
 
