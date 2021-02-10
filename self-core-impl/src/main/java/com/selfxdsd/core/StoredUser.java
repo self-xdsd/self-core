@@ -25,6 +25,7 @@ package com.selfxdsd.core;
 import com.selfxdsd.api.*;
 import com.selfxdsd.api.storage.Storage;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 /**
@@ -134,6 +135,11 @@ public final class StoredUser implements User {
     @Override
     public ApiTokens apiTokens() {
         return this.storage.apiTokens().ofUser(this);
+    }
+
+    @Override
+    public ApiToken register(final String name, final String token, final LocalDateTime expiration) {
+        return this.storage.apiTokens().register(name, token, expiration, this);
     }
 
     @Override

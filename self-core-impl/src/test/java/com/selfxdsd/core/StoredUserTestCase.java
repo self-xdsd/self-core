@@ -23,9 +23,11 @@ package com.selfxdsd.core;
 
 import com.selfxdsd.api.*;
 import com.selfxdsd.api.storage.Storage;
+import java.time.LocalDateTime;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
+import org.mockito.MockSettings;
 import org.mockito.Mockito;
 
 /**
@@ -288,4 +290,29 @@ public final class StoredUserTestCase {
             Matchers.nullValue()
         );
     }
+
+    /**
+     * Registers a token.
+     */
+    @Test
+    public void registersNewApiToken() {
+        final Storage storage = Mockito.mock(Storage.class, Mockito.RETURNS_DEEP_STUBS);
+        final User user = new StoredUser(
+            "amihaiemil",
+            "amihaiemil@gmail.com",
+            "user",
+            Provider.Names.GITHUB,
+            storage
+        );
+        user.register("abc", "secret", LocalDateTime.MAX);
+        Mockito.verify(storage).apiTokens();
+        Mockito.verify(storage.apiTokens())
+            .register(
+                Mockito.anyString(),
+                Mockito.anyString(),
+                Mockito.any(LocalDateTime.class),
+                Mockito.eq(user)
+            );
+    }
+
 }
