@@ -22,6 +22,8 @@
  */
 package com.selfxdsd.api;
 
+import java.time.LocalDateTime;
+
 /**
  * User.
  * @author Mihai Andronache (amihaiemil@gmail.com)
@@ -78,4 +80,17 @@ public interface User {
      * @return ApiTokens.
      */
     ApiTokens apiTokens();
+
+    /**
+     * Register token.
+     * @param name Name of token.
+     * @param token Value of token.
+     * @param expiration Expiration date.
+     * @return Registered ApiToken.
+     */
+    ApiToken register(
+        final String name,
+        final String token,
+        final LocalDateTime expiration
+    );
 }
