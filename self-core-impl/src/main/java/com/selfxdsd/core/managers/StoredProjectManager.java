@@ -644,5 +644,16 @@ public final class StoredProjectManager implements ProjectManager {
                 "A Project Manager does not have any ApiTokens!"
             );
         }
+
+        @Override
+        public ApiToken register(
+            final String name,
+            final String token,
+            final LocalDateTime expiration
+        ) {
+            throw new UnsupportedOperationException(
+                "A Project Manager can not register ApiTokens!"
+            );
+        }
     }
 }

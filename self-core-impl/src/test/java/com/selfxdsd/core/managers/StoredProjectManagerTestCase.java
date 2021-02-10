@@ -1486,4 +1486,16 @@ public final class StoredProjectManagerTestCase {
         ).thenReturn(repo);
         return repo;
     }
+
+    /**
+     * A PM can not register token.
+     */
+    @Test(expected = UnsupportedOperationException.class)
+    public void unableToRegisterToken() {
+        final User pmUser = new StoredProjectManager.PmUser(
+            Mockito.mock(ProjectManager.class)
+        );
+        pmUser.register("foo", "secret", LocalDateTime.MIN);
+    }
+
 }

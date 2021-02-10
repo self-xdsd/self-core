@@ -22,21 +22,20 @@
  */
 package com.selfxdsd.api;
 
+import java.time.LocalDateTime;
+
 /**
  * Tokens used to access Self XDSD's RESTful API.
  *
  * @author Andrei Osipov (andreoss@sdf.org)
  * @version $Id$
  * @since 0.0.61
- * @todo #951:60min Implement method ApiTokens.register(name, token,
- *  expiration,User), which should register a new token. Also implement
- *  method User.register(name, token expiration) which should forward the call
- *  to the method in ApiTokens with this User.
  */
 public interface ApiTokens extends Iterable<ApiToken> {
 
     /**
      * Get an ApiToken by its ID (which is its actual value).
+     *
      * @param token String token.
      * @return ApiToken or null if it's not found.
      */
@@ -56,4 +55,20 @@ public interface ApiTokens extends Iterable<ApiToken> {
      * @return True if token was successfully removed.
      */
     boolean remove(final ApiToken token);
+
+    /**
+     * Register a token.
+     *
+     * @param name Token's name.
+     * @param token Token's value.
+     * @param expiration Expiration date.
+     * @param user User of a token.
+     * @return Registered ApiToken.
+     */
+    ApiToken register(
+        final String name,
+        final String token,
+        final LocalDateTime expiration,
+        final User user
+    );
 }
