@@ -12,7 +12,7 @@ import java.net.URI;
 import java.util.Iterator;
 
 /**
- * A Bitbucket Provider Organizations.
+ * A User's Organizations on Bitbucket.
  *
  * @author Nikita Monokov (nmonokov@gmail.com)
  * @version $Id$

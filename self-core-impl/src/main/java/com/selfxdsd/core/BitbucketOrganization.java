@@ -9,7 +9,7 @@ import javax.json.JsonObject;
 import java.net.URI;
 
 /**
- * A Bitbucket Provider Organization.
+ * A Bitbucket Organization (Team).
  *
  * @author Nikita Monokov (nmonokov@gmail.com)
  * @version $Id$
@@ -41,7 +41,8 @@ final class BitbucketOrganization implements Organization {
      * Ctor.
      *
      * @param owner Current authenticated User.
-     * @param json The Organization in JSON format as returned by Bitbucket's API.
+     * @param json The Organization in JSON format as returned
+     *             by Bitbucket's API.
      * @param resources Bitbucket's JSON Resources.
      * @param storage Storage used by Organization Repos.
      */

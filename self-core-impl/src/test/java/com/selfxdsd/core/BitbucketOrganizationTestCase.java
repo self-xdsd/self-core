@@ -64,7 +64,10 @@ public final class BitbucketOrganizationTestCase {
                 .add("links",
                         Json.createObjectBuilder().add("repositories",
                                 Json.createObjectBuilder().add("href",
-                                        "https://bitbucket.org/!api/2.0/repositories")))
+                                        "https://bitbucket.org/!api/2.0/repositories"
+                                )
+                        )
+                )
                 .build(),
             resources,
             Mockito.mock(Storage.class)).repos();

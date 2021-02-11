@@ -16,28 +16,29 @@ import java.util.function.Consumer;
  * @author Nikita Monokov (nmonokov@gmail.com)
  * @version $Id$
  * @since 0.0.62
+ * todo #978:60min Continue class implementation
  */
 public class BitbucketOrganizationRepos implements Repos {
 
     /**
      * Organization Repos URI.
      */
-    private URI reposUri;
+    private final URI reposUri;
 
     /**
      * Current authenticated User.
      */
-    private User owner;
+    private final User owner;
 
     /**
      * Bitbucket's JSON Resources.
      */
-    private JsonResources resources;
+    private final JsonResources resources;
 
     /**
      * Storage used by Organization Repo.
      */
-    private Storage storage;
+    private final Storage storage;
 
     /**
      * Ctor.
@@ -46,10 +47,10 @@ public class BitbucketOrganizationRepos implements Repos {
      * @param resources Bitbucket's JSON Resources.
      * @param storage Storage used by Organization Repo.
      */
-    public BitbucketOrganizationRepos(URI uri,
-                                      User owner,
-                                      JsonResources resources,
-                                      Storage storage) {
+    public BitbucketOrganizationRepos(final URI uri,
+                                      final User owner,
+                                      final JsonResources resources,
+                                      final Storage storage) {
         this.reposUri = uri;
         this.owner = owner;
         this.resources = resources;
@@ -62,7 +63,7 @@ public class BitbucketOrganizationRepos implements Repos {
     }
 
     @Override
-    public void forEach(Consumer<? super Repo> action) {
+    public void forEach(final Consumer<? super Repo> action) {
         throw new UnsupportedOperationException("Not implemented yet");
     }
 
