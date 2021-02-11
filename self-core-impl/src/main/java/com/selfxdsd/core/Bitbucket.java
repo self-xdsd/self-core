@@ -43,10 +43,6 @@ import java.net.URI;
  *  when you're constructing the URI.
  *  Documentation reference:
  *  https://support.atlassian.com/bitbucket-cloud/docs/invitations-resource/
- * @todo #943:60min Start scaffolding BitbucketOrganizations using the other
- *  providers as model.
- *  Documentation reference:
- *  https://developer.atlassian.com/bitbucket/api/2/reference/resource/teams
  */
 public final class Bitbucket implements Provider {
 
@@ -133,7 +129,11 @@ public final class Bitbucket implements Provider {
 
     @Override
     public Organizations organizations() {
-        throw new UnsupportedOperationException("Not implemented yet");
+        return new BitbucketOrganizations(
+                this.resources,
+                this.uri,
+                this.user,
+                this.storage);
     }
 
     @Override
