@@ -75,7 +75,7 @@ abstract class BaseSelf implements Self {
         final User authenticated;
         final ApiToken apiToken = this.storage.apiTokens().getById(token);
         if(apiToken != null
-            && apiToken.expiration().isBefore(LocalDateTime.now())) {
+            && LocalDateTime.now().isBefore(apiToken.expiration())) {
             authenticated = apiToken.owner();
         } else {
             authenticated = null;

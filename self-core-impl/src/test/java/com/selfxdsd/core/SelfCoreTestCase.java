@@ -133,17 +133,19 @@ public final class SelfCoreTestCase {
     }
 
     /**
-     * The authenticate(token) method returns null if the token exists,
-     * but it is expired.
+     * The authenticate(token) method returns the User if the ApiToken
+     * exists and the expiration is before now.
      */
     @Test
-    public void userNullWhenApiTokenExpired() {
+    public void userExistsWhenApiTokenAfterNow() {
         final LocalDateTime now = LocalDateTime.now();
 
         final Storage storage = Mockito.mock(Storage.class);
         final ApiTokens all = Mockito.mock(ApiTokens.class);
 
         final ApiToken token = Mockito.mock(ApiToken.class);
+        final User owner = Mockito.mock(User.class);
+        Mockito.when(token.owner()).thenReturn(owner);
         Mockito.when(token.expiration()).thenReturn(now.plusHours(1));
 
         Mockito.when(all.getById("token123")).thenReturn(token);
@@ -153,16 +155,16 @@ public final class SelfCoreTestCase {
 
         MatcherAssert.assertThat(
             self.authenticate("token123"),
-            Matchers.nullValue()
+            Matchers.is(owner)
         );
     }
 
     /**
-     * The authenticate(token) method returns the User if the ApiToken
-     * exists and the expiration is before now.
+     * The authenticate(token) method returns null if the token exists,
+     * but it is expired.
      */
     @Test
-    public void userExistsWhenApiTokenBeforeNow() {
+    public void userNullWhenApiTokenExpired() {
         final User user = Mockito.mock(User.class);
         final LocalDateTime now = LocalDateTime.now();
 
@@ -180,7 +182,7 @@ public final class SelfCoreTestCase {
 
         MatcherAssert.assertThat(
             self.authenticate("token123"),
-            Matchers.is(user)
+            Matchers.nullValue()
         );
     }
 }
