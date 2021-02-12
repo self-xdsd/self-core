@@ -15,10 +15,10 @@ import java.util.function.Consumer;
  *
  * @author Nikita Monokov (nmonokov@gmail.com)
  * @version $Id$
- * @since 0.0.62
- * todo #978:60min Continue class implementation
+ * @since 0.0.64
+ * @todo #978:60min Continue implementing this class and writing tests for it.
  */
-public class BitbucketOrganizationRepos implements Repos {
+public final class BitbucketOrganizationRepos implements Repos {
 
     /**
      * Organization Repos URI.

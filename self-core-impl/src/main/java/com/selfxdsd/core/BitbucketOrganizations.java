@@ -16,9 +16,9 @@ import java.util.Iterator;
  *
  * @author Nikita Monokov (nmonokov@gmail.com)
  * @version $Id$
- * @since 0.0.62
+ * @since 0.0.64
  */
-public class BitbucketOrganizations implements Organizations {
+public final class BitbucketOrganizations implements Organizations {
 
     /**
      * Bitbucket's JSON Resources.

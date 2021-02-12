@@ -52,21 +52,27 @@ public final class BitbucketOrganizationTestCase {
     public void returnsOrganizationRepos(){
         final JsonResources resources = new MockJsonResources(
             req -> {
-                MatcherAssert.assertThat(req.getUri().toString(),
-                    Matchers.is("https://bitbucket.org/!api/2.0/repositories"));
-                return new MockResource(200,
-                    Json.createArrayBuilder().build());
+                MatcherAssert.assertThat(
+                    req.getUri().toString(),
+                    Matchers.is(
+                        "https://bitbucket.org/!api/2.0/repositories"
+                    )
+                );
+                return new MockResource(
+                    200,
+                    Json.createArrayBuilder().build()
+                );
             }
         );
         final Repos repos = new BitbucketOrganization(Mockito.mock(User.class),
             Json.createObjectBuilder()
                 .add("uuid", "{1234-5678}")
                 .add("links",
-                        Json.createObjectBuilder().add("repositories",
-                                Json.createObjectBuilder().add("href",
-                                        "https://bitbucket.org/!api/2.0/repositories"
-                                )
+                    Json.createObjectBuilder().add("repositories",
+                        Json.createObjectBuilder().add("href",
+                            "https://bitbucket.org/!api/2.0/repositories"
                         )
+                    )
                 )
                 .build(),
             resources,

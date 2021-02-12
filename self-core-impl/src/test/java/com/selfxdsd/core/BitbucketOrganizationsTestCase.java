@@ -29,7 +29,7 @@ public final class BitbucketOrganizationsTestCase {
      * Rule to verify a specific exception with a specific message.
      */
     @Rule
-    public final ExpectedException expectedException = ExpectedException.none();
+    public final ExpectedException exception = ExpectedException.none();
 
     /**
      * Fetches organizations.
@@ -64,8 +64,8 @@ public final class BitbucketOrganizationsTestCase {
      */
     @Test
     public void throwsWhenNotAuthenticated(){
-        expectedException.expect(IllegalStateException.class);
-        expectedException.expectMessage("Current User is "
+        exception.expect(IllegalStateException.class);
+        exception.expectMessage("Current User is "
             + "not authenticated.");
 
         final JsonResources resources = new MockJsonResources(
@@ -82,8 +82,8 @@ public final class BitbucketOrganizationsTestCase {
      */
     @Test
     public void throwsWhenUnableToFetch() {
-        expectedException.expect(IllegalStateException.class);
-        expectedException.expectMessage("Unable to fetch Bitbucket "
+        exception.expect(IllegalStateException.class);
+        exception.expectMessage("Unable to fetch Bitbucket "
             + "organizations for current User. Expected 200 OK, "
             + "but got: 500");
 
