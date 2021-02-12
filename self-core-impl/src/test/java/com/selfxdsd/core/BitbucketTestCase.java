@@ -22,6 +22,7 @@
  */
 package com.selfxdsd.core;
 
+import com.selfxdsd.api.Organizations;
 import com.selfxdsd.api.Provider;
 import com.selfxdsd.api.User;
 import com.selfxdsd.api.storage.Storage;
@@ -82,13 +83,15 @@ public final class BitbucketTestCase {
     /**
      * Bitbucket provider returns its organizations.
      */
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void organizations() {
         final Provider bitbucket = new Bitbucket(
             Mockito.mock(User.class),
             Mockito.mock(Storage.class)
         );
-        bitbucket.organizations();
+        Organizations organizations = bitbucket.organizations();
+        MatcherAssert.assertThat(organizations,
+                Matchers.instanceOf(BitbucketOrganizations.class));
     }
 
     /**
