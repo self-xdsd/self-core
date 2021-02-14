@@ -81,6 +81,11 @@ public final class InMemoryPayoutMethods implements PayoutMethods {
     }
 
     @Override
+    public boolean remove(final PayoutMethod payoutMethod) {
+        throw new UnsupportedOperationException("Not yet implemented.");
+    }
+
+    @Override
     public PayoutMethods ofContributor(final Contributor contributor) {
         final List<PayoutMethod> ofContributor = this.payoutMethods
             .values()
