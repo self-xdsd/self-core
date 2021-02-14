@@ -118,6 +118,18 @@ public final class ContributorPayoutMethods implements PayoutMethods {
     }
 
     @Override
+    public PayoutMethod getByType(final String type) {
+        PayoutMethod found = null;
+        for(final PayoutMethod method : this.payoutMethods) {
+            if(method.type().equalsIgnoreCase(type)) {
+                found = method;
+                break;
+            }
+        }
+        return found;
+    }
+
+    @Override
     public Iterator<PayoutMethod> iterator() {
         return this.payoutMethods.iterator();
     }

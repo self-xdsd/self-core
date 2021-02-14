@@ -188,4 +188,56 @@ public final class ContributorPayoutMethodsTestCase {
             Matchers.iterableWithSize(2)
         );
     }
+
+    /**
+     * It can return the found PayoutMethod by type.
+     */
+    @Test
+    public void returnsFoundByType() {
+        final PayoutMethod stripe = Mockito.mock(PayoutMethod.class);
+        Mockito.when(stripe.type()).thenReturn("STRIPE");
+
+        final PayoutMethod paypal = Mockito.mock(PayoutMethod.class);
+        Mockito.when(paypal.type()).thenReturn("PAYPAL");
+
+        final PayoutMethods methods = new ContributorPayoutMethods(
+            Mockito.mock(Contributor.class),
+            Arrays.asList(
+                paypal,
+                stripe
+            ),
+            Mockito.mock(Storage.class)
+        );
+
+        MatcherAssert.assertThat(
+            methods.getByType("STRIPE"),
+            Matchers.is(stripe)
+        );
+    }
+
+    /**
+     * It returns null if the type of PayoutMethod is not found.
+     */
+    @Test
+    public void returnsNullByType() {
+        final PayoutMethod stripe = Mockito.mock(PayoutMethod.class);
+        Mockito.when(stripe.type()).thenReturn("STRIPE");
+
+        final PayoutMethod paypal = Mockito.mock(PayoutMethod.class);
+        Mockito.when(paypal.type()).thenReturn("PAYPAL");
+
+        final PayoutMethods methods = new ContributorPayoutMethods(
+            Mockito.mock(Contributor.class),
+            Arrays.asList(
+                paypal,
+                stripe
+            ),
+            Mockito.mock(Storage.class)
+        );
+
+        MatcherAssert.assertThat(
+            methods.getByType("GREENPAY"),
+            Matchers.nullValue()
+        );
+    }
 }
