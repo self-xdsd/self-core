@@ -52,13 +52,4 @@ public interface PayoutMethods extends Iterable<PayoutMethod> {
      */
     PayoutMethods ofContributor(final Contributor contributor);
 
-    /**
-     * Activate the given PayoutMethod. All the other payout methods
-     * of the same Contributor should be deactivated (only one active
-     * PayoutMethod per Contributor is allowed).
-     * @param payoutMethod PayoutMethod to be activated.
-     * @return Activated payout method.
-     */
-    PayoutMethod activate(final PayoutMethod payoutMethod);
-
 }

@@ -96,11 +96,6 @@ public final class InMemoryPayoutMethods implements PayoutMethods {
     }
 
     @Override
-    public PayoutMethod activate(final PayoutMethod payoutMethod) {
-        throw new UnsupportedOperationException("Not yet implemented.");
-    }
-
-    @Override
     public Iterator<PayoutMethod> iterator() {
         throw new UnsupportedOperationException(
             "You cannot iterate over all PayoutMethods in Self. "

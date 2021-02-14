@@ -118,20 +118,6 @@ public final class ContributorPayoutMethods implements PayoutMethods {
     }
 
     @Override
-    public PayoutMethod activate(final PayoutMethod payoutMethod) {
-        if(this.contributor.equals(payoutMethod.contributor())) {
-            return this.storage.payoutMethods().activate(payoutMethod);
-        }
-        throw new IllegalStateException(
-            "These are the PayoutMethods of Contributor "
-            + this.contributor.username() + " at "
-            + this.contributor.provider() + ". "
-            + "You cannot activate the PayoutMethod "
-            + "of another Contributor here."
-        );
-    }
-
-    @Override
     public Iterator<PayoutMethod> iterator() {
         return this.payoutMethods.iterator();
     }
