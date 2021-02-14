@@ -118,18 +118,6 @@ public final class ContributorPayoutMethods implements PayoutMethods {
     }
 
     @Override
-    public PayoutMethod active() {
-        PayoutMethod active = null;
-        for(final PayoutMethod method : this.payoutMethods) {
-            if(method.active()) {
-                active = method;
-                break;
-            }
-        }
-        return active;
-    }
-
-    @Override
     public PayoutMethod activate(final PayoutMethod payoutMethod) {
         if(this.contributor.equals(payoutMethod.contributor())) {
             return this.storage.payoutMethods().activate(payoutMethod);

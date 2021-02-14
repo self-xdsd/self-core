@@ -60,28 +60,6 @@ public final class ContributorPayoutMethodsTestCase {
     }
 
     /**
-     * ContributorPayoutMethods can return the active PayoutMethod.
-     */
-    @Test
-    public void returnsActiveMethod() {
-        final PayoutMethod active = Mockito.mock(PayoutMethod.class);
-        Mockito.when(active.active()).thenReturn(Boolean.TRUE);
-        final PayoutMethods methods = new ContributorPayoutMethods(
-            Mockito.mock(Contributor.class),
-            Arrays.asList(
-                Mockito.mock(PayoutMethod.class),
-                active,
-                Mockito.mock(PayoutMethod.class)
-            ),
-            Mockito.mock(Storage.class)
-        );
-        MatcherAssert.assertThat(
-            methods.active(),
-            Matchers.is(active)
-        );
-    }
-
-    /**
      * ContributorPayoutMethods.ofContributor should return self if the
      * Contributor matches.
      */
