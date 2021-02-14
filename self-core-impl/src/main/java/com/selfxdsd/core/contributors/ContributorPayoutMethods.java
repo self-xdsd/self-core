@@ -105,6 +105,26 @@ public final class ContributorPayoutMethods implements PayoutMethods {
     }
 
     @Override
+    public boolean remove(final PayoutMethod payoutMethod) {
+        if(this.contributor.equals(payoutMethod.contributor())) {
+            final boolean removed = this.storage.payoutMethods()
+                .remove(payoutMethod);
+            if(removed) {
+                this.payoutMethods.remove(payoutMethod);
+            }
+            return removed;
+        } else {
+            throw new IllegalStateException(
+                "These are the PayoutMethods of Contributor "
+                + this.contributor.username() + " at "
+                + this.contributor.provider() + ". "
+                + "You cannot remove the PayoutMethod "
+                + "of another Contributor here."
+            );
+        }
+    }
+
+    @Override
     public PayoutMethods ofContributor(final Contributor contributor) {
         if(this.contributor.equals(contributor)) {
             return this;

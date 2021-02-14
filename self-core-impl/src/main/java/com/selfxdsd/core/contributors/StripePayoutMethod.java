@@ -34,6 +34,7 @@ import com.stripe.model.Account;
 import javax.json.Json;
 import javax.json.JsonObject;
 import java.io.StringReader;
+import java.util.Objects;
 
 /**
  * A Contributor's Stripe PayoutMethod.
@@ -142,5 +143,23 @@ public final class StripePayoutMethod implements PayoutMethod {
                 ex
             );
         }
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.contributor, this.identifier);
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (!(obj instanceof PayoutMethod)) {
+            return false;
+        }
+        final PayoutMethod other = (PayoutMethod) obj;
+        return this.contributor.equals(other.contributor())
+            && this.identifier.equalsIgnoreCase(other.identifier());
     }
 }

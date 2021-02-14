@@ -240,4 +240,72 @@ public final class ContributorPayoutMethodsTestCase {
             Matchers.nullValue()
         );
     }
+
+    /**
+     * We can remove a new PayoutMethod.
+     */
+    @Test
+    public void removeWorks() {
+        final Contributor contributor = Mockito.mock(Contributor.class);
+        final PayoutMethod paypal = Mockito.mock(PayoutMethod.class);
+        Mockito.when(paypal.type()).thenReturn(PayoutMethod.Type.PAYPAL);
+        final PayoutMethod stripe = Mockito.mock(PayoutMethod.class);
+        Mockito.when(paypal.type()).thenReturn(PayoutMethod.Type.STRIPE);
+        Mockito.when(stripe.contributor()).thenReturn(contributor);
+
+        final PayoutMethods all = Mockito.mock(PayoutMethods.class);
+        Mockito.when(all.remove(stripe)).thenReturn(true);
+
+        final Storage storage = Mockito.mock(Storage.class);
+        Mockito.when(storage.payoutMethods()).thenReturn(all);
+
+        final PayoutMethods methods = new ContributorPayoutMethods(
+            contributor,
+            Arrays.asList(paypal, stripe),
+            storage
+        );
+        MatcherAssert.assertThat(
+            methods,
+            Matchers.iterableWithSize(2)
+        );
+        final boolean removed = methods.remove(stripe);
+
+        MatcherAssert.assertThat(
+            removed,
+            Matchers.is(Boolean.TRUE)
+        );
+        MatcherAssert.assertThat(
+            methods,
+            Matchers.iterableWithSize(1)
+        );
+        Mockito.verify(all, Mockito.times(1)).remove(stripe);
+    }
+
+    /**
+     * Method remove should complain if we try to remove the PayoutMethod of
+     * another Contributor.
+     */
+    @Test(expected = IllegalStateException.class)
+    public void removeComplainsOnOtherContributor() {
+        final Contributor contributor = Mockito.mock(Contributor.class);
+        final PayoutMethod paypal = Mockito.mock(PayoutMethod.class);
+        Mockito.when(paypal.type()).thenReturn(PayoutMethod.Type.PAYPAL);
+
+        final PayoutMethods methods = new ContributorPayoutMethods(
+            contributor,
+            Arrays.asList(paypal),
+            Mockito.mock(Storage.class)
+        );
+        MatcherAssert.assertThat(
+            methods,
+            Matchers.iterableWithSize(1)
+        );
+
+        final PayoutMethod stripe = Mockito.mock(PayoutMethod.class);
+        Mockito.when(paypal.type()).thenReturn(PayoutMethod.Type.STRIPE);
+        Mockito.when(stripe.contributor()).thenReturn(
+            Mockito.mock(Contributor.class)
+        );
+        final boolean removed = methods.remove(stripe);
+    }
 }
