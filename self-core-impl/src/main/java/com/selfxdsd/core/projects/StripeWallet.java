@@ -191,18 +191,17 @@ public final class StripeWallet implements Wallet {
             final PayoutMethod payoutMethod = this.storage
                 .payoutMethods()
                 .ofContributor(contributor)
-                .active();
+                .getByType(PayoutMethod.Type.STRIPE);
             if (payoutMethod == null) {
                 LOG.error(
                     "[STRIPE] Contributor " + contributor.username()
-                    + " from " + contributor.provider() + " has no "
+                    + " from " + contributor.provider() + " has no Stripe "
                     + "PayoutMethod set up, cannot pay."
                 );
                 throw new WalletPaymentException(
                     "Contributor " + contributor.username()
                     + " hasn't finished setting up their Stripe account yet. "
                     + "We cannot make the payment yet."
-
                 );
             }
             final PaymentMethod paymentMethod = this.storage

@@ -345,14 +345,15 @@ public final class StoredContributorTestCase {
     @Test
     public void returnsBillingInfoOfActivePayoutMethod() {
         final BillingInfo info = Mockito.mock(BillingInfo.class);
-        final PayoutMethod active = Mockito.mock(PayoutMethod.class);
-        Mockito.when(active.active()).thenReturn(Boolean.TRUE);
-        Mockito.when(active.billingInfo()).thenReturn(info);
+        final PayoutMethod stripe = Mockito.mock(PayoutMethod.class);
+        Mockito.when(stripe.type()).thenReturn("STRIPE");
+        Mockito.when(stripe.billingInfo()).thenReturn(info);
 
         final PayoutMethods ofContributor = Mockito.mock(PayoutMethods.class);
         Mockito.when(ofContributor.iterator()).thenReturn(
-            List.of(active).iterator()
+            List.of(stripe).iterator()
         );
+        Mockito.when(ofContributor.getByType("STRIPE")).thenReturn(stripe);
 
         final PayoutMethods all = Mockito.mock(PayoutMethods.class);
         final Storage storage = Mockito.mock(Storage.class);

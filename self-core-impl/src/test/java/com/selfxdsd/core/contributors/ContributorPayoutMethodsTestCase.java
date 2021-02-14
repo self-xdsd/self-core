@@ -60,28 +60,6 @@ public final class ContributorPayoutMethodsTestCase {
     }
 
     /**
-     * ContributorPayoutMethods can return the active PayoutMethod.
-     */
-    @Test
-    public void returnsActiveMethod() {
-        final PayoutMethod active = Mockito.mock(PayoutMethod.class);
-        Mockito.when(active.active()).thenReturn(Boolean.TRUE);
-        final PayoutMethods methods = new ContributorPayoutMethods(
-            Mockito.mock(Contributor.class),
-            Arrays.asList(
-                Mockito.mock(PayoutMethod.class),
-                active,
-                Mockito.mock(PayoutMethod.class)
-            ),
-            Mockito.mock(Storage.class)
-        );
-        MatcherAssert.assertThat(
-            methods.active(),
-            Matchers.is(active)
-        );
-    }
-
-    /**
      * ContributorPayoutMethods.ofContributor should return self if the
      * Contributor matches.
      */
@@ -212,54 +190,54 @@ public final class ContributorPayoutMethodsTestCase {
     }
 
     /**
-     * ContributorPayoutMethods.activate(...) complains if the given
-     * PayoutMethod belongs to another Contributor.
+     * It can return the found PayoutMethod by type.
      */
-    @Test(expected = IllegalStateException.class)
-    public void activateMethodComplainsOnDifferentContributor() {
-        final Contributor contributor = Mockito.mock(Contributor.class);
-        final Contributor other = Mockito.mock(Contributor.class);
+    @Test
+    public void returnsFoundByType() {
+        final PayoutMethod stripe = Mockito.mock(PayoutMethod.class);
+        Mockito.when(stripe.type()).thenReturn("STRIPE");
+
+        final PayoutMethod paypal = Mockito.mock(PayoutMethod.class);
+        Mockito.when(paypal.type()).thenReturn("PAYPAL");
+
         final PayoutMethods methods = new ContributorPayoutMethods(
-            contributor,
+            Mockito.mock(Contributor.class),
             Arrays.asList(
-                Mockito.mock(PayoutMethod.class),
-                Mockito.mock(PayoutMethod.class),
-                Mockito.mock(PayoutMethod.class)
+                paypal,
+                stripe
             ),
             Mockito.mock(Storage.class)
         );
-        final PayoutMethod method = Mockito.mock(PayoutMethod.class);
-        Mockito.when(method.contributor()).thenReturn(other);
-        methods.activate(method);
+
+        MatcherAssert.assertThat(
+            methods.getByType("STRIPE"),
+            Matchers.is(stripe)
+        );
     }
 
     /**
-     * We can activate a PayoutMethod belonging to the Contributor.
+     * It returns null if the type of PayoutMethod is not found.
      */
     @Test
-    public void activateMethodWorks() {
-        final PayoutMethod active = Mockito.mock(PayoutMethod.class);
-        final PayoutMethods all = Mockito.mock(PayoutMethods.class);
-        final Storage storage = Mockito.mock(Storage.class);
-        Mockito.when(storage.payoutMethods()).thenReturn(all);
+    public void returnsNullByType() {
+        final PayoutMethod stripe = Mockito.mock(PayoutMethod.class);
+        Mockito.when(stripe.type()).thenReturn("STRIPE");
 
-        final Contributor contributor = Mockito.mock(Contributor.class);
+        final PayoutMethod paypal = Mockito.mock(PayoutMethod.class);
+        Mockito.when(paypal.type()).thenReturn("PAYPAL");
+
         final PayoutMethods methods = new ContributorPayoutMethods(
-            contributor,
+            Mockito.mock(Contributor.class),
             Arrays.asList(
-                Mockito.mock(PayoutMethod.class),
-                Mockito.mock(PayoutMethod.class),
-                Mockito.mock(PayoutMethod.class)
+                paypal,
+                stripe
             ),
-            storage
+            Mockito.mock(Storage.class)
         );
-        final PayoutMethod method = Mockito.mock(PayoutMethod.class);
-        Mockito.when(method.contributor()).thenReturn(contributor);
-        Mockito.when(all.activate(method)).thenReturn(active);
 
         MatcherAssert.assertThat(
-            methods.activate(method),
-            Matchers.is(active)
+            methods.getByType("GREENPAY"),
+            Matchers.nullValue()
         );
     }
 }

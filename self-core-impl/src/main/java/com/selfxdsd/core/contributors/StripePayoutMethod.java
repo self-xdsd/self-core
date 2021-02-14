@@ -54,24 +54,16 @@ public final class StripePayoutMethod implements PayoutMethod {
     private final String identifier;
 
     /**
-     * Is this PayoutMethod active or not?
-     */
-    private final boolean active;
-
-    /**
      * Ctor.
      * @param contributor Contributor owner.
      * @param identifier Identifier.
-     * @param active Active or not active.
      */
     public StripePayoutMethod(
         final Contributor contributor,
-        final String identifier,
-        final boolean active
+        final String identifier
     ) {
         this.contributor = contributor;
         this.identifier = identifier;
-        this.active = active;
     }
 
     @Override
@@ -82,11 +74,6 @@ public final class StripePayoutMethod implements PayoutMethod {
     @Override
     public String type() {
         return Type.STRIPE;
-    }
-
-    @Override
-    public boolean active() {
-        return this.active;
     }
 
     @Override

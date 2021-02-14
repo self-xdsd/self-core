@@ -69,8 +69,7 @@ public final class InMemoryPayoutMethods implements PayoutMethods {
     ) {
         final PayoutMethod method = new StripePayoutMethod(
             contributor,
-            identifier,
-            false
+            identifier
         );
         this.payoutMethods.put(
             new PayoutMethodKey(
@@ -97,16 +96,7 @@ public final class InMemoryPayoutMethods implements PayoutMethods {
     }
 
     @Override
-    public PayoutMethod active() {
-        throw new UnsupportedOperationException(
-            "You cannot get the active PayoutMethod "
-            + "out of all PayoutMethods in Self. "
-            + "Call #ofProject(...) first."
-        );
-    }
-
-    @Override
-    public PayoutMethod activate(final PayoutMethod payoutMethod) {
+    public PayoutMethod getByType(final String type) {
         throw new UnsupportedOperationException("Not yet implemented.");
     }
 

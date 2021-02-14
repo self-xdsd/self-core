@@ -45,6 +45,11 @@ import java.util.Objects;
  *  then the method should only return the Tasks from these contracts.
  *  Otherwise, it should return all the Tasks of the contributor, as it
  *  does now.
+ * @todo #985:240min At the moment, method billingInfo() here always reads
+ *  the BillingInfo from the Stripe PayoutMethod if it exists. When we will
+ *  have more types of PayoutMethod, we will need to make some big changes:
+ *  the BillingInfo will have to be saved on our side as a relationship to
+ *  the Contributor.
  */
 public final class StoredContributor implements Contributor {
 
@@ -191,15 +196,11 @@ public final class StoredContributor implements Contributor {
     @Override
     public BillingInfo billingInfo() {
         final BillingInfo info;
-        PayoutMethod active = null;
-        for(final PayoutMethod method : this.payoutMethods()) {
-            if(method.active()) {
-                active = method;
-                break;
-            }
-        }
-        if(active != null) {
-            info = active.billingInfo();
+        final PayoutMethod stripe = this.payoutMethods().getByType(
+            PayoutMethod.Type.STRIPE
+        );
+        if(stripe != null) {
+            info = stripe.billingInfo();
         } else {
             info = new BillingInfo() {
                 @Override

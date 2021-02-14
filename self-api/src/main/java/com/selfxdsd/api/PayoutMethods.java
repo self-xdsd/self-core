@@ -28,6 +28,9 @@ package com.selfxdsd.api;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.22
+ * @todo #985:60min Implement and test method remove(PayoutMethod) which will
+ *  delete a PayoutMethod. Also implement method PayoutMethod.remove() which
+ *  will call this.storage.payoutMethods().remove(this).
  */
 public interface PayoutMethods extends Iterable<PayoutMethod> {
 
@@ -53,18 +56,10 @@ public interface PayoutMethods extends Iterable<PayoutMethod> {
     PayoutMethods ofContributor(final Contributor contributor);
 
     /**
-     * Get the active PayoutMethod.
-     * @return PayoutMethod or null if there isn't any.
+     * Get a PayoutMethod by type (Stripe, Paypal etc).
+     * @param type Type of the PayoutMethod.
+     * @return PayoutMethod or null if it's not found.
      */
-    PayoutMethod active();
-
-    /**
-     * Activate the given PayoutMethod. All the other payout methods
-     * of the same Contributor should be deactivated (only one active
-     * PayoutMethod per Contributor is allowed).
-     * @param payoutMethod PayoutMethod to be activated.
-     * @return Activated payout method.
-     */
-    PayoutMethod activate(final PayoutMethod payoutMethod);
+    PayoutMethod getByType(final String type);
 
 }
