@@ -250,19 +250,14 @@ public final class ContributorPayoutMethodsTestCase {
         final PayoutMethod paypal = Mockito.mock(PayoutMethod.class);
         Mockito.when(paypal.type()).thenReturn(PayoutMethod.Type.PAYPAL);
         final PayoutMethod stripe = Mockito.mock(PayoutMethod.class);
-        Mockito.when(paypal.type()).thenReturn(PayoutMethod.Type.STRIPE);
+        Mockito.when(stripe.type()).thenReturn(PayoutMethod.Type.STRIPE);
         Mockito.when(stripe.contributor()).thenReturn(contributor);
-
-        final PayoutMethods all = Mockito.mock(PayoutMethods.class);
-        Mockito.when(all.remove(stripe)).thenReturn(true);
-
-        final Storage storage = Mockito.mock(Storage.class);
-        Mockito.when(storage.payoutMethods()).thenReturn(all);
+        Mockito.when(stripe.remove()).thenReturn(Boolean.TRUE);
 
         final PayoutMethods methods = new ContributorPayoutMethods(
             contributor,
             Arrays.asList(paypal, stripe),
-            storage
+            Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(
             methods,
@@ -278,7 +273,6 @@ public final class ContributorPayoutMethodsTestCase {
             methods,
             Matchers.iterableWithSize(1)
         );
-        Mockito.verify(all, Mockito.times(1)).remove(stripe);
     }
 
     /**

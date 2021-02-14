@@ -28,9 +28,6 @@ package com.selfxdsd.api;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.22
- * @todo #988:60min Implement method PayoutMethod.remove() which
- *  will remove the PayoutMethod from Stripe and call this.storage
- *  .payoutMethods().remove(this) to remove it from the storage.
  */
 public interface PayoutMethods extends Iterable<PayoutMethod> {
 

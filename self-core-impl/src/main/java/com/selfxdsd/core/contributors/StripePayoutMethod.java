@@ -25,6 +25,7 @@ package com.selfxdsd.core.contributors;
 import com.selfxdsd.api.BillingInfo;
 import com.selfxdsd.api.Contributor;
 import com.selfxdsd.api.PayoutMethod;
+import com.selfxdsd.api.storage.Storage;
 import com.selfxdsd.core.Env;
 import com.selfxdsd.core.projects.AccountBillingInfo;
 import com.stripe.Stripe;
@@ -55,16 +56,24 @@ public final class StripePayoutMethod implements PayoutMethod {
     private final String identifier;
 
     /**
+     * Self's Storage.
+     */
+    private final Storage storage;
+
+    /**
      * Ctor.
      * @param contributor Contributor owner.
      * @param identifier Identifier.
+     * @param storage Storage.
      */
     public StripePayoutMethod(
         final Contributor contributor,
-        final String identifier
+        final String identifier,
+        final Storage storage
     ) {
         this.contributor = contributor;
         this.identifier = identifier;
+        this.storage = storage;
     }
 
     @Override
@@ -137,6 +146,31 @@ public final class StripePayoutMethod implements PayoutMethod {
         } catch (final StripeException ex) {
             throw new IllegalStateException(
                 "Stripe threw an exception when trying to fetch the "
+                + "Stripe Connect Account of Contributor "
+                + this.contributor.username() + "/"
+                + this.contributor.provider() + ". ",
+                ex
+            );
+        }
+    }
+
+    @Override
+    public boolean remove() {
+        final String apiToken = System.getenv(Env.STRIPE_API_TOKEN);
+        if(apiToken == null || apiToken.trim().isEmpty()) {
+            throw new IllegalStateException(
+                "Please specify the "
+                + Env.STRIPE_API_TOKEN
+                + " Environment Variable!"
+            );
+        }
+        Stripe.apiKey = apiToken;
+        try {
+            Account.retrieve(this.identifier).delete();
+            return this.storage.payoutMethods().remove(this);
+        } catch (final StripeException ex) {
+            throw new IllegalStateException(
+                "Stripe threw an exception when trying to delete the "
                 + "Stripe Connect Account of Contributor "
                 + this.contributor.username() + "/"
                 + this.contributor.provider() + ". ",

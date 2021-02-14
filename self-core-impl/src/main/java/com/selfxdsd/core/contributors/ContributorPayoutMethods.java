@@ -107,8 +107,7 @@ public final class ContributorPayoutMethods implements PayoutMethods {
     @Override
     public boolean remove(final PayoutMethod payoutMethod) {
         if(this.contributor.equals(payoutMethod.contributor())) {
-            final boolean removed = this.storage.payoutMethods()
-                .remove(payoutMethod);
+            final boolean removed = payoutMethod.remove();
             if(removed) {
                 this.payoutMethods.remove(payoutMethod);
             }
