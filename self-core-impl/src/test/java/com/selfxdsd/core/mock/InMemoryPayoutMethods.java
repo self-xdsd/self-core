@@ -69,7 +69,8 @@ public final class InMemoryPayoutMethods implements PayoutMethods {
     ) {
         final PayoutMethod method = new StripePayoutMethod(
             contributor,
-            identifier
+            identifier,
+            this.storage
         );
         this.payoutMethods.put(
             new PayoutMethodKey(

@@ -24,6 +24,7 @@ package com.selfxdsd.core.contributors;
 
 import com.selfxdsd.api.Contributor;
 import com.selfxdsd.api.PayoutMethod;
+import com.selfxdsd.api.storage.Storage;
 import com.selfxdsd.core.Env;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -47,7 +48,8 @@ public final class StripePayoutMethodTestCase {
         final Contributor owner = Mockito.mock(Contributor.class);
         final PayoutMethod method = new StripePayoutMethod(
             owner,
-            "acct_001"
+            "acct_001",
+            Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(
             method.contributor(),
@@ -62,7 +64,8 @@ public final class StripePayoutMethodTestCase {
     public void returnsType() {
         final PayoutMethod method = new StripePayoutMethod(
             Mockito.mock(Contributor.class),
-            "acct_001"
+            "acct_001",
+            Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(
             method.type(),
@@ -77,7 +80,8 @@ public final class StripePayoutMethodTestCase {
     public void returnsIdentifier() {
         final PayoutMethod method = new StripePayoutMethod(
             Mockito.mock(Contributor.class),
-            "acct_001"
+            "acct_001",
+            Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(
             method.identifier(),
@@ -93,7 +97,8 @@ public final class StripePayoutMethodTestCase {
     public void jsonComplainsOnMissingApiKey() {
         final PayoutMethod method = new StripePayoutMethod(
             Mockito.mock(Contributor.class),
-            "acct_001"
+            "acct_001",
+            Mockito.mock(Storage.class)
         );
 
         try {
@@ -120,11 +125,39 @@ public final class StripePayoutMethodTestCase {
     public void billingInfoComplainsOnMissingKey() {
         final PayoutMethod method = new StripePayoutMethod(
             Mockito.mock(Contributor.class),
-            "acct_001"
+            "acct_001",
+            Mockito.mock(Storage.class)
         );
 
         try {
             method.billingInfo();
+            Assert.fail("IllegalStateException was expected.");
+        } catch (final IllegalStateException ex) {
+            MatcherAssert.assertThat(
+                ex.getMessage(),
+                Matchers.equalTo(
+                "Please specify the "
+                    + Env.STRIPE_API_TOKEN
+                    + " Environment Variable!"
+                )
+            );
+        }
+    }
+
+    /**
+     * StoredContributor.remove() should throw an ISE
+     * if the Stripe API token is not set.
+     */
+    @Test
+    public void removeComplainsOnMissingKey() {
+        final PayoutMethod method = new StripePayoutMethod(
+            Mockito.mock(Contributor.class),
+            "acct_001",
+            Mockito.mock(Storage.class)
+        );
+
+        try {
+            method.remove();
             Assert.fail("IllegalStateException was expected.");
         } catch (final IllegalStateException ex) {
             MatcherAssert.assertThat(

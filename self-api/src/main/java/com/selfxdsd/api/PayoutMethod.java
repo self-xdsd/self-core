@@ -66,6 +66,12 @@ public interface PayoutMethod {
     JsonObject json();
 
     /**
+     * Remove this PayoutMethod.
+     * @return True if succeeded, false otherwise.
+     */
+    boolean remove();
+
+    /**
      * Possible payout methods.
      */
     class Type {
