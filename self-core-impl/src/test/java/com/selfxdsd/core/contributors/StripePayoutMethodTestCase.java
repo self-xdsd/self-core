@@ -47,8 +47,7 @@ public final class StripePayoutMethodTestCase {
         final Contributor owner = Mockito.mock(Contributor.class);
         final PayoutMethod method = new StripePayoutMethod(
             owner,
-            "acct_001",
-            Boolean.FALSE
+            "acct_001"
         );
         MatcherAssert.assertThat(
             method.contributor(),
@@ -63,28 +62,11 @@ public final class StripePayoutMethodTestCase {
     public void returnsType() {
         final PayoutMethod method = new StripePayoutMethod(
             Mockito.mock(Contributor.class),
-            "acct_001",
-            Boolean.FALSE
+            "acct_001"
         );
         MatcherAssert.assertThat(
             method.type(),
             Matchers.equalTo(PayoutMethod.Type.STRIPE)
-        );
-    }
-
-    /**
-     * StripePayoutMethod returns its status.
-     */
-    @Test
-    public void returnsActiveFlag() {
-        final PayoutMethod method = new StripePayoutMethod(
-            Mockito.mock(Contributor.class),
-            "acct_001",
-            Boolean.FALSE
-        );
-        MatcherAssert.assertThat(
-            method.active(),
-            Matchers.is(Boolean.FALSE)
         );
     }
 
@@ -95,8 +77,7 @@ public final class StripePayoutMethodTestCase {
     public void returnsIdentifier() {
         final PayoutMethod method = new StripePayoutMethod(
             Mockito.mock(Contributor.class),
-            "acct_001",
-            Boolean.FALSE
+            "acct_001"
         );
         MatcherAssert.assertThat(
             method.identifier(),
@@ -112,8 +93,7 @@ public final class StripePayoutMethodTestCase {
     public void jsonComplainsOnMissingApiKey() {
         final PayoutMethod method = new StripePayoutMethod(
             Mockito.mock(Contributor.class),
-            "acct_001",
-            Boolean.TRUE
+            "acct_001"
         );
 
         try {
@@ -140,8 +120,7 @@ public final class StripePayoutMethodTestCase {
     public void billingInfoComplainsOnMissingKey() {
         final PayoutMethod method = new StripePayoutMethod(
             Mockito.mock(Contributor.class),
-            "acct_001",
-            Boolean.TRUE
+            "acct_001"
         );
 
         try {

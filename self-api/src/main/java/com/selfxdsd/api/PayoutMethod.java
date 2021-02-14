@@ -46,12 +46,6 @@ public interface PayoutMethod {
     String type();
 
     /**
-     * Is this payout method active or not?
-     * @return True or false.
-     */
-    boolean active();
-
-    /**
      * Identifier.
      * @return String.
      */
