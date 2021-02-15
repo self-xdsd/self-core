@@ -86,7 +86,7 @@ public final class WalletPaymentMethods implements PaymentMethods {
             throw new PaymentMethodsException("Can't remove this payment "
                 + "method because it's part of different wallet.");
         }
-        return this.storage.paymentMethods().remove(paymentMethod);
+        return paymentMethod.remove();
     }
 
     @Override
