@@ -227,7 +227,7 @@ public final class StripePaymentMethodTestCase {
 
     /**
      * StripePaymentMethod.json() should throw an ISE
-     * if the stripe.api.token env variable is not set.
+     * if the self_stripe_token env variable is not set.
      */
     @Test
     public void jsonComplainsOnMissingApiKey() {
@@ -243,6 +243,66 @@ public final class StripePaymentMethodTestCase {
         );
         try {
             paymentMethod.json();
+            Assert.fail("IllegalStateException was expected.");
+        } catch (final IllegalStateException ex) {
+            MatcherAssert.assertThat(
+                ex.getMessage(),
+                Matchers.equalTo(
+                "Please specify the "
+                    + Env.STRIPE_API_TOKEN
+                    + " Environment Variable!"
+                )
+            );
+        }
+    }
+
+    /**
+     * StripePaymentMethod.remove() will complain if the PaymentMethod
+     * is active.
+     */
+    @Test
+    public void cannotRemoveIfActive() {
+        final PaymentMethod paymentMethod = new StripePaymentMethod(
+            Mockito.mock(Storage.class),
+            "fake_id_132",
+            this.mockWallet(
+                Wallet.Type.STRIPE,
+                "john/test",
+                Provider.Names.GITHUB
+            ),
+            true
+        );
+        try {
+            paymentMethod.remove();
+            Assert.fail("IllegalStateException was expected.");
+        } catch (final IllegalStateException ex) {
+            MatcherAssert.assertThat(
+                ex.getMessage(),
+                Matchers.equalTo(
+                    "This PaymentMethod is active, it cannot be removed."
+                )
+            );
+        }
+    }
+
+    /**
+     * StripePaymentMethod.remove() should throw an ISE
+     * if the self_stripe_token env variable is not set.
+     */
+    @Test
+    public void removeComplainsIfNotStripeToken() {
+        final PaymentMethod paymentMethod = new StripePaymentMethod(
+            Mockito.mock(Storage.class),
+            "fake_id_132",
+            this.mockWallet(
+                Wallet.Type.STRIPE,
+                "john/test",
+                Provider.Names.GITHUB
+            ),
+            false
+        );
+        try {
+            paymentMethod.remove();
             Assert.fail("IllegalStateException was expected.");
         } catch (final IllegalStateException ex) {
             MatcherAssert.assertThat(

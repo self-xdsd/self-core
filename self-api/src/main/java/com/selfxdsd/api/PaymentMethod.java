@@ -61,4 +61,12 @@ public interface PaymentMethod {
      * @return PaymentMethod in JSON.
      */
     JsonObject json();
+
+    /**
+     * Remove this PaymentMethod.
+     * @return True if successful, false otherwise.
+     * @throws IllegalStateException If this PaymentMethod is active or
+     *  there was any problem while removing it from the payment provider.
+     */
+    boolean remove();
 }

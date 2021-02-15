@@ -43,6 +43,11 @@ import java.io.StringReader;
 public final class StripePaymentMethod extends StoredPaymentMethod {
 
     /**
+     * Self Storage.
+     */
+    private final Storage storage;
+
+    /**
      * Ctor.
      * @param storage Storage.
      * @param identifier Identifier.
@@ -56,6 +61,7 @@ public final class StripePaymentMethod extends StoredPaymentMethod {
         final boolean active
     ) {
         super(storage, identifier, wallet, active);
+        this.storage = storage;
     }
 
     @Override
@@ -97,5 +103,48 @@ public final class StripePaymentMethod extends StoredPaymentMethod {
             "PaymentMethod " + this.identifier() + " of Customer/Wallet "
             + this.wallet().identifier() + " not found in Stripe!"
         );
+    }
+
+    @Override
+    public boolean remove() {
+        if(this.active()) {
+            throw new IllegalStateException(
+                "This PaymentMethod is active, it cannot be removed."
+            );
+        } else {
+            boolean deletedFromStripe = false;
+            final String apiToken = System.getenv(Env.STRIPE_API_TOKEN);
+            if(apiToken == null || apiToken.trim().isEmpty()) {
+                throw new IllegalStateException(
+                    "Please specify the "
+                    + Env.STRIPE_API_TOKEN
+                    + " Environment Variable!"
+                );
+            }
+            try {
+                Stripe.apiKey = apiToken;
+                final PaymentMethod detached = PaymentMethod.retrieve(
+                    this.identifier()
+                ).detach();
+                if(detached.getCustomer() == null) {
+                    deletedFromStripe = true;
+                }
+            } catch (final StripeException ex) {
+                throw new IllegalStateException(
+                    "StripeException when trying to delete PaymentMethod "
+                    + this.identifier() + " of Customer/Wallet "
+                    + this.wallet().identifier(),
+                    ex
+                );
+            }
+            if(deletedFromStripe) {
+                return this.storage.paymentMethods().remove(this);
+            } else {
+                throw new IllegalStateException(
+                    "Could not remove PaymentMethod because it was not "
+                    + "successfully removed from Stripe first!"
+                );
+            }
+        }
     }
 }
