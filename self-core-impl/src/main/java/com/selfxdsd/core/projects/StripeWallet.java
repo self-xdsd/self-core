@@ -34,6 +34,7 @@ import com.stripe.model.Customer;
 import com.stripe.model.PaymentIntent;
 import com.stripe.model.SetupIntent;
 import com.stripe.param.PaymentIntentCreateParams;
+import com.stripe.param.SetupIntentCreateParams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,8 +42,6 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -337,10 +336,13 @@ public final class StripeWallet implements Wallet {
             );
         }
         Stripe.apiKey = apiToken;
-        final Map<String, Object> params = new HashMap<>();
-        params.put("customer", this.identifier);
         try {
-            return SetupIntent.create(params);
+            return SetupIntent.create(
+                SetupIntentCreateParams.builder()
+                    .setCustomer(this.identifier)
+                    .setUsage(SetupIntentCreateParams.Usage.OFF_SESSION)
+                    .build()
+            );
         } catch (final StripeException ex) {
             LOG.error(
                 "StripeException when trying to create a "
