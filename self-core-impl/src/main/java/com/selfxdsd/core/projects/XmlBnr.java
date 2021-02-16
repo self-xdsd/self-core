@@ -47,7 +47,7 @@ import java.net.http.HttpResponse;
  * @checkstyle ReturnCount (200 lines)
  * @checkstyle IllegalCatch (200 lines)
  */
-final class XmlBnr implements Bnr {
+public final class XmlBnr implements Bnr {
 
     /**
      * Logger.
@@ -64,7 +64,7 @@ final class XmlBnr implements Bnr {
     /**
      * Ctor. Uses BNR's real API by default.
      */
-    XmlBnr() {
+    public XmlBnr() {
         this(URI.create("https://www.bnr.ro/nbrfxrates.xml"));
     }
 

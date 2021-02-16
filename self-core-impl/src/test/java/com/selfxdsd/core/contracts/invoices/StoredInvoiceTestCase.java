@@ -46,6 +46,9 @@ public final class StoredInvoiceTestCase {
             "transacetionId123",
             "mihai",
             "vlad",
+            "RO",
+            "RO",
+            BigDecimal.valueOf(487),
             Mockito.mock(Storage.class)
         );
         assertThat(invoice.invoiceId(), is(1));
@@ -65,6 +68,9 @@ public final class StoredInvoiceTestCase {
             "transacetionId123",
             "mihai",
             "vlad",
+            "RO",
+            "RO",
+            BigDecimal.valueOf(487),
             Mockito.mock(Storage.class)
         );
         assertThat(invoice.contract(), is(contract));
@@ -84,6 +90,9 @@ public final class StoredInvoiceTestCase {
             "transactionID",
             "mihai",
             "vlad",
+            "RO",
+            "RO",
+            BigDecimal.valueOf(487),
             storage
         );
         final InvoicedTasks all = Mockito.mock(InvoicedTasks.class);
@@ -122,6 +131,9 @@ public final class StoredInvoiceTestCase {
             "transactionID",
             "mihai",
             "vlad",
+            "RO",
+            "RO",
+            BigDecimal.valueOf(487),
             storage
         );
         final InvoicedTasks all = Mockito.mock(InvoicedTasks.class);
@@ -163,6 +175,9 @@ public final class StoredInvoiceTestCase {
             "transactionID",
             "mihai",
             "vlad",
+            "RO",
+            "RO",
+            BigDecimal.valueOf(487),
             storage
         );
         final InvoicedTasks all = Mockito.mock(InvoicedTasks.class);
@@ -204,6 +219,9 @@ public final class StoredInvoiceTestCase {
             "transactionID",
             "mihai",
             "vlad",
+            "RO",
+            "RO",
+            BigDecimal.valueOf(487),
             storage
         );
         final InvoicedTasks all = Mockito.mock(InvoicedTasks.class);
@@ -245,6 +263,9 @@ public final class StoredInvoiceTestCase {
             "transacetionId123",
             "mihai",
             "vlad",
+            "RO",
+            "RO",
+            BigDecimal.valueOf(487),
             Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(
@@ -268,6 +289,9 @@ public final class StoredInvoiceTestCase {
             "transactionId",
             "mihai",
             "vlad",
+            "RO",
+            "RO",
+            BigDecimal.valueOf(487),
             storage
         );
         MatcherAssert.assertThat(
@@ -290,6 +314,9 @@ public final class StoredInvoiceTestCase {
             "transactionId123",
             "mihai",
             "vlad",
+            "RO",
+            "RO",
+            BigDecimal.valueOf(487),
             mock(Storage.class)
         );
         MatcherAssert.assertThat(
@@ -321,6 +348,9 @@ public final class StoredInvoiceTestCase {
             "transacetionId123",
             "mihai",
             "vlad",
+            "RO",
+            "RO",
+            BigDecimal.valueOf(487),
             Mockito.mock(Storage.class)
         );
 
@@ -361,6 +391,9 @@ public final class StoredInvoiceTestCase {
             "transactionId123",
             "mihai",
             "vlad",
+            "RO",
+            "RO",
+            BigDecimal.valueOf(487),
             Mockito.mock(Storage.class)
         );
 
@@ -414,6 +447,9 @@ public final class StoredInvoiceTestCase {
             null,
             "mihai",
             "vlad",
+            "RO",
+            "RO",
+            BigDecimal.valueOf(487),
             storage
         );
 
@@ -449,6 +485,9 @@ public final class StoredInvoiceTestCase {
             "transacetionId123",
             "mihai",
             "vlad",
+            "RO",
+            "RO",
+            BigDecimal.valueOf(487),
             Mockito.mock(Storage.class)
         );
         final Invoice invoiceTwo = new StoredInvoice(
@@ -459,6 +498,9 @@ public final class StoredInvoiceTestCase {
             "transacetionId123",
             "mihai",
             "vlad",
+            "RO",
+            "RO",
+            BigDecimal.valueOf(487),
             Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(invoice, Matchers.equalTo(invoiceTwo));
@@ -477,6 +519,9 @@ public final class StoredInvoiceTestCase {
             "transacetionId123",
             "mihai",
             "vlad",
+            "RO",
+            "RO",
+            BigDecimal.valueOf(487),
             Mockito.mock(Storage.class)
         );
         final Invoice invoiceTwo = new StoredInvoice(
@@ -487,6 +532,9 @@ public final class StoredInvoiceTestCase {
             "transacetionId123",
             "mihai",
             "vlad",
+            "RO",
+            "RO",
+            BigDecimal.valueOf(487),
             Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(invoice.hashCode(),
@@ -508,11 +556,40 @@ public final class StoredInvoiceTestCase {
             "transacetionId123",
             "mihai",
             "vlad",
+            "RO",
+            "RO",
+            BigDecimal.valueOf(487),
             Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(
             invoice.billedBy(),
             Matchers.equalTo("mihai")
+        );
+    }
+
+    /**
+     * If the billedByCountry attribute is set in the constructor
+     * (not null and not empty), that's the value that should be
+     * returned.
+     */
+    @Test
+    public void returnsSetBilledByCountry() {
+        final Invoice invoice = new StoredInvoice(
+            1,
+            Mockito.mock(Contract.class),
+            LocalDateTime.now(),
+            LocalDateTime.now(),
+            "transacetionId123",
+            "mihai",
+            "vlad",
+            "BG",
+            "RO",
+            BigDecimal.valueOf(487),
+            Mockito.mock(Storage.class)
+        );
+        MatcherAssert.assertThat(
+            invoice.billedByCountry(),
+            Matchers.equalTo("BG")
         );
     }
 
@@ -531,11 +608,91 @@ public final class StoredInvoiceTestCase {
             "transacetionId123",
             "mihai",
             "vlad",
+            "RO",
+            "RO",
+            BigDecimal.valueOf(487),
             Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(
             invoice.billedTo(),
             Matchers.equalTo("vlad")
+        );
+    }
+
+    /**
+     * If the billedToCountry attribute is set in the constructor
+     * (not null and not empty), that's the value that should be
+     * returned.
+     */
+    @Test
+    public void returnsSetBilledToCountry() {
+        final Invoice invoice = new StoredInvoice(
+            1,
+            Mockito.mock(Contract.class),
+            LocalDateTime.now(),
+            LocalDateTime.now(),
+            "transacetionId123",
+            "mihai",
+            "vlad",
+            "RO",
+            "DE",
+            BigDecimal.valueOf(487),
+            Mockito.mock(Storage.class)
+        );
+        MatcherAssert.assertThat(
+            invoice.billedToCountry(),
+            Matchers.equalTo("DE")
+        );
+    }
+
+    /**
+     * If the eurToRon attribute is set in the constructor
+     * (not 0), that's the value that should be
+     * returned.
+     */
+    @Test
+    public void returnsSetEurToRon() {
+        final Invoice invoice = new StoredInvoice(
+            1,
+            Mockito.mock(Contract.class),
+            LocalDateTime.now(),
+            LocalDateTime.now(),
+            "transacetionId123",
+            "mihai",
+            "vlad",
+            "RO",
+            "DE",
+            BigDecimal.valueOf(300),
+            Mockito.mock(Storage.class)
+        );
+        MatcherAssert.assertThat(
+            invoice.eurToRon(),
+            Matchers.equalTo(BigDecimal.valueOf(300))
+        );
+    }
+
+    /**
+     * If the eurToRon attribute is NOT set in the constructor
+     * (value 0), then it will be read from BNR (via XmlBnr).
+     */
+    @Test
+    public void returnsBnrEurToRon() {
+        final Invoice invoice = new StoredInvoice(
+            1,
+            Mockito.mock(Contract.class),
+            LocalDateTime.now(),
+            LocalDateTime.now(),
+            "transacetionId123",
+            "mihai",
+            "vlad",
+            null,
+            null,
+            BigDecimal.valueOf(0),
+            Mockito.mock(Storage.class)
+        );
+        MatcherAssert.assertThat(
+            invoice.eurToRon(),
+            Matchers.greaterThanOrEqualTo(BigDecimal.valueOf(450))
         );
     }
 
@@ -560,11 +717,46 @@ public final class StoredInvoiceTestCase {
             "transacetionId123",
             null,
             "vlad",
+            "RO",
+            "RO",
+            BigDecimal.valueOf(487),
             Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(
             invoice.billedBy(),
             Matchers.equalTo("Contributor LLC")
+        );
+    }
+
+    /**
+     * If the billedByCountry is not given as ctor parameter (set to null),
+     * then it should be read from the Contract.
+     */
+    @Test
+    public void returnsContractBilledByCountry() {
+        final BillingInfo info = Mockito.mock(BillingInfo.class);
+        Mockito.when(info.country()).thenReturn("UK");
+        final Contributor contributor = Mockito.mock(Contributor.class);
+        Mockito.when(contributor.billingInfo()).thenReturn(info);
+        final Contract contract = Mockito.mock(Contract.class);
+        Mockito.when(contract.contributor()).thenReturn(contributor);
+
+        final Invoice invoice = new StoredInvoice(
+            1,
+            contract,
+            LocalDateTime.now(),
+            LocalDateTime.now(),
+            "transacetionId123",
+            null,
+            "vlad",
+            null,
+            null,
+            BigDecimal.valueOf(0),
+            Mockito.mock(Storage.class)
+        );
+        MatcherAssert.assertThat(
+            invoice.billedByCountry(),
+            Matchers.equalTo("UK")
         );
     }
 
@@ -589,11 +781,46 @@ public final class StoredInvoiceTestCase {
             "transacetionId123",
             "mihai",
             null,
+            "RO",
+            "RO",
+            BigDecimal.valueOf(487),
             Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(
             invoice.billedTo(),
             Matchers.equalTo("Project LLC")
+        );
+    }
+
+    /**
+     * If the billedToCountry is not given as ctor parameter (set to null),
+     * then it should be read from the Contract.
+     */
+    @Test
+    public void returnsContractBilledToCountry() {
+        final BillingInfo info = Mockito.mock(BillingInfo.class);
+        Mockito.when(info.country()).thenReturn("DK");
+        final Project project = Mockito.mock(Project.class);
+        Mockito.when(project.billingInfo()).thenReturn(info);
+        final Contract contract = Mockito.mock(Contract.class);
+        Mockito.when(contract.project()).thenReturn(project);
+
+        final Invoice invoice = new StoredInvoice(
+            1,
+            contract,
+            LocalDateTime.now(),
+            LocalDateTime.now(),
+            "transacetionId123",
+            "mihai",
+            null,
+            null,
+            null,
+            BigDecimal.valueOf(0),
+            Mockito.mock(Storage.class)
+        );
+        MatcherAssert.assertThat(
+            invoice.billedToCountry(),
+            Matchers.equalTo("DK")
         );
     }
 
@@ -616,6 +843,9 @@ public final class StoredInvoiceTestCase {
             null,
             "mihai",
             "vlad",
+            "RO",
+            "RO",
+            BigDecimal.valueOf(487),
             storage
         );
         MatcherAssert.assertThat(
@@ -644,6 +874,9 @@ public final class StoredInvoiceTestCase {
             "fake_payment_123",
             "mihai",
             "vlad",
+            "RO",
+            "RO",
+            BigDecimal.valueOf(487),
             storage
         );
         MatcherAssert.assertThat(
@@ -678,6 +911,9 @@ public final class StoredInvoiceTestCase {
             transactionId,
             "mihai",
             "vlad",
+            "RO",
+            "RO",
+            BigDecimal.valueOf(487),
             storage
         );
         MatcherAssert.assertThat(
@@ -733,6 +969,9 @@ public final class StoredInvoiceTestCase {
             "transaction123",
             "mihai",
             "contributro",
+            "RO",
+            "RO",
+            BigDecimal.valueOf(487),
             storage
         );
         storage

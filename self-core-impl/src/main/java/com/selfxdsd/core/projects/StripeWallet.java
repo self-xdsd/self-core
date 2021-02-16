@@ -220,9 +220,10 @@ public final class StripeWallet implements Wallet {
                 );
             }
 
+            final BillingInfo contributorBilling = payoutMethod.billingInfo();
             final BigDecimal vat = this.calculateVat(
                 invoice.commission(),
-                payoutMethod.billingInfo()
+                contributorBilling
             );
             final PaymentIntent paymentIntent = PaymentIntent
                 .create(
@@ -256,6 +257,7 @@ public final class StripeWallet implements Wallet {
                 final LocalDateTime paymentDate = LocalDateTime
                     .ofEpochSecond(paymentIntent.getCreated(),
                         0, OffsetDateTime.now().getOffset());
+                final BigDecimal eurToRon = new XmlBnr().euroToRon();
                 this.storage.invoices()
                     .registerAsPaid(
                         new StoredInvoice(
@@ -266,10 +268,13 @@ public final class StripeWallet implements Wallet {
                             paymentIntent.getId(),
                             invoice.billedBy(),
                             invoice.billedTo(),
+                            contributorBilling.country(),
+                            contract.project().billingInfo().country(),
+                            eurToRon,
                             this.storage
                         ),
                         vat,
-                        new XmlBnr().euroToRon()
+                        eurToRon
                     );
             } else {
                 LOG.error("[STRIPE] PaymentIntent status: " + status);

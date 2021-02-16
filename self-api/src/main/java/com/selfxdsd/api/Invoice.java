@@ -67,6 +67,19 @@ public interface Invoice {
     String billedTo();
 
     /**
+     * Country of the Contributor (who billed this Invoice).
+     * @return String.
+     */
+    String billedByCountry();
+
+    /**
+     * Country of the Client (who received this Invoice).
+     * Country of the Client (who received this Invoice).
+     * @return String.
+     */
+    String billedToCountry();
+
+    /**
      * Tasked invoiced here.
      * @return InvoicedTasks.
      */
@@ -90,6 +103,12 @@ public interface Invoice {
      * @return BigDecimal.
      */
     BigDecimal commission();
+
+    /**
+     * EUR to RON exchange rage (e.g. if 487, then it means 1 EUR = 4,87 RON).
+     * @return BigDecimal.
+     */
+    BigDecimal eurToRon();
 
     /**
      * An invoice is active until payment is done.

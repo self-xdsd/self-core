@@ -143,6 +143,9 @@ public final class FakeWallet implements Wallet {
                     "fake_payment_" + uuid,
                     invoice.billedBy(),
                     invoice.billedTo(),
+                    "FK Country",
+                    "FK Country",
+                    BigDecimal.valueOf(0),
                     this.storage
                 ),
                 BigDecimal.valueOf(0),

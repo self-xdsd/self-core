@@ -2,6 +2,7 @@ package com.selfxdsd.core.contracts.invoices;
 
 import com.selfxdsd.api.*;
 import com.selfxdsd.api.storage.Storage;
+import com.selfxdsd.core.projects.XmlBnr;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentCatalog;
 import org.apache.pdfbox.pdmodel.interactive.form.PDAcroForm;
@@ -65,6 +66,21 @@ public final class StoredInvoice implements Invoice {
     private final String billedTo;
 
     /**
+     * Country of the Contributor (who emitted this Invoice).
+     */
+    private final String billedByCountry;
+
+    /**
+     * Country of the Client (who received this Invoice).
+     */
+    private final String billedToCountry;
+
+    /**
+     * EUR to RON exchange rate (e.g. if 487, it means 1 EUR = 4,87 RON).
+     */
+    private final BigDecimal eurToRon;
+
+    /**
      * Self storage context.
      */
     private final Storage storage;
@@ -78,7 +94,11 @@ public final class StoredInvoice implements Invoice {
      * @param transactionId The payment's transaction ID.
      * @param billedBy Who emitted the Invoice.
      * @param billedTo Who pays it.
+     * @param billedByCountry Country of the Contributor.
+     * @param billedToCountry Country of the Client.
+     * @param eurToRon EUR to RON exchange rate.
      * @param storage Self storage context.
+     * @checkstyle ParameterNumber (50 lines)
      */
     public StoredInvoice(
         final int id,
@@ -88,6 +108,9 @@ public final class StoredInvoice implements Invoice {
         final String transactionId,
         final String billedBy,
         final String billedTo,
+        final String billedByCountry,
+        final String billedToCountry,
+        final BigDecimal eurToRon,
         final Storage storage
     ) {
         this.id = id;
@@ -97,6 +120,9 @@ public final class StoredInvoice implements Invoice {
         this.transactionId = transactionId;
         this.billedBy = billedBy;
         this.billedTo = billedTo;
+        this.billedByCountry = billedByCountry;
+        this.billedToCountry = billedToCountry;
+        this.eurToRon = eurToRon;
         this.storage = storage;
     }
 
@@ -172,6 +198,30 @@ public final class StoredInvoice implements Invoice {
             billedTo = this.contract.project().billingInfo().toString();
         }
         return billedTo;
+    }
+
+    @Override
+    public String billedByCountry() {
+        final String billedByCountry;
+        if(this.billedByCountry != null && !this.billedByCountry.isEmpty()) {
+            billedByCountry = this.billedByCountry;
+        } else {
+            billedByCountry = this.contract.contributor().billingInfo()
+                .country();
+        }
+        return billedByCountry;
+    }
+
+    @Override
+    public String billedToCountry() {
+        final String billedToCountry;
+        if(this.billedToCountry != null && !this.billedToCountry.isEmpty()) {
+            billedToCountry = this.billedToCountry;
+        } else {
+            billedToCountry = this.contract.project().billingInfo().country();
+        }
+        return billedToCountry;
+
     }
 
     @Override
@@ -307,6 +357,17 @@ public final class StoredInvoice implements Invoice {
             commission = commission.add(task.commission());
         }
         return commission;
+    }
+
+    @Override
+    public BigDecimal eurToRon() {
+        final BigDecimal eurToRon;
+        if(!this.eurToRon.equals(BigDecimal.valueOf(0))) {
+            eurToRon = this.eurToRon;
+        } else {
+            eurToRon = new XmlBnr().euroToRon();
+        }
+        return eurToRon;
     }
 
     @Override
