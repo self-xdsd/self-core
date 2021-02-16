@@ -90,6 +90,13 @@ public final class StripeWalletITCase {
                 .thenReturn(BigDecimal.valueOf(108 * 100));
 
             final Contract contract = Mockito.mock(Contract.class);
+
+            final Project project = Mockito.mock(Project.class);
+            final BillingInfo projectInfo = Mockito.mock(BillingInfo.class);
+            Mockito.when(projectInfo.country()).thenReturn("BG");
+            Mockito.when(project.billingInfo()).thenReturn(projectInfo);
+            Mockito.when(contract.project()).thenReturn(project);
+
             final Contributor contributor = Mockito.mock(Contributor.class);
             Mockito.when(contract.contributor()).thenReturn(contributor);
             Mockito.when(invoice.contract()).thenReturn(contract);
@@ -115,7 +122,6 @@ public final class StripeWalletITCase {
             final Invoices invoices = Mockito.mock(Invoices.class);
             Mockito.when(storage.invoices()).thenReturn(invoices);
 
-            final Project project = Mockito.mock(Project.class);
             final Wallets allWallets = Mockito.mock(Wallets.class);
             final Wallets ofProject = Mockito.mock(Wallets.class);
 
