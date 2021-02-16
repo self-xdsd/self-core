@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.NumberFormat;
 import java.time.LocalDateTime;
 import java.util.Locale;
@@ -24,6 +25,7 @@ import java.util.Locale;
  * @since 0.0.3
  * @checkstyle ExecutableStatementCount (500 lines)
  * @checkstyle TrailingComment (500 lines)
+ * @checkstyle JavaNCSS (500 lines)
  * @todo #826:60min Modify the PDF template and the code in toPdf()
  *  such that more tasks are written on more pages. At the moment
  *  only 40 tasks are written to the 1-page PDF.
@@ -253,6 +255,37 @@ public final class StoredInvoice implements Invoice {
 
     @Override
     public void toPdf(final OutputStream out) throws IOException {
+        final String billedByCountry = this.billedByCountry();
+        final String billedToCountry = this.billedToCountry();
+
+        final String totalAmountText;
+        final String exRateText;
+        if("RO".equalsIgnoreCase(billedByCountry)
+            && "RO".equalsIgnoreCase(billedToCountry)) {
+            final BigDecimal totalAmount = this.totalAmount();
+            final BigDecimal exRate = this.eurToRon();
+            totalAmountText = NumberFormat
+                .getCurrencyInstance(Locale.GERMANY)
+                .format(totalAmount.divide(BigDecimal.valueOf(100)))
+                + " / "
+                + this.convertEuroToRon(totalAmount, exRate).toString()
+                    .replace('.', ',')
+                + " RON";
+
+            exRateText = "BNR Exchange Rate: 1 EUR = " + exRate.divide(
+                BigDecimal.valueOf(100),
+            2,
+                RoundingMode.HALF_UP
+            ).toString().replace('.', ',') + " RON";
+        } else {
+            totalAmountText = NumberFormat
+                .getCurrencyInstance(Locale.GERMANY)
+                .format(
+                    this.totalAmount()
+                        .divide(BigDecimal.valueOf(100))
+                );
+            exRateText = "";
+        }
         final PDDocument doc = PDDocument.load(
             this.getResourceAsFile("invoice_template.pdf")
         );
@@ -280,14 +313,9 @@ public final class StoredInvoice implements Invoice {
                 )
         );
 
-        acroForm.getField("totalDue").setValue(
-            NumberFormat
-                .getCurrencyInstance(Locale.GERMANY)
-                .format(
-                    this.totalAmount()
-                        .divide(BigDecimal.valueOf(100))
-                )
-        );
+        acroForm.getField("totalDue").setValue(totalAmountText);
+        acroForm.getField("exchangeRate").setValue(exRateText);
+
         if(this.isPaid()) {
             acroForm.getField("status").setValue("Paid");
         } else {
@@ -405,5 +433,22 @@ public final class StoredInvoice implements Invoice {
             }
         }
         return tempFile;
+    }
+
+    /**
+     * Convert Euro to RON.
+     * @param euro Value in EUR.
+     * @param rate EUR to RON Exchange Rate.
+     * @return Value in RON.
+     */
+    private BigDecimal convertEuroToRon(
+        final BigDecimal euro,
+        final BigDecimal rate
+    ) {
+        return euro.multiply(rate).divide(
+            BigDecimal.valueOf(10000),
+            2,
+            RoundingMode.HALF_UP
+        );
     }
 }
