@@ -61,10 +61,11 @@ public final class WalletPaymentMethods implements PaymentMethods {
      * @param paymentMethods Payment methods for this Wallet.
      * @param storage Storage.
      */
-    public WalletPaymentMethods(final Wallet wallet,
-                                final
-                                Supplier<Stream<PaymentMethod>> paymentMethods,
-                                final Storage storage) {
+    public WalletPaymentMethods(
+        final Wallet wallet,
+        final Supplier<Stream<PaymentMethod>> paymentMethods,
+        final Storage storage
+    ) {
         this.wallet = wallet;
         this.paymentMethods = paymentMethods;
         this.storage = storage;
@@ -114,6 +115,15 @@ public final class WalletPaymentMethods implements PaymentMethods {
                 + "method because it's part of different wallet.");
         }
         return this.storage.paymentMethods().activate(paymentMethod);
+    }
+
+    @Override
+    public PaymentMethod deactivate(final PaymentMethod paymentMethod) {
+        if(!paymentMethod.wallet().equals(this.wallet)){
+            throw new PaymentMethodsException("Can't deactivate this payment "
+                + "method because it's part of different wallet.");
+        }
+        return this.storage.paymentMethods().deactivate(paymentMethod);
     }
 
     @Override

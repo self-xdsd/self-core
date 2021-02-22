@@ -68,4 +68,10 @@ public interface PaymentMethods extends Iterable<PaymentMethod> {
      */
     PaymentMethod activate(final PaymentMethod paymentMethod);
 
+    /**
+     * Deactivate the given PaymentMethod.
+     * @param paymentMethod PaymentMethod to be deactivated.
+     * @return Deactivated payment method.
+     */
+    PaymentMethod deactivate(final PaymentMethod paymentMethod);
 }

@@ -250,4 +250,50 @@ public final class WalletPaymentMethodsTestCase {
 
         pms.activate(pmeth);
     }
+
+    /**
+     * Can deactivate a PaymentMethod.
+     */
+    @Test
+    public void canDeactivatePaymentMethod() {
+        final Storage storage = Mockito.mock(Storage.class);
+        final PaymentMethods all = Mockito.mock(PaymentMethods.class);
+        Mockito.when(storage.paymentMethods()).thenReturn(all);
+
+        final Wallet wallet = Mockito.mock(Wallet.class);
+        final PaymentMethod pmeth = Mockito.mock(PaymentMethod.class);
+        Mockito.when(pmeth.wallet()).thenReturn(wallet);
+
+        final PaymentMethods pms = new WalletPaymentMethods(
+            wallet,
+            () -> Stream.of(pmeth),
+            storage
+        );
+
+        pms.deactivate(pmeth);
+
+        Mockito.verify(all).deactivate(pmeth);
+    }
+
+    /**
+     * Complains when deactivate PaymentMethod if is attached to other Wallet.
+     */
+    @Test(expected = PaymentMethodsException.class)
+    public void complainsWhenDeactivatePaymentMethodIfAttachedToOtherWallet() {
+        final Storage storage = Mockito.mock(Storage.class);
+        final PaymentMethods all = Mockito.mock(PaymentMethods.class);
+        Mockito.when(storage.paymentMethods()).thenReturn(all);
+
+        final Wallet wallet = Mockito.mock(Wallet.class);
+        final PaymentMethod pmeth = Mockito.mock(PaymentMethod.class);
+        Mockito.when(pmeth.wallet()).thenReturn(Mockito.mock(Wallet.class));
+
+        final PaymentMethods pms = new WalletPaymentMethods(
+            wallet,
+            Stream::empty,
+            storage
+        );
+
+        pms.deactivate(pmeth);
+    }
 }

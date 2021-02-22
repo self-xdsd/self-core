@@ -224,6 +224,12 @@ public final class FakeWallet implements Wallet {
             }
 
             @Override
+            public PaymentMethod deactivate(final PaymentMethod paymentMethod) {
+                throw new PaymentMethodsException("Can't deactivate "
+                    + "a FakeWallet payment method.");
+            }
+
+            @Override
             public Iterator<PaymentMethod> iterator() {
                 return Collections.emptyIterator();
             }
