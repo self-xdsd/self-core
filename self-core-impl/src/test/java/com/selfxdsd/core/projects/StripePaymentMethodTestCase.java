@@ -102,6 +102,32 @@ public final class StripePaymentMethodTestCase {
     }
 
     /**
+     * StoredPaymentMethod can be deactivated.
+     */
+    @Test
+    public void canBeDeactivated(){
+        final Storage storage = Mockito.mock(Storage.class);
+
+        final PaymentMethods paymentMethods = Mockito
+            .mock(PaymentMethods.class);
+        Mockito.when(storage.paymentMethods()).thenReturn(paymentMethods);
+
+        final PaymentMethod paymentMethod = new StripePaymentMethod(
+            storage,
+            "fake_id_132",
+            Mockito.mock(Wallet.class),
+            false);
+
+        Mockito.when(paymentMethods.deactivate(paymentMethod))
+            .thenReturn(paymentMethod);
+
+        final PaymentMethod deactivated = paymentMethod.deactivate();
+        MatcherAssert.assertThat(deactivated, Matchers.equalTo(paymentMethod));
+        MatcherAssert.assertThat(deactivated.hashCode(),
+            Matchers.equalTo(paymentMethod.hashCode()));
+    }
+
+    /**
      * StoredPaymentMethod respects equals and hash code contracts.
      */
     @Test

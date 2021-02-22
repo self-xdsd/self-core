@@ -33,6 +33,10 @@ import java.util.Objects;
  * @author criske
  * @version $Id$
  * @since 0.0.26
+ * @todo #1002:30min Method activate(PaymentMethod) here should not call method
+ *  ofWallet. It should simply call this.storage.paymentMethods()
+ *  .activate(this). Also, method WalletPaymetMethods.activate(...) should call
+ *  PaymentMethod.activate().
  */
 public abstract class StoredPaymentMethod implements PaymentMethod {
 
@@ -93,6 +97,11 @@ public abstract class StoredPaymentMethod implements PaymentMethod {
     public final PaymentMethod activate() {
         return this.storage.paymentMethods().ofWallet(wallet)
             .activate(this);
+    }
+
+    @Override
+    public final PaymentMethod deactivate() {
+        return this.storage.paymentMethods().deactivate(this);
     }
 
     @Override
