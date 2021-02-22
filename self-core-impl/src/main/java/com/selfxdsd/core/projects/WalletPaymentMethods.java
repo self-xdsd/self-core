@@ -114,7 +114,7 @@ public final class WalletPaymentMethods implements PaymentMethods {
             throw new PaymentMethodsException("Can't activate this payment "
                 + "method because it's part of different wallet.");
         }
-        return this.storage.paymentMethods().activate(paymentMethod);
+        return paymentMethod.activate();
     }
 
     @Override

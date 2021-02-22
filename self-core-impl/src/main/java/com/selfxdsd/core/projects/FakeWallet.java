@@ -220,7 +220,7 @@ public final class FakeWallet implements Wallet {
                 final PaymentMethod paymentMethod
             ) {
                 throw new PaymentMethodsException("Can't activate "
-                    + "a missing wallet payment method.");
+                    + "a FakeWallet payment method.");
             }
 
             @Override
