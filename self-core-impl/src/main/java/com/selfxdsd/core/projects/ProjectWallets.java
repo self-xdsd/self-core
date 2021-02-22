@@ -158,7 +158,7 @@ public final class ProjectWallets implements Wallets {
     public boolean remove(final Wallet wallet) {
         if(this.project.equals(wallet.project())) {
             this.wallets.remove(wallet);
-            return this.storage.wallets().remove(wallet);
+            return wallet.remove();
         }
         throw new IllegalStateException(
             "These are the wallets of Project " + project.repoFullName()

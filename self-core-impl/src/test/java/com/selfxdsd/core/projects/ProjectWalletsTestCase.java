@@ -316,17 +316,13 @@ public final class ProjectWalletsTestCase {
     @Test
     public void removeWalletWorks(){
         final Wallet wallet = Mockito.mock(Wallet.class);
-
-        final Wallets all = Mockito.mock(Wallets.class);
-        Mockito.when(all.remove(wallet)).thenReturn(true);
-        final Storage storage = Mockito.mock(Storage.class);
-        Mockito.when(storage.wallets()).thenReturn(all);
+        Mockito.when(wallet.remove()).thenReturn(Boolean.TRUE);
 
         final Project project = Mockito.mock(Project.class);
         final Wallets wallets = new ProjectWallets(
             project,
             List.of(wallet, Mockito.mock(Wallet.class)),
-            storage
+            Mockito.mock(Storage.class)
         );
         Mockito.when(wallet.project()).thenReturn(project);
 
@@ -342,7 +338,7 @@ public final class ProjectWalletsTestCase {
             wallets,
             Matchers.iterableWithSize(1)
         );
-        Mockito.verify(all, Mockito.times(1)).remove(wallet);
+        Mockito.verify(wallet, Mockito.times(1)).remove();
     }
 
     /**
