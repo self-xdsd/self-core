@@ -26,8 +26,10 @@ import com.selfxdsd.api.*;
 import com.selfxdsd.api.exceptions.InvoiceException;
 import com.selfxdsd.api.exceptions.WalletPaymentException;
 import com.selfxdsd.api.storage.Storage;
+import com.selfxdsd.core.Env;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
+import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -333,28 +335,30 @@ public final class StripeWalletTestCase {
     }
 
     /**
-     * StripeWallet can remove itself.
+     * StripeWallet.remove() complains if the Stripe API Token is missing.
      */
     @Test
-    public void removesItself() {
-        final Wallets all = Mockito.mock(Wallets.class);
-        final Storage storage = Mockito.mock(Storage.class);
-        Mockito.when(storage.wallets()).thenReturn(all);
-
+    public void removeComplainsOnMissingToken() {
         final Wallet stripe = new StripeWallet(
-            storage,
+            Mockito.mock(Storage.class),
             Mockito.mock(Project.class),
             BigDecimal.valueOf(1000),
             "123StripeID",
             Boolean.TRUE
         );
 
-        Mockito.when(all.remove(stripe)).thenReturn(true);
-
-        MatcherAssert.assertThat(
-            stripe.remove(),
-            Matchers.is(Boolean.TRUE)
-        );
-        Mockito.verify(all, Mockito.times(1)).remove(stripe);
+        try {
+            stripe.remove();
+            Assert.fail("ISE was expected!");
+        } catch (final IllegalStateException ex) {
+            MatcherAssert.assertThat(
+                ex.getMessage(),
+                Matchers.equalTo(
+                    "Please specify the "
+                    + Env.STRIPE_API_TOKEN
+                    + " Environment Variable!"
+                )
+            );
+        }
     }
 }
