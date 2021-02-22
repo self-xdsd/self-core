@@ -85,4 +85,10 @@ public interface Wallets extends Iterable<Wallet> {
      */
     Wallet updateCash(final Wallet wallet, final BigDecimal cash);
 
+    /**
+     * Removes a Wallet.
+     * @param wallet Wallet to be removed.
+     * @return True if removed, false otherwise.
+     */
+    boolean remove(final Wallet wallet);
 }

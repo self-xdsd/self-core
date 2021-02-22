@@ -309,4 +309,53 @@ public final class ProjectWalletsTestCase {
         Mockito.when(wallet.project()).thenReturn(Mockito.mock(Project.class));
         wallets.updateCash(wallet, BigDecimal.TEN);
     }
+
+    /**
+     * ProjectWallets.remove(...) works.
+     */
+    @Test
+    public void removeWalletWorks(){
+        final Wallet wallet = Mockito.mock(Wallet.class);
+        Mockito.when(wallet.remove()).thenReturn(Boolean.TRUE);
+
+        final Project project = Mockito.mock(Project.class);
+        final Wallets wallets = new ProjectWallets(
+            project,
+            List.of(wallet, Mockito.mock(Wallet.class)),
+            Mockito.mock(Storage.class)
+        );
+        Mockito.when(wallet.project()).thenReturn(project);
+
+        MatcherAssert.assertThat(
+            wallets,
+            Matchers.iterableWithSize(2)
+        );
+        MatcherAssert.assertThat(
+            wallets.remove(wallet),
+            Matchers.is(true)
+        );
+        MatcherAssert.assertThat(
+            wallets,
+            Matchers.iterableWithSize(1)
+        );
+        Mockito.verify(wallet, Mockito.times(1)).remove();
+    }
+
+    /**
+     * ProjectWallets.remove(...) complains if the given Wallet
+     * belongs to another project.
+     */
+    @Test(expected = IllegalStateException.class)
+    public void complainsWhenRemoveWallet(){
+        final Storage storage = Mockito.mock(Storage.class);
+        final Project project = Mockito.mock(Project.class);
+        final Wallet wallet = Mockito.mock(Wallet.class);
+        final Wallets wallets = new ProjectWallets(
+            project,
+            List.of(Mockito.mock(Wallet.class)),
+            storage
+        );
+        Mockito.when(wallet.project()).thenReturn(Mockito.mock(Project.class));
+        wallets.remove(wallet);
+    }
 }
