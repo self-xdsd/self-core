@@ -57,7 +57,7 @@ public interface PaymentMethod {
     PaymentMethod activate();
 
     /**
-     * Dectivates this PaymentMethod.
+     * Deactivates this PaymentMethod.
      * @return PaymentMethod
      */
     PaymentMethod deactivate();

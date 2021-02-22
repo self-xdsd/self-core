@@ -95,8 +95,7 @@ public abstract class StoredPaymentMethod implements PaymentMethod {
 
     @Override
     public final PaymentMethod activate() {
-        return this.storage.paymentMethods().ofWallet(wallet)
-            .activate(this);
+        return this.storage.paymentMethods().activate(this);
     }
 
     @Override

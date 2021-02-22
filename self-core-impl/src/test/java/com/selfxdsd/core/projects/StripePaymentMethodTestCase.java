@@ -79,12 +79,9 @@ public final class StripePaymentMethodTestCase {
         );
         final Storage storage = Mockito.mock(Storage.class);
 
-        final PaymentMethods paymentMethods = Mockito
+        final PaymentMethods all = Mockito
             .mock(PaymentMethods.class);
-        final PaymentMethods ofWallet = Mockito
-            .mock(PaymentMethods.class);
-        Mockito.when(storage.paymentMethods()).thenReturn(paymentMethods);
-        Mockito.when(paymentMethods.ofWallet(wallet)).thenReturn(ofWallet);
+        Mockito.when(storage.paymentMethods()).thenReturn(all);
 
         final PaymentMethod paymentMethod = new StripePaymentMethod(
             storage,
@@ -92,7 +89,7 @@ public final class StripePaymentMethodTestCase {
             wallet,
             true);
 
-        Mockito.when(ofWallet.activate(paymentMethod))
+        Mockito.when(all.activate(paymentMethod))
             .thenReturn(paymentMethod);
 
         final PaymentMethod activated = paymentMethod.activate();
@@ -108,9 +105,9 @@ public final class StripePaymentMethodTestCase {
     public void canBeDeactivated(){
         final Storage storage = Mockito.mock(Storage.class);
 
-        final PaymentMethods paymentMethods = Mockito
+        final PaymentMethods all = Mockito
             .mock(PaymentMethods.class);
-        Mockito.when(storage.paymentMethods()).thenReturn(paymentMethods);
+        Mockito.when(storage.paymentMethods()).thenReturn(all);
 
         final PaymentMethod paymentMethod = new StripePaymentMethod(
             storage,
@@ -118,7 +115,7 @@ public final class StripePaymentMethodTestCase {
             Mockito.mock(Wallet.class),
             false);
 
-        Mockito.when(paymentMethods.deactivate(paymentMethod))
+        Mockito.when(all.deactivate(paymentMethod))
             .thenReturn(paymentMethod);
 
         final PaymentMethod deactivated = paymentMethod.deactivate();
