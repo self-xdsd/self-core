@@ -50,8 +50,6 @@ import java.util.Objects;
  * @version $Id$
  * @since 0.0.27
  * @checkstyle ExecutableStatementCount (1000 lines)
- * @todo #1004:60min Method remove() in this class should remove the wallet
- *  (Customer) from Stripe before removing it from our Storage.
  */
 public final class StripeWallet implements Wallet {
 
@@ -397,7 +395,36 @@ public final class StripeWallet implements Wallet {
 
     @Override
     public boolean remove() {
-        return this.storage.wallets().remove(this);
+        final String apiToken = System.getenv(Env.STRIPE_API_TOKEN);
+        if(apiToken == null || apiToken.trim().isEmpty()) {
+            throw new IllegalStateException(
+                "Please specify the "
+                + Env.STRIPE_API_TOKEN
+                + " Environment Variable!"
+            );
+        }
+        Stripe.apiKey = apiToken;
+        try {
+            final boolean deleted;
+            final Customer removed = Customer.retrieve(this.identifier)
+                .delete();
+            if(removed.getDeleted()) {
+                deleted = this.storage.wallets().remove(this);
+            } else {
+                deleted = false;
+            }
+            return deleted;
+        } catch (final StripeException ex) {
+            LOG.error(
+                "StripeException when trying to delete "
+                + "the Wallet (Customer) " + this.identifier
+            );
+            throw new IllegalStateException(
+                "StripeException when trying to delete "
+                + "the Wallet (Customer) " + this.identifier,
+                ex
+            );
+        }
     }
 
     @Override
