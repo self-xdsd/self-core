@@ -149,8 +149,21 @@ public final class ProjectWallets implements Wallets {
         }
         throw new IllegalStateException(
             "These are the wallets of Project " + project.repoFullName()
-                + " at " + project.provider() + ". You update cash for a Wallet"
-                + " belonging to another Project here."
+            + " at " + project.provider() + ". You update cash for a Wallet"
+            + " belonging to another Project here."
+        );
+    }
+
+    @Override
+    public boolean remove(final Wallet wallet) {
+        if(this.project.equals(wallet.project())) {
+            this.wallets.remove(wallet);
+            return this.storage.wallets().remove(wallet);
+        }
+        throw new IllegalStateException(
+            "These are the wallets of Project " + project.repoFullName()
+            + " at " + project.provider() + ". You cannot remove a Wallet "
+            + "belonging to another Project here."
         );
     }
 
