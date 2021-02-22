@@ -96,6 +96,11 @@ public abstract class StoredPaymentMethod implements PaymentMethod {
     }
 
     @Override
+    public final PaymentMethod deactivate() {
+        return this.storage.paymentMethods().deactivate(this);
+    }
+
+    @Override
     public final boolean equals(final Object obj) {
         if(this == obj){
             return true;

@@ -51,10 +51,16 @@ public interface PaymentMethod {
     boolean active();
 
     /**
-     * Activates this payment PaymentMethod.
+     * Activates this PaymentMethod.
      * @return PaymentMethod
      */
     PaymentMethod activate();
+
+    /**
+     * Dectivates this PaymentMethod.
+     * @return PaymentMethod
+     */
+    PaymentMethod deactivate();
 
     /**
      * Get the whole PaymentMethod as JSON.
