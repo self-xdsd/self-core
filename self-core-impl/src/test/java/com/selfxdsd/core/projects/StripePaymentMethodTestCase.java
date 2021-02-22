@@ -228,6 +228,11 @@ public final class StripePaymentMethodTestCase {
             }
 
             @Override
+            public boolean remove() {
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
             public int hashCode() {
                 return Objects.hash(type, repoFullName, provider);
             }

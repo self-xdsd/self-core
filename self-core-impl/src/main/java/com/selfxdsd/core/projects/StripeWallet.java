@@ -50,6 +50,8 @@ import java.util.Objects;
  * @version $Id$
  * @since 0.0.27
  * @checkstyle ExecutableStatementCount (1000 lines)
+ * @todo #1004:60min Method remove() in this class should remove the wallet
+ *  (Customer) from Stripe before removing it from our Storage.
  */
 public final class StripeWallet implements Wallet {
 
@@ -391,6 +393,11 @@ public final class StripeWallet implements Wallet {
                 ex
             );
         }
+    }
+
+    @Override
+    public boolean remove() {
+        return this.storage.wallets().remove(this);
     }
 
     @Override

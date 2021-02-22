@@ -331,4 +331,30 @@ public final class StripeWalletTestCase {
 
         stripe.pay(invoice);
     }
+
+    /**
+     * StripeWallet can remove itself.
+     */
+    @Test
+    public void removesItself() {
+        final Wallets all = Mockito.mock(Wallets.class);
+        final Storage storage = Mockito.mock(Storage.class);
+        Mockito.when(storage.wallets()).thenReturn(all);
+
+        final Wallet stripe = new StripeWallet(
+            storage,
+            Mockito.mock(Project.class),
+            BigDecimal.valueOf(1000),
+            "123StripeID",
+            Boolean.TRUE
+        );
+
+        Mockito.when(all.remove(stripe)).thenReturn(true);
+
+        MatcherAssert.assertThat(
+            stripe.remove(),
+            Matchers.is(Boolean.TRUE)
+        );
+        Mockito.verify(all, Mockito.times(1)).remove(stripe);
+    }
 }

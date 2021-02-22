@@ -473,4 +473,29 @@ public final class FakeWalletTestCase {
 
     }
 
+    /**
+     * FakeWallet can remove itself.
+     */
+    @Test
+    public void removesItself() {
+        final Wallets all = Mockito.mock(Wallets.class);
+        final Storage storage = Mockito.mock(Storage.class);
+        Mockito.when(storage.wallets()).thenReturn(all);
+
+        final Wallet fake = new FakeWallet(
+            storage,
+            Mockito.mock(Project.class),
+            BigDecimal.valueOf(1000),
+            "123FakeID",
+            Boolean.TRUE
+        );
+
+        Mockito.when(all.remove(fake)).thenReturn(true);
+
+        MatcherAssert.assertThat(
+            fake.remove(),
+            Matchers.is(Boolean.TRUE)
+        );
+        Mockito.verify(all, Mockito.times(1)).remove(fake);
+    }
 }

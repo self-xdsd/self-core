@@ -308,6 +308,11 @@ public final class FakeWallet implements Wallet {
     }
 
     @Override
+    public boolean remove() {
+        return this.storage.wallets().remove(this);
+    }
+
+    @Override
     public boolean equals(final Object other) {
         boolean equals;
         if (this == other) {

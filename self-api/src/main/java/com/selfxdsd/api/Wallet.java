@@ -120,6 +120,11 @@ public interface Wallet {
     BillingInfo billingInfo();
 
     /**
+     * Remove this Wallet.
+     * @return True if removed, false otherwise.
+     */
+    boolean remove();
+    /**
      * Possible wallet types.
      */
     class Type {
