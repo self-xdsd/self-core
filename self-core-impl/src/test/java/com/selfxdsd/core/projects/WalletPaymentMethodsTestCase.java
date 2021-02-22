@@ -256,10 +256,6 @@ public final class WalletPaymentMethodsTestCase {
      */
     @Test
     public void canDeactivatePaymentMethod() {
-        final Storage storage = Mockito.mock(Storage.class);
-        final PaymentMethods all = Mockito.mock(PaymentMethods.class);
-        Mockito.when(storage.paymentMethods()).thenReturn(all);
-
         final Wallet wallet = Mockito.mock(Wallet.class);
         final PaymentMethod pmeth = Mockito.mock(PaymentMethod.class);
         Mockito.when(pmeth.wallet()).thenReturn(wallet);
@@ -267,12 +263,12 @@ public final class WalletPaymentMethodsTestCase {
         final PaymentMethods pms = new WalletPaymentMethods(
             wallet,
             () -> Stream.of(pmeth),
-            storage
+            Mockito.mock(Storage.class)
         );
 
         pms.deactivate(pmeth);
 
-        Mockito.verify(all).deactivate(pmeth);
+        Mockito.verify(pmeth, Mockito.times(1)).deactivate();
     }
 
     /**

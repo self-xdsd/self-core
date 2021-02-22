@@ -123,7 +123,7 @@ public final class WalletPaymentMethods implements PaymentMethods {
             throw new PaymentMethodsException("Can't deactivate this payment "
                 + "method because it's part of different wallet.");
         }
-        return this.storage.paymentMethods().deactivate(paymentMethod);
+        return paymentMethod.deactivate();
     }
 
     @Override
