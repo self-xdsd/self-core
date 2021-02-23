@@ -24,6 +24,7 @@ package com.selfxdsd.core;
 
 import com.selfxdsd.api.Organizations;
 import com.selfxdsd.api.Provider;
+import com.selfxdsd.api.Repo;
 import com.selfxdsd.api.User;
 import com.selfxdsd.api.storage.Storage;
 import org.hamcrest.MatcherAssert;
@@ -59,13 +60,15 @@ public final class BitbucketTestCase {
     /**
      * Bitbucket provider returns one of its repositories.
      */
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void returnsRepository() {
         final Provider bitbucket = new Bitbucket(
             Mockito.mock(User.class),
             Mockito.mock(Storage.class)
         );
-        bitbucket.repo("john", "test");
+        final Repo repo = bitbucket.repo("john", "test");
+        MatcherAssert.assertThat(repo, Matchers
+            .instanceOf(BitbucketRepo.class));
     }
 
     /**

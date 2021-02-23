@@ -32,10 +32,6 @@ import java.net.URI;
  * @author criske
  * @version $Id$
  * @since 0.0.62
- * @todo #943:60min Start scaffolding BitbucketRepo using the other providers
- *  as model.
- *  Documentation reference:
- *  https://developer.atlassian.com/bitbucket/api/2/reference/resource/repositories
  * @todo #943:60min Start scaffolding BitbucketInvitations using the other
  *  providers as model.
  *  Warning: 2.0 API doesn't support yet invitations.Until then we will use 1.0,
@@ -119,7 +115,13 @@ public final class Bitbucket implements Provider {
 
     @Override
     public Repo repo(final String owner, final String name) {
-        throw new UnsupportedOperationException("Not implemented yet");
+        return new BitbucketRepo(
+            this.resources,
+            URI.create(this.uri.toString() + "/repositories/"
+                + owner + "/" + name),
+            this.user,
+            this.storage
+        );
     }
 
     @Override
