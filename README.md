@@ -12,7 +12,7 @@
 
 Self's Core, version `0.0.66`.
 
-This repo contains the main Java SE 11 Implementation, clean of any framework.
+This repo contains the main Java SE 11 implementation, clean of any framework.
 
 The platform's domain model is implemented as a set of public Java Interfaces which, besides being the skeleton of the core implementation, can also be used to implement Selenium tests or implement a Java client for the RESTful API.
 
