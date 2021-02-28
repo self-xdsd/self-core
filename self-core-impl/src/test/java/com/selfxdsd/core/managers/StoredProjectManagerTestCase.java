@@ -45,7 +45,8 @@ import java.util.function.Supplier;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
- * @checkstyle ExecutableStatementCount (1500 lines)
+ * @checkstyle ExecutableStatementCount (2000 lines)
+ * @checkstyle ClassFanOutComplexity (2000 lines)
  */
 public final class StoredProjectManagerTestCase {
 
@@ -901,7 +902,8 @@ public final class StoredProjectManagerTestCase {
     }
 
     /**
-     * StoredProjectManager.unassignedTasks(Event) works.
+     * StoredProjectManager.unassignedTasks(Event) elects a Contributor if
+     * the Issue doesn't already have an assignee.
      */
     @Test
     public void handlesUnassignedTasksEvent() {
@@ -968,13 +970,16 @@ public final class StoredProjectManagerTestCase {
 
     /**
      * StoredProjectManager.unassignedTasks(Event) assigns Issue's
-     * assignee if they are Contributor to Project.
+     * assignee if they have the appropriate Contract with the Project.
      */
     @Test
     public void handlesUnassignedTasksEventIssueAssigneeIsContributor(){
 
+        final Contract contract = Mockito.mock(Contract.class);
         final Contributor assignee = Mockito.mock(Contributor.class);
         Mockito.when(assignee.username()).thenReturn("mihai");
+        Mockito.when(contract.contributor()).thenReturn(assignee);
+
         final Task assigned = Mockito.mock(Task.class);
 
         final Task task = Mockito.mock(Task.class);
@@ -996,13 +1001,24 @@ public final class StoredProjectManagerTestCase {
         Mockito.when(ofProject.unassigned()).thenReturn(unassigned);
 
         final Project project = Mockito.mock(Project.class);
+        Mockito.when(project.repoFullName()).thenReturn("self-xdsd/self-core");
+        Mockito.when(project.provider()).thenReturn("github");
         Mockito.when(project.tasks()).thenReturn(ofProject);
         Mockito.when(project.language()).thenReturn(new English());
-        final Contributors contributors = Mockito.mock(Contributors.class);
-        Mockito.when(contributors.elect(task)).thenReturn(assignee);
-        Mockito.when(contributors.getById("mihai", "github"))
-            .thenReturn(assignee);
-        Mockito.when(project.contributors()).thenReturn(contributors);
+
+        final Contracts contracts = Mockito.mock(Contracts.class);
+        Mockito.when(
+            contracts.findById(
+                new Contract.Id(
+                    "self-xdsd/self-core",
+                    "mihai",
+                    "github",
+                    "DEV"
+                )
+            )
+        ).thenReturn(contract);
+
+        Mockito.when(project.contracts()).thenReturn(contracts);
 
         final User owner = Mockito.mock(User.class);
         Mockito.when(owner.username()).thenReturn("mihai");
@@ -1039,8 +1055,8 @@ public final class StoredProjectManagerTestCase {
 
     /**
      * StoredProjectManager.unassignedTasks(Event) unassigns Issue's
-     * assignee if they are not Contributor to Project and elects
-     * new Contributor.
+     * assignee if they don't have the appropriate Contract
+     * with the Project and elects new Contributor.
      */
     @Test
     public void handlesUnassignedTasksEventIssueAssigneeIsNotContributor(){
@@ -1069,12 +1085,32 @@ public final class StoredProjectManagerTestCase {
         Mockito.when(ofProject.unassigned()).thenReturn(unassigned);
 
         final Project project = Mockito.mock(Project.class);
+        Mockito.when(project.repoFullName()).thenReturn("self-xdsd/self-core");
+        Mockito.when(project.provider()).thenReturn("github");
         Mockito.when(project.tasks()).thenReturn(ofProject);
         Mockito.when(project.language()).thenReturn(new English());
+
+        final Contracts contracts = Mockito.mock(Contracts.class);
+        Mockito.when(
+            contracts.findById(
+                new Contract.Id(
+                    "self-xdsd/self-core",
+                    "john",
+                    "github",
+                    "DEV"
+                )
+            )
+        ).thenReturn(null);
+
+        Mockito.when(project.contracts()).thenReturn(contracts);
+
         final Contributors contributors = Mockito.mock(Contributors.class);
         Mockito.when(contributors.elect(task)).thenReturn(assignee);
         Mockito.when(contributors.getById("mihai", "github"))
             .thenReturn(assignee);
+
+
+
         Mockito.when(project.contributors()).thenReturn(contributors);
 
         final User owner = Mockito.mock(User.class);
