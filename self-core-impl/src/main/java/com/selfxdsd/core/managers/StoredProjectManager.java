@@ -364,13 +364,20 @@ public final class StoredProjectManager implements ProjectManager {
             }
             final String issueAssignee = issue.assignee();
             if (issueAssignee != null) {
-                final Contributor contributor = project.contributors()
-                    .getById(issueAssignee, issue.provider());
-                if (contributor == null) {
+                final Contract contract = project.contracts().findById(
+                    new Contract.Id(
+                        project.repoFullName(),
+                        issueAssignee,
+                        project.provider(),
+                        task.role()
+                    )
+                );
+                if (contract == null) {
                     LOG.debug("Unassigning @" + issueAssignee
                         + " from issue #" + issue.issueId()
                         + ". They are not contributor for project "
                         + project.repoFullName() + " at " + project.provider()
+                        + ". "
                     );
                     if (issue.unassign(issueAssignee)) {
                         LOG.debug("Electing new assignee for task #"
@@ -384,7 +391,9 @@ public final class StoredProjectManager implements ProjectManager {
                             + ". New election aborted.");
                     }
                 } else {
-                    this.assignTask(project, task, issue, contributor);
+                    this.assignTask(
+                        project, task, issue, contract.contributor()
+                    );
                 }
             } else {
                 LOG.debug("Electing assignee for task #" + issue.issueId());
