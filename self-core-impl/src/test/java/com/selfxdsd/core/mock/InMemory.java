@@ -162,6 +162,15 @@ public final class InMemory implements Storage {
     }
 
     /**
+     * todo #979:60min implement InMemoryPayments and return it here.
+     * @return Payments.
+     */
+    @Override
+    public Payments payments() {
+        throw new UnsupportedOperationException("Not implemented yet!");
+    }
+
+    /**
      * Nothing to close, this is an in-memory storage.
      */
     @Override
