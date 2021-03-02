@@ -68,20 +68,20 @@ public final class StoredPayment implements Payment {
     private final String failReason;
 
     /**
-     * ctor.
-     * @param invoice the Invoice to which this payment made.
-     * @param transactionId successful payment transaction id.
-     * @param paymentTime payment time.
-     * @param value payment amount.
-     * @param status payment status (FAILED or SUCCESSFUL).
-     * @param failReason payment failure reason.
+     * Ctor.
+     * @param invoice The Invoice to which this payment made.
+     * @param transactionId Successful payment transaction id.
+     * @param paymentTime Payment time.
+     * @param value Payment amount.
+     * @param status Payment status (FAILED or SUCCESSFUL).
+     * @param failReason Payment failure reason.
      */
-    public StoredPayment(Invoice invoice,
-                         String transactionId,
-                         LocalDateTime paymentTime,
-                         BigDecimal value,
-                         String status,
-                         String failReason
+    public StoredPayment(final Invoice invoice,
+                         final String transactionId,
+                         final LocalDateTime paymentTime,
+                         final BigDecimal value,
+                         final String status,
+                         final String failReason
     ) {
         this.invoice = invoice;
         this.transactionId = transactionId;

@@ -37,7 +37,7 @@ public interface Payment {
 
     /**
      * The {@link Invoice} to which this Payment is made.
-     * @return an {@link Invoice}
+     * @return Invoice
      */
     Invoice invoice();
 
@@ -56,19 +56,19 @@ public interface Payment {
     /**
      * The value of the Payment.<br>
      * Which is usually the total amount of the Invoice.
-     * @return a BigDecimal or null if the payment fail.
+     * @return BigDecimal or null if the payment fail.
      */
     BigDecimal value();
 
     /**
      * The status of the Payment (SUCCESSFUL or FAILED).
-     * @return a String.
+     * @return String.
      */
     String status();
 
     /**
      * The description of the reason why the Payment fail.
-     * @return a String or null if the Payment done successfully.
+     * @return String or null if the Payment done successfully.
      */
     String failReason();
 
@@ -78,7 +78,7 @@ public interface Payment {
      */
     class Status {
         /**
-         * private ctor.
+         * Private ctor.
          */
         private Status(){};
 

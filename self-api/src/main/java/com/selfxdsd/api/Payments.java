@@ -38,12 +38,12 @@ public interface Payments extends Iterable<Payment> {
     /**
      * Register a new {@link Payment}.
      * @param invoice Invoice to be payed.
-     * @param transactionId the transaction id of successful payment.
-     * @param timestamp payment time.
-     * @param value amount payed.
+     * @param transactionId The transaction id of successful payment.
+     * @param timestamp Payment time.
+     * @param value Amount payed.
      * @param status SUCCESSFUL or FAILED.
-     * @param failReason why the payment has failed if any.
-     * @return registered Payment.
+     * @param failReason Why the payment has failed if any.
+     * @return Registered Payment.
      */
     Payment register(
         final Invoice invoice,
@@ -56,7 +56,7 @@ public interface Payments extends Iterable<Payment> {
 
     /**
      * Get all the Payments of a given {@link Invoice}.
-     * @param invoice {@link Invoice}.
+     * @param invoice Invoice.
      * @return Payments.
      */
     Payments ofInvoice(final Invoice invoice);
