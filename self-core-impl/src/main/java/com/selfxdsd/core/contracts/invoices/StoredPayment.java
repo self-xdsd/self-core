@@ -131,7 +131,7 @@ public final class StoredPayment implements Payment {
 
     @Override
     public boolean equals(final Object obj) {
-        return this == obj || (obj instanceof Payment
+        return this == obj || (obj instanceof StoredPayment
             && this.hashCode() == obj.hashCode());
     }
 }
