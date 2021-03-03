@@ -43,7 +43,7 @@ public interface Payment {
 
     /**
      * The transaction id of the payment.
-     * @return String or null if the payment has FAILED.
+     * @return String or empty if the payment has FAILED.
      */
     String transactionId();
 
