@@ -124,7 +124,7 @@ public final class StoredPayment implements Payment {
     @Override
     public int hashCode() {
         return Objects.hash(
-            this.invoice.invoiceId(),
+            this.invoice().invoiceId(),
             this.paymentTime()
         );
     }
@@ -132,6 +132,8 @@ public final class StoredPayment implements Payment {
     @Override
     public boolean equals(final Object obj) {
         return this == obj || (obj instanceof StoredPayment
-            && this.hashCode() == obj.hashCode());
+            && this.invoice().invoiceId() ==
+                ((Payment) obj).invoice().invoiceId())
+            && this.paymentTime() == ((Payment) obj).paymentTime();
     }
 }
