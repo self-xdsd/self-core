@@ -32,6 +32,8 @@ import javax.json.JsonValue;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
+ *
+ * todo #979:60min Implement InMemoryPayments & InMemory.payments() method.
  */
 public final class InMemory implements Storage {
 
@@ -161,10 +163,6 @@ public final class InMemory implements Storage {
         throw new UnsupportedOperationException("Not implemented yet!");
     }
 
-    /**
-     * todo #979:60min implement InMemoryPayments and return it here.
-     * @return Payments.
-     */
     @Override
     public Payments payments() {
         throw new UnsupportedOperationException("Not implemented yet!");
