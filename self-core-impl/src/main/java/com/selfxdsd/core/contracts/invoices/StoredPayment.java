@@ -36,9 +36,6 @@ import java.util.Objects;
  * @author Ali FELLAHI (fellahi.ali@gmail.com)
  * @version $Id$
  * @since 0.0.67
- *
- * @todo #979:30min Write unit tests for this class
- *  especially the platformInvoice() method.
  */
 public final class StoredPayment implements Payment {
 
