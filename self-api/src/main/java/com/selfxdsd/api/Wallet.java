@@ -63,6 +63,10 @@ public interface Wallet {
      * Pay an invoice.
      * @param invoice The Invoice to be paid.
      * @return Wallet having cash deducted with Invoice amount.
+     *
+     * @todo #979:60min Modify this method to create & return a Payment object.
+     *  A payment could be successful or failed in both cases all related info
+     *  should be in the returned Payment object.
      */
     Wallet pay(final Invoice invoice);
 

@@ -13,6 +13,9 @@ import java.time.LocalDateTime;
  * @author criske
  * @version $Id$
  * @since 0.0.3
+ *
+ * @todo #979:30min Add payments() method that returns Invoice's Payments and
+ *  its implementation in StoredInvoice.
  */
 public interface Invoice {
 
