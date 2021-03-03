@@ -159,8 +159,7 @@ public final class StoredPayment implements Payment {
     @Override
     public boolean equals(final Object obj) {
         return this == obj || (obj instanceof StoredPayment
-            && this.invoice().invoiceId() ==
-                ((Payment) obj).invoice().invoiceId())
-            && this.paymentTime() == ((Payment) obj).paymentTime();
+            && this.invoice().equals(((Payment) obj).invoice())
+            && this.paymentTime() == ((Payment) obj).paymentTime());
     }
 }
