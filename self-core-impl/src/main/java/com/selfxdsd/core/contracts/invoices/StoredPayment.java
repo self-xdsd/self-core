@@ -24,6 +24,8 @@ package com.selfxdsd.core.contracts.invoices;
 
 import com.selfxdsd.api.Invoice;
 import com.selfxdsd.api.Payment;
+import com.selfxdsd.api.PlatformInvoice;
+import com.selfxdsd.api.storage.Storage;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -34,6 +36,9 @@ import java.util.Objects;
  * @author Ali FELLAHI (fellahi.ali@gmail.com)
  * @version $Id$
  * @since 0.0.67
+ *
+ * @todo #979:30min Write unit tests for this class
+ *  especially the platformInvoice() method.
  */
 public final class StoredPayment implements Payment {
 
@@ -68,6 +73,11 @@ public final class StoredPayment implements Payment {
     private final String failReason;
 
     /**
+     * Self storage API.
+     */
+    private final Storage storage;
+
+    /**
      * Ctor.
      * @param invoice The Invoice to which this payment made.
      * @param transactionId Successful payment transaction id.
@@ -75,13 +85,15 @@ public final class StoredPayment implements Payment {
      * @param value Payment amount.
      * @param status Payment status (FAILED or SUCCESSFUL).
      * @param failReason Payment failure reason.
+     * @param storage Self Storage.
      */
     public StoredPayment(final Invoice invoice,
                          final String transactionId,
                          final LocalDateTime paymentTime,
                          final BigDecimal value,
                          final String status,
-                         final String failReason
+                         final String failReason,
+                         final Storage storage
     ) {
         this.invoice = invoice;
         this.transactionId = transactionId;
@@ -89,11 +101,26 @@ public final class StoredPayment implements Payment {
         this.value = value;
         this.status = status;
         this.failReason = failReason;
+        this.storage = storage;
     }
 
     @Override
     public Invoice invoice() {
         return this.invoice;
+    }
+
+    @Override
+    public PlatformInvoice platformInvoice() {
+        final PlatformInvoice platformInvoice;
+        if (Status.SUCCESSFUL.equals(this.status())){
+            platformInvoice = this.storage.platformInvoices().getByPayment(
+                this.transactionId(),
+                this.paymentTime()
+            );
+        } else {
+            platformInvoice = null;
+        }
+        return platformInvoice;
     }
 
     @Override

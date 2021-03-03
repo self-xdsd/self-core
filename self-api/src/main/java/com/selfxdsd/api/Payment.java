@@ -42,6 +42,12 @@ public interface Payment {
     Invoice invoice();
 
     /**
+     * The invoice sent to {@link Contributor} in case of successful payment.
+     * @return PlatformInvoice or null if the payment failed.
+     */
+    PlatformInvoice platformInvoice();
+
+    /**
      * The transaction id of the payment.
      * @return String or empty if the payment has FAILED.
      */
