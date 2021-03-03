@@ -32,8 +32,6 @@ import javax.json.JsonValue;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
- *
- * todo #979:60min Implement InMemoryPayments & InMemory.payments() method.
  */
 public final class InMemory implements Storage {
 
