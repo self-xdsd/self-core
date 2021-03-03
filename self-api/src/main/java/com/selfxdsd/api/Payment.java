@@ -68,7 +68,7 @@ public interface Payment {
 
     /**
      * The description of the reason why the Payment fail.
-     * @return String or null if the Payment done successfully.
+     * @return String or empty if the Payment done successfully.
      */
     String failReason();
 
