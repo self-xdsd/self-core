@@ -22,44 +22,36 @@
  */
 package com.selfxdsd.core;
 
+import com.selfxdsd.api.Comment;
 import com.selfxdsd.api.Comments;
-import com.selfxdsd.api.Commit;
-import com.selfxdsd.api.storage.Storage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.json.Json;
 import javax.json.JsonObject;
+import java.net.HttpURLConnection;
 import java.net.URI;
+import java.util.Iterator;
 
 /**
- * A Commit in Bitbucket.
+ * Comments of a Commit on Bitbucket.<br>
  * @author criske
  * @version $Id$
  * @since 0.0.67
  */
-final class BitbucketCommit implements Commit {
+final class BitbucketCommitComments implements Comments {
 
     /**
      * Logger.
      */
     private static final Logger LOG = LoggerFactory.getLogger(
-        BitbucketCommit.class
+        BitbucketCommitComments.class
     );
 
     /**
-     * Commit base uri.
+     * Base Comments uri.
      */
-    private final URI commitUri;
-
-    /**
-     * Commit JSON as returned by Bitbucket's API.
-     */
-    private final JsonObject json;
-
-    /**
-     * Self storage, in case we want to store something.
-     */
-    private final Storage storage;
+    private final URI commentsUri;
 
     /**
      * Bitbucket's JSON Resources.
@@ -68,57 +60,52 @@ final class BitbucketCommit implements Commit {
 
     /**
      * Ctor.
-     * @param commitUri Commit base URI.
-     * @param json Json Commit as returned by Bitbucket's API.
-     * @param storage Storage.
+     *
+     * @param commentsUri Commit's comments URI.
      * @param resources Bitbucket's JSON Resources.
      */
-    BitbucketCommit(
-        final URI commitUri,
-        final JsonObject json,
-        final Storage storage,
+    BitbucketCommitComments(
+        final URI commentsUri,
         final JsonResources resources
     ) {
-        this.commitUri = commitUri;
-        this.json = json;
-        this.storage = storage;
+        this.commentsUri = commentsUri;
         this.resources = resources;
     }
 
     @Override
-    public Comments comments() {
-        return new BitbucketCommitComments(
-            URI.create(this.commitUri + "/comments"),
-            this.resources
+    public Comment post(final String body) {
+        LOG.debug("Posting Commit Comment to: [" + this.commentsUri + "].");
+        final Resource resource = this.resources.post(
+            this.commentsUri,
+            Json.createObjectBuilder()
+                .add("content", Json.createObjectBuilder()
+                    .add("raw", body)
+                    .build())
+                .build()
         );
-    }
-
-    /**
-     * {@inheritDoc}
-     * <br/>
-     * Since Bitbucket 2.0 doesn't reveal the `username` anymore in their json
-     * responses, we will extract the `account_id` as username from `author`
-     * section.
-     */
-    @Override
-    public String author() {
-        return this.json
-            .getJsonArray("values")
-            .getJsonObject(0)
-            .getJsonObject("author")
-            .getString("account_id");
+        if (resource.statusCode() == HttpURLConnection.HTTP_CREATED) {
+            return new BitbucketComment(resource.asJsonObject());
+        } else {
+            LOG.error(
+                "Expected status 201 CREATED, but got: ["
+                + resource.statusCode() + "]."
+            );
+            throw new IllegalStateException(
+                "Bitbucket Commit Comment was not created. Status is "
+                + resource.statusCode() + "."
+            );
+        }
     }
 
     @Override
-    public String shaRef() {
-        return this.json
-            .getJsonArray("values")
-            .getJsonObject(0)
-            .getString("hash");
+    public Comment received(final JsonObject comment) {
+        return new BitbucketComment(comment);
     }
 
     @Override
-    public JsonObject json() {
-        return this.json;
+    public Iterator<Comment> iterator() {
+        throw new UnsupportedOperationException(
+            "Can't iterate over all the comments of a commit."
+        );
     }
 }
