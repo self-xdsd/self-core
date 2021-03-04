@@ -124,6 +124,12 @@ public interface Wallet {
     BillingInfo billingInfo();
 
     /**
+     * Activate this wallet.
+     * @return Activated wallet.
+     */
+    Wallet activate();
+
+    /**
      * Remove this Wallet.
      * @return True if removed, false otherwise.
      */

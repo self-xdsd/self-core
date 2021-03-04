@@ -228,6 +228,11 @@ public final class StripePaymentMethodTestCase {
             }
 
             @Override
+            public Wallet activate() {
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
             public boolean remove() {
                 throw new UnsupportedOperationException();
             }

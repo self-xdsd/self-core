@@ -34,6 +34,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * Unit tests for {@link StripeWallet}.
@@ -360,5 +361,61 @@ public final class StripeWalletTestCase {
                 )
             );
         }
+    }
+
+    /**
+     * StripeWallet.activate() returns self if already active.
+     */
+    @Test
+    public void activateReturnsSelfIfActive() {
+        final Wallet stripe = new StripeWallet(
+            Mockito.mock(Storage.class),
+            Mockito.mock(Project.class),
+            BigDecimal.valueOf(1000),
+            "123StripeID",
+            Boolean.TRUE
+        );
+        MatcherAssert.assertThat(
+            stripe.activate(),
+            Matchers.is(stripe)
+        );
+    }
+
+    /**
+     * StripeWallet.activate() activates the wallet and also removes the
+     * Project's FakeWallet if it exists.
+     */
+    @Test
+    public void activatesSelfIfNotActive() {
+        final Wallet activated = Mockito.mock(Wallet.class);
+
+        final Wallet fake = Mockito.mock(Wallet.class);
+        Mockito.when(fake.type()).thenReturn(Wallet.Type.FAKE);
+
+        final Wallets all = Mockito.mock(Wallets.class);
+        final Storage storage = Mockito.mock(Storage.class);
+        Mockito.when(storage.wallets()).thenReturn(all);
+
+        final Project project = Mockito.mock(Project.class);
+        final Wallets ofProject = Mockito.mock(Wallets.class);
+        Mockito.when(all.ofProject(project)).thenReturn(ofProject);
+
+        Mockito.when(ofProject.iterator()).thenReturn(List.of(fake).iterator());
+
+        final Wallet stripe = new StripeWallet(
+            storage,
+            project,
+            BigDecimal.valueOf(1000),
+            "123StripeID",
+            Boolean.FALSE
+        );
+
+        Mockito.when(all.activate(stripe)).thenReturn(activated);
+
+        MatcherAssert.assertThat(
+            stripe.activate(),
+            Matchers.is(activated)
+        );
+        Mockito.verify(fake, Mockito.times(1)).remove();
     }
 }

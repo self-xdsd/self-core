@@ -498,4 +498,52 @@ public final class FakeWalletTestCase {
         );
         Mockito.verify(all, Mockito.times(1)).remove(fake);
     }
+
+    /**
+     * FakeWallet can activate itself if not active.
+     */
+    @Test
+    public void activatesItselfIfNotActive() {
+        final Wallets all = Mockito.mock(Wallets.class);
+        final Storage storage = Mockito.mock(Storage.class);
+        Mockito.when(storage.wallets()).thenReturn(all);
+
+        final Wallet fake = new FakeWallet(
+            storage,
+            Mockito.mock(Project.class),
+            BigDecimal.valueOf(1000),
+            "123FakeID",
+            Boolean.FALSE
+        );
+
+        final Wallet activated = Mockito.mock(Wallet.class);
+        Mockito.when(all.activate(fake)).thenReturn(activated);
+
+        MatcherAssert.assertThat(
+            fake.activate(),
+            Matchers.is(activated)
+        );
+        Mockito.verify(
+            all,
+            Mockito.times(1)
+        ).activate(fake);
+    }
+
+    /**
+     * It will return itself if already active.
+     */
+    @Test
+    public void activateReturnsSelfIfActive() {
+        final Wallet fake = new FakeWallet(
+            Mockito.mock(Storage.class),
+            Mockito.mock(Project.class),
+            BigDecimal.valueOf(1000),
+            "123FakeID",
+            Boolean.TRUE
+        );
+        MatcherAssert.assertThat(
+            fake.activate(),
+            Matchers.is(fake)
+        );
+    }
 }

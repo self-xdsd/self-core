@@ -394,6 +394,24 @@ public final class StripeWallet implements Wallet {
     }
 
     @Override
+    public Wallet activate() {
+        final Wallet activated;
+        if(this.active) {
+            activated = this;
+        } else {
+            final Wallets all = this.storage.wallets();
+            activated = all.activate(this);
+            for (final Wallet wallet : all.ofProject(this.project)) {
+                if (Type.FAKE.equalsIgnoreCase(wallet.type())) {
+                    wallet.remove();
+                    break;
+                }
+            }
+        }
+        return activated;
+    }
+
+    @Override
     public boolean remove() {
         final String apiToken = System.getenv(Env.STRIPE_API_TOKEN);
         if(apiToken == null || apiToken.trim().isEmpty()) {

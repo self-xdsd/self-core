@@ -308,6 +308,17 @@ public final class FakeWallet implements Wallet {
     }
 
     @Override
+    public Wallet activate() {
+        final Wallet activated;
+        if(this.active) {
+            activated = this;
+        } else {
+            activated = this.storage.wallets().activate(this);
+        }
+        return activated;
+    }
+
+    @Override
     public boolean remove() {
         return this.storage.wallets().remove(this);
     }
