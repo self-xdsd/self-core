@@ -22,6 +22,7 @@
  */
 package com.selfxdsd.core;
 
+import com.selfxdsd.api.Comments;
 import com.selfxdsd.api.Commit;
 import com.selfxdsd.api.storage.Storage;
 import org.hamcrest.MatcherAssert;
@@ -68,9 +69,9 @@ public final class BitbucketCommitTestCase {
     /**
      * Returns BitbucketCommits' comments.
      */
-    @Test(expected = UnsupportedOperationException.class)
+    @Test()
     public void returnsComments(){
-        new BitbucketCommit(
+        final Comments comments =new BitbucketCommit(
             URI.create("https://bitbucket.org/api/2.0/repositories"
                 + "/crisketm/my-super-repo/commits"
                 + "/84899952ccf723fe5e4306aac2c857f05ef4686a"),
@@ -78,5 +79,7 @@ public final class BitbucketCommitTestCase {
             Mockito.mock(Storage.class),
             Mockito.mock(JsonResources.class)
         ).comments();
+        MatcherAssert.assertThat(comments, Matchers
+            .instanceOf(BitbucketCommitComments.class));
     }
 }
