@@ -25,6 +25,7 @@ package com.selfxdsd.core.contracts.invoices;
 import com.selfxdsd.api.Contract;
 import com.selfxdsd.api.Invoice;
 import com.selfxdsd.api.Invoices;
+import com.selfxdsd.api.Payment;
 import com.selfxdsd.api.storage.Storage;
 
 import java.math.BigDecimal;
@@ -90,7 +91,7 @@ public final class ContractInvoices implements Invoices {
     }
 
     @Override
-    public boolean registerAsPaid(
+    public Payment registerAsPaid(
         final Invoice invoice,
         final BigDecimal contributorVat,
         final BigDecimal eurToRon
