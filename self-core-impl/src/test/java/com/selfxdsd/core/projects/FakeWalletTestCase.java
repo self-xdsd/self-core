@@ -404,7 +404,7 @@ public final class FakeWalletTestCase {
             )
         ).thenReturn(payment);
 
-        final Wallet updated = new FakeWallet(
+        final Payment successful = new FakeWallet(
             storage,
             project,
             BigDecimal.TEN,
@@ -412,8 +412,10 @@ public final class FakeWalletTestCase {
             true
         ).pay(invoice);
 
-        MatcherAssert.assertThat(updated.cash(),
-            Matchers.equalTo(BigDecimal.ZERO));
+        MatcherAssert.assertThat(
+            payment,
+            Matchers.is(successful)
+        );
 
         final ArgumentCaptor<Invoice> paidInvoiceCapture = ArgumentCaptor
             .forClass(Invoice.class);

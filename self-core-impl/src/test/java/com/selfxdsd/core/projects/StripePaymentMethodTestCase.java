@@ -181,7 +181,7 @@ public final class StripePaymentMethodTestCase {
             }
 
             @Override
-            public Wallet pay(final Invoice invoice) {
+            public Payment pay(final Invoice invoice) {
                 throw new UnsupportedOperationException();
             }
 

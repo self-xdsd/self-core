@@ -63,11 +63,14 @@ public interface Wallet {
      * Pay an invoice.
      * @param invoice The Invoice to be paid.
      * @return Wallet having cash deducted with Invoice amount.
-     *
-     * @todo #1026:180min Modify method pay(...) to return the Payment created
-     *  by Invoices.registerAsPai(...).
+     * @todo #1034:90min Write a Wallet decorator which will perform all the
+     *  required pre-checks before making a payment (invoice is not paid, the
+     *  cash limit is not exceeded etc).
+     * @todo #1034:90min Write a Wallet decorator which will catch any
+     *  WalletPaymentException or IllegalStateException thrown from this method
+     *  and register a failed Payment for it.
      */
-    Wallet pay(final Invoice invoice);
+    Payment pay(final Invoice invoice);
 
     /**
      * Type of this wallet.

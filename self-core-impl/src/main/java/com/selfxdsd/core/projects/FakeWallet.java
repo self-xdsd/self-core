@@ -108,7 +108,7 @@ public final class FakeWallet implements Wallet {
     }
 
     @Override
-    public Wallet pay(final Invoice invoice) {
+    public Payment pay(final Invoice invoice) {
         if (!this.project.equals(invoice.contract().project())) {
             throw new InvoiceException.NotPartOfProjectContract(invoice,
                 this.project);
@@ -132,7 +132,7 @@ public final class FakeWallet implements Wallet {
             + "..."
         );
         final String uuid = UUID.randomUUID().toString().replace("-", "");
-        this.storage
+        final Payment payment = this.storage
             .invoices()
             .registerAsPaid(
                 new StoredInvoice(
@@ -151,7 +151,8 @@ public final class FakeWallet implements Wallet {
                 BigDecimal.valueOf(0),
                 BigDecimal.valueOf(0)
             );
-        return this.updateCash(newCash);
+        this.updateCash(newCash);
+        return payment;
     }
 
     @Override
