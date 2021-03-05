@@ -28,7 +28,6 @@ import com.selfxdsd.api.storage.Storage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.json.Json;
 import javax.json.JsonObject;
 import java.net.HttpURLConnection;
 import java.net.URI;
@@ -87,9 +86,7 @@ final class BitbucketCommits implements Commits {
             "Getting commit [" + ref + "] from ["
             + this.commitsUri + "..."
         );
-        final URI commitUri = URI.create(
-            this.commitsUri.toString() + "/" + ref
-        );
+        final URI commitUri = this.createCommitUri(ref);
         final Resource resource = this.resources.get(commitUri);
         final JsonObject jsonObject;
         switch (resource.statusCode()) {
@@ -127,27 +124,17 @@ final class BitbucketCommits implements Commits {
 
     @Override
     public Commit latest() {
-        final Resource resource = this.resources.get(this.commitsUri);
+        final Resource resource = this.resources
+            .get(URI.create(this.commitsUri + "?pagelen=1"));
         final Commit latest;
         if (resource.statusCode() == HttpURLConnection.HTTP_OK) {
-            final JsonObject commitsJson = resource.asJsonObject();
-            // since a single commit json struct is basically the same as
-            // commits json struct with one element, we just update the commits
-            // json by removing the remaining commits from "values" key array
-            // and keep the top one (latest).
-            final JsonObject latestCommitJson = commitsJson
+            final JsonObject latestCommitJson = resource
+                .asJsonObject()
                 .getJsonArray("values")
                 .getJsonObject(0);
-            final JsonObject commitJson = Json.createPatchBuilder()
-                .replace("/values", Json.createArrayBuilder()
-                    .add(latestCommitJson)
-                    .build())
-                .build()
-                .apply(commitsJson);
             latest = new BitbucketCommit(
-                URI.create(this.commitsUri.toString() + "/"
-                    + latestCommitJson.getString("hash")),
-                commitJson,
+                this.createCommitUri(latestCommitJson.getString("hash")),
+                latestCommitJson,
                 this.storage,
                 this.resources
             );
@@ -166,5 +153,20 @@ final class BitbucketCommits implements Commits {
         throw new UnsupportedOperationException(
             "You cannot iterate over all the Commits in a Repo."
         );
+    }
+
+    /**
+     * Creates the URI for a Bitbucket commit based on ref (hash).
+     * @param ref Hash.
+     * @return URI.
+     */
+    private URI createCommitUri(final String ref) {
+        final String commitsUriStr = this.commitsUri.toString();
+        // Uri for commit is /<owner>/<name>/commit/<hash>
+        // we only need to drop the "s" from "commits" part of commitsUriStr
+        // and add the hash/ref at the end.
+        final String commitUriStr = commitsUriStr
+            .substring(0, commitsUriStr.length() -1) + "/" +ref;
+        return URI.create(commitUriStr);
     }
 }
