@@ -43,14 +43,16 @@ public interface Invoices extends Iterable<Invoice> {
     Invoices ofContract(final Contract.Id id);
 
     /**
-     * Register an Invoice as paid.
+     * Register an Invoice as paid. You should call this method only when
+     * you're sure that the Invoice has been paid successfully.
+     *
      * @param invoice Paid invoice.
      * @param contributorVat Vat which Self takes from the Contributor.
      * @param eurToRon Euro to RON (Romanian Leu) conversion rate.
      *  For example, if the value is 487, it means 1 EUR = 4,87 RON.
-     * @return True or false, depending on whether the operation succeeded.
+     * @return Payment.
      */
-    boolean registerAsPaid(
+    Payment registerAsPaid(
         final Invoice invoice,
         final BigDecimal contributorVat,
         final BigDecimal eurToRon

@@ -132,7 +132,7 @@ public final class FakeWallet implements Wallet {
             + "..."
         );
         final String uuid = UUID.randomUUID().toString().replace("-", "");
-        final boolean paid = this.storage
+        this.storage
             .invoices()
             .registerAsPaid(
                 new StoredInvoice(
@@ -151,11 +151,6 @@ public final class FakeWallet implements Wallet {
                 BigDecimal.valueOf(0),
                 BigDecimal.valueOf(0)
             );
-        if (!paid) {
-            throw new WalletPaymentException(
-                "Could not pay invoice #" + invoice.invoiceId()
-            );
-        }
         return this.updateCash(newCash);
     }
 

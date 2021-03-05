@@ -22,10 +22,7 @@
  */
 package com.selfxdsd.core.contracts.invoices;
 
-import com.selfxdsd.api.Contract;
-import com.selfxdsd.api.Invoice;
-import com.selfxdsd.api.Invoices;
-import com.selfxdsd.api.Provider;
+import com.selfxdsd.api.*;
 import com.selfxdsd.api.storage.Storage;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -221,9 +218,10 @@ public final class ContractInvoicesTestCase {
         Mockito.when(contract.contractId()).thenReturn(contractId);
 
         final Invoices all = Mockito.mock(Invoices.class);
+        final Payment payment = Mockito.mock(Payment.class);
         Mockito.when(
             all.registerAsPaid(invoice, contributorVat, eurToRon)
-        ).thenReturn(Boolean.TRUE);
+        ).thenReturn(payment);
         final Storage storage = Mockito.mock(Storage.class);
         Mockito.when(storage.invoices()).thenReturn(all);
 
@@ -235,7 +233,7 @@ public final class ContractInvoicesTestCase {
 
         MatcherAssert.assertThat(
             invoices.registerAsPaid(invoice, contributorVat, eurToRon),
-            Matchers.is(Boolean.TRUE)
+            Matchers.is(payment)
         );
     }
 
@@ -267,9 +265,10 @@ public final class ContractInvoicesTestCase {
         );
 
         final Invoices all = Mockito.mock(Invoices.class);
+        final Payment payment = Mockito.mock(Payment.class);
         Mockito.when(
             all.registerAsPaid(invoice, contributorVat, eurToRon)
-        ).thenReturn(Boolean.TRUE);
+        ).thenReturn(payment);
         final Storage storage = Mockito.mock(Storage.class);
         Mockito.when(storage.invoices()).thenReturn(all);
 
@@ -281,7 +280,7 @@ public final class ContractInvoicesTestCase {
 
         MatcherAssert.assertThat(
             invoices.registerAsPaid(invoice, contributorVat, eurToRon),
-            Matchers.is(Boolean.TRUE)
+            Matchers.is(payment)
         );
     }
 

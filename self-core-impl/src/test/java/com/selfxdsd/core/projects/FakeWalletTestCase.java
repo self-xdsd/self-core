@@ -395,13 +395,14 @@ public final class FakeWalletTestCase {
 
         final Invoices invoices = Mockito.mock(Invoices.class);
         Mockito.when(storage.invoices()).thenReturn(invoices);
+        final Payment payment = Mockito.mock(Payment.class);
         Mockito.when(
             invoices.registerAsPaid(
                 Mockito.any(Invoice.class),
                 Mockito.any(BigDecimal.class),
                 Mockito.any(BigDecimal.class)
             )
-        ).thenReturn(true);
+        ).thenReturn(payment);
 
         final Wallet updated = new FakeWallet(
             storage,
@@ -431,46 +432,6 @@ public final class FakeWalletTestCase {
             Matchers.notNullValue());
         MatcherAssert.assertThat(paidInvoice.transactionId(),
             Matchers.notNullValue());
-    }
-
-
-    /**
-     * FakeWallet.pay(...) throws WalletException if something went wrong
-     * when paying the invoice.
-     */
-    @Test(expected = WalletPaymentException.class)
-    public void complainsIfSomethingWentWrongWhenPayInvoice() {
-        final Project project = Mockito.mock(Project.class);
-
-        final Invoice invoice = Mockito.mock(Invoice.class);
-        Mockito.when(invoice.isPaid()).thenReturn(false);
-        Mockito.when(invoice.totalAmount()).thenReturn(BigDecimal.TEN);
-        Mockito.when(invoice.invoiceId()).thenReturn(1);
-
-        final Contract contract = Mockito.mock(Contract.class);
-        Mockito.when(contract.project()).thenReturn(project);
-        Mockito.when(invoice.contract())
-            .thenReturn(contract);
-
-        final Storage storage = Mockito.mock(Storage.class);
-        final Invoices invoices = Mockito.mock(Invoices.class);
-        Mockito.when(storage.invoices()).thenReturn(invoices);
-        Mockito.when(
-            invoices.registerAsPaid(
-                Mockito.any(Invoice.class),
-                Mockito.any(BigDecimal.class),
-                Mockito.any(BigDecimal.class)
-            )
-        ).thenReturn(false);
-
-        new FakeWallet(
-            storage,
-            project,
-            BigDecimal.TEN,
-            "id",
-            true
-        ).pay(invoice);
-
     }
 
     /**
