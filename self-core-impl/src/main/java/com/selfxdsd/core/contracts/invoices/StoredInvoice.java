@@ -254,6 +254,11 @@ public final class StoredInvoice implements Invoice {
     }
 
     @Override
+    public Payments payments() {
+        return this.storage.payments().ofInvoice(this);
+    }
+
+    @Override
     public void toPdf(final OutputStream out) throws IOException {
         final String billedByCountry = this.billedByCountry();
         final String billedToCountry = this.billedToCountry();

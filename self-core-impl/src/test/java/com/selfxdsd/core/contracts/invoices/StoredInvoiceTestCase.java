@@ -1001,4 +1001,36 @@ public final class StoredInvoiceTestCase {
             Matchers.greaterThan(0)
         );
     }
+
+    /**
+     * StoredInvoice.payments() reads the Invoice's payments from the storage.
+     */
+    @Test
+    public void returnsPayments() {
+        final Storage storage = Mockito.mock(Storage.class);
+        final Invoice invoice = new StoredInvoice(
+            1,
+            Mockito.mock(Contract.class),
+            LocalDateTime.now(),
+            LocalDateTime.now(),
+            "transactionID",
+            "mihai",
+            "vlad",
+            "RO",
+            "RO",
+            BigDecimal.valueOf(487),
+            storage
+        );
+        final Payments all = Mockito.mock(Payments.class);
+        final Payments ofInvoice = Mockito.mock(Payments.class);
+        Mockito.when(all.ofInvoice(invoice)).thenReturn(ofInvoice);
+        Mockito.when(storage.payments()).thenReturn(all);
+
+        MatcherAssert.assertThat(
+            invoice.payments(),
+            Matchers.is(ofInvoice)
+        );
+        Mockito.verify(storage, timeout(1)).payments();
+        Mockito.verify(all, timeout(1)).ofInvoice(invoice);
+    }
 }

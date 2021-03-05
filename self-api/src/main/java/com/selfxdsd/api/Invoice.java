@@ -13,9 +13,6 @@ import java.time.LocalDateTime;
  * @author criske
  * @version $Id$
  * @since 0.0.3
- *
- * @todo #979:30min Add payments() method that returns Invoice's Payments and
- *  its implementation in StoredInvoice.
  */
 public interface Invoice {
 
@@ -125,6 +122,13 @@ public interface Invoice {
      * @return PlatformInvoice or null if it doesn't exist.
      */
     PlatformInvoice platformInvoice();
+
+    /**
+     * The payments performed for this Invoice. An Invoice may have many
+     * payments out of which 1 is successful and n-1 are failed for some reason.
+     * @return Payments.
+     */
+    Payments payments();
 
     /**
      * Turn this invoice to a PDF file.
