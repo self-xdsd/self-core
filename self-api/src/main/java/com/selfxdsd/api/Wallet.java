@@ -64,7 +64,7 @@ public interface Wallet {
      * @param invoice The Invoice to be paid.
      * @return Wallet having cash deducted with Invoice amount.
      *
-     * @todo #1026:60min Modify method pay(...) to return the Payment created
+     * @todo #1026:180min Modify method pay(...) to return the Payment created
      *  by Invoices.registerAsPai(...).
      */
     Wallet pay(final Invoice invoice);
