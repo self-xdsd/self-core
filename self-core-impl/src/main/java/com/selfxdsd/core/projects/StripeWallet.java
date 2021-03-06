@@ -149,9 +149,11 @@ public final class StripeWallet implements Wallet {
      * @see <a href='https://stripe.com/docs/connect/collect-then-transfer-guide'>docs</a>
      * @param invoice The Invoice to be paid.
      * @return Wallet with the updated cash limit.
+     * @checkstyle CyclomaticComplexity (200 lines)
+     * @checkstyle MethodLength (200 lines)
      */
     @Override
-    public Wallet pay(final Invoice invoice) {
+    public Payment pay(final Invoice invoice) {
         final Contract contract = invoice.contract();
         LOG.debug(
             "[STRIPE] Trying to pay Invoice #" + invoice.invoiceId() + " of "
@@ -258,7 +260,7 @@ public final class StripeWallet implements Wallet {
                     .ofEpochSecond(paymentIntent.getCreated(),
                         0, OffsetDateTime.now().getOffset());
                 final BigDecimal eurToRon = new XmlBnr().euroToRon();
-                this.storage.invoices()
+                final Payment payment = this.storage.invoices()
                     .registerAsPaid(
                         new StoredInvoice(
                             invoice.invoiceId(),
@@ -276,6 +278,8 @@ public final class StripeWallet implements Wallet {
                         vat,
                         eurToRon
                     );
+                this.updateCash(newLimit);
+                return payment;
             } else {
                 LOG.error("[STRIPE] PaymentIntent status: " + status);
                 LOG.error("[STRIPE] Cancelling PaymentIntent...");
@@ -287,9 +291,37 @@ public final class StripeWallet implements Wallet {
                 );
             }
         } catch (final StripeException ex) {
-            this.rethrowStripeException(ex, invoice.invoiceId());
+            final int invoiceId = invoice.invoiceId();
+            final String code = ex.getCode();
+            LOG.error(
+                String.format(
+                    "[STRIPE] StripeException (code %s, request id %s) "
+                    + "while trying to pay Invoice #%s.",
+                    code,
+                    ex.getRequestId(),
+                    invoiceId
+                ),
+                ex
+            );
+            if("authentication_required".equalsIgnoreCase(code)) {
+                throw new WalletPaymentException(
+                    "Payment cannot be made because the card "
+                    + "requires authentication."
+                );
+            }
+            if("card_declined".equalsIgnoreCase(code)) {
+                final String message = ex.getMessage();
+                throw new WalletPaymentException(
+                    "Payment cannot be made: "
+                    + message.substring(0, message.indexOf(';'))
+                );
+            }
+            throw new IllegalStateException(
+                "Stripe threw an exception when trying execute PaymentIntent"
+                + " for invoice #" + invoiceId + ": " + ex.getMessage(),
+                ex
+            );
         }
-        return this.updateCash(newLimit);
     }
 
     /**
@@ -464,46 +496,6 @@ public final class StripeWallet implements Wallet {
     @Override
     public int hashCode() {
         return Objects.hash(this.project);
-    }
-
-    /**
-     * Rethrow the StripeException.
-     * @param exception StripeException.
-     * @param invoiceId Invoice ID.
-     */
-    private void rethrowStripeException(
-        final StripeException exception,
-        final int invoiceId
-    ) {
-        final String code = exception.getCode();
-        LOG.error(
-            String.format(
-                "[STRIPE] StripeException (code %s, request id %s) "
-                + "while trying to pay Invoice #%s.",
-                code,
-                exception.getRequestId(),
-                invoiceId
-            ),
-            exception
-        );
-        if("authentication_required".equalsIgnoreCase(code)) {
-            throw new WalletPaymentException(
-                "Payment cannot be made because the card "
-                + "requires authentication."
-            );
-        }
-        if("card_declined".equalsIgnoreCase(code)) {
-            final String message = exception.getMessage();
-            throw new WalletPaymentException(
-                "Payment cannot be made: "
-                + message.substring(0, message.indexOf(';'))
-            );
-        }
-        throw new IllegalStateException(
-            "Stripe threw an exception when trying execute PaymentIntent"
-            + " for invoice #" + invoiceId + ": " + exception.getMessage(),
-            exception
-        );
     }
 
     /**
