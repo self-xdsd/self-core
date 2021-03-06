@@ -32,8 +32,6 @@ import java.time.LocalDateTime;
  * @author Ali Fellahi (fellahi.ali@gmail.com)
  * @version $Id$
  * @since 0.0.67
- * @todo #1038:60min Implement and test class InvoicePayments which will
- *  represent an Invoice's Payments.
  */
 public interface Payments extends Iterable<Payment> {
 
