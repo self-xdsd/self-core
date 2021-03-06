@@ -94,9 +94,16 @@ public interface Payment {
         public static final String SUCCESSFUL = "SUCCESSFUL";
 
         /**
-         * Failed status.
+         * Failed status. Not enough cash on the card, authentication failed or
+         * other customer fault.
          */
         public static final String FAILED = "FAILED";
+
+        /**
+         * Error while performing the payment, for example communication problem
+         * with Stripe.
+         */
+        public static final String ERROR = "ERROR";
     }
 
 }

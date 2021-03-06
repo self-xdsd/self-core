@@ -66,9 +66,6 @@ public interface Wallet {
      * @todo #1034:90min Write a Wallet decorator which will perform all the
      *  required pre-checks before making a payment (invoice is not paid, the
      *  cash limit is not exceeded etc).
-     * @todo #1034:90min Write a Wallet decorator which will catch any
-     *  WalletPaymentException or IllegalStateException thrown from this method
-     *  and register a failed Payment for it.
      */
     Payment pay(final Invoice invoice);
 
