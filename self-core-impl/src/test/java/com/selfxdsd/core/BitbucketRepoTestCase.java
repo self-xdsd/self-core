@@ -22,7 +22,7 @@
  */
 package com.selfxdsd.core;
 
-import com.selfxdsd.api.User;
+import com.selfxdsd.api.*;
 import com.selfxdsd.api.storage.Storage;
 import com.selfxdsd.core.mock.MockJsonResources;
 import org.hamcrest.MatcherAssert;
@@ -31,6 +31,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import javax.json.Json;
+import java.net.HttpURLConnection;
 import java.net.URI;
 
 /**
@@ -74,14 +75,54 @@ public final class BitbucketRepoTestCase {
     /**
      * BitbucketRepo.activate() can activate the repo.
      */
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void activatesProject() {
-        new BitbucketRepo(
-            Mockito.mock(JsonResources.class),
-            URI.create("https://bitbucket.org/api/2.0/repositories/john/test"),
-            Mockito.mock(User.class),
-            Mockito.mock(Storage.class)
-        ).activate();
+        // projects fixture
+        final Projects projects = Mockito.mock(Projects.class);
+        Mockito.when(projects.getProjectById(
+            "alilo",
+            "test")
+        ).thenReturn(null);
+        // user fixture
+        final User owner = Mockito.mock(User.class);
+        final Provider provider = Mockito.mock(Provider.class);
+        Mockito.when(provider.name()).thenReturn(Provider.Names.BITBUCKET);
+        Mockito.when(owner.provider()).thenReturn(provider);
+        // project manager fixture
+        final ProjectManagers managers = Mockito.mock(ProjectManagers.class);
+        final ProjectManager manager = Mockito.mock(ProjectManager.class);
+        Mockito.when(managers.pick(Provider.Names.BITBUCKET))
+            .thenReturn(manager);
+        // storage fixture
+        final Storage storage = Mockito.mock(Storage.class);
+        Mockito.when(storage.projects()).thenReturn(projects);
+        Mockito.when(storage.projectManagers()).thenReturn(managers);
+
+        final Repo repo = new BitbucketRepo(
+            new MockJsonResources(req -> new MockJsonResources.MockResource(
+                HttpURLConnection.HTTP_OK,
+                Json.createObjectBuilder().add(
+                    "full_name",
+                    "alilo/test"
+                ).build()
+            )),
+            URI.create("https://bitbucket.org/api/2.0/repositories/alilo/test"),
+            owner,
+            storage
+        );
+        // project fixture
+        final Project activated = Mockito.mock(Project.class);
+        Mockito.when(manager.assign(repo)).thenReturn(activated);
+        Mockito.when(activated.wallets())
+            .thenReturn(Mockito.mock(Wallets.class));
+        Mockito.when(activated.contracts())
+            .thenReturn(Mockito.mock(Contracts.class));
+
+        MatcherAssert.assertThat(
+            repo.activate(),
+            Matchers.is(activated)
+        );
+        Mockito.verify(activated).resolve(Mockito.any());
     }
 
     /**
