@@ -23,7 +23,6 @@
 package com.selfxdsd.core.projects;
 
 import com.selfxdsd.api.*;
-import com.selfxdsd.api.exceptions.InvoiceException;
 import com.selfxdsd.api.exceptions.WalletPaymentException;
 import com.selfxdsd.api.storage.Storage;
 import com.selfxdsd.core.Env;
@@ -186,62 +185,6 @@ public final class StripeWalletTestCase {
             "identifier",
             Boolean.TRUE
         ).billingInfo();
-    }
-
-    /**
-     * Wallet.pay(...) throws if the Invoice is already paid.
-     */
-    @Test(expected = InvoiceException.AlreadyPaid.class)
-    public void complainsIfInvoiceIsAlreadyPaid(){
-        final Invoice invoice = Mockito.mock(Invoice.class);
-        final Contract contract = Mockito.mock(Contract.class);
-        Mockito.when(contract.contractId()).thenReturn(
-            new Contract.Id(
-                "mihai/test",
-                "mihai",
-                "github",
-                "DEV"
-            )
-        );
-        Mockito.when(invoice.contract()).thenReturn(contract);
-        Mockito.when(invoice.isPaid()).thenReturn(true);
-
-        new StripeWallet(
-            Mockito.mock(Storage.class),
-            Mockito.mock(Project.class),
-            BigDecimal.TEN,
-            "id",
-            true
-        ).pay(invoice);
-    }
-
-    /**
-     * Wallet.pay(...) throws if the Invoice total amount is lower than 108
-     * euro.
-     */
-    @Test(expected = WalletPaymentException.class)
-    public void complainsIfInvoiceTotalAmountIsTooLow(){
-        final Invoice invoice = Mockito.mock(Invoice.class);
-        final Contract contract = Mockito.mock(Contract.class);
-        Mockito.when(contract.contractId()).thenReturn(
-            new Contract.Id(
-                "mihai/test",
-                "mihai",
-                "github",
-                "DEV"
-            )
-        );
-        Mockito.when(invoice.contract()).thenReturn(contract);
-        Mockito.when(invoice.isPaid()).thenReturn(false);
-        Mockito.when(invoice.totalAmount()).thenReturn(BigDecimal.TEN);
-
-        new StripeWallet(
-            Mockito.mock(Storage.class),
-            Mockito.mock(Project.class),
-            BigDecimal.TEN,
-            "id",
-            true
-        ).pay(invoice);
     }
 
     /**

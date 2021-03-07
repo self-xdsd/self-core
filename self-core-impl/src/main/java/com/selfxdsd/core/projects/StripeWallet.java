@@ -23,7 +23,6 @@
 package com.selfxdsd.core.projects;
 
 import com.selfxdsd.api.*;
-import com.selfxdsd.api.exceptions.InvoiceException;
 import com.selfxdsd.api.exceptions.WalletPaymentException;
 import com.selfxdsd.api.storage.Storage;
 import com.selfxdsd.core.Env;
@@ -160,30 +159,9 @@ public final class StripeWallet implements Wallet {
             + " Contract " + contract.contractId()
             + " from Wallet " + this.identifier
         );
-        if (invoice.isPaid()) {
-            LOG.error("[STRIPE] Invoice already paid.");
-            throw new InvoiceException.AlreadyPaid(invoice);
-        }
-
-        if (invoice.totalAmount().longValueExact() < 108 * 100) {
-            LOG.error("[STRIPE] In order to be paid, Invoice amount must"
-                + " be at least 108 €.");
-            throw new WalletPaymentException("In order to be paid, Invoice"
-                + " amount must be at least 108 €.");
-        }
-
         final BigDecimal newLimit = this.limit.subtract(
             invoice.totalAmount()
         );
-        if (newLimit.longValue() < 0L) {
-            LOG.error("[STRIPE] Not enough cash to pay Invoice.");
-            throw new WalletPaymentException(
-                "Invoice value exceeds wallet limit. "
-                + "Please increase the limit of your wallet with "
-                + "at least " + newLimit.abs().add(invoice.totalAmount())
-                .divide(BigDecimal.valueOf(100), RoundingMode.HALF_UP) + " €."
-            );
-        }
 
         ensureApiToken();
 
