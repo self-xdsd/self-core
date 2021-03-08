@@ -63,9 +63,6 @@ public interface Wallet {
      * Pay an invoice.
      * @param invoice The Invoice to be paid.
      * @return Wallet having cash deducted with Invoice amount.
-     * @todo #1034:90min Write a Wallet decorator which will perform all the
-     *  required pre-checks before making a payment (invoice is not paid, the
-     *  cash limit is not exceeded etc).
      */
     Payment pay(final Invoice invoice);
 

@@ -23,9 +23,7 @@
 package com.selfxdsd.core.projects;
 
 import com.selfxdsd.api.*;
-import com.selfxdsd.api.exceptions.InvoiceException;
 import com.selfxdsd.api.exceptions.PaymentMethodsException;
-import com.selfxdsd.api.exceptions.WalletPaymentException;
 import com.selfxdsd.api.storage.Storage;
 import com.selfxdsd.core.contracts.invoices.StoredInvoice;
 import com.stripe.model.SetupIntent;
@@ -33,7 +31,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.Iterator;
@@ -109,28 +106,12 @@ public final class FakeWallet implements Wallet {
 
     @Override
     public Payment pay(final Invoice invoice) {
-        if (!this.project.equals(invoice.contract().project())) {
-            throw new InvoiceException.NotPartOfProjectContract(invoice,
-                this.project);
-        }
-        if(invoice.isPaid()) {
-            throw new InvoiceException.AlreadyPaid(invoice);
-        }
-        final BigDecimal newCash = this.limit.subtract(invoice
-            .totalAmount());
-        if (newCash.longValueExact() < 0L) {
-            throw new WalletPaymentException("No cash available in wallet "
-                + "for paying invoice #" + invoice.invoiceId()
-                + ". Please increase the limit from your dashboard with"
-                + " at least " + newCash.abs().divide(BigDecimal
-                .valueOf(1000), RoundingMode.HALF_UP) + "\u20ac."
-            );
-        }
         LOG.debug(
             "[FAKE] Paying Invoice #" + invoice.invoiceId()
             + " of Contract " + invoice.contract().contractId()
             + "..."
         );
+        final BigDecimal newCash = this.limit.subtract(invoice.totalAmount());
         final String uuid = UUID.randomUUID().toString().replace("-", "");
         final Payment payment = this.storage
             .invoices()

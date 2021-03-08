@@ -23,9 +23,7 @@
 package com.selfxdsd.core.projects;
 
 import com.selfxdsd.api.*;
-import com.selfxdsd.api.exceptions.InvoiceException;
 import com.selfxdsd.api.exceptions.PaymentMethodsException;
-import com.selfxdsd.api.exceptions.WalletPaymentException;
 import com.selfxdsd.api.storage.Storage;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -290,77 +288,6 @@ public final class FakeWalletTestCase {
         MatcherAssert.assertThat(paymentMethods.active(), Matchers.nullValue());
         Assert.assertThrows(PaymentMethodsException.class,
             () -> paymentMethods.activate(null));
-    }
-
-    /**
-     * Wallet.pay(...) throws if the Invoice is already paid.
-     */
-    @Test(expected = InvoiceException.AlreadyPaid.class)
-    public void complainsIfInvoiceIsAlreadyPaid() {
-        final Project project = Mockito.mock(Project.class);
-        final Invoice invoice = Mockito.mock(Invoice.class);
-        Mockito.when(invoice.isPaid()).thenReturn(true);
-        final Contract contract = Mockito.mock(Contract.class);
-        Mockito.when(contract.project()).thenReturn(project);
-        Mockito.when(invoice.contract())
-            .thenReturn(contract);
-
-        new FakeWallet(
-            Mockito.mock(Storage.class),
-            project,
-            BigDecimal.TEN,
-            "id",
-            true
-        ).pay(invoice);
-    }
-
-    /**
-     * Wallet.pay(...) throws if the Invoice is not part of the project
-     * contract.
-     */
-    @Test(expected = InvoiceException.NotPartOfProjectContract.class)
-    public void complainsIfInvoiceIsNotPartOfProjectContract() {
-        final Invoice invoice = Mockito.mock(Invoice.class);
-        Mockito.when(invoice.isPaid()).thenReturn(false);
-        Mockito.when(invoice.contract())
-            .thenReturn(Mockito.mock(Contract.class));
-
-        new FakeWallet(
-            Mockito.mock(Storage.class),
-            Mockito.mock(Project.class),
-            BigDecimal.TEN,
-            "id",
-            true
-        ).pay(invoice);
-    }
-
-
-    /**
-     * Wallet.pay(...) throws if there are no cash available after deduct
-     * Invoice total amount from limit.
-     */
-    @Test(expected = WalletPaymentException.class)
-    public void complainsIfNewCashIsNegative() {
-        final Project project = Mockito.mock(Project.class);
-
-        final Invoice invoice = Mockito.mock(Invoice.class);
-        Mockito.when(invoice.isPaid()).thenReturn(false);
-        Mockito.when(invoice.totalAmount()).thenReturn(BigDecimal.TEN);
-        Mockito.when(invoice.totalAmount())
-            .thenReturn(BigDecimal.valueOf(100));
-
-        final Contract contract = Mockito.mock(Contract.class);
-        Mockito.when(contract.project()).thenReturn(project);
-        Mockito.when(invoice.contract())
-            .thenReturn(contract);
-
-        new FakeWallet(
-            Mockito.mock(Storage.class),
-            project,
-            BigDecimal.TEN,
-            "id",
-            true
-        ).pay(invoice);
     }
 
     /**
