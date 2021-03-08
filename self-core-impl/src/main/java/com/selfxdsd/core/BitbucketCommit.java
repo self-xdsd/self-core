@@ -102,23 +102,21 @@ final class BitbucketCommit implements Commit {
      */
     @Override
     public String author() {
-        return this.json
-            .getJsonArray("values")
-            .getJsonObject(0)
-            .getJsonObject("author")
-            .getString("account_id");
+        return this.json.getJsonObject("author").getString("account_id");
     }
 
     @Override
     public String shaRef() {
-        return this.json
-            .getJsonArray("values")
-            .getJsonObject(0)
-            .getString("hash");
+        return this.json.getString("hash");
     }
 
     @Override
     public JsonObject json() {
         return this.json;
+    }
+
+    @Override
+    public String toString() {
+        return this.commitUri.toString();
     }
 }
