@@ -154,14 +154,32 @@ public final class BitbucketRepoTestCase {
     /**
      * BitbucketRepo.collaborators() returns its collaborators.
      */
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void returnsCollaborators() {
-        new BitbucketRepo(
-            Mockito.mock(JsonResources.class),
-            URI.create("https://bitbucket.org/api/2.0/repositories/john/test"),
+        final Repo repo = new BitbucketRepo(
+            new MockJsonResources(req -> new MockJsonResources.MockResource(
+                HttpURLConnection.HTTP_OK,
+                Json.createObjectBuilder().add(
+                    "workspace",
+                    Json.createObjectBuilder()
+                        .add("slug", "john")
+                        .build()
+                ).build()
+            )),
+            URI.create(
+                "https://bitbucket.org/api/2.0/repositories/john/test"
+            ),
             Mockito.mock(User.class),
             Mockito.mock(Storage.class)
-        ).collaborators();
+        );
+
+        MatcherAssert.assertThat(
+            repo.collaborators(),
+            Matchers.allOf(
+                Matchers.notNullValue(),
+                Matchers.instanceOf(BitbucketCollaborators.class)
+            )
+        );
     }
 
     /**

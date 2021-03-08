@@ -34,8 +34,6 @@ import java.net.URI;
  * @since 0.0.67
  * @todo #976:60min Start implement and test BitbucketIssues for
  *  BitbucketRepo#issues().
- * @todo #976:60min Start implement and test BitbucketCollaborators for
- *  BitbucketRepo#collaborators().
  * @todo #976:60min Start implement and test BitbucketWebhooks for
  *  BitbucketRepo#webhooks().
  * @todo #976:60min Start implement and test BitbucketStars for
@@ -118,7 +116,12 @@ final class BitbucketRepo extends BaseRepo {
 
     @Override
     public Collaborators collaborators() {
-        throw new UnsupportedOperationException("Not implemented yet");
+        return new BitbucketCollaborators(
+            this.resources(),
+            URI.create("https://bitbucket.org/api/2.0/workspaces/"
+                + this.json().getJsonObject("workspace").getString("slug")
+                + "/members"),
+            this.storage());
     }
 
     @Override
