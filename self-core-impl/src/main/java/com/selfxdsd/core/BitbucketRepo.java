@@ -32,7 +32,6 @@ import java.net.URI;
  * @author criske
  * @version $Id$
  * @since 0.0.67
- * @todo #976:60min Implement and test BitbucketRepo#activate().
  * @todo #976:60min Start implement and test BitbucketIssues for
  *  BitbucketRepo#issues().
  * @todo #976:60min Start implement and test BitbucketCollaborators for
@@ -63,7 +62,43 @@ final class BitbucketRepo extends BaseRepo {
 
     @Override
     public Project activate() {
-        throw new UnsupportedOperationException("Not implemented yet");
+        final Project project = super.activate();
+        project.resolve(
+            new Event() {
+                @Override
+                public String type() {
+                    return Type.ACTIVATE;
+                }
+
+                @Override
+                public Issue issue() {
+                    throw new UnsupportedOperationException(
+                        "No Issue in the activate event."
+                    );
+                }
+
+                @Override
+                public Comment comment() {
+                    throw new UnsupportedOperationException(
+                        "No Comment in the activate event."
+                    );
+                }
+
+                @Override
+                public Commit commit() {
+                    throw new UnsupportedOperationException(
+                        "No Commit in the activate event."
+                    );
+                }
+
+                @Override
+                public Project project() {
+                    return project;
+                }
+
+            }
+        );
+        return project;
     }
 
     @Override
