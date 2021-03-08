@@ -67,18 +67,14 @@ public final class BitbucketCommitsTestCase {
             req -> new MockJsonResources.MockResource(
                 HttpURLConnection.HTTP_OK,
                 Json.createObjectBuilder()
-                    .add("values", Json.createArrayBuilder()
-                        .add(Json.createObjectBuilder()
-                            .add("hash",
-                                "84899952ccf723fe5e4306aac2c857f05ef4686a")
-                            .add("author", Json.createObjectBuilder()
-                                .add("account_id",
-                                    "601e661dcd564b00686f4e4b")
-                                .build())
-                            .build())
-                        .build()
-                    )
+                    .add("hash",
+                        "84899952ccf723fe5e4306aac2c857f05ef4686a")
+                    .add("author", Json.createObjectBuilder()
+                        .add("account_id",
+                            "601e661dcd564b00686f4e4b")
+                        .build())
                     .build()
+
             )
         );
         final Commits commits = new BitbucketCommits(
@@ -98,7 +94,7 @@ public final class BitbucketCommitsTestCase {
             req.getUri().toString(),
             Matchers.equalTo(
                 "https://bitbucket.org/api/2.0/repositories"
-                    + "/crisketm/my-super-repo/commits"
+                    + "/crisketm/my-super-repo/commit"
                     + "/13f74048cd8b4c2fdafdf0d45771c1cf73b998de"
             )
         );
@@ -109,6 +105,12 @@ public final class BitbucketCommitsTestCase {
         MatcherAssert.assertThat(
             found.shaRef(),
             Matchers.equalTo("84899952ccf723fe5e4306aac2c857f05ef4686a")
+        );
+        MatcherAssert.assertThat(
+            found.toString(),
+            Matchers.equalTo("https://bitbucket.org/api/2.0/repositories"
+                + "/crisketm/my-super-repo/commit"
+                + "/13f74048cd8b4c2fdafdf0d45771c1cf73b998de")
         );
     }
 
@@ -202,6 +204,12 @@ public final class BitbucketCommitsTestCase {
         MatcherAssert.assertThat(
             latest.shaRef(),
             Matchers.equalTo("13f74048cd8b4c2fdafdf0d45771c1cf73b998de")
+        );
+        MatcherAssert.assertThat(
+            latest.toString(),
+            Matchers.equalTo("https://bitbucket.org/api/2.0/repositories"
+                + "/crisketm/my-super-repo/commit"
+                + "/13f74048cd8b4c2fdafdf0d45771c1cf73b998de")
         );
     }
 
