@@ -54,6 +54,28 @@ public final class StoredInvoiceTestCase {
     }
 
     /**
+     * Invoice has the latest Payment.
+     */
+    @Test
+    public void hasLatestPayment() {
+        final Payment latest = Mockito.mock(Payment.class);
+        final Invoice invoice = new StoredInvoice(
+            1,
+            Mockito.mock(Contract.class),
+            LocalDateTime.now(),
+            latest,
+            "mihai",
+            "vlad",
+            "RO",
+            "RO",
+            BigDecimal.valueOf(487),
+            Mockito.mock(Storage.class)
+        );
+        assertThat(invoice.latest(), is(latest));
+    }
+
+
+    /**
      * Invoice has the correct contract id.
      */
     @Test
