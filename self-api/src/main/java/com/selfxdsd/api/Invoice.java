@@ -43,18 +43,6 @@ public interface Invoice {
     LocalDateTime createdAt();
 
     /**
-     * Timestamp of the payment.
-     * @return LocalDateTime or null if it's not paid.
-     */
-    LocalDateTime paymentTime();
-
-    /**
-     * Returns the transaction ID of the payment.
-     * @return String or null if it's not paid.
-     */
-    String transactionId();
-
-    /**
      * Who emitted the Invoice?
      * @return String.
      */

@@ -171,16 +171,6 @@ public final class StoredInvoice implements Invoice {
     }
 
     @Override
-    public LocalDateTime paymentTime() {
-        return this.paymentTime;
-    }
-
-    @Override
-    public String transactionId() {
-        return this.transactionId;
-    }
-
-    @Override
     public String billedBy() {
         final String billedBy;
         if(this.billedBy != null && !this.billedBy.isEmpty()) {
