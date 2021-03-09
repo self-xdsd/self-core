@@ -26,6 +26,7 @@ import com.selfxdsd.api.*;
 import com.selfxdsd.api.exceptions.PaymentMethodsException;
 import com.selfxdsd.api.storage.Storage;
 import com.selfxdsd.core.contracts.invoices.StoredInvoice;
+import com.selfxdsd.core.contracts.invoices.StoredPayment;
 import com.stripe.model.SetupIntent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -111,7 +112,8 @@ public final class FakeWallet implements Wallet {
             + " of Contract " + invoice.contract().contractId()
             + "..."
         );
-        final BigDecimal newCash = this.limit.subtract(invoice.totalAmount());
+        final BigDecimal totalAmount = invoice.totalAmount();
+        final BigDecimal newCash = this.limit.subtract(totalAmount);
         final String uuid = UUID.randomUUID().toString().replace("-", "");
         final Payment payment = this.storage
             .invoices()
@@ -120,8 +122,15 @@ public final class FakeWallet implements Wallet {
                     invoice.invoiceId(),
                     invoice.contract(),
                     invoice.createdAt(),
-                    LocalDateTime.now(),
-                    "fake_payment_" + uuid,
+                    new StoredPayment(
+                        invoice,
+                        "fake_payment_" + uuid,
+                        LocalDateTime.now(),
+                        totalAmount,
+                        Payment.Status.SUCCESSFUL,
+                        "",
+                        this.storage
+                    ),
                     invoice.billedBy(),
                     invoice.billedTo(),
                     "FK Country",

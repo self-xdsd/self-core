@@ -43,6 +43,13 @@ public interface Invoice {
     LocalDateTime createdAt();
 
     /**
+     * Latest Payment performed for this Invoice. If the Payment is successful,
+     * the Invoice is considered paid.
+     * @return Payment or null if no Payment as been performed yet.
+     */
+    Payment latest();
+
+    /**
      * Who emitted the Invoice?
      * @return String.
      */

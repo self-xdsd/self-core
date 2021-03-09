@@ -48,14 +48,10 @@ public final class StoredInvoice implements Invoice {
     private final LocalDateTime createdAt;
 
     /**
-     * Time when this Invoice has been paid.
+     * Latest Payment performed for this Invoice. If it's successful,
+     * then this Invoice is considered paid.
      */
-    private final LocalDateTime paymentTime;
-
-    /**
-     * The payment's transaction ID.
-     */
-    private final String transactionId;
+    private final Payment latest;
 
     /**
      * Who emitted this Invoice?
@@ -92,8 +88,7 @@ public final class StoredInvoice implements Invoice {
      * @param id Invoice id.
      * @param contract Contract.
      * @param createdAt Invoice creation time.
-     * @param paymentTime Time when this Invoice has been paid.
-     * @param transactionId The payment's transaction ID.
+     * @param latest Latest Payment performed for this Invoice.
      * @param billedBy Who emitted the Invoice.
      * @param billedTo Who pays it.
      * @param billedByCountry Country of the Contributor.
@@ -106,8 +101,7 @@ public final class StoredInvoice implements Invoice {
         final int id,
         final Contract contract,
         final LocalDateTime createdAt,
-        final LocalDateTime paymentTime,
-        final String transactionId,
+        final Payment latest,
         final String billedBy,
         final String billedTo,
         final String billedByCountry,
@@ -118,8 +112,7 @@ public final class StoredInvoice implements Invoice {
         this.id = id;
         this.contract = contract;
         this.createdAt = createdAt;
-        this.paymentTime = paymentTime;
-        this.transactionId = transactionId;
+        this.latest = latest;
         this.billedBy = billedBy;
         this.billedTo = billedTo;
         this.billedByCountry = billedByCountry;
@@ -168,6 +161,11 @@ public final class StoredInvoice implements Invoice {
     @Override
     public LocalDateTime createdAt() {
         return this.createdAt;
+    }
+
+    @Override
+    public Payment latest() {
+        return this.latest;
     }
 
     @Override
@@ -223,18 +221,21 @@ public final class StoredInvoice implements Invoice {
 
     @Override
     public boolean isPaid() {
-        return this.paymentTime != null && this.transactionId != null;
+        return this.latest != null && this.latest.status().equalsIgnoreCase(
+            Payment.Status.SUCCESSFUL
+        );
     }
 
     @Override
     public PlatformInvoice platformInvoice() {
         final PlatformInvoice found;
         if(this.isPaid()) {
-            if(this.transactionId.startsWith("fake_payment_")) {
+            final String transactionId = this.latest.transactionId();
+            if(transactionId.startsWith("fake_payment_")) {
                 found = null;
             } else {
                 found = this.storage.platformInvoices().getByPayment(
-                    this.transactionId, this.paymentTime
+                    transactionId, this.latest.paymentTime()
                 );
             }
         } else {

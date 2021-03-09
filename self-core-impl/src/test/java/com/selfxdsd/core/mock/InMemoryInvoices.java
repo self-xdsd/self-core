@@ -80,7 +80,6 @@ public final class InMemoryInvoices implements Invoices {
             null,
             null,
             null,
-            null,
             BigDecimal.valueOf(0),
             this.storage
         );
