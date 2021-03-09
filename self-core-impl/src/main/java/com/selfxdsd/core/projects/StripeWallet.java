@@ -27,6 +27,7 @@ import com.selfxdsd.api.exceptions.WalletPaymentException;
 import com.selfxdsd.api.storage.Storage;
 import com.selfxdsd.core.Env;
 import com.selfxdsd.core.contracts.invoices.StoredInvoice;
+import com.selfxdsd.core.contracts.invoices.StoredPayment;
 import com.stripe.Stripe;
 import com.stripe.exception.StripeException;
 import com.stripe.model.Customer;
@@ -205,11 +206,12 @@ public final class StripeWallet implements Wallet {
                 invoice.commission(),
                 contributorBilling
             );
+            final BigDecimal totalAmount = invoice.totalAmount();
             final PaymentIntent paymentIntent = PaymentIntent
                 .create(
                     PaymentIntentCreateParams.builder()
                         .setCurrency("eur")
-                        .setAmount(invoice.totalAmount().longValueExact())
+                        .setAmount(totalAmount.longValueExact())
                         .setCustomer(this.identifier)
                         .setPaymentMethod(paymentMethod.identifier())
                         .setTransferData(
@@ -244,8 +246,15 @@ public final class StripeWallet implements Wallet {
                             invoice.invoiceId(),
                             invoice.contract(),
                             invoice.createdAt(),
-                            paymentDate,
-                            paymentIntent.getId(),
+                            new StoredPayment(
+                                invoice,
+                                paymentIntent.getId(),
+                                paymentDate,
+                                totalAmount,
+                                Payment.Status.SUCCESSFUL,
+                                "",
+                                this.storage
+                            ),
                             invoice.billedBy(),
                             invoice.billedTo(),
                             contributorBilling.country(),

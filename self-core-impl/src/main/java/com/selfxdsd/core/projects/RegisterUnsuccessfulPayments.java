@@ -63,13 +63,13 @@ public final class RegisterUnsuccessfulPayments implements Wallet  {
             payment = this.original.pay(invoice);
         } catch (final WalletPaymentException failed) {
             payment = invoice.payments().register(
-                invoice, null, LocalDateTime.now(),
+                invoice, "", LocalDateTime.now(),
                 invoice.totalAmount(),
                 Payment.Status.FAILED, failed.getMessage()
             );
         } catch (final IllegalStateException errored) {
             payment = invoice.payments().register(
-                invoice, null, LocalDateTime.now(),
+                invoice, "", LocalDateTime.now(),
                 invoice.totalAmount(),
                 Payment.Status.ERROR, errored.getMessage()
             );

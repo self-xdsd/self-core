@@ -357,10 +357,7 @@ public final class FakeWalletTestCase {
         MatcherAssert.assertThat(paidInvoice.isPaid(), Matchers.is(true));
         MatcherAssert.assertThat(paidInvoice.invoiceId(),
             Matchers.is(invoice.invoiceId()));
-        MatcherAssert.assertThat(paidInvoice.paymentTime(),
-            Matchers.notNullValue());
-        MatcherAssert.assertThat(paidInvoice.transactionId(),
-            Matchers.notNullValue());
+        MatcherAssert.assertThat(paidInvoice.latest(), Matchers.notNullValue());
     }
 
     /**

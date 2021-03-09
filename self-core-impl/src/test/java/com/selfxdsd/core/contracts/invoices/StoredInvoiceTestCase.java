@@ -42,8 +42,7 @@ public final class StoredInvoiceTestCase {
             1,
             Mockito.mock(Contract.class),
             LocalDateTime.now(),
-            LocalDateTime.now(),
-            "transacetionId123",
+            Mockito.mock(Payment.class),
             "mihai",
             "vlad",
             "RO",
@@ -55,6 +54,28 @@ public final class StoredInvoiceTestCase {
     }
 
     /**
+     * Invoice has the latest Payment.
+     */
+    @Test
+    public void hasLatestPayment() {
+        final Payment latest = Mockito.mock(Payment.class);
+        final Invoice invoice = new StoredInvoice(
+            1,
+            Mockito.mock(Contract.class),
+            LocalDateTime.now(),
+            latest,
+            "mihai",
+            "vlad",
+            "RO",
+            "RO",
+            BigDecimal.valueOf(487),
+            Mockito.mock(Storage.class)
+        );
+        assertThat(invoice.latest(), is(latest));
+    }
+
+
+    /**
      * Invoice has the correct contract id.
      */
     @Test
@@ -64,8 +85,7 @@ public final class StoredInvoiceTestCase {
             1,
             contract,
             LocalDateTime.now(),
-            LocalDateTime.now(),
-            "transacetionId123",
+            Mockito.mock(Payment.class),
             "mihai",
             "vlad",
             "RO",
@@ -86,8 +106,7 @@ public final class StoredInvoiceTestCase {
             1,
             Mockito.mock(Contract.class),
             LocalDateTime.now(),
-            LocalDateTime.now(),
-            "transactionID",
+            Mockito.mock(Payment.class),
             "mihai",
             "vlad",
             "RO",
@@ -127,8 +146,7 @@ public final class StoredInvoiceTestCase {
             1,
             Mockito.mock(Contract.class),
             LocalDateTime.now(),
-            LocalDateTime.now(),
-            "transactionID",
+            Mockito.mock(Payment.class),
             "mihai",
             "vlad",
             "RO",
@@ -171,8 +189,7 @@ public final class StoredInvoiceTestCase {
             1,
             Mockito.mock(Contract.class),
             LocalDateTime.now(),
-            LocalDateTime.now(),
-            "transactionID",
+            Mockito.mock(Payment.class),
             "mihai",
             "vlad",
             "RO",
@@ -215,8 +232,7 @@ public final class StoredInvoiceTestCase {
             1,
             Mockito.mock(Contract.class),
             LocalDateTime.now(),
-            LocalDateTime.now(),
-            "transactionID",
+            Mockito.mock(Payment.class),
             "mihai",
             "vlad",
             "RO",
@@ -259,8 +275,7 @@ public final class StoredInvoiceTestCase {
             1,
             Mockito.mock(Contract.class),
             creationTime,
-            LocalDateTime.now(),
-            "transacetionId123",
+            Mockito.mock(Payment.class),
             "mihai",
             "vlad",
             "RO",
@@ -271,57 +286,6 @@ public final class StoredInvoiceTestCase {
         MatcherAssert.assertThat(
             invoice.createdAt(),
             Matchers.is(creationTime)
-        );
-    }
-
-    /**
-     * A StoredInvoice can return its payment time.
-     */
-    @Test
-    public void hasPaymentTime() {
-        final LocalDateTime paymentTime = LocalDateTime.now();
-        final Storage storage = Mockito.mock(Storage.class);
-        final Invoice invoice = new StoredInvoice(
-            1,
-            Mockito.mock(Contract.class),
-            LocalDateTime.now(),
-            paymentTime,
-            "transactionId",
-            "mihai",
-            "vlad",
-            "RO",
-            "RO",
-            BigDecimal.valueOf(487),
-            storage
-        );
-        MatcherAssert.assertThat(
-            invoice.paymentTime(),
-            Matchers.is(paymentTime)
-        );
-    }
-
-    /**
-     * A StoredInvoice can return its transaction id.
-     */
-    @Test
-    public void hasTransactionId() {
-        final LocalDateTime paymentTime = LocalDateTime.now();
-        final Invoice invoice = new StoredInvoice(
-            1,
-            Mockito.mock(Contract.class),
-            LocalDateTime.now(),
-            paymentTime,
-            "transactionId123",
-            "mihai",
-            "vlad",
-            "RO",
-            "RO",
-            BigDecimal.valueOf(487),
-            mock(Storage.class)
-        );
-        MatcherAssert.assertThat(
-            invoice.transactionId(),
-            Matchers.is("transactionId123")
         );
     }
 
@@ -344,8 +308,7 @@ public final class StoredInvoiceTestCase {
             1,
             contract,
             LocalDateTime.now(),
-            LocalDateTime.now(),
-            "transacetionId123",
+            Mockito.mock(Payment.class),
             "mihai",
             "vlad",
             "RO",
@@ -383,12 +346,13 @@ public final class StoredInvoiceTestCase {
                 Contract.Roles.DEV
             )
         );
+        final Payment payment = Mockito.mock(Payment.class);
+        Mockito.when(payment.status()).thenReturn(Payment.Status.SUCCESSFUL);
         final Invoice invoice = new StoredInvoice(
             1,
             contract,
             LocalDateTime.now(),
-            LocalDateTime.now(),
-            "transactionId123",
+            payment,
             "mihai",
             "vlad",
             "RO",
@@ -444,7 +408,6 @@ public final class StoredInvoiceTestCase {
             contract,
             LocalDateTime.now(),
             null,
-            null,
             "mihai",
             "vlad",
             "RO",
@@ -481,8 +444,7 @@ public final class StoredInvoiceTestCase {
             1,
             Mockito.mock(Contract.class),
             LocalDateTime.now(),
-            LocalDateTime.now(),
-            "transacetionId123",
+            Mockito.mock(Payment.class),
             "mihai",
             "vlad",
             "RO",
@@ -494,8 +456,7 @@ public final class StoredInvoiceTestCase {
             1,
             Mockito.mock(Contract.class),
             LocalDateTime.now(),
-            LocalDateTime.now(),
-            "transacetionId123",
+            Mockito.mock(Payment.class),
             "mihai",
             "vlad",
             "RO",
@@ -515,8 +476,7 @@ public final class StoredInvoiceTestCase {
             1,
             Mockito.mock(Contract.class),
             LocalDateTime.now(),
-            LocalDateTime.now(),
-            "transacetionId123",
+            Mockito.mock(Payment.class),
             "mihai",
             "vlad",
             "RO",
@@ -528,8 +488,7 @@ public final class StoredInvoiceTestCase {
             1,
             Mockito.mock(Contract.class),
             LocalDateTime.now(),
-            LocalDateTime.now(),
-            "transacetionId123",
+            Mockito.mock(Payment.class),
             "mihai",
             "vlad",
             "RO",
@@ -552,8 +511,7 @@ public final class StoredInvoiceTestCase {
             1,
             Mockito.mock(Contract.class),
             LocalDateTime.now(),
-            LocalDateTime.now(),
-            "transacetionId123",
+            Mockito.mock(Payment.class),
             "mihai",
             "vlad",
             "RO",
@@ -578,8 +536,7 @@ public final class StoredInvoiceTestCase {
             1,
             Mockito.mock(Contract.class),
             LocalDateTime.now(),
-            LocalDateTime.now(),
-            "transacetionId123",
+            Mockito.mock(Payment.class),
             "mihai",
             "vlad",
             "BG",
@@ -604,8 +561,7 @@ public final class StoredInvoiceTestCase {
             1,
             Mockito.mock(Contract.class),
             LocalDateTime.now(),
-            LocalDateTime.now(),
-            "transacetionId123",
+            Mockito.mock(Payment.class),
             "mihai",
             "vlad",
             "RO",
@@ -630,8 +586,7 @@ public final class StoredInvoiceTestCase {
             1,
             Mockito.mock(Contract.class),
             LocalDateTime.now(),
-            LocalDateTime.now(),
-            "transacetionId123",
+            Mockito.mock(Payment.class),
             "mihai",
             "vlad",
             "RO",
@@ -656,8 +611,7 @@ public final class StoredInvoiceTestCase {
             1,
             Mockito.mock(Contract.class),
             LocalDateTime.now(),
-            LocalDateTime.now(),
-            "transacetionId123",
+            Mockito.mock(Payment.class),
             "mihai",
             "vlad",
             "RO",
@@ -681,8 +635,7 @@ public final class StoredInvoiceTestCase {
             1,
             Mockito.mock(Contract.class),
             LocalDateTime.now(),
-            LocalDateTime.now(),
-            "transacetionId123",
+            Mockito.mock(Payment.class),
             "mihai",
             "vlad",
             null,
@@ -713,8 +666,7 @@ public final class StoredInvoiceTestCase {
             1,
             contract,
             LocalDateTime.now(),
-            LocalDateTime.now(),
-            "transacetionId123",
+            Mockito.mock(Payment.class),
             null,
             "vlad",
             "RO",
@@ -745,8 +697,7 @@ public final class StoredInvoiceTestCase {
             1,
             contract,
             LocalDateTime.now(),
-            LocalDateTime.now(),
-            "transacetionId123",
+            Mockito.mock(Payment.class),
             null,
             "vlad",
             null,
@@ -777,8 +728,7 @@ public final class StoredInvoiceTestCase {
             1,
             contract,
             LocalDateTime.now(),
-            LocalDateTime.now(),
-            "transacetionId123",
+            Mockito.mock(Payment.class),
             "mihai",
             null,
             "RO",
@@ -809,8 +759,7 @@ public final class StoredInvoiceTestCase {
             1,
             contract,
             LocalDateTime.now(),
-            LocalDateTime.now(),
-            "transacetionId123",
+            Mockito.mock(Payment.class),
             "mihai",
             null,
             null,
@@ -840,7 +789,6 @@ public final class StoredInvoiceTestCase {
             Mockito.mock(Contract.class),
             LocalDateTime.now(),
             null,
-            null,
             "mihai",
             "vlad",
             "RO",
@@ -866,12 +814,14 @@ public final class StoredInvoiceTestCase {
                 "PlatformInvoices storage should not be called!"
             )
         );
+        final Payment fake = Mockito.mock(Payment.class);
+        Mockito.when(fake.status()).thenReturn(Payment.Status.SUCCESSFUL);
+        Mockito.when(fake.transactionId()).thenReturn("fake_payment_123");
         final Invoice invoice = new StoredInvoice(
             1,
             Mockito.mock(Contract.class),
             LocalDateTime.now(),
-            LocalDateTime.now(),
-            "fake_payment_123",
+            fake,
             "mihai",
             "vlad",
             "RO",
@@ -903,12 +853,15 @@ public final class StoredInvoiceTestCase {
         Mockito.when(all.getByPayment(transactionId, payment))
             .thenReturn(found);
 
+        final Payment successful = Mockito.mock(Payment.class);
+        Mockito.when(successful.status()).thenReturn(Payment.Status.SUCCESSFUL);
+        Mockito.when(successful.transactionId()).thenReturn(transactionId);
+        Mockito.when(successful.paymentTime()).thenReturn(payment);
         final Invoice invoice = new StoredInvoice(
             1,
             Mockito.mock(Contract.class),
             LocalDateTime.now(),
-            payment,
-            transactionId,
+            successful,
             "mihai",
             "vlad",
             "RO",
@@ -950,6 +903,8 @@ public final class StoredInvoiceTestCase {
             ),
             storage
         );
+        final Payment payment = Mockito.mock(Payment.class);
+        Mockito.when(payment.status()).thenReturn(Payment.Status.SUCCESSFUL);
         final Invoice invoice = new StoredInvoice(
             1,
             new StoredContract(
@@ -965,8 +920,7 @@ public final class StoredInvoiceTestCase {
                 storage
             ),
             LocalDateTime.now(),
-            LocalDateTime.now(),
-            "transaction123",
+            payment,
             "mihai",
             "contributro",
             "RO",
@@ -1012,8 +966,7 @@ public final class StoredInvoiceTestCase {
             1,
             Mockito.mock(Contract.class),
             LocalDateTime.now(),
-            LocalDateTime.now(),
-            "transactionID",
+            Mockito.mock(Payment.class),
             "mihai",
             "vlad",
             "RO",
