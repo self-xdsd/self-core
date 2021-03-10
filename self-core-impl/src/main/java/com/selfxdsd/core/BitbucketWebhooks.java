@@ -162,7 +162,8 @@ final class BitbucketWebhooks implements Webhooks {
         if(response.statusCode() == HttpURLConnection.HTTP_OK) {
             LOG.debug("Webhooks fetched successfully!");
             final List<Webhook> list = new ArrayList<>();
-            final JsonArray hooks = response.asJsonObject().getJsonArray("values");
+            final JsonArray hooks = response.asJsonObject()
+                .getJsonArray("values");
             for(final JsonValue hook : hooks) {
                 list.add(
                     new Webhook() {
