@@ -30,7 +30,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 
 /**
  * Wallet decorator which perform all the required pre-checks before making
@@ -78,23 +77,18 @@ public final class PreCheckPayments implements Wallet  {
             LOG.error("[Payment-PreCheck] Invoice already paid.");
             throw new InvoiceException.AlreadyPaid(invoice);
         }
-        if (invoice.totalAmount().longValueExact() < 108 * 100) {
+        final BigDecimal totalAmount = invoice.totalAmount();
+        if (totalAmount.longValueExact() < 108 * 100) {
             LOG.error("[Payment-PreCheck] In order to be paid, Invoice amount"
                 + " must be at least 108 €.");
             throw new WalletPaymentException("In order to be paid, Invoice"
                 + " amount must be at least 108 €.");
         }
-        final BigDecimal newLimit = this.cash().subtract(
-            invoice.totalAmount()
-        );
+        final BigDecimal newLimit = this.cash().subtract(totalAmount);
         if (newLimit.longValue() < 0L) {
             LOG.error("[Payment-PreCheck] Not enough cash to pay Invoice.");
             throw new WalletPaymentException(
-                "Invoice value exceeds wallet limit. "
-                    + "Please increase the limit of your wallet with "
-                    + "at least " + newLimit.abs().add(invoice.totalAmount())
-                    .divide(BigDecimal.valueOf(100), RoundingMode.HALF_UP)
-                    + " €."
+                "Invoice value exceeds the limit of the project's wallet."
             );
         }
         return this.original.pay(invoice);

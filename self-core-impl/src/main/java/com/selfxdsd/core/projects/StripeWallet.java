@@ -179,9 +179,8 @@ public final class StripeWallet implements Wallet {
                     + "PayoutMethod set up, cannot pay."
                 );
                 throw new WalletPaymentException(
-                    "Contributor " + contributor.username()
-                    + " hasn't finished setting up their Stripe account yet. "
-                    + "We cannot make the payment yet."
+                    "Contributor " + contributor.username() + " hasn't "
+                    + "finished setting up their Stripe PayoutMethod."
                 );
             }
             final PaymentMethod paymentMethod = this.storage
@@ -194,10 +193,7 @@ public final class StripeWallet implements Wallet {
                     + "Cannot make payment."
                 );
                 throw new WalletPaymentException(
-                    "No active payment method for wallet #"
-                    + this.identifier + " of project "
-                    + this.project.repoFullName() + "/"
-                    + this.project.provider()
+                    "The project's wallet has no active card."
                 );
             }
 
@@ -273,8 +269,8 @@ public final class StripeWallet implements Wallet {
                 paymentIntent.cancel();
                 LOG.error("[STRIPE] PaymentIntent successfully cancelled.");
                 throw new WalletPaymentException(
-                    "Could not pay invoice #" + invoice.invoiceId() + " due to"
-                    + " Stripe payment intent status \"" + status + "\""
+                    "Stripe payment intent status \"" + status + "\". "
+                    + "Payment intent cancelled. "
                 );
             }
         } catch (final StripeException ex) {
@@ -292,15 +288,14 @@ public final class StripeWallet implements Wallet {
             );
             if("authentication_required".equalsIgnoreCase(code)) {
                 throw new WalletPaymentException(
-                    "Payment cannot be made because the card "
-                    + "requires authentication."
+                    "The card requires authentication."
                 );
             }
             if("card_declined".equalsIgnoreCase(code)) {
                 final String message = ex.getMessage();
                 throw new WalletPaymentException(
-                    "Payment cannot be made: "
-                    + message.substring(0, message.indexOf(';'))
+                    "Stripe message: "
+                    + message.substring(0, message.indexOf(';')) + ". "
                 );
             }
             throw new IllegalStateException(
@@ -317,7 +312,7 @@ public final class StripeWallet implements Wallet {
     private void ensureApiToken() {
         if (this.stripeApiToken == null
             || this.stripeApiToken.trim().isEmpty()) {
-            throw new WalletPaymentException(
+            throw new IllegalStateException(
                 "Please specify the "
                 + Env.STRIPE_API_TOKEN
                 + " Environment Variable!"
