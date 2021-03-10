@@ -5,6 +5,8 @@ import com.selfxdsd.api.Repos;
 import com.selfxdsd.api.User;
 import com.selfxdsd.api.storage.Storage;
 
+import javax.json.JsonValue;
+import java.net.HttpURLConnection;
 import java.net.URI;
 import java.util.Iterator;
 import java.util.Spliterator;
@@ -16,7 +18,6 @@ import java.util.function.Consumer;
  * @author Nikita Monokov (nmonokov@gmail.com)
  * @version $Id$
  * @since 0.0.64
- * @todo #978:60min Continue implementing this class and writing tests for it.
  */
 public final class BitbucketOrganizationRepos implements Repos {
 
@@ -59,7 +60,36 @@ public final class BitbucketOrganizationRepos implements Repos {
 
     @Override
     public Iterator<Repo> iterator() {
-        throw new UnsupportedOperationException("Not implemented yet");
+        final Resource resource = resources.get(this.reposUri);
+        final int statusCode = resource.statusCode();
+        if (statusCode == HttpURLConnection.HTTP_OK) {
+            return resource.asJsonObject()
+                .getJsonArray("values")
+                .stream()
+                .map(this::buildRepo)
+                .iterator();
+        } else {
+            throw new IllegalStateException("Unable to fetch Bitbucket "
+                + "organization Repos for current User. Expected 200 OK, "
+                + "but got: " + statusCode);
+        }
+    }
+
+    /**
+     * Builds a repo from provided JSON data.
+     *
+     * @param repoData Repo as JSON.
+     * @return Repo.
+     */
+    private Repo buildRepo(final JsonValue repoData) {
+        final String repoUri =  this.reposUri.toString() + "/"
+            + repoData.asJsonObject().getString("slug");
+        return new BitbucketRepo(
+            this.resources,
+            URI.create(repoUri),
+            this.owner,
+            this.storage
+        );
     }
 
     @Override
