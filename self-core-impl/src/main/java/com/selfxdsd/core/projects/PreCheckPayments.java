@@ -77,15 +77,14 @@ public final class PreCheckPayments implements Wallet  {
             LOG.error("[Payment-PreCheck] Invoice already paid.");
             throw new InvoiceException.AlreadyPaid(invoice);
         }
-        if (invoice.totalAmount().longValueExact() < 108 * 100) {
+        final BigDecimal totalAmount = invoice.totalAmount();
+        if (totalAmount.longValueExact() < 108 * 100) {
             LOG.error("[Payment-PreCheck] In order to be paid, Invoice amount"
                 + " must be at least 108 €.");
             throw new WalletPaymentException("In order to be paid, Invoice"
                 + " amount must be at least 108 €.");
         }
-        final BigDecimal newLimit = this.cash().subtract(
-            invoice.totalAmount()
-        );
+        final BigDecimal newLimit = this.cash().subtract(totalAmount);
         if (newLimit.longValue() < 0L) {
             LOG.error("[Payment-PreCheck] Not enough cash to pay Invoice.");
             throw new WalletPaymentException(
