@@ -185,14 +185,21 @@ public final class BitbucketRepoTestCase {
     /**
      * BitbucketRepo.webhooks() returns its webhooks.
      */
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void returnsWebhooks() {
-        new BitbucketRepo(
+        final BitbucketRepo repo = new BitbucketRepo(
             Mockito.mock(JsonResources.class),
             URI.create("https://bitbucket.org/api/2.0/repositories/john/test"),
             Mockito.mock(User.class),
             Mockito.mock(Storage.class)
-        ).webhooks();
+        );
+        MatcherAssert.assertThat(
+            repo.webhooks(),
+            Matchers.allOf(
+                Matchers.notNullValue(),
+                Matchers.instanceOf(BitbucketWebhooks.class)
+            )
+        );
     }
 
     /**
