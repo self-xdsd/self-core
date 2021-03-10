@@ -317,7 +317,7 @@ public final class StripeWallet implements Wallet {
     private void ensureApiToken() {
         if (this.stripeApiToken == null
             || this.stripeApiToken.trim().isEmpty()) {
-            throw new WalletPaymentException(
+            throw new IllegalStateException(
                 "Please specify the "
                 + Env.STRIPE_API_TOKEN
                 + " Environment Variable!"
