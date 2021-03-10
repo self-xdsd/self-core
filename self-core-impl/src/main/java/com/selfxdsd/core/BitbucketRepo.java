@@ -34,8 +34,6 @@ import java.net.URI;
  * @since 0.0.67
  * @todo #976:60min Start implement and test BitbucketIssues for
  *  BitbucketRepo#issues().
- * @todo #976:60min Start implement and test BitbucketWebhooks for
- *  BitbucketRepo#webhooks().
  * @todo #976:60min Start implement and test BitbucketStars for
  *  BitbucketRepo#stars().
  */
@@ -126,7 +124,11 @@ final class BitbucketRepo extends BaseRepo {
 
     @Override
     public Webhooks webhooks() {
-        throw new UnsupportedOperationException("Not implemented yet");
+        return new BitbucketWebhooks(
+            this.resources(),
+            URI.create(this.repoUri().toString() + "/hooks"),
+            this.storage()
+        );
     }
 
     @Override
