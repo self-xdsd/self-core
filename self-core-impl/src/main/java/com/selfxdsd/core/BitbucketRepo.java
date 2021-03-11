@@ -104,7 +104,12 @@ final class BitbucketRepo extends BaseRepo {
 
     @Override
     public Issues issues() {
-        throw new UnsupportedOperationException("Not implemented yet");
+        return new BitbucketIssues(
+            this.resources(),
+            URI.create(this.repoUri().toString() + "/issues"),
+            this,
+            this.storage()
+        );
     }
 
     @Override
