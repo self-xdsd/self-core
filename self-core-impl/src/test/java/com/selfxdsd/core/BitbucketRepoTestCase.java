@@ -128,14 +128,21 @@ public final class BitbucketRepoTestCase {
     /**
      * BitbucketRepo.issues() returns its issues.
      */
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void returnsIssues() {
-        new BitbucketRepo(
+        BitbucketRepo repo = new BitbucketRepo(
             Mockito.mock(JsonResources.class),
             URI.create("https://bitbucket.org/api/2.0/repositories/john/test"),
             Mockito.mock(User.class),
             Mockito.mock(Storage.class)
-        ).issues();
+        );
+        MatcherAssert.assertThat(
+            repo.issues(),
+            Matchers.allOf(
+                Matchers.notNullValue(),
+                Matchers.instanceOf(BitbucketIssues.class)
+            )
+        );
     }
 
     /**
