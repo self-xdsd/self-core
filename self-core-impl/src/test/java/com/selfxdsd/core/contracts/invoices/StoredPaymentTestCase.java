@@ -22,10 +22,7 @@
  */
 package com.selfxdsd.core.contracts.invoices;
 
-import com.selfxdsd.api.Invoice;
-import com.selfxdsd.api.Payment;
-import com.selfxdsd.api.PlatformInvoice;
-import com.selfxdsd.api.PlatformInvoices;
+import com.selfxdsd.api.*;
 import com.selfxdsd.api.storage.Storage;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -51,15 +48,20 @@ public final class StoredPaymentTestCase {
     @Test
     public void hasInvoice() {
         final Invoice invoice = Mockito.mock(Invoice.class);
+        final Invoices all = Mockito.mock(Invoices.class);
+        Mockito.when(all.getById(1)).thenReturn(invoice);
+        final Storage storage = Mockito.mock(Storage.class);
+        Mockito.when(storage.invoices()).thenReturn(all);
+
         MatcherAssert.assertThat(
             new StoredPayment(
-                invoice,
+                1,
                 "123",
                 LocalDateTime.now(),
                 BigDecimal.TEN,
                 Payment.Status.SUCCESSFUL,
                 "",
-                Mockito.mock(Storage.class)
+                storage
             ).invoice(),
             Matchers.is(invoice)
         );
@@ -79,7 +81,7 @@ public final class StoredPaymentTestCase {
             .thenReturn(found);
         MatcherAssert.assertThat(
             new StoredPayment(
-                Mockito.mock(Invoice.class),
+                1,
                 "123",
                 paymentTime,
                 BigDecimal.TEN,
@@ -98,7 +100,7 @@ public final class StoredPaymentTestCase {
     public void nullPlatformInvoiceForFailedPayment() {
         MatcherAssert.assertThat(
             new StoredPayment(
-                Mockito.mock(Invoice.class),
+                1,
                 "123",
                 LocalDateTime.now(),
                 BigDecimal.TEN,
@@ -117,7 +119,7 @@ public final class StoredPaymentTestCase {
     public void hasTransactionId() {
         MatcherAssert.assertThat(
             new StoredPayment(
-                Mockito.mock(Invoice.class),
+                1,
                 "123",
                 LocalDateTime.now(),
                 BigDecimal.TEN,
@@ -137,7 +139,7 @@ public final class StoredPaymentTestCase {
         final LocalDateTime paymentTime = LocalDateTime.now();
         MatcherAssert.assertThat(
             new StoredPayment(
-                Mockito.mock(Invoice.class),
+                1,
                 "123",
                 paymentTime,
                 BigDecimal.TEN,
@@ -156,7 +158,7 @@ public final class StoredPaymentTestCase {
     public void hasValue() {
         MatcherAssert.assertThat(
             new StoredPayment(
-                Mockito.mock(Invoice.class),
+                1,
                 "123",
                 LocalDateTime.now(),
                 BigDecimal.TEN,
@@ -175,7 +177,7 @@ public final class StoredPaymentTestCase {
     public void hasStatus() {
         MatcherAssert.assertThat(
             new StoredPayment(
-                Mockito.mock(Invoice.class),
+                1,
                 "123",
                 LocalDateTime.now(),
                 BigDecimal.TEN,
@@ -194,7 +196,7 @@ public final class StoredPaymentTestCase {
     public void failReason() {
         MatcherAssert.assertThat(
             new StoredPayment(
-                Mockito.mock(Invoice.class),
+                1,
                 "",
                 LocalDateTime.now(),
                 BigDecimal.TEN,
@@ -211,10 +213,9 @@ public final class StoredPaymentTestCase {
      */
     @Test
     public void areEquals() {
-        Invoice invoice = Mockito.mock(Invoice.class);
         LocalDateTime paymentTime = LocalDateTime.now();
         final Payment first = new StoredPayment(
-            invoice,
+            1,
             "123",
             paymentTime,
             BigDecimal.TEN,
@@ -224,7 +225,7 @@ public final class StoredPaymentTestCase {
         );
 
         final Payment second = new StoredPayment(
-            invoice,
+            1,
             "123",
             paymentTime,
             BigDecimal.TEN,
@@ -250,7 +251,7 @@ public final class StoredPaymentTestCase {
     @Test
     public void notEquals() {
         final Payment first = new StoredPayment(
-            Mockito.mock(Invoice.class),
+            1,
             "123",
             LocalDateTime.MAX,
             BigDecimal.TEN,
@@ -260,7 +261,7 @@ public final class StoredPaymentTestCase {
         );
 
         final Payment second = new StoredPayment(
-            Mockito.mock(Invoice.class),
+            2,
             "123",
             LocalDateTime.MIN,
             BigDecimal.TEN,

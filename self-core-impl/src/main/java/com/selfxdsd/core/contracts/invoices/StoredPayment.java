@@ -40,9 +40,9 @@ import java.util.Objects;
 public final class StoredPayment implements Payment {
 
     /**
-     * Invoice to which this payment made.
+     * Id of the Invoice to which this Payment belongs.
      */
-    private final Invoice invoice;
+    private int invoiceId;
 
     /**
      * Successful Payment transaction id.
@@ -76,7 +76,7 @@ public final class StoredPayment implements Payment {
 
     /**
      * Ctor.
-     * @param invoice The Invoice to which this payment made.
+     * @param invoiceId Id of the Invoice to which this Payment belongs.
      * @param transactionId Successful payment transaction id.
      * @param paymentTime Payment time.
      * @param value Payment amount.
@@ -84,15 +84,16 @@ public final class StoredPayment implements Payment {
      * @param failReason Payment failure reason.
      * @param storage Self Storage.
      */
-    public StoredPayment(final Invoice invoice,
-                         final String transactionId,
-                         final LocalDateTime paymentTime,
-                         final BigDecimal value,
-                         final String status,
-                         final String failReason,
-                         final Storage storage
+    public StoredPayment(
+        final int invoiceId,
+        final String transactionId,
+        final LocalDateTime paymentTime,
+        final BigDecimal value,
+        final String status,
+        final String failReason,
+        final Storage storage
     ) {
-        this.invoice = invoice;
+        this.invoiceId = invoiceId;
         this.transactionId = transactionId;
         this.paymentTime = paymentTime;
         this.value = value;
@@ -103,7 +104,7 @@ public final class StoredPayment implements Payment {
 
     @Override
     public Invoice invoice() {
-        return this.invoice;
+        return this.storage.invoices().getById(this.invoiceId);
     }
 
     @Override
@@ -148,15 +149,17 @@ public final class StoredPayment implements Payment {
     @Override
     public int hashCode() {
         return Objects.hash(
-            this.invoice().invoiceId(),
-            this.paymentTime()
+            this.invoiceId,
+            this.paymentTime,
+            this.transactionId
         );
     }
 
     @Override
     public boolean equals(final Object obj) {
         return this == obj || (obj instanceof StoredPayment
-            && this.invoice().equals(((Payment) obj).invoice())
-            && this.paymentTime() == ((Payment) obj).paymentTime());
+            && this.invoiceId == ((StoredPayment) obj).invoiceId
+            && this.paymentTime.isEqual(((StoredPayment) obj).paymentTime)
+            && this.transactionId.equals(((StoredPayment) obj).transactionId));
     }
 }

@@ -243,7 +243,7 @@ public final class StripeWallet implements Wallet {
                             invoice.contract(),
                             invoice.createdAt(),
                             new StoredPayment(
-                                invoice,
+                                invoice.invoiceId(),
                                 paymentIntent.getId(),
                                 paymentDate,
                                 totalAmount,
