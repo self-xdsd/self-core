@@ -150,7 +150,8 @@ public final class StoredPayment implements Payment {
     public int hashCode() {
         return Objects.hash(
             this.invoiceId,
-            this.paymentTime()
+            this.paymentTime,
+            this.transactionId
         );
     }
 
@@ -158,6 +159,7 @@ public final class StoredPayment implements Payment {
     public boolean equals(final Object obj) {
         return this == obj || (obj instanceof StoredPayment
             && this.invoiceId == ((StoredPayment) obj).invoiceId
-            && this.paymentTime() == ((Payment) obj).paymentTime());
+            && this.paymentTime.isEqual(((StoredPayment) obj).paymentTime)
+            && this.transactionId.equals(((StoredPayment) obj).transactionId));
     }
 }
