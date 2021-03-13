@@ -32,8 +32,6 @@ import java.net.URI;
  * @author criske
  * @version $Id$
  * @since 0.0.67
- * @todo #976:60min Start implement and test BitbucketIssues for
- *  BitbucketRepo#issues().
  * @todo #976:60min Start implement and test BitbucketStars for
  *  BitbucketRepo#stars().
  */
