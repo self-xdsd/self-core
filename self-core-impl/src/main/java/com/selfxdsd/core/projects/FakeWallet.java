@@ -123,7 +123,7 @@ public final class FakeWallet implements Wallet {
                     invoice.contract(),
                     invoice.createdAt(),
                     new StoredPayment(
-                        invoice,
+                        invoice.invoiceId(),
                         "fake_payment_" + uuid,
                         LocalDateTime.now(),
                         totalAmount,
