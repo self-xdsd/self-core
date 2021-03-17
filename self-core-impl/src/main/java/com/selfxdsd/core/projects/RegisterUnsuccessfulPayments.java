@@ -126,4 +126,14 @@ public final class RegisterUnsuccessfulPayments implements Wallet  {
     public boolean remove() {
         return this.original.remove();
     }
+
+    @Override
+    public boolean equals(final Object obj) {
+        return this.original.equals(obj);
+    }
+
+    @Override
+    public int hashCode() {
+        return this.original.hashCode();
+    }
 }

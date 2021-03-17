@@ -311,4 +311,26 @@ public final class RegisterUnsuccessfulPaymentsTestCase {
         );
         Mockito.verify(original, Mockito.times(1)).remove();
     }
+
+    /**
+     * Delegates the equals() method to the original.
+     */
+    @Test
+    public void delegatesEquals(){
+        final Wallet original = Mockito.mock(Wallet.class);
+        final Wallet preCheck = new RegisterUnsuccessfulPayments(original);
+        MatcherAssert.assertThat(preCheck.equals(original),
+            Matchers.is(Boolean.TRUE));
+    }
+
+    /**
+     * Delegates the equals() method to the original.
+     */
+    @Test
+    public void delegatesHashCode(){
+        final Wallet original = Mockito.mock(Wallet.class);
+        final Wallet preCheck = new RegisterUnsuccessfulPayments(original);
+        MatcherAssert.assertThat(preCheck.hashCode(),
+            Matchers.is(original.hashCode()));
+    }
 }
