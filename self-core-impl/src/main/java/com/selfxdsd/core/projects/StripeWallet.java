@@ -465,11 +465,12 @@ public final class StripeWallet implements Wallet {
         if (this == other) {
             equals = true;
         } else {
-            if (other == null || getClass() != other.getClass()) {
+            if (!(other instanceof Wallet)) {
                 equals = false;
             } else {
-                final StripeWallet stripeWallet = (StripeWallet) other;
-                equals = this.project.equals(stripeWallet.project);
+                final Wallet otherWallet = (Wallet) other;
+                equals = this.type().equals(otherWallet.type())
+                    && this.project.equals(otherWallet.project());
             }
         }
         return equals;
@@ -477,7 +478,7 @@ public final class StripeWallet implements Wallet {
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.project);
+        return Objects.hash(this.project, this.type());
     }
 
     /**
@@ -524,4 +525,6 @@ public final class StripeWallet implements Wallet {
         }
         return calculated;
     }
+
+
 }
