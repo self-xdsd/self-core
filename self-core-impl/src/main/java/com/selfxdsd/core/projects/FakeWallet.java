@@ -315,12 +315,12 @@ public final class FakeWallet implements Wallet {
         if (this == other) {
             equals = true;
         } else {
-            if (other == null || getClass() != other.getClass()) {
+            if (!(other instanceof Wallet)) {
                 equals = false;
             } else {
-                final FakeWallet missing = (FakeWallet) other;
-                equals = this.project.equals(missing.project)
-                    && this.type().equals(missing.type());
+                final Wallet otherWallet = (Wallet) other;
+                equals = this.type().equals(otherWallet.type())
+                    && this.project.equals(otherWallet.project());
             }
         }
         return equals;

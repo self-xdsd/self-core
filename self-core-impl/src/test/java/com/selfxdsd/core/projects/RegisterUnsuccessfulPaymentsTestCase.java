@@ -24,6 +24,7 @@ package com.selfxdsd.core.projects;
 
 import com.selfxdsd.api.*;
 import com.selfxdsd.api.exceptions.WalletPaymentException;
+import com.selfxdsd.api.storage.Storage;
 import com.stripe.model.SetupIntent;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -317,10 +318,40 @@ public final class RegisterUnsuccessfulPaymentsTestCase {
      */
     @Test
     public void delegatesEquals(){
-        final Wallet original = Mockito.mock(Wallet.class);
-        final Wallet preCheck = new RegisterUnsuccessfulPayments(original);
-        MatcherAssert.assertThat(preCheck.equals(original),
+        final Wallet stripe = new StripeWallet(
+            Mockito.mock(Storage.class),
+            Mockito.mock(Project.class),
+            BigDecimal.TEN,
+            "1",
+            false
+        );
+        final Wallet fake = new FakeWallet(
+            Mockito.mock(Storage.class),
+            Mockito.mock(Project.class),
+            BigDecimal.TEN,
+            "1",
+            false
+        );
+        final Wallet preCheckStripe = new RegisterUnsuccessfulPayments(stripe);
+        final Wallet preCheckFake = new RegisterUnsuccessfulPayments(fake);
+
+        MatcherAssert.assertThat(preCheckStripe.equals(stripe),
             Matchers.is(Boolean.TRUE));
+        MatcherAssert.assertThat(stripe.equals(preCheckStripe),
+            Matchers.is(Boolean.TRUE));
+        MatcherAssert.assertThat(preCheckFake.equals(fake),
+            Matchers.is(Boolean.TRUE));
+        MatcherAssert.assertThat(fake.equals(preCheckFake),
+            Matchers.is(Boolean.TRUE));
+
+        MatcherAssert.assertThat(preCheckFake.equals(stripe),
+            Matchers.is(Boolean.FALSE));
+        MatcherAssert.assertThat(stripe.equals(preCheckFake),
+            Matchers.is(Boolean.FALSE));
+        MatcherAssert.assertThat(preCheckStripe.equals(fake),
+            Matchers.is(Boolean.FALSE));
+        MatcherAssert.assertThat(fake.equals(preCheckStripe),
+            Matchers.is(Boolean.FALSE));
     }
 
     /**
