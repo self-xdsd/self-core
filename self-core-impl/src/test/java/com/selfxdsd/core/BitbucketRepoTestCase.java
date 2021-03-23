@@ -200,12 +200,18 @@ public final class BitbucketRepoTestCase {
             Mockito.mock(User.class),
             Mockito.mock(Storage.class)
         );
+        final Webhooks webhooks = repo.webhooks();
         MatcherAssert.assertThat(
-            repo.webhooks(),
+            webhooks,
             Matchers.allOf(
                 Matchers.notNullValue(),
                 Matchers.instanceOf(BitbucketWebhooks.class)
             )
+        );
+        MatcherAssert.assertThat(
+            webhooks.toString(),
+            Matchers.equalTo("https://bitbucket.org/api/2.0"
+                + "/repositories/john/test/hooks")
         );
     }
 

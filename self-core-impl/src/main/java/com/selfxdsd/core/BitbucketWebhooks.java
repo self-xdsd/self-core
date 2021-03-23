@@ -33,8 +33,11 @@ import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.json.JsonValue;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URI;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -46,8 +49,6 @@ import java.util.List;
  * @author Ali FELLAHI (fellahi.ali@gmail.com)
  * @version $Id$
  * @since 0.0.68
- *
- * @todo #1015:60min Continue writing tests for BitbucketWebhooks class.
  */
 final class BitbucketWebhooks implements Webhooks {
 
@@ -64,7 +65,7 @@ final class BitbucketWebhooks implements Webhooks {
     private final URI hooksUri;
 
     /**
-     * Gitlab's JSON Resources.
+     * Bitbucket's JSON Resources.
      */
     private final JsonResources resources;
 
@@ -76,7 +77,7 @@ final class BitbucketWebhooks implements Webhooks {
     /**
      * Ctor.
      *
-     * @param resources Gitlab's JSON Resources.
+     * @param resources Bitbucket's JSON Resources.
      * @param hooksUri Hooks base URI.
      * @param storage Storage.
      */
@@ -133,7 +134,8 @@ final class BitbucketWebhooks implements Webhooks {
                 final Resource response = this.resources
                     .delete(
                         URI.create(
-                            this.hooksUri.toString() + "/" + hook.id()
+                            this.hooksUri.toString() + "/"
+                                + this.encode(hook.id())
                         ),
                         Json.createObjectBuilder().build()
                     );
@@ -159,7 +161,7 @@ final class BitbucketWebhooks implements Webhooks {
             "Fetching Bitbucket webhooks [" + this.hooksUri + "]..."
         );
         final Resource response = this.resources.get(
-            URI.create(this.hooksUri.toString() + "?per_page=100")
+            URI.create(this.hooksUri.toString() + "?pagelen=100")
         );
         if(response.statusCode() == HttpURLConnection.HTTP_OK) {
             LOG.debug("Webhooks fetched successfully!");
@@ -196,5 +198,38 @@ final class BitbucketWebhooks implements Webhooks {
             iterator = Collections.emptyIterator();
         }
         return iterator;
+    }
+
+    /**
+     * Encode a segment or query parameter that will be added to uri.
+     * <br/><br/>
+     * This encoding is needed for {@link Webhook#id()} when is added
+     * to each hook url in {@link Webhooks#remove()}. Due to id format
+     * <code>{uuid}</code>,the brackets must be encoded.
+     *
+     * @param segment Segment.
+     * @return Encoded or fallback to original if fails.
+     */
+    private String encode(final String segment){
+        String encoded;
+        try {
+            encoded = URLEncoder.encode(
+                segment,
+                StandardCharsets.UTF_8.toString()
+            );
+        } catch (final UnsupportedEncodingException exception) {
+            LOG.error(
+                "Failed to encode {}, due to error: {}",
+                segment,
+                exception.getMessage()
+            );
+            encoded = segment;
+        }
+        return encoded;
+    }
+
+    @Override
+    public String toString() {
+        return this.hooksUri.toString();
     }
 }
