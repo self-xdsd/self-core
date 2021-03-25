@@ -43,7 +43,7 @@ final class BitbucketStars implements Stars {
 
     @Override
     public boolean add() {
-        LOG.error("Bitbucket doesn't support repo starring.");
-        return false;
+        LOG.warn("Bitbucket doesn't support repo starring.");
+        return true;
     }
 }
