@@ -32,8 +32,9 @@ import java.net.URI;
  * @author criske
  * @version $Id$
  * @since 0.0.67
- * @todo #976:60min Start implement and test BitbucketStars for
- *  BitbucketRepo#stars().
+ * @todo #1016:60min Start implement and test BitbucketLabels for
+ *  BitbucketRepo#labels(). Same as for `stars`, since they are not supported,
+ *  provide a placeholder implementation.
  */
 final class BitbucketRepo extends BaseRepo {
 
@@ -136,7 +137,7 @@ final class BitbucketRepo extends BaseRepo {
 
     @Override
     public Stars stars() {
-        throw new UnsupportedOperationException("Not implemented yet");
+        return new BitbucketStars();
     }
 
     @Override

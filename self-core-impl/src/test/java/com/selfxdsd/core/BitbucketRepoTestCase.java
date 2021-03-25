@@ -218,14 +218,16 @@ public final class BitbucketRepoTestCase {
     /**
      * BitbucketRepo.stars() returns its stars.
      */
-    @Test(expected = UnsupportedOperationException.class)
+    @Test()
     public void returnsStars() {
-        new BitbucketRepo(
+        final Stars stars = new BitbucketRepo(
             Mockito.mock(JsonResources.class),
             URI.create("https://bitbucket.org/api/2.0/repositories/john/test"),
             Mockito.mock(User.class),
             Mockito.mock(Storage.class)
         ).stars();
+        MatcherAssert.assertThat(stars,
+            Matchers.instanceOf(BitbucketStars.class));
     }
 
     /**
