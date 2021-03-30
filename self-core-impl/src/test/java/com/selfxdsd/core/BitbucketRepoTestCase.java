@@ -246,13 +246,14 @@ public final class BitbucketRepoTestCase {
     /**
      * BitbucketRepo.labels() returns its labels.
      */
-    @Test(expected = UnsupportedOperationException.class)
     public void returnsLabels() {
-        new BitbucketRepo(
+        final Labels labels = new BitbucketRepo(
             Mockito.mock(JsonResources.class),
             URI.create("https://bitbucket.org/api/2.0/repositories/john/test"),
             Mockito.mock(User.class),
             Mockito.mock(Storage.class)
         ).labels();
+        MatcherAssert.assertThat(labels, Matchers
+            .instanceOf(BitbucketLabels.class));
     }
 }
