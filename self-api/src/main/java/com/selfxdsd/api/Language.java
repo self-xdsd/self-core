@@ -22,9 +22,15 @@
  */
 package com.selfxdsd.api;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.Properties;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Language spoken in a Project.
@@ -32,18 +38,21 @@ import java.util.Set;
  * @version $Id$
  * @since 0.0.8
  * @checkstyle ReturnCount (100 lines)
+ * @todo #1071:60min Continue writing unit tests
+ *  for {@link Language#tryReplyFromLink(String)} in order to ensure complete
+ *  test coverage.
  */
 public abstract class Language {
 
     /**
      * Commands that the agent can understand, in a given language.
      */
-    private final Properties commands = new Properties();
+    private final Properties commands;
 
     /**
      * Responses that the agent can give, in a given language.
      */
-    private final Properties responses = new Properties();
+    private final Properties responses;
 
     /**
      * Constructor. These two files should be in self-pm, so we don't have
@@ -56,6 +65,7 @@ public abstract class Language {
         final String commandsFileName,
         final String responsesFileName
     ) {
+        this(new Properties(), new Properties());
         try {
             this.commands.load(
                 this.getClass().getClassLoader()
@@ -71,6 +81,20 @@ public abstract class Language {
                 ex
             );
         }
+    }
+
+    /**
+     * Generic constructor from existing command and responses properties.
+     * Should be used only in tests.
+     * @param commands Commands properties.
+     * @param responses Responses properties.
+     */
+    protected Language(
+        final Properties commands,
+        final Properties responses
+    ){
+        this.commands = commands;
+        this.responses = responses;
     }
 
     /**
@@ -104,7 +128,95 @@ public abstract class Language {
      * @return String reply or null if nothing is found.
      */
     public final String reply(final String key) {
-        return this.responses.getProperty(key);
+        final String reply = this.responses.getProperty(key);
+        return tryReplyFromLink(reply);
+    }
+
+    /**
+     * Try to follow the link from reply. If the reply is not a valid
+     * link (not starting with the right protocol), it will fallback
+     * to the reply as string.
+     * <br>
+     * Supported protocols:
+     * <ul>
+     *     <li>
+     *         <b>Classpath</b> loads the file from resources:
+     *         <br>
+     *         <code>
+     *             commands.comment=classpath:replies/commands.comment_en.md
+     *         </code>
+     *     </li>
+     *     <li>
+     *         <b>File</b> loads the file from file system by absolute path:
+     *         <br>
+     *         <code>
+     *             commands.comment=file:///<full_path>/commands.comment_en.md
+     *         </code>
+     *     </li>
+     *     <li>
+     *         <b>Http(s)</b> is doing a http(s) request:
+     *         <br>
+     *         <code>
+     *             commands.comment=http://my.docs.com/commands/comment
+     *         </code>
+     *     </li>
+     * </ul>
+     *
+     * If something goes wrong like IO exception, bad request etc...,
+     * it will return null.
+     *
+     * @param linkedReply Reply as link.
+     * @return Actual reply fetched from link or null if something goes wrong.
+     * @checkstyle CyclomaticComplexity (60 lines).
+     * @checkstyle BooleanExpressionComplexity (20 lines).
+     */
+    private String tryReplyFromLink(final String linkedReply){
+        final boolean isLinked = linkedReply != null
+            && (linkedReply.startsWith("http://")
+            || linkedReply.startsWith("https://")
+            || linkedReply.startsWith("file://")
+            || linkedReply.startsWith("classpath:")
+        );
+        String reply = null;
+        if (isLinked) {
+            URL url = null;
+            if (linkedReply.startsWith("classpath:")) {
+                if (linkedReply.length() > "classpath:".length()) {
+                    final String path = linkedReply
+                        .split("classpath:")[1];
+                    url = this.getClass().getClassLoader().getResource(path);
+                }
+            } else {
+                try {
+                    url = new URL(linkedReply);
+                } catch (final MalformedURLException exception) {
+                    exception.printStackTrace();
+                    //no-op
+                }
+            }
+            if (url != null) {
+                try {
+                    URLConnection connection = url.openConnection();
+                    try (
+                        final BufferedReader reader = new BufferedReader(
+                            new InputStreamReader(connection.getInputStream()))
+                    ) {
+                        reply = reader.lines().collect(Collectors
+                            .joining(System.lineSeparator()));
+                    } catch (final IOException exception) {
+                        exception.printStackTrace();
+                        //no-op
+                    }
+                } catch (final IOException exception) {
+                    exception.printStackTrace();
+                    //no-op
+                }
+            }
+        }else{
+            //there is no link => fallback
+            reply = linkedReply;
+        }
+        return reply;
     }
 
 }
