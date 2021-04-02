@@ -30,4 +30,9 @@ package com.selfxdsd.api;
  */
 public interface Role {
 
+    /**
+     * This Role as String.
+     * @return String.
+     */
+    String asString();
 }

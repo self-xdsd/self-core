@@ -22,8 +22,11 @@
  */
 package com.selfxdsd.core;
 
+import com.selfxdsd.api.Contract;
 import com.selfxdsd.api.Issue;
+import com.selfxdsd.api.Label;
 import com.selfxdsd.api.Role;
+import java.util.List;
 
 /**
  * Role required for an Issue/PR read from its labels.<br><br>
@@ -52,4 +55,30 @@ final class LabelsRole implements Role {
         this.issue = issue;
     }
 
+    @Override
+    public String asString() {
+        final List<String> roles = List.of(
+            Contract.Roles.DEV,
+            Contract.Roles.REV,
+            Contract.Roles.QA,
+            Contract.Roles.PO,
+            Contract.Roles.ARCH
+        );
+        String role = null;
+        for(final Label label : this.issue.labels()) {
+            final String name = label.name().trim().toUpperCase();
+            if(roles.contains(name)) {
+                role = name;
+                break;
+            }
+        }
+        if(role == null) {
+            if(this.issue.isPullRequest()) {
+                role = Contract.Roles.REV;
+            } else {
+                role = Contract.Roles.DEV;
+            }
+        }
+        return role;
+    }
 }
