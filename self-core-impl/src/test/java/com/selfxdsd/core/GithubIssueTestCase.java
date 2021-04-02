@@ -72,46 +72,6 @@ public final class GithubIssueTestCase {
     }
 
     /**
-     * Github Issue can return the DEV role when it is not a PR.
-     */
-    @Test
-    public void returnsDevRole() {
-        final Issue issue = new GithubIssue(
-            URI.create("http://localhost/issues/1"),
-            Json.createObjectBuilder()
-                .add("number", 1)
-                .add("html_url", "http://localhost/issues/1")
-                .build(),
-            Mockito.mock(Storage.class),
-            Mockito.mock(JsonResources.class)
-        );
-        MatcherAssert.assertThat(
-            issue.role(),
-            Matchers.equalTo(Contract.Roles.DEV)
-        );
-    }
-
-    /**
-     * Github Issue can return the REV role when it is a PR.
-     */
-    @Test
-    public void returnsRevRole() {
-        final Issue issue = new GithubIssue(
-            URI.create("http://localhost/pull/1"),
-            Json.createObjectBuilder()
-                .add("number", 1)
-                .add("html_url", "http://localhost/pull/1")
-                .build(),
-            Mockito.mock(Storage.class),
-            Mockito.mock(JsonResources.class)
-        );
-        MatcherAssert.assertThat(
-            issue.role(),
-            Matchers.equalTo(Contract.Roles.REV)
-        );
-    }
-
-    /**
      * GithubIssue can return the fullName of the Repo it belongs to,
      * from an Issue url.
      */

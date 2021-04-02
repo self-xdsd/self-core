@@ -23,7 +23,6 @@
 package com.selfxdsd.core;
 
 import com.selfxdsd.api.Comments;
-import com.selfxdsd.api.Contract;
 import com.selfxdsd.api.Estimation;
 import com.selfxdsd.api.Issue;
 import com.selfxdsd.api.storage.Storage;
@@ -75,50 +74,6 @@ public final class GitlabIssueTestCase {
             Mockito.mock(JsonResources.class)
         );
         MatcherAssert.assertThat(issue.provider(), Matchers.equalTo("gitlab"));
-    }
-
-    /**
-     * Gitlab Issue can return the DEV role when it is not a PR.
-     */
-    @Test
-    public void returnsDevRole() {
-        final Issue issue = new GitlabIssue(
-            URI.create("https://gitlab.com/api/v4/projects"
-                + "/john%2Ftest/issues/1"),
-            Json.createObjectBuilder()
-                .add("iid", 1)
-                .add("web_url", "http://gitlab.com/john/"
-                    + "test/-/issues/1")
-                .build(),
-            Mockito.mock(Storage.class),
-            Mockito.mock(JsonResources.class)
-        );
-        MatcherAssert.assertThat(
-            issue.role(),
-            Matchers.equalTo(Contract.Roles.DEV)
-        );
-    }
-
-    /**
-     * Gitlab Issue can return the REV role when it is a PR.
-     */
-    @Test
-    public void returnsRevRole() {
-        final Issue issue = new GitlabIssue(
-            URI.create("https://gitlab.com/api/v4/projects"
-                + "/john%2Ftest/merge_requests/1"),
-            Json.createObjectBuilder()
-                .add("iid", 1)
-                .add("web_url", "http://gitlab.com/john/"
-                    + "test/-/merge_requests/1")
-                .build(),
-            Mockito.mock(Storage.class),
-            Mockito.mock(JsonResources.class)
-        );
-        MatcherAssert.assertThat(
-            issue.role(),
-            Matchers.equalTo(Contract.Roles.REV)
-        );
     }
 
     /**

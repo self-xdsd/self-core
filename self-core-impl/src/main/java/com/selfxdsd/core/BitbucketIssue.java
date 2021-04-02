@@ -98,13 +98,7 @@ final class BitbucketIssue implements Issue {
 
     @Override
     public String role() {
-        final String role;
-        if(this.isPullRequest()) {
-            role = Contract.Roles.REV;
-        } else {
-            role = Contract.Roles.DEV;
-        }
-        return role;
+        return new LabelsRole(this).asString();
     }
 
     @Override
