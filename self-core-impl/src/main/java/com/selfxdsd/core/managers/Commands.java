@@ -56,7 +56,11 @@ public final class Commands implements Conversation {
         if(Event.Type.COMMANDS.equals(event.type())) {
             final Project project = event.project();
             final Language language = project.language();
-            final String reply = language.reply("commands.comment");
+            final String author = event.comment().author();
+            final String reply = String.format(
+                language.reply("commands.comment"),
+                author
+            );
             steps = new SendReply(reply);
         } else {
             steps = this.next.start(event);

@@ -27,11 +27,6 @@ import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.Properties;
-
 /**
  * Unit tests for {@link Language} linked responses.
  * @author criske
@@ -50,64 +45,24 @@ public final class LanguageLinkedResponsesTestCase {
         MatcherAssert.assertThat(
             english.reply("commands.comment"),
             Matchers.startsWith(
-                "* ``Hello`` -- any comment addressed"
+                "Hi @%s! Here are the commands which I understand:"
             )
         );
     }
 
     /**
-     * Language can follow a file linked from responses properties entry value.
-     * @throws IOException if something goes wrong.
-     * @checkstyle JavadocType (40 lines).
-     * @checkstyle JavadocMethod (40 lines).
+     * Language can follow a resource linked from responses properties entry
+     * value but returns null if the file resource is not found.
      */
     @Test
-    public void shouldReadReplyFromFileLink() throws IOException {
-        final Path file = Files.createTempFile("self-lang-comment-link",
-            "test");
-        Files.writeString(file, "* ``Hello`` -- any comment addressed");
-        final Properties commands = new Properties();
-        commands.putIfAbsent(
-            "commands.comment",
-            "file:///" + file.toAbsolutePath()
-        );
-        class TestLanguage extends Language {
-            TestLanguage() {
-                super(new Properties(), commands);
-            }
-        }
-        final Language language = new TestLanguage();
+    public void shouldFailToReadReplyFromClasspathLink() {
+        final Language english = new Language(
+            "commands_en.properties",
+            "responses_bad_link_en.properties") {
+        };
         MatcherAssert.assertThat(
-            language.reply("commands.comment"),
-            Matchers.startsWith(
-                "* ``Hello`` -- any comment addressed"
-            )
-        );
-        Files.delete(file);
-    }
-
-    /**
-     * Language can follow a http link from responses properties entry value.
-     * @checkstyle JavadocType (40 lines).
-     * @checkstyle JavadocMethod (40 lines).
-     */
-    @Test
-    public void shouldReadReplyFromHttpLink() {
-        final Properties commands = new Properties();
-        commands.putIfAbsent(
-            "commands.comment",
-            "https://raw.githubusercontent.com/self-xdsd/self-docs/"
-                + "master/projectmanager.md"
-        );
-        class TestLanguage extends Language {
-            TestLanguage() {
-                super(new Properties(), commands);
-            }
-        }
-        final Language language = new TestLanguage();
-        MatcherAssert.assertThat(
-            language.reply("commands.comment"),
-            Matchers.startsWith("---")
+            english.reply("commands.comment"),
+            Matchers.nullValue()
         );
     }
 }

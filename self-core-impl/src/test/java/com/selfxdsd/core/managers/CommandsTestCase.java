@@ -22,14 +22,14 @@
  */
 package com.selfxdsd.core.managers;
 
-import com.selfxdsd.api.Event;
-import com.selfxdsd.api.Project;
+import com.selfxdsd.api.*;
 import com.selfxdsd.api.pm.Conversation;
 import com.selfxdsd.api.pm.Step;
 import com.selfxdsd.core.projects.English;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
 /**
@@ -43,6 +43,7 @@ public final class CommandsTestCase {
     /**
      * Commands.start(...) should return a SendReply step in case
      * of a "commands" event.
+     * @checkstyle ExecutableStatementCount (60 lines).
      */
     @Test
     public void returnsStepForCommands() {
@@ -50,8 +51,16 @@ public final class CommandsTestCase {
         Mockito.when(event.type()).thenReturn(Event.Type.COMMANDS);
 
         final Project project = Mockito.mock(Project.class);
+        final Comment comment = Mockito.mock(Comment.class);
+        final Comments comments = Mockito.mock(Comments.class);
+        final Issue issue = Mockito.mock(Issue.class);
         Mockito.when(project.language()).thenReturn(new English());
         Mockito.when(event.project()).thenReturn(project);
+        Mockito.when(event.comment()).thenReturn(comment);
+        Mockito.when(comment.body()).thenReturn("");
+        Mockito.when(comment.author()).thenReturn("john");
+        Mockito.when(event.issue()).thenReturn(issue);
+        Mockito.when(issue.comments()).thenReturn(comments);
 
         final Conversation commands = new Commands(
             next -> {
@@ -63,12 +72,24 @@ public final class CommandsTestCase {
         );
 
         final Step step = commands.start(event);
+        step.perform(event);
         MatcherAssert.assertThat(
             step,
             Matchers.allOf(
                 Matchers.notNullValue(),
                 Matchers.instanceOf(SendReply.class)
             )
+        );
+        final ArgumentCaptor<String> reply = ArgumentCaptor
+            .forClass(String.class);
+        Mockito.verify(comments, Mockito.times(1))
+            .post(reply.capture());
+        MatcherAssert.assertThat(
+            reply.getValue(),
+            Matchers
+                .startsWith(
+                    "> \n\nHi @john! Here are the commands which I understand:"
+                )
         );
     }
 
