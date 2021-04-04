@@ -132,5 +132,10 @@ public interface Event {
          */
         public static final String STATUS = "status";
 
+        /**
+         * Available commands event.
+         */
+        public static final String COMMANDS = "commands";
+
     }
 }

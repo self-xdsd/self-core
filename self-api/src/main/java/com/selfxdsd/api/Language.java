@@ -22,9 +22,13 @@
  */
 package com.selfxdsd.api;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URL;
 import java.util.Properties;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Language spoken in a Project.
@@ -104,7 +108,50 @@ public abstract class Language {
      * @return String reply or null if nothing is found.
      */
     public final String reply(final String key) {
-        return this.responses.getProperty(key);
+        return followPossibleLink(this.responses.getProperty(key));
+    }
+
+    /**
+     * Try to follow the link from reply. If the reply is not a valid
+     * link (not starting with the right protocol), it will fallback
+     * to the reply as string.
+     * <br>
+     * The link must start with <i>classpath:</i>.
+     * <br>
+     * Example:<br>
+     * <code>
+     *     commands.comment=classpath:replies/commands.comment_en.md
+     * </code>
+     *
+     * @param linkedReply Reply as link.
+     * @return Actual reply fetched from link or null if something goes wrong.
+     */
+    private String followPossibleLink(final String linkedReply){
+        final boolean isLinked = linkedReply != null
+            && linkedReply.startsWith("classpath:")
+            && linkedReply.length() > "classpath:".length();
+
+        String reply = null;
+        if (isLinked) {
+            final String path = linkedReply.split("classpath:")[1];
+            URL url =  this.getClass().getClassLoader().getResource(path);
+            if (url != null) {
+                try (
+                    final BufferedReader reader = new BufferedReader(
+                        new InputStreamReader(url.openConnection()
+                            .getInputStream()))
+                ) {
+                    reply = reader.lines().collect(Collectors
+                        .joining(System.lineSeparator()));
+                } catch (final IOException exception) {
+                    exception.printStackTrace();
+                }
+            }
+        }else{
+            //there is no link => fallback
+            reply = linkedReply;
+        }
+        return reply;
     }
 
 }

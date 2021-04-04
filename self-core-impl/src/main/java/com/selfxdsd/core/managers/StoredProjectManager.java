@@ -47,6 +47,7 @@ import java.util.function.Supplier;
  * @version $Id$
  * @checkstyle ExecutableStatementCount (1000 lines)
  * @checkstyle ClassFanOutComplexity (1000 lines)
+ * @checkstyle ClassDataAbstractionCoupling (1000 lines)
  * @since 0.0.1
  */
 public final class StoredProjectManager implements ProjectManager {
@@ -556,12 +557,14 @@ public final class StoredProjectManager implements ProjectManager {
             );
             final Conversation conversation = new IgnoreBots(
                 new Understand(
-                    new Hello(
-                        new Status(
-                            new Resign(
-                                new Deregister(
-                                    new Register(
-                                        new Confused()
+                    new Commands(
+                        new Hello(
+                            new Status(
+                                new Resign(
+                                    new Deregister(
+                                        new Register(
+                                            new Confused()
+                                        )
                                     )
                                 )
                             )
