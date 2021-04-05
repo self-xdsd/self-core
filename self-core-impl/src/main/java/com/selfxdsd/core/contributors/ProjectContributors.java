@@ -238,7 +238,7 @@ public final class ProjectContributors extends BasePaged
                                     BigDecimal.valueOf(60),
                                     RoundingMode.HALF_UP
                                 );
-                            price = price.add(manager.commission(price));
+                            price = price.add(manager.projectCommission(price));
                             final BigDecimal budget = this.project
                                 .wallet()
                                 .available();

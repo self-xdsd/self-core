@@ -329,7 +329,8 @@ public final class ProviderContributorsTestCase {
 
         final ProjectManager projectManager = Mockito
             .mock(ProjectManager.class);
-        Mockito.when(projectManager.percentage()).thenReturn(pmCommission);
+        Mockito.when(projectManager.projectPercentage())
+            .thenReturn(pmCommission);
         Mockito.when(project.projectManager()).thenReturn(projectManager);
 
         return project;

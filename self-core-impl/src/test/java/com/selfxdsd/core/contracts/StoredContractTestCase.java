@@ -363,12 +363,12 @@ public final class StoredContractTestCase {
         ).thenReturn(invoices);
 
         final ProjectManager manager = Mockito.mock(ProjectManager.class);
-        Mockito.when(manager.percentage()).thenReturn(8.0);
-        Mockito.when(manager.commission(BigDecimal.valueOf(10000)))
+        Mockito.when(manager.projectPercentage()).thenReturn(8.0);
+        Mockito.when(manager.projectCommission(BigDecimal.valueOf(10000)))
             .thenReturn(BigDecimal.valueOf(800));
-        Mockito.when(manager.commission(BigDecimal.valueOf(15000)))
+        Mockito.when(manager.projectCommission(BigDecimal.valueOf(15000)))
             .thenReturn(BigDecimal.valueOf(1200));
-        Mockito.when(manager.commission(BigDecimal.valueOf(7500)))
+        Mockito.when(manager.projectCommission(BigDecimal.valueOf(7500)))
             .thenReturn(BigDecimal.valueOf(600));
 
         final Projects allProjects = Mockito.mock(Projects.class);

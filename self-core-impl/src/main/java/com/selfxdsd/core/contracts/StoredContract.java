@@ -212,7 +212,7 @@ public final class StoredContract implements Contract {
         for(final Task task : this.tasks()) {
             total = total
                 .add(task.value())
-                .add(manager.commission(task.value()));
+                .add(manager.projectCommission(task.value()));
         }
         total = total.add(this.invoices().active().totalAmount());
         return total;

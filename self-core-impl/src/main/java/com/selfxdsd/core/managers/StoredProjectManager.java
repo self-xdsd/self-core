@@ -85,9 +85,9 @@ public final class StoredProjectManager implements ProjectManager {
     private final String accessToken;
 
     /**
-     * Commission for each handled Task.
+     * Commission taken from the Project for each handled Task.
      */
-    private final double percentage;
+    private final double projectPercentage;
 
     /**
      * Self's storage.
@@ -106,7 +106,7 @@ public final class StoredProjectManager implements ProjectManager {
      * @param username PM's username.
      * @param provider The provider's name (Gitlab, Github etc).
      * @param accessToken API Access token.
-     * @param percentage Commission percentage.
+     * @param projectPercentage Project commission percentage.
      * @param storage Self's storage.
      * @checkstyle ParameterNumber (10 lines)
      */
@@ -116,7 +116,7 @@ public final class StoredProjectManager implements ProjectManager {
         final String username,
         final String provider,
         final String accessToken,
-        final double percentage,
+        final double projectPercentage,
         final Storage storage
     ) {
         this(id,
@@ -124,7 +124,7 @@ public final class StoredProjectManager implements ProjectManager {
             username,
             provider,
             accessToken,
-            percentage,
+            projectPercentage,
             storage,
             LocalDateTime::now);
     }
@@ -136,7 +136,7 @@ public final class StoredProjectManager implements ProjectManager {
      * @param username PM's username.
      * @param provider The provider's name (Gitlab, Github etc).
      * @param accessToken API Access token.
-     * @param percentage Commission percentage.
+     * @param projectPercentage Project commission percentage.
      * @param storage Self's storage.
      * @param dateTimeSupplier Current date time. Used in testing deadlines.
      * @checkstyle ParameterNumber (10 lines)
@@ -147,7 +147,7 @@ public final class StoredProjectManager implements ProjectManager {
         final String username,
         final String provider,
         final String accessToken,
-        final double percentage,
+        final double projectPercentage,
         final Storage storage,
         final Supplier<LocalDateTime> dateTimeSupplier
     ) {
@@ -156,7 +156,7 @@ public final class StoredProjectManager implements ProjectManager {
         this.username = username;
         this.provider = provider;
         this.accessToken = accessToken;
-        this.percentage = percentage;
+        this.projectPercentage = projectPercentage;
         this.storage = storage;
         this.dateTimeSupplier = dateTimeSupplier;
     }
@@ -204,15 +204,15 @@ public final class StoredProjectManager implements ProjectManager {
     }
 
     @Override
-    public double percentage() {
-        return this.percentage;
+    public double projectPercentage() {
+        return this.projectPercentage;
     }
 
     @Override
-    public BigDecimal commission(final BigDecimal value) {
+    public BigDecimal projectCommission(final BigDecimal value) {
         return value.multiply(
             BigDecimal
-                .valueOf(this.percentage)
+                .valueOf(this.projectPercentage)
                 .setScale(2, RoundingMode.HALF_UP)
         ).divide(
             BigDecimal.valueOf(100),
@@ -478,7 +478,7 @@ public final class StoredProjectManager implements ProjectManager {
                     final InvoicedTask invoiced = task.contract()
                         .invoices()
                         .active()
-                        .register(task, this.commission(task.value()));
+                        .register(task, this.projectCommission(task.value()));
                     if(invoiced != null) {
                         issue.comments().post(
                             String.format(

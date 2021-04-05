@@ -128,7 +128,7 @@ public final class StoredProjectManagerTestCase {
             Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(
-            manager.percentage(),
+            manager.projectPercentage(),
             Matchers.equalTo(8.0)
         );
     }
@@ -149,19 +149,19 @@ public final class StoredProjectManagerTestCase {
             Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(
-            fixed.commission(BigDecimal.valueOf(1000)),
+            fixed.projectCommission(BigDecimal.valueOf(1000)),
             Matchers.equalTo(BigDecimal.valueOf(80))
         );
         MatcherAssert.assertThat(
-            fixed.commission(BigDecimal.valueOf(10000)),
+            fixed.projectCommission(BigDecimal.valueOf(10000)),
             Matchers.equalTo(BigDecimal.valueOf(800))
         );
         MatcherAssert.assertThat(
-            fixed.commission(BigDecimal.valueOf(100)),
+            fixed.projectCommission(BigDecimal.valueOf(100)),
             Matchers.equalTo(BigDecimal.valueOf(8))
         );
         MatcherAssert.assertThat(
-            fixed.commission(BigDecimal.valueOf(10)),
+            fixed.projectCommission(BigDecimal.valueOf(10)),
             Matchers.equalTo(BigDecimal.valueOf(1))
         );
 
@@ -175,19 +175,19 @@ public final class StoredProjectManagerTestCase {
             Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(
-            comma.commission(BigDecimal.valueOf(1000)),
+            comma.projectCommission(BigDecimal.valueOf(1000)),
             Matchers.equalTo(BigDecimal.valueOf(86))
         );
         MatcherAssert.assertThat(
-            comma.commission(BigDecimal.valueOf(10000)),
+            comma.projectCommission(BigDecimal.valueOf(10000)),
             Matchers.equalTo(BigDecimal.valueOf(863))
         );
         MatcherAssert.assertThat(
-            comma.commission(BigDecimal.valueOf(100)),
+            comma.projectCommission(BigDecimal.valueOf(100)),
             Matchers.equalTo(BigDecimal.valueOf(9))
         );
         MatcherAssert.assertThat(
-            comma.commission(BigDecimal.valueOf(10)),
+            comma.projectCommission(BigDecimal.valueOf(10)),
             Matchers.equalTo(BigDecimal.valueOf(1))
         );
     }
