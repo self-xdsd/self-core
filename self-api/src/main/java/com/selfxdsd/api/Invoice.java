@@ -96,10 +96,10 @@ public interface Invoice {
     BigDecimal amount();
 
     /**
-     * Value of the PM's commission.
+     * Value of the project's commission.
      * @return BigDecimal.
      */
-    BigDecimal commission();
+    BigDecimal projectCommission();
 
     /**
      * EUR to RON exchange rage (e.g. if 487, then it means 1 EUR = 4,87 RON).

@@ -260,7 +260,7 @@ public final class StoredInvoiceTestCase {
         Mockito.when(storage.invoicedTasks()).thenReturn(all);
 
         MatcherAssert.assertThat(
-            invoice.commission(),
+            invoice.projectCommission(),
             Matchers.equalTo(BigDecimal.valueOf(300))
         );
     }
