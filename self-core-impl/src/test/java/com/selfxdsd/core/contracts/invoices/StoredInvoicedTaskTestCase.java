@@ -52,6 +52,7 @@ public final class StoredInvoicedTaskTestCase {
             1,
             BigDecimal.valueOf(25000),
             BigDecimal.valueOf(50),
+            BigDecimal.valueOf(50),
             Mockito.mock(Task.class),
             Mockito.mock(Storage.class)
         );
@@ -72,6 +73,7 @@ public final class StoredInvoicedTaskTestCase {
             1,
             BigDecimal.valueOf(25000),
             BigDecimal.valueOf(50),
+            BigDecimal.valueOf(50),
             task,
             Mockito.mock(Storage.class)
         );
@@ -91,6 +93,7 @@ public final class StoredInvoicedTaskTestCase {
             1,
             BigDecimal.valueOf(25000),
             BigDecimal.valueOf(50),
+            BigDecimal.valueOf(50),
             Mockito.mock(Task.class),
             Mockito.mock(Storage.class)
         );
@@ -101,21 +104,42 @@ public final class StoredInvoicedTaskTestCase {
     }
 
     /**
-     * StoredInvoicedTask can return the PM commission.
+     * StoredInvoicedTask can return the project commission.
      */
     @Test
-    public void returnsCommission() {
+    public void returnsProjectCommission() {
         final InvoicedTask task = new StoredInvoicedTask(
             12,
             1,
             BigDecimal.valueOf(25000),
             BigDecimal.valueOf(50),
+            BigDecimal.valueOf(30),
             Mockito.mock(Task.class),
             Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(
-            task.commission(),
+            task.projectCommission(),
             Matchers.equalTo(BigDecimal.valueOf(50))
+        );
+    }
+
+    /**
+     * StoredInvoicedTask can return the contributor commission.
+     */
+    @Test
+    public void returnsContributorCommission() {
+        final InvoicedTask task = new StoredInvoicedTask(
+            12,
+            1,
+            BigDecimal.valueOf(25000),
+            BigDecimal.valueOf(50),
+            BigDecimal.valueOf(30),
+            Mockito.mock(Task.class),
+            Mockito.mock(Storage.class)
+        );
+        MatcherAssert.assertThat(
+            task.contributorCommission(),
+            Matchers.equalTo(BigDecimal.valueOf(30))
         );
     }
 
@@ -128,6 +152,7 @@ public final class StoredInvoicedTaskTestCase {
             12,
             1,
             BigDecimal.valueOf(25000),
+            BigDecimal.valueOf(50),
             BigDecimal.valueOf(50),
             Mockito.mock(Task.class),
             Mockito.mock(Storage.class)
@@ -153,6 +178,7 @@ public final class StoredInvoicedTaskTestCase {
             12,
             1,
             BigDecimal.valueOf(25000),
+            BigDecimal.valueOf(50),
             BigDecimal.valueOf(50),
             Mockito.mock(Task.class),
             storage

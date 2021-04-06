@@ -246,7 +246,7 @@ public final class StoredInvoiceTestCase {
                 invoice,
                 () -> {
                     final InvoicedTask task = Mockito.mock(InvoicedTask.class);
-                    Mockito.when(task.commission())
+                    Mockito.when(task.projectCommission())
                         .thenReturn(BigDecimal.valueOf(100));
                     final List<InvoicedTask> tasks = new ArrayList<>();
                     tasks.add(task);
@@ -260,7 +260,7 @@ public final class StoredInvoiceTestCase {
         Mockito.when(storage.invoicedTasks()).thenReturn(all);
 
         MatcherAssert.assertThat(
-            invoice.commission(),
+            invoice.projectCommission(),
             Matchers.equalTo(BigDecimal.valueOf(300))
         );
     }

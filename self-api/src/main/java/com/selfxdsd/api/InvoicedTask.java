@@ -29,8 +29,6 @@ import java.math.BigDecimal;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.7
- * @todo #1073:60min Add the attribute contributorCommission to the invoiced
- *  task and rename the original commission to projectCommission.
  */
 public interface InvoicedTask {
 
@@ -53,20 +51,25 @@ public interface InvoicedTask {
     Task task();
 
     /**
-     * Value of this invoiced task in cents. This is the
-     * value that the Contributor will receive.
+     * Value of this invoiced task in cents.
      * @return BigDecimal value.
      */
     BigDecimal value();
 
     /**
-     * Commission that the PM will receive.
+     * Project commission that the PM will receive.
      * @return BigDecimal.
      */
-    BigDecimal commission();
+    BigDecimal projectCommission();
 
     /**
-     * Total value of this InvoicedTask (value + commission).
+     * Contributor commission that the PM will receive.
+     * @return BigDecimal.
+     */
+    BigDecimal contributorCommission();
+
+    /**
+     * Total value of this InvoicedTask (value + project commission).
      * @return BigDecimal.
      */
     BigDecimal totalAmount();

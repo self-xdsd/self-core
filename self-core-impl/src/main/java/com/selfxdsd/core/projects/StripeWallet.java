@@ -199,7 +199,7 @@ public final class StripeWallet implements Wallet {
 
             final BillingInfo contributorBilling = payoutMethod.billingInfo();
             final BigDecimal vat = this.calculateVat(
-                invoice.commission(),
+                invoice.projectCommission(),
                 contributorBilling
             );
             final BigDecimal totalAmount = invoice.totalAmount();
