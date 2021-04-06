@@ -66,14 +66,16 @@ public final class InMemoryProjectManagers implements ProjectManagers {
             "zoeself",
             Provider.Names.GITHUB,
             "123token",
-            8
+            8,
+            5
         );
         register(
             "123",
             "zoeself",
             Provider.Names.GITLAB,
             "123token",
-            8
+            8,
+            5
         );
     }
 
@@ -117,7 +119,8 @@ public final class InMemoryProjectManagers implements ProjectManagers {
         final String username,
         final String provider,
         final String accessToken,
-        final double percentage
+        final double projectPercentage,
+        final double contributorPercentage
     ) {
         final int id = ++this.idCounter;
         final StoredProjectManager projectManager = new StoredProjectManager(
@@ -126,8 +129,8 @@ public final class InMemoryProjectManagers implements ProjectManagers {
             username,
             provider,
             accessToken,
-            percentage,
-            0,
+            projectPercentage,
+            contributorPercentage,
             this.storage
         );
         this.pms.put(id, projectManager);

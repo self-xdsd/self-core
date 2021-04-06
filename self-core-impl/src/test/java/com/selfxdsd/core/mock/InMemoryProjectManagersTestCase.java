@@ -77,7 +77,8 @@ public final class InMemoryProjectManagersTestCase {
             "userpm",
             "foo-provider",
             "122token",
-            8
+            8,
+            5
         );
         assertThat(
             "Should have pms for: github, gitlab, foo-provider",
@@ -97,7 +98,8 @@ public final class InMemoryProjectManagersTestCase {
                 "userpm",
                 "foo-provider",
                 "122token",
-                8
+                8,
+                5
             );
         assertThat(projectManagers.getById(3), equalTo(projectManager));
     }
