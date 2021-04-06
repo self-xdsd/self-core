@@ -899,6 +899,7 @@ public final class StoredInvoiceTestCase {
                 "github",
                 "token-1235",
                 0.20,
+                0.50,
                 storage
             ),
             storage

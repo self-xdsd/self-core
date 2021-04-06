@@ -350,7 +350,7 @@ public final class ProjectContributorsTestCase {
         Mockito.when(task.assignee()).thenReturn(assignee);
         Mockito.when(task.role()).thenReturn("DEV");
         Mockito.when(task.project()).thenReturn(project);
-        Mockito.when(project.projectManager().commission(Mockito.any()))
+        Mockito.when(project.projectManager().projectCommission(Mockito.any()))
             .thenReturn(BigDecimal.valueOf(100));
         final Resignations resignations = Mockito.mock(Resignations.class);
         Mockito.when(task.resignations()).thenReturn(resignations);
@@ -403,7 +403,7 @@ public final class ProjectContributorsTestCase {
         Mockito.when(task.assignee()).thenReturn(null);
         Mockito.when(task.role()).thenReturn("DEV");
         Mockito.when(task.project()).thenReturn(project);
-        Mockito.when(project.projectManager().commission(Mockito.any()))
+        Mockito.when(project.projectManager().projectCommission(Mockito.any()))
             .thenReturn(BigDecimal.valueOf(800));
         final Resignations resignations = Mockito.mock(Resignations.class);
         Mockito.when(task.resignations()).thenReturn(resignations);
@@ -506,7 +506,7 @@ public final class ProjectContributorsTestCase {
         Mockito.when(task.role()).thenReturn("DEV");
         Mockito.when(task.estimation()).thenReturn(60);
         Mockito.when(task.project()).thenReturn(project);
-        Mockito.when(project.projectManager().commission(Mockito.any()))
+        Mockito.when(project.projectManager().projectCommission(Mockito.any()))
             .thenReturn(BigDecimal.valueOf(0));
         final Resignations resignations = Mockito.mock(Resignations.class);
         Mockito.when(task.resignations()).thenReturn(resignations);
@@ -561,7 +561,7 @@ public final class ProjectContributorsTestCase {
         Mockito.when(task.role()).thenReturn("DEV");
         Mockito.when(task.estimation()).thenReturn(60);
         Mockito.when(task.project()).thenReturn(project);
-        Mockito.when(project.projectManager().commission(Mockito.any()))
+        Mockito.when(project.projectManager().projectCommission(Mockito.any()))
             .thenReturn(BigDecimal.valueOf(100));
         final Resignations resignations = Mockito.mock(Resignations.class);
         Mockito.when(task.resignations()).thenReturn(resignations);
@@ -599,7 +599,7 @@ public final class ProjectContributorsTestCase {
         Mockito.when(task.role()).thenReturn("DEV");
         Mockito.when(task.estimation()).thenReturn(60);
         Mockito.when(task.project()).thenReturn(project);
-        Mockito.when(project.projectManager().commission(Mockito.any()))
+        Mockito.when(project.projectManager().projectCommission(Mockito.any()))
             .thenReturn(BigDecimal.valueOf(600));
         final Resignations resignations = Mockito.mock(Resignations.class);
         Mockito.when(task.resignations()).thenReturn(resignations);
@@ -796,7 +796,8 @@ public final class ProjectContributorsTestCase {
 
         final ProjectManager projectManager = Mockito
             .mock(ProjectManager.class);
-        Mockito.when(projectManager.percentage()).thenReturn(pmCommission);
+        Mockito.when(projectManager.projectPercentage())
+            .thenReturn(pmCommission);
         Mockito.when(project.projectManager()).thenReturn(projectManager);
 
         return project;

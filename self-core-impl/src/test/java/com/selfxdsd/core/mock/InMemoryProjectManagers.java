@@ -127,6 +127,7 @@ public final class InMemoryProjectManagers implements ProjectManagers {
             provider,
             accessToken,
             percentage,
+            0,
             this.storage
         );
         this.pms.put(id, projectManager);

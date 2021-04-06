@@ -25,10 +25,12 @@ public interface Invoice {
     /**
      * Register a Task on this Invoice.
      * @param task Task to be registered.
-     * @param commission PM's commission for the invoiced Task.
+     * @param projectCommission Commission taken from the Project.
      * @return InvoicedTask.
+     * @todo #1073:60min Modify this method to also accpet the commission
+     *  taken from the Contributor.
      */
-    InvoicedTask register(final Task task, final BigDecimal commission);
+    InvoicedTask register(final Task task, final BigDecimal projectCommission);
 
     /**
      * The contract.
