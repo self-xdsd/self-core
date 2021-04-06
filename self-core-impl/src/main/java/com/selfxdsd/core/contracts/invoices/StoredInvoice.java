@@ -337,7 +337,7 @@ public final class StoredInvoice implements Invoice {
             values.append(invoiced.value().divide(BigDecimal.valueOf(100)))
                 .append("\n");
             commissions.append(
-                invoiced.commission().divide(BigDecimal.valueOf(100))
+                invoiced.projectCommission().divide(BigDecimal.valueOf(100))
             ).append("\n");
             count++;
         }
@@ -378,7 +378,7 @@ public final class StoredInvoice implements Invoice {
     public BigDecimal commission() {
         BigDecimal commission = BigDecimal.valueOf(0);
         for(final InvoicedTask task : this.tasks()) {
-            commission = commission.add(task.commission());
+            commission = commission.add(task.projectCommission());
         }
         return commission;
     }

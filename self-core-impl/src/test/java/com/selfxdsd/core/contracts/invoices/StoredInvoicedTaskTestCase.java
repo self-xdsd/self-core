@@ -114,7 +114,7 @@ public final class StoredInvoicedTaskTestCase {
             Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(
-            task.commission(),
+            task.projectCommission(),
             Matchers.equalTo(BigDecimal.valueOf(50))
         );
     }

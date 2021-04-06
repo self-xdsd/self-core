@@ -53,20 +53,19 @@ public interface InvoicedTask {
     Task task();
 
     /**
-     * Value of this invoiced task in cents. This is the
-     * value that the Contributor will receive.
+     * Value of this invoiced task in cents.
      * @return BigDecimal value.
      */
     BigDecimal value();
 
     /**
-     * Commission that the PM will receive.
+     * Project commission that the PM will receive.
      * @return BigDecimal.
      */
-    BigDecimal commission();
+    BigDecimal projectCommission();
 
     /**
-     * Total value of this InvoicedTask (value + commission).
+     * Total value of this InvoicedTask (value + project commission).
      * @return BigDecimal.
      */
     BigDecimal totalAmount();
