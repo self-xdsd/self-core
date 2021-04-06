@@ -58,17 +58,18 @@ public interface ProjectManagers extends Iterable<ProjectManager> {
      * @param username User name.
      * @param provider Provider name.
      * @param accessToken Access token.
-     * @param percentage Commission percentage that this PM takes for
-     *  each invoiced task.
+     * @param projectPercentage Commission percentage that this PM takes from
+     *  the Project for each invoiced task.
+     * @param contributorPercentage Commission percentage that this PM takes
+     *  from the Contributor for each invoiced task.
      * @return The registered ProjectManager.
-     * @todo #1073:30min Modify this method to also accept the percentage
-     *  taken from the Contributor.
      */
     ProjectManager register(
         final String userId,
         final String username,
         final String provider,
         final String accessToken,
-        final double percentage
+        final double projectPercentage,
+        final double contributorPercentage
     );
 }
