@@ -95,11 +95,12 @@ public final class InvoiceTasks implements InvoicedTasks {
     public InvoicedTask register(
         final Invoice invoice,
         final Task finished,
-        final BigDecimal commission
+        final BigDecimal projectCommission,
+        final BigDecimal contributorCommission
     ) {
         if(this.invoice.invoiceId() == invoice.invoiceId()) {
             return this.storage.invoicedTasks().register(
-                invoice, finished, commission
+                invoice, finished, projectCommission, contributorCommission
             );
         }
         throw new IllegalStateException(

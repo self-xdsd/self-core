@@ -152,7 +152,7 @@ public final class StoredInvoice implements Invoice {
                 );
             }
             return this.storage.invoicedTasks().register(
-                this, task, projectCommission
+                this, task, projectCommission, contributorCommission
             );
         }
     }

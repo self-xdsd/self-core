@@ -130,7 +130,12 @@ public final class InvoiceTasksTestCase {
 
         final Invoice two = Mockito.mock(Invoice.class);
         Mockito.when(two.invoiceId()).thenReturn(2);
-        tasks.register(two, Mockito.mock(Task.class), BigDecimal.valueOf(50));
+        tasks.register(
+            two,
+            Mockito.mock(Task.class),
+            BigDecimal.valueOf(50),
+            BigDecimal.valueOf(30)
+        );
     }
 
     /**
@@ -146,7 +151,9 @@ public final class InvoiceTasksTestCase {
 
         final InvoicedTasks all = Mockito.mock(InvoicedTasks.class);
         Mockito.when(
-            all.register(one, finished, BigDecimal.valueOf(50))
+            all.register(
+                one, finished, BigDecimal.valueOf(50), BigDecimal.valueOf(30)
+            )
         ).thenReturn(registered);
         final Storage storage = Mockito.mock(Storage.class);
         Mockito.when(storage.invoicedTasks()).thenReturn(all);
@@ -163,7 +170,9 @@ public final class InvoiceTasksTestCase {
             storage
         );
         MatcherAssert.assertThat(
-            tasks.register(one, finished, BigDecimal.valueOf(50)),
+            tasks.register(
+                one, finished, BigDecimal.valueOf(50), BigDecimal.valueOf(30)
+            ),
             Matchers.is(registered)
         );
     }
