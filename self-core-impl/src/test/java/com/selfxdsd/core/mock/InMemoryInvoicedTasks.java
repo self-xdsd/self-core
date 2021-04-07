@@ -82,14 +82,15 @@ public final class InMemoryInvoicedTasks implements InvoicedTasks {
     public InvoicedTask register(
         final Invoice invoice,
         final Task finished,
-        final BigDecimal commission
+        final BigDecimal projectCommission,
+        final BigDecimal contributorCommission
     ) {
         final InvoicedTask registered = new StoredInvoicedTask(
             this.idGenerator++,
             invoice.invoiceId(),
             finished.value(),
-            commission,
-            BigDecimal.valueOf(0),
+            projectCommission,
+            contributorCommission,
             finished,
             this.storage
         );

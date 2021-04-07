@@ -328,7 +328,7 @@ public final class StoredInvoiceTestCase {
         Mockito.when(task.assignee()).thenReturn(assignee);
         Mockito.when(task.role()).thenReturn(Contract.Roles.DEV);
 
-        invoice.register(task, BigDecimal.valueOf(50));
+        invoice.register(task, BigDecimal.valueOf(50), BigDecimal.valueOf(30));
     }
 
     /**
@@ -372,12 +372,13 @@ public final class StoredInvoiceTestCase {
         Mockito.when(task.assignee()).thenReturn(assignee);
         Mockito.when(task.role()).thenReturn(Contract.Roles.DEV);
 
-        invoice.register(task, BigDecimal.valueOf(50));
+        invoice.register(task, BigDecimal.valueOf(50), BigDecimal.valueOf(30));
     }
 
     /**
      * We should be able to register a new Task if the Task and the Invoice
      * belong to the same Contract and the Invoice is active (not paid yet).
+     * @checkstyle LocalFinalVariableName (100 lines)
      */
     @Test
     public void registersNewTask() {
@@ -416,21 +417,22 @@ public final class StoredInvoiceTestCase {
             storage
         );
 
-        final BigDecimal commission = BigDecimal.valueOf(50);
+        final BigDecimal projectCommission = BigDecimal.valueOf(50);
+        final BigDecimal contributorCommission = BigDecimal.valueOf(30);
 
         final InvoicedTask registered = Mockito.mock(InvoicedTask.class);
         final InvoicedTasks invoicedTasks = Mockito.mock(InvoicedTasks.class);
         Mockito
             .when(
                 invoicedTasks.register(
-                    invoice, task, commission
+                    invoice, task, projectCommission, contributorCommission
                 )
             )
             .thenReturn(registered);
         Mockito.when(storage.invoicedTasks()).thenReturn(invoicedTasks);
 
         MatcherAssert.assertThat(
-            invoice.register(task, commission),
+            invoice.register(task, projectCommission, contributorCommission),
             Matchers.is(registered)
         );
     }
@@ -947,6 +949,7 @@ public final class StoredInvoiceTestCase {
                     false,
                     storage
                 ),
+                BigDecimal.ZERO,
                 BigDecimal.ZERO
             );
         final ByteArrayOutputStream out = new ByteArrayOutputStream();

@@ -43,12 +43,15 @@ public interface InvoicedTasks extends Iterable<InvoicedTask> {
      * Register a finished Task to an Invoice.
      * @param invoice Invoice.
      * @param finished Task to be registered.
-     * @param commission PM's commission for this invoiced task.
+     * @param projectCommission Project commission for this invoiced task.
+     * @param contributorCommission Contributor commission for this invoiced
+     *  task.
      * @return InvoicedTask.
      */
     InvoicedTask register(
         final Invoice invoice,
         final Task finished,
-        final BigDecimal commission
+        final BigDecimal projectCommission,
+        final BigDecimal contributorCommission
     );
 }

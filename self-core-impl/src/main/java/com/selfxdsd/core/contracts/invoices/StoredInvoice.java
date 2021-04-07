@@ -132,7 +132,8 @@ public final class StoredInvoice implements Invoice {
     @Override
     public InvoicedTask register(
         final Task task,
-        final BigDecimal commission
+        final BigDecimal projectCommission,
+        final BigDecimal contributorCommission
     ) {
         final Contract.Id taskContract = new Contract.Id(
             task.project().repoFullName(),
@@ -151,7 +152,7 @@ public final class StoredInvoice implements Invoice {
                 );
             }
             return this.storage.invoicedTasks().register(
-                this, task, commission
+                this, task, projectCommission, contributorCommission
             );
         }
     }
