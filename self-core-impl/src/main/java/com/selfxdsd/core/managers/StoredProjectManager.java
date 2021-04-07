@@ -505,10 +505,15 @@ public final class StoredProjectManager implements ProjectManager {
                         + " of Contributor " + assignee.username()
                         + " is closed. Invoicing... "
                     );
+                    final BigDecimal value = task.value();
                     final InvoicedTask invoiced = task.contract()
                         .invoices()
                         .active()
-                        .register(task, this.projectCommission(task.value()));
+                        .register(
+                            task,
+                            this.projectCommission(value),
+                            this.contributorCommission(value)
+                        );
                     if(invoiced != null) {
                         issue.comments().post(
                             String.format(

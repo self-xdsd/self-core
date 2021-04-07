@@ -1435,7 +1435,9 @@ public final class StoredProjectManagerTestCase {
         final InvoicedTask invoiced = Mockito.mock(InvoicedTask.class);
         final Invoice active = Mockito.mock(Invoice.class);
         Mockito.when(
-            active.register(task, BigDecimal.valueOf(80))
+            active.register(
+                task, BigDecimal.valueOf(80), BigDecimal.valueOf(50)
+            )
         ).thenReturn(invoiced);
         final Invoices invoices = Mockito.mock(Invoices.class);
         Mockito.when(invoices.active()).thenReturn(active);
@@ -1481,7 +1483,7 @@ public final class StoredProjectManagerTestCase {
         Mockito.verify(contract, Mockito.times(1)).invoices();
         Mockito.verify(invoices, Mockito.times(1)).active();
         Mockito.verify(active, Mockito.times(1))
-            .register(task, BigDecimal.valueOf(80));
+            .register(task, BigDecimal.valueOf(80), BigDecimal.valueOf(50));
         Mockito.verify(comments, Mockito.times(1)).post(Mockito.anyString());
     }
 
