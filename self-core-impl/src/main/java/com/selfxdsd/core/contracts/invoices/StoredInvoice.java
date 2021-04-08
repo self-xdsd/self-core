@@ -29,6 +29,9 @@ import java.util.Locale;
  * @todo #826:60min Modify the PDF template and the code in toPdf()
  *  such that more tasks are written on more pages. At the moment
  *  only 40 tasks are written to the 1-page PDF.
+ * @todo #1079:60min Let's load the InvoicedTasks eagerly (now they are always
+ *  read from the storage when calling this.tasks()). This will mean adding
+ *  the InvoiceTasks attribute and constructor parameter.
  */
 public final class StoredInvoice implements Invoice {
 
