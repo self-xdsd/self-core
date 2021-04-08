@@ -223,10 +223,10 @@ public final class StoredInvoiceTestCase {
     }
 
     /**
-     * Invoice can return its total commission.
+     * Invoice can return its total project commission.
      */
     @Test
-    public void returnsCommission() {
+    public void returnsProjectCommission() {
         final Storage storage = Mockito.mock(Storage.class);
         final Invoice invoice = new StoredInvoice(
             1,
@@ -262,6 +262,49 @@ public final class StoredInvoiceTestCase {
         MatcherAssert.assertThat(
             invoice.projectCommission(),
             Matchers.equalTo(BigDecimal.valueOf(300))
+        );
+    }
+
+    /**
+     * Invoice can return its total contributor commission.
+     */
+    @Test
+    public void returnsContributorCommission() {
+        final Storage storage = Mockito.mock(Storage.class);
+        final Invoice invoice = new StoredInvoice(
+            1,
+            Mockito.mock(Contract.class),
+            LocalDateTime.now(),
+            Mockito.mock(Payment.class),
+            "mihai",
+            "vlad",
+            "RO",
+            "RO",
+            BigDecimal.valueOf(487),
+            storage
+        );
+        final InvoicedTasks all = Mockito.mock(InvoicedTasks.class);
+        Mockito.when(all.ofInvoice(invoice)).thenReturn(
+            new InvoiceTasks(
+                invoice,
+                () -> {
+                    final InvoicedTask task = Mockito.mock(InvoicedTask.class);
+                    Mockito.when(task.contributorCommission())
+                        .thenReturn(BigDecimal.valueOf(50));
+                    final List<InvoicedTask> tasks = new ArrayList<>();
+                    tasks.add(task);
+                    tasks.add(task);
+                    tasks.add(task);
+                    return tasks.stream();
+                },
+                storage
+            )
+        );
+        Mockito.when(storage.invoicedTasks()).thenReturn(all);
+
+        MatcherAssert.assertThat(
+            invoice.contributorCommission(),
+            Matchers.equalTo(BigDecimal.valueOf(150))
         );
     }
 

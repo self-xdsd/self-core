@@ -151,6 +151,9 @@ public final class StripeWallet implements Wallet {
      * @return Wallet with the updated cash limit.
      * @checkstyle CyclomaticComplexity (200 lines)
      * @checkstyle MethodLength (200 lines)
+     * @todo #1079:60min Take in consideration the contributor's commission
+     *  when calculating the VAT and also deduct this commission from the sum
+     *  which the contributor will receive, together with the VAT.
      */
     @Override
     public Payment pay(final Invoice invoice) {
