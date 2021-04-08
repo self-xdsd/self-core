@@ -29,9 +29,6 @@ import java.util.Locale;
  * @todo #826:60min Modify the PDF template and the code in toPdf()
  *  such that more tasks are written on more pages. At the moment
  *  only 40 tasks are written to the 1-page PDF.
- * @todo #1075:30min Implement and test method contributorCommission() which
- *  will return the total commission taken from the Contributor, with this
- *  Invoice.
  */
 public final class StoredInvoice implements Invoice {
 
@@ -383,6 +380,15 @@ public final class StoredInvoice implements Invoice {
         BigDecimal commission = BigDecimal.valueOf(0);
         for(final InvoicedTask task : this.tasks()) {
             commission = commission.add(task.projectCommission());
+        }
+        return commission;
+    }
+
+    @Override
+    public BigDecimal contributorCommission() {
+        BigDecimal commission = BigDecimal.valueOf(0);
+        for(final InvoicedTask task : this.tasks()) {
+            commission = commission.add(task.contributorCommission());
         }
         return commission;
     }
