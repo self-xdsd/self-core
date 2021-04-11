@@ -17,6 +17,7 @@ import java.math.RoundingMode;
 import java.text.NumberFormat;
 import java.time.LocalDateTime;
 import java.util.Locale;
+import java.util.function.Supplier;
 
 /**
  * An Invoice stored in self.
@@ -29,9 +30,6 @@ import java.util.Locale;
  * @todo #826:60min Modify the PDF template and the code in toPdf()
  *  such that more tasks are written on more pages. At the moment
  *  only 40 tasks are written to the 1-page PDF.
- * @todo #1079:60min Let's load the InvoicedTasks eagerly (now they are always
- *  read from the storage when calling this.tasks()). This will mean adding
- *  the InvoiceTasks attribute and constructor parameter.
  */
 public final class StoredInvoice implements Invoice {
 
@@ -80,6 +78,28 @@ public final class StoredInvoice implements Invoice {
      * EUR to RON exchange rate (e.g. if 487, it means 1 EUR = 4,87 RON).
      */
     private final BigDecimal eurToRon;
+
+    /**
+     * Tasks registered on this Invoice. Make sure to read them from the Storage
+     * only once and cache the result.
+     */
+    private final Supplier<InvoicedTasks> invoicedTasks = new Supplier<>() {
+
+        /**
+         * Cached invoiced tasks.
+         * @checkstyle ExplicitInitialization (5 lines)
+         */
+        private InvoicedTasks invoicedTasks = null;
+
+        @Override
+        public InvoicedTasks get() {
+            if (this.invoicedTasks == null) {
+                this.invoicedTasks = StoredInvoice.this.storage.invoicedTasks()
+                    .ofInvoice(StoredInvoice.this);
+            }
+            return this.invoicedTasks;
+        }
+    };
 
     /**
      * Self storage context.
@@ -220,7 +240,7 @@ public final class StoredInvoice implements Invoice {
 
     @Override
     public InvoicedTasks tasks() {
-        return this.storage.invoicedTasks().ofInvoice(this);
+        return this.invoicedTasks.get();
     }
 
     @Override

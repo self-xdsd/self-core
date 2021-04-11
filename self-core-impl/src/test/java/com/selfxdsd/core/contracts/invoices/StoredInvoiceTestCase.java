@@ -134,6 +134,67 @@ public final class StoredInvoiceTestCase {
             invoice.tasks(),
             Matchers.iterableWithSize(3)
         );
+
+        Mockito.verify(storage, times(1)).invoicedTasks();
+    }
+
+    /**
+     * Invoice can return the invoiced tasks more times, but they should be
+     * read from the Storage only once and be cached.
+     */
+    @Test
+    public void returnsCachedTasks() {
+        final Storage storage = Mockito.mock(Storage.class);
+        final Invoice invoice = new StoredInvoice(
+            1,
+            Mockito.mock(Contract.class),
+            LocalDateTime.now(),
+            Mockito.mock(Payment.class),
+            "mihai",
+            "vlad",
+            "RO",
+            "RO",
+            BigDecimal.valueOf(487),
+            storage
+        );
+        final InvoicedTasks all = Mockito.mock(InvoicedTasks.class);
+        Mockito.when(all.ofInvoice(invoice)).thenReturn(
+            new InvoiceTasks(
+                invoice,
+                () -> {
+                    final List<InvoicedTask> tasks = new ArrayList<>();
+                    tasks.add(Mockito.mock(InvoicedTask.class));
+                    tasks.add(Mockito.mock(InvoicedTask.class));
+                    tasks.add(Mockito.mock(InvoicedTask.class));
+                    return tasks.stream();
+                },
+                storage
+            )
+        );
+        Mockito.when(storage.invoicedTasks()).thenReturn(all);
+
+        MatcherAssert.assertThat(
+            invoice.tasks(),
+            Matchers.iterableWithSize(3)
+        );
+        MatcherAssert.assertThat(
+            invoice.tasks(),
+            Matchers.iterableWithSize(3)
+        );
+        MatcherAssert.assertThat(
+            invoice.tasks(),
+            Matchers.iterableWithSize(3)
+        );
+        MatcherAssert.assertThat(
+            invoice.tasks(),
+            Matchers.iterableWithSize(3)
+        );
+        MatcherAssert.assertThat(
+            invoice.tasks(),
+            Matchers.iterableWithSize(3)
+        );
+
+        Mockito.verify(storage, times(1)).invoicedTasks();
     }
 
     /**
