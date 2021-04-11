@@ -291,7 +291,7 @@ public final class StoredPlatformInvoiceTestCase {
     }
 
     /**
-     * StoredPlatformInvoice can return its total amound.
+     * StoredPlatformInvoice can return its total amount.
      */
     @Test
     public void returnsTotalAmount() {
@@ -310,6 +310,53 @@ public final class StoredPlatformInvoiceTestCase {
         MatcherAssert.assertThat(
             invoice.totalAmount(),
             Matchers.equalTo(BigDecimal.valueOf(119))
+        );
+    }
+
+    /**
+     * StoredPlatformInvoice can return its total amount when there is no VAT.
+     */
+    @Test
+    public void returnsTotalAmountNoVat() {
+        final PlatformInvoice invoice = new StoredPlatformInvoice(
+            1234,
+            LocalDateTime.now(),
+            "mihai",
+            BigDecimal.valueOf(100),
+            BigDecimal.valueOf(0),
+            "transactionId123",
+            LocalDateTime.now(),
+            10,
+            BigDecimal.valueOf(487),
+            Mockito.mock(Storage.class)
+        );
+        MatcherAssert.assertThat(
+            invoice.totalAmount(),
+            Matchers.equalTo(BigDecimal.valueOf(100))
+        );
+    }
+
+    /**
+     * StoredPlatformInvoice can return its total amount with reverse (negative)
+     * VAT. In this scenario, the VAT should not be added to the total amount.
+     */
+    @Test
+    public void returnsTotalAmountReverseVat() {
+        final PlatformInvoice invoice = new StoredPlatformInvoice(
+            1234,
+            LocalDateTime.now(),
+            "mihai",
+            BigDecimal.valueOf(100),
+            BigDecimal.valueOf(-19),
+            "transactionId123",
+            LocalDateTime.now(),
+            10,
+            BigDecimal.valueOf(487),
+            Mockito.mock(Storage.class)
+        );
+        MatcherAssert.assertThat(
+            invoice.totalAmount(),
+            Matchers.equalTo(BigDecimal.valueOf(100))
         );
     }
 }

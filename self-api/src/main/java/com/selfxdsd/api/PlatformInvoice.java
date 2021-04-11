@@ -103,7 +103,14 @@ public interface PlatformInvoice {
      * @return BigDecimal.
      */
     default BigDecimal totalAmount() {
-        return this.commission().add(this.vat());
+        final BigDecimal vat = this.vat();
+        final BigDecimal totalAmount;
+        if(vat.compareTo(BigDecimal.valueOf(0)) > 0) {
+            totalAmount = this.commission().add(vat);
+        } else {
+            totalAmount = this.commission();
+        }
+        return totalAmount;
     }
 
     /**
