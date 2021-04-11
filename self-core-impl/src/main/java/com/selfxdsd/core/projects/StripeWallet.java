@@ -151,9 +151,6 @@ public final class StripeWallet implements Wallet {
      * @return Wallet with the updated cash limit.
      * @checkstyle CyclomaticComplexity (200 lines)
      * @checkstyle MethodLength (200 lines)
-     * @todo #1079:60min Take in consideration the contributor's commission
-     *  when calculating the VAT and also deduct this commission from the sum
-     *  which the contributor will receive, together with the VAT.
      */
     @Override
     public Payment pay(final Invoice invoice) {
@@ -201,11 +198,22 @@ public final class StripeWallet implements Wallet {
             }
 
             final BillingInfo contributorBilling = payoutMethod.billingInfo();
+            final BigDecimal totalAmount = invoice.totalAmount();
+            final BigDecimal projectComm = invoice.projectCommission();
+            final BigDecimal contributorComm = invoice.contributorCommission();
             final BigDecimal vat = this.calculateVat(
-                invoice.projectCommission(),
+                projectComm.add(contributorComm),
                 contributorBilling
             );
-            final BigDecimal totalAmount = invoice.totalAmount();
+            final BigDecimal grossEarnings = invoice.amount();
+            final BigDecimal netEarnings;
+            if(vat.compareTo(BigDecimal.valueOf(0)) > 0) {
+                netEarnings = grossEarnings
+                    .subtract(contributorComm)
+                    .subtract(vat);
+            } else {
+                netEarnings = grossEarnings.subtract(contributorComm);
+            }
             final PaymentIntent paymentIntent = PaymentIntent
                 .create(
                     PaymentIntentCreateParams.builder()
@@ -217,10 +225,7 @@ public final class StripeWallet implements Wallet {
                             PaymentIntentCreateParams.TransferData
                                 .builder()
                                 .setDestination(payoutMethod.identifier())
-                                .setAmount(
-                                    invoice.amount().subtract(vat)
-                                        .longValueExact()
-                                )
+                                .setAmount(netEarnings.longValueExact())
                                 .build()
                         )
                         .setDescription(
@@ -491,13 +496,14 @@ public final class StripeWallet implements Wallet {
      *
      * If Contributor is from other countries of the EU, VAT is 19%
      * <b>unless</b> they provide a VAT number (TaxId), in which
-     * case it is 0.<br><br>
+     * case it is <b>negative (reverse charge)</b>.<br><br>
      *
      * If Contributor is from outside of the EU, VAT is 0.
      *
      * @param commission Self's commission.
      * @param contributor BillingInfo of the Contributor.
-     * @return BigDecimal.
+     * @return BigDecimal. Zero if no VAT applies. Greater than 0 if VAT applies
+     *  or negative if reverse VAT applies.
      */
     private BigDecimal calculateVat(
         final BigDecimal commission,
@@ -516,7 +522,7 @@ public final class StripeWallet implements Wallet {
             if(!"RO".equalsIgnoreCase(countryCode)) {
                 final String taxId = contributor.taxId();
                 if (taxId != null && !taxId.isEmpty()) {
-                    calculated = BigDecimal.valueOf(0);
+                    calculated = vat.multiply(BigDecimal.valueOf(-1));
                 } else {
                     calculated = vat;
                 }
