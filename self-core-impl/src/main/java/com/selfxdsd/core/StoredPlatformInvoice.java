@@ -43,6 +43,8 @@ import java.util.Locale;
  * @since 0.0.50
  * @checkstyle TrailingComment (500 lines)
  * @checkstyle ExecutableStatementCount (500 lines)
+ * @todo #1084:60min Modify the pdf of the PlatformInvoice to print the sentence
+ *  "VAT reverse charge applies" if the VAT is negative.
  */
 public final class StoredPlatformInvoice implements PlatformInvoice {
 

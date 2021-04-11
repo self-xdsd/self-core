@@ -86,6 +86,9 @@ public final class StripeWalletITCase {
                 .thenReturn(BigDecimal.valueOf((108 + 1) * 100));
             Mockito.when(invoice.projectCommission()).thenReturn(BigDecimal
                 .valueOf(100));
+            Mockito.when(invoice.contributorCommission()).thenReturn(
+                BigDecimal.valueOf(20)
+            );
             Mockito.when(invoice.amount())
                 .thenReturn(BigDecimal.valueOf(108 * 100));
 
