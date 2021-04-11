@@ -43,8 +43,6 @@ import java.util.Locale;
  * @since 0.0.50
  * @checkstyle TrailingComment (500 lines)
  * @checkstyle ExecutableStatementCount (500 lines)
- * @todo #1084:60min Modify the pdf of the PlatformInvoice to print the sentence
- *  "VAT reverse charge applies" if the VAT is negative.
  */
 public final class StoredPlatformInvoice implements PlatformInvoice {
 
@@ -207,7 +205,7 @@ public final class StoredPlatformInvoice implements PlatformInvoice {
             + this.euroToRon(this.commission).toString().replace('.', ',')
             + " RON"
         );
-        if(this.vat.compareTo(BigDecimal.valueOf(0)) == 1) {
+        if(this.vat.compareTo(BigDecimal.valueOf(0)) > 0) {
             acroForm.getField("vat_text").setValue("VAT/TVA (19%)");
             acroForm.getField("vat_value").setValue(
                 NumberFormat
@@ -218,6 +216,10 @@ public final class StoredPlatformInvoice implements PlatformInvoice {
                 + " / "
                 + this.euroToRon(this.vat).toString().replace('.', ',')
                 + " RON"
+            );
+        } else if (this.vat.compareTo(BigDecimal.valueOf(0)) < 0) {
+            acroForm.getField("vat_text").setValue(
+                "VAT reverse charge applies./Taxare inversă TVA."
             );
         }
         acroForm.getField("totalDue").setValue(
