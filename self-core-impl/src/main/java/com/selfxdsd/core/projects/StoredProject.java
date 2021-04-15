@@ -281,7 +281,7 @@ public final class StoredProject implements Project {
         if(apiToken == null || apiToken.trim().isEmpty()) {
             LOG.error("Stripe API Token missing!");
             throw new IllegalStateException(
-                "Please specify the "
+                "[CREATE_STRIPE_WALLET] Please specify the "
                 + Env.STRIPE_API_TOKEN
                 + " Environment Variable!"
             );

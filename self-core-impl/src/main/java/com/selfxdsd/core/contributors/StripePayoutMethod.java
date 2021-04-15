@@ -96,7 +96,7 @@ public final class StripePayoutMethod implements PayoutMethod {
         final String apiToken = System.getenv(Env.STRIPE_API_TOKEN);
         if(apiToken == null || apiToken.trim().isEmpty()) {
             throw new IllegalStateException(
-                "Please specify the "
+                "[CONTRIBUTOR_BILLING_INFO] Please specify the "
                 + Env.STRIPE_API_TOKEN
                 + " Environment Variable!"
             );
@@ -130,7 +130,7 @@ public final class StripePayoutMethod implements PayoutMethod {
         final String apiToken = System.getenv(Env.STRIPE_API_TOKEN);
         if(apiToken == null || apiToken.trim().isEmpty()) {
             throw new IllegalStateException(
-                "Please specify the "
+                "[PAYOUT_METHOD_JSON] Please specify the "
                 + Env.STRIPE_API_TOKEN
                 + " Environment Variable!"
             );
@@ -159,7 +159,7 @@ public final class StripePayoutMethod implements PayoutMethod {
         final String apiToken = System.getenv(Env.STRIPE_API_TOKEN);
         if(apiToken == null || apiToken.trim().isEmpty()) {
             throw new IllegalStateException(
-                "Please specify the "
+                "[REMOVE_PAYOUT_METHOD] Please specify the "
                 + Env.STRIPE_API_TOKEN
                 + " Environment Variable!"
             );

@@ -298,7 +298,7 @@ public final class StripeWalletTestCase {
             MatcherAssert.assertThat(
                 ex.getMessage(),
                 Matchers.equalTo(
-                    "Please specify the "
+                    "[REMOVE_STRIPE_WALLET] Please specify the "
                     + Env.STRIPE_API_TOKEN
                     + " Environment Variable!"
                 )

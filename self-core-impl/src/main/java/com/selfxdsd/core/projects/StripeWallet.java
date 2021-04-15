@@ -321,7 +321,7 @@ public final class StripeWallet implements Wallet {
         if (this.stripeApiToken == null
             || this.stripeApiToken.trim().isEmpty()) {
             throw new IllegalStateException(
-                "Please specify the "
+                "[STRIPE_WALLET_PAY] Please specify the "
                 + Env.STRIPE_API_TOKEN
                 + " Environment Variable!"
             );
@@ -357,7 +357,7 @@ public final class StripeWallet implements Wallet {
         final String apiToken = System.getenv(Env.STRIPE_API_TOKEN);
         if(apiToken == null || apiToken.trim().isEmpty()) {
             throw new IllegalStateException(
-                "Please specify the "
+                "[PAYMENT_METHOD_SETUP] Please specify the "
                 + Env.STRIPE_API_TOKEN
                 + " Environment Variable!"
             );
@@ -397,7 +397,7 @@ public final class StripeWallet implements Wallet {
         final String apiToken = System.getenv(Env.STRIPE_API_TOKEN);
         if(apiToken == null || apiToken.trim().isEmpty()) {
             throw new IllegalStateException(
-                "Please specify the "
+                "[PO_BILLING_INFO] Please specify the "
                 + Env.STRIPE_API_TOKEN
                 + " Environment Variable!"
             );
@@ -438,7 +438,7 @@ public final class StripeWallet implements Wallet {
         final String apiToken = System.getenv(Env.STRIPE_API_TOKEN);
         if(apiToken == null || apiToken.trim().isEmpty()) {
             throw new IllegalStateException(
-                "Please specify the "
+                "[REMOVE_STRIPE_WALLET] Please specify the "
                 + Env.STRIPE_API_TOKEN
                 + " Environment Variable!"
             );
