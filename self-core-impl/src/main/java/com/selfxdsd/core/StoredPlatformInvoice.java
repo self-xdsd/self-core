@@ -219,7 +219,7 @@ public final class StoredPlatformInvoice implements PlatformInvoice {
             );
         } else if (this.vat.compareTo(BigDecimal.valueOf(0)) < 0) {
             acroForm.getField("vat_text").setValue(
-                "VAT reverse charge applies./Taxare inversă TVA."
+                "VAT reverse charge applies./Taxare inversa TVA."
             );
         }
         acroForm.getField("totalDue").setValue(
