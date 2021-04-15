@@ -68,10 +68,23 @@ public final class RegisterUnsuccessfulPayments implements Wallet  {
                 Payment.Status.FAILED, failed.getMessage()
             );
         } catch (final IllegalStateException errored) {
+            final String failReason;
+            final String message = errored.getMessage();
+            if(message != null && !message.isEmpty()) {
+                if(message.length() > 500) {
+                    failReason = message.substring(0, 500) + "...";
+                } else {
+                    failReason = message;
+                }
+            } else {
+                failReason = "Unknown reason.";
+            }
+
             payment = invoice.payments().register(
                 invoice, "", LocalDateTime.now(),
                 invoice.totalAmount(),
-                Payment.Status.ERROR, errored.getMessage()
+                Payment.Status.ERROR,
+                failReason
             );
         }
         return payment;
