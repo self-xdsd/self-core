@@ -281,7 +281,7 @@ public final class StripePaymentMethodTestCase {
             MatcherAssert.assertThat(
                 ex.getMessage(),
                 Matchers.equalTo(
-                "Please specify the "
+                "[PAYMENT_METHOD_JSON] Please specify the "
                     + Env.STRIPE_API_TOKEN
                     + " Environment Variable!"
                 )
@@ -341,7 +341,7 @@ public final class StripePaymentMethodTestCase {
             MatcherAssert.assertThat(
                 ex.getMessage(),
                 Matchers.equalTo(
-                "Please specify the "
+                "[REMOVE_PAYMENT_METHOD] Please specify the "
                     + Env.STRIPE_API_TOKEN
                     + " Environment Variable!"
                 )
