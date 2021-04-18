@@ -43,6 +43,7 @@ import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.Objects;
+import java.util.function.Supplier;
 
 /**
  * A Project's Stripe wallet.
@@ -151,6 +152,8 @@ public final class StripeWallet implements Wallet {
      * @return Wallet with the updated cash limit.
      * @checkstyle CyclomaticComplexity (200 lines)
      * @checkstyle MethodLength (200 lines)
+     * @checkstyle LineLength (200 lines)
+     * @checkstyle JavaNCSS (200 lines)
      */
     @Override
     public Payment pay(final Invoice invoice) {
@@ -216,25 +219,32 @@ public final class StripeWallet implements Wallet {
             }
             final PaymentIntent paymentIntent = PaymentIntent
                 .create(
-                    PaymentIntentCreateParams.builder()
-                        .setCurrency("eur")
-                        .setAmount(totalAmount.longValueExact())
-                        .setCustomer(this.identifier)
-                        .setPaymentMethod(paymentMethod.identifier())
-                        .setTransferData(
-                            PaymentIntentCreateParams.TransferData
-                                .builder()
-                                .setDestination(payoutMethod.identifier())
-                                .setAmount(netEarnings.longValueExact())
-                                .build()
-                        )
-                        .setDescription(
-                            "Payment for Invoice #" + invoice.invoiceId() + " "
-                            + "of Contract " + contract.contractId() + ". "
-                        )
-                        .setOffSession(true)
-                        .setConfirm(true)
-                        .build()
+                    (
+                        (Supplier<PaymentIntentCreateParams>) () -> {
+                            PaymentIntentCreateParams.Builder paymentParams = PaymentIntentCreateParams.builder()
+                                .setCurrency("eur")
+                                .setAmount(totalAmount.longValueExact())
+                                .setCustomer(StripeWallet.this.identifier)
+                                .setPaymentMethod(paymentMethod.identifier())
+                                .setTransferData(
+                                    PaymentIntentCreateParams.TransferData
+                                        .builder()
+                                        .setDestination(payoutMethod.identifier())
+                                        .setAmount(netEarnings.longValueExact())
+                                        .build()
+                                )
+                                .setDescription(
+                                    "Payment for Invoice #" + invoice.invoiceId() + " "
+                                    + "of Contract " + contract.contractId() + ". "
+                                )
+                                .setOffSession(true)
+                                .setConfirm(true);
+                            if (!Country.isFromSepa(contributorBilling.country())) {
+                                paymentParams = paymentParams.setOnBehalfOf(payoutMethod.identifier());
+                            }
+                            return paymentParams.build();
+                        }
+                    ).get()
                 );
 
             final String status = paymentIntent.getStatus();
@@ -534,6 +544,5 @@ public final class StripeWallet implements Wallet {
         }
         return calculated;
     }
-
 
 }
