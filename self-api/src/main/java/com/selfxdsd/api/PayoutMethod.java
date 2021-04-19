@@ -59,6 +59,14 @@ public interface PayoutMethod {
     BillingInfo billingInfo();
 
     /**
+     * Can this PayoutMethod be used to receive payments? Even if it is created,
+     * it might not be usable yet (the Contributor still needs to provide some
+     * data to Stripe).
+     * @return True of false.
+     */
+    boolean canReceivePayments();
+
+    /**
      * The whole PayoutMethod in JSON.
      * This usually comes from the API of the payment processor.
      * @return The PayoutMethod in JSON format.

@@ -64,6 +64,8 @@ public final class StripePayoutMethod implements PayoutMethod {
     /**
      * Stripe Connected Account. Make sure to read it from the API only once
      * and cache the result.
+     * @todo #1097:60min Initialize this Supplier in the Constructor, so we
+     *  can write proper unit tests for the methods which are using it.
      */
     private final Supplier<Account> connectedAccount = new Supplier<>() {
 
@@ -136,6 +138,26 @@ public final class StripePayoutMethod implements PayoutMethod {
     @Override
     public BillingInfo billingInfo() {
         return new AccountBillingInfo(this.connectedAccount.get());
+    }
+
+    @Override
+    public boolean canReceivePayments() {
+        final boolean canReceivePayments;
+        final Account account = this.connectedAccount.get();
+        final Account.Capabilities capabilities = account.getCapabilities();
+        if(capabilities != null) {
+            final String transfers = capabilities.getTransfers();
+            final String cardPayments = capabilities.getCardPayments();
+            if("active".equalsIgnoreCase(transfers)
+                && "active".equalsIgnoreCase(cardPayments)) {
+                canReceivePayments = true;
+            } else {
+                canReceivePayments = false;
+            }
+        } else {
+            canReceivePayments = false;
+        }
+        return canReceivePayments;
     }
 
     @Override
