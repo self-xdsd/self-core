@@ -143,6 +143,7 @@ public final class StripeWalletITCase {
             Mockito.when(
                 payoutsOfContrib.getByType(PayoutMethod.Type.STRIPE)
             ).thenReturn(payoutMethod);
+            Mockito.when(payoutMethod.canReceivePayments()).thenReturn(true);
             Mockito.when(payoutMethod.identifier()).thenReturn("ac_123");
 
             Mockito.when(storage.paymentMethods())

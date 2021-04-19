@@ -182,9 +182,21 @@ public final class StripeWallet implements Wallet {
                     + "PayoutMethod set up, cannot pay."
                 );
                 throw new WalletPaymentException(
-                    "Contributor " + contributor.username() + " hasn't "
-                    + "finished setting up their Stripe PayoutMethod."
+                    "Contributor " + contributor.username() + " has not "
+                    + "created their Stripe PayoutMethod yet."
                 );
+            } else {
+                if(!payoutMethod.canReceivePayments()) {
+                    LOG.error(
+                        "[STRIPE] Contributor " + contributor.username()
+                        + " from " + contributor.provider() + " hasn't finished "
+                        + "setting up their PayoutMethod, cannot pay."
+                    );
+                    throw new WalletPaymentException(
+                        "Contributor " + contributor.username() + " has not "
+                        + "finished setting up their Stripe PayoutMethod."
+                    );
+                }
             }
             final PaymentMethod paymentMethod = this.storage
                 .paymentMethods()
