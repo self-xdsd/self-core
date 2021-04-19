@@ -36,6 +36,7 @@ import javax.json.Json;
 import javax.json.JsonObject;
 import java.io.StringReader;
 import java.util.Objects;
+import java.util.function.Supplier;
 
 /**
  * A Contributor's Stripe PayoutMethod.
@@ -59,6 +60,47 @@ public final class StripePayoutMethod implements PayoutMethod {
      * Self's Storage.
      */
     private final Storage storage;
+
+    /**
+     * Stripe Connected Account. Make sure to read it from the API only once
+     * and cache the result.
+     */
+    private final Supplier<Account> connectedAccount = new Supplier<>() {
+
+        /**
+         * Cached account.
+         */
+        private Account account;
+
+        @Override
+        public Account get() {
+            if(this.account == null) {
+                final String apiToken = System.getenv(Env.STRIPE_API_TOKEN);
+                if(apiToken == null || apiToken.trim().isEmpty()) {
+                    throw new IllegalStateException(
+                        "[StripePayoutMethod] Please specify the "
+                        + Env.STRIPE_API_TOKEN
+                        + " Environment Variable!"
+                    );
+                }
+                Stripe.apiKey = apiToken;
+                try {
+                    this.account = Account.retrieve(
+                        StripePayoutMethod.this.identifier
+                    );
+                } catch (final StripeException ex) {
+                    throw new IllegalStateException(
+                        "Stripe threw an exception when trying to fetch the "
+                        + "Stripe Connect Account of Contributor "
+                        + StripePayoutMethod.this.contributor.username() + "/"
+                        + StripePayoutMethod.this.contributor.provider() + ". ",
+                        ex
+                    );
+                }
+            }
+            return this.account;
+        }
+    };
 
     /**
      * Ctor.
@@ -93,65 +135,16 @@ public final class StripePayoutMethod implements PayoutMethod {
 
     @Override
     public BillingInfo billingInfo() {
-        final String apiToken = System.getenv(Env.STRIPE_API_TOKEN);
-        if(apiToken == null || apiToken.trim().isEmpty()) {
-            throw new IllegalStateException(
-                "[CONTRIBUTOR_BILLING_INFO] Please specify the "
-                + Env.STRIPE_API_TOKEN
-                + " Environment Variable!"
-            );
-        }
-        Stripe.apiKey = apiToken;
-        try {
-            final Account account = Account.retrieve(this.identifier);
-            System.out.println(
-                Json.createReader(
-                    new StringReader(
-                        account.getRawJsonObject().toString()
-                    )
-                ).readObject().toString()
-            );
-            return new AccountBillingInfo(
-                account
-            );
-        } catch (final StripeException ex) {
-            throw new IllegalStateException(
-                "Stripe threw an exception when trying to fetch the "
-                + "Stripe Connect Account of Contributor "
-                + this.contributor.username() + "/"
-                + this.contributor.provider() + ". ",
-                ex
-            );
-        }
+        return new AccountBillingInfo(this.connectedAccount.get());
     }
 
     @Override
     public JsonObject json() {
-        final String apiToken = System.getenv(Env.STRIPE_API_TOKEN);
-        if(apiToken == null || apiToken.trim().isEmpty()) {
-            throw new IllegalStateException(
-                "[PAYOUT_METHOD_JSON] Please specify the "
-                + Env.STRIPE_API_TOKEN
-                + " Environment Variable!"
-            );
-        }
-        Stripe.apiKey = apiToken;
-        try {
-            final Account account = Account.retrieve(this.identifier);
-            return Json.createReader(
-                new StringReader(
-                    account.getRawJsonObject().toString()
-                )
-            ).readObject();
-        } catch (final StripeException ex) {
-            throw new IllegalStateException(
-                "Stripe threw an exception when trying to fetch the "
-                + "Stripe Connect Account of Contributor "
-                + this.contributor.username() + "/"
-                + this.contributor.provider() + ". ",
-                ex
-            );
-        }
+        return Json.createReader(
+            new StringReader(
+                this.connectedAccount.get().getRawJsonObject().toString()
+            )
+        ).readObject();
     }
 
     @Override
