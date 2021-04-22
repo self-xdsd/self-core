@@ -26,6 +26,7 @@ import com.selfxdsd.api.Contributor;
 import com.selfxdsd.api.PayoutMethod;
 import com.selfxdsd.api.storage.Storage;
 import com.selfxdsd.core.Env;
+import com.stripe.model.Account;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
@@ -116,7 +117,6 @@ public final class StripePayoutMethodTestCase {
         }
     }
 
-
     /**
      * StoredContributor.billingInfo() should throw an ISE
      * if the Stripe API token is not set.
@@ -142,6 +142,103 @@ public final class StripePayoutMethodTestCase {
                 )
             );
         }
+    }
+
+    /**
+     * The StripePayoutMethod cannot receive payments if the Account's
+     * Capabilities are null.
+     */
+    @Test
+    public void cannotReceivePaymentsIfCapabilitiesNull() {
+        final PayoutMethod payout = new StripePayoutMethod(
+            Mockito.mock(Contributor.class),
+            "payoutMethodId123456",
+            Mockito.mock(Storage.class),
+            () -> {
+                final Account account = new Account();
+                account.setCapabilities(null);
+                return account;
+            }
+        );
+        MatcherAssert.assertThat(
+            payout.canReceivePayments(),
+            Matchers.is(Boolean.FALSE)
+        );
+    }
+
+    /**
+     * The StripePayoutMethod cannot receive payments if the Account's
+     * Transfer capability is not active.
+     */
+    @Test
+    public void cannotReceivePaymentsIfInactiveTransfers() {
+        final PayoutMethod payout = new StripePayoutMethod(
+            Mockito.mock(Contributor.class),
+            "payoutMethodId123456",
+            Mockito.mock(Storage.class),
+            () -> {
+                final Account account = new Account();
+                final Account.Capabilities caps = new Account.Capabilities();
+                caps.setTransfers("inactive");
+                caps.setCardPayments("active");
+                account.setCapabilities(caps);
+                return account;
+            }
+        );
+        MatcherAssert.assertThat(
+            payout.canReceivePayments(),
+            Matchers.is(Boolean.FALSE)
+        );
+    }
+
+    /**
+     * The StripePayoutMethod cannot receive payments if the Account's
+     * Card-Payments capability is not active.
+     */
+    @Test
+    public void cannotReceivePaymentsIfInactiveCardPayments() {
+        final PayoutMethod payout = new StripePayoutMethod(
+            Mockito.mock(Contributor.class),
+            "payoutMethodId123456",
+            Mockito.mock(Storage.class),
+            () -> {
+                final Account account = new Account();
+                final Account.Capabilities caps = new Account.Capabilities();
+                caps.setTransfers("active");
+                caps.setCardPayments("inactive");
+                account.setCapabilities(caps);
+                return account;
+            }
+        );
+        MatcherAssert.assertThat(
+            payout.canReceivePayments(),
+            Matchers.is(Boolean.FALSE)
+        );
+    }
+
+    /**
+     * The StripePayoutMethod can receive payments if the Accounts Transfers
+     * and Card-Payments capabilities are active.
+     */
+    @Test
+    public void canReceivePaymentsIfActiveTransfersAndCardPayments() {
+        final PayoutMethod payout = new StripePayoutMethod(
+            Mockito.mock(Contributor.class),
+            "payoutMethodId123456",
+            Mockito.mock(Storage.class),
+            () -> {
+                final Account account = new Account();
+                final Account.Capabilities caps = new Account.Capabilities();
+                caps.setTransfers("active");
+                caps.setCardPayments("active");
+                account.setCapabilities(caps);
+                return account;
+            }
+        );
+        MatcherAssert.assertThat(
+            payout.canReceivePayments(),
+            Matchers.is(Boolean.TRUE)
+        );
     }
 
     /**
