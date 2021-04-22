@@ -62,47 +62,9 @@ public final class StripePayoutMethod implements PayoutMethod {
     private final Storage storage;
 
     /**
-     * Stripe Connected Account. Make sure to read it from the API only once
-     * and cache the result.
-     * @todo #1097:60min Initialize this Supplier in the Constructor, so we
-     *  can write proper unit tests for the methods which are using it.
+     * Stripe Connected Account supplier.
      */
-    private final Supplier<Account> connectedAccount = new Supplier<>() {
-
-        /**
-         * Cached account.
-         */
-        private Account account;
-
-        @Override
-        public Account get() {
-            if(this.account == null) {
-                final String apiToken = System.getenv(Env.STRIPE_API_TOKEN);
-                if(apiToken == null || apiToken.trim().isEmpty()) {
-                    throw new IllegalStateException(
-                        "[StripePayoutMethod] Please specify the "
-                        + Env.STRIPE_API_TOKEN
-                        + " Environment Variable!"
-                    );
-                }
-                Stripe.apiKey = apiToken;
-                try {
-                    this.account = Account.retrieve(
-                        StripePayoutMethod.this.identifier
-                    );
-                } catch (final StripeException ex) {
-                    throw new IllegalStateException(
-                        "Stripe threw an exception when trying to fetch the "
-                        + "Stripe Connect Account of Contributor "
-                        + StripePayoutMethod.this.contributor.username() + "/"
-                        + StripePayoutMethod.this.contributor.provider() + ". ",
-                        ex
-                    );
-                }
-            }
-            return this.account;
-        }
-    };
+    private final Supplier<Account> connectedAccount;
 
     /**
      * Ctor.
@@ -115,9 +77,65 @@ public final class StripePayoutMethod implements PayoutMethod {
         final String identifier,
         final Storage storage
     ) {
+        this(
+            contributor,
+            identifier,
+            storage,
+            new Supplier<>() {
+
+                /**
+                 * Cached account.
+                 */
+                private Account account;
+
+                @Override
+                public Account get() {
+                    if(this.account == null) {
+                        final String tkn = System.getenv(Env.STRIPE_API_TOKEN);
+                        if(tkn == null || tkn.trim().isEmpty()) {
+                            throw new IllegalStateException(
+                                "[StripePayoutMethod] Please specify the "
+                                    + Env.STRIPE_API_TOKEN
+                                    + " Environment Variable!"
+                            );
+                        }
+                        Stripe.apiKey = tkn;
+                        try {
+                            this.account = Account.retrieve(identifier);
+                        } catch (final StripeException ex) {
+                            throw new IllegalStateException(
+                                "Stripe threw an exception when trying to fetch"
+                                + " the Stripe Connect Account of Contributor "
+                                + contributor.username() + "/"
+                                + contributor.provider() + ". ",
+                                ex
+                            );
+                        }
+                    }
+                    return this.account;
+                }
+            }
+        );
+    }
+
+    /**
+     * Ctor.
+     * @param contributor Contributor owner.
+     * @param identifier Identifier.
+     * @param storage Storage.
+     * @param connectedAccount Stripe Connected Account. Make sure to read it
+     *  from the API only once and cache the result.
+     */
+    public StripePayoutMethod(
+        final Contributor contributor,
+        final String identifier,
+        final Storage storage,
+        final Supplier<Account> connectedAccount
+    ) {
         this.contributor = contributor;
         this.identifier = identifier;
         this.storage = storage;
+        this.connectedAccount = connectedAccount;
     }
 
     @Override
