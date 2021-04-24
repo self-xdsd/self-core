@@ -48,16 +48,6 @@ final class Country {
     );
 
     /**
-     * All the 27 EU countries + UK.
-     */
-    private static final List<String> SEPA_COUNTRIES = List.of(
-        "AT", "BE", "BG", "HR", "CY", "CZ", "DK", "EE",
-        "FI", "FR", "DE", "GR", "HU", "IE", "IT", "LV",
-        "LT", "LU", "MT", "NL", "PL", "PT", "RO", "SK",
-        "SI", "ES", "SE", "GB"
-    );
-
-    /**
      * Is the given country from the EU?
      * @param country Country code.
      * @return True or false.
@@ -72,7 +62,7 @@ final class Country {
      * @return True or false.
      */
     static boolean isFromSepa(final String country) {
-        return SEPA_COUNTRIES.contains(country.toUpperCase());
+        return EU_COUNTRIES.contains(country.toUpperCase());
     }
 
 }
