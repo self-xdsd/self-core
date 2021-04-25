@@ -72,12 +72,12 @@ public final class TaskIsRegistered extends PreconditionCheck {
         );
         if(registered != null) {
             LOG.debug(
-                "Issue #" + issue.issueId() + "is registered as a Task."
+                "Issue #" + issue.issueId() + " is registered as a Task."
             );
             this.onTrue().perform(event);
         } else {
             LOG.debug(
-                "Issue #" + issue.issueId() + "is NOT registered as a Task."
+                "Issue #" + issue.issueId() + " is NOT registered as a Task."
             );
             this.onFalse().perform(event);
         }

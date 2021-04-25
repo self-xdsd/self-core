@@ -345,36 +345,46 @@ public final class StoredProjectManager implements ProjectManager {
 
     @Override
     public void reopenedIssue(final Event event) {
-        final Project project = event.project();
-        final Issue issue = event.issue();
-        final Task task = project.tasks()
-            .getById(
-                issue.issueId(),
-                issue.repoFullName(),
-                issue.provider(),
-                issue.isPullRequest()
-            );
-        if(task == null) {
-            project.tasks().register(issue);
-            final String author = issue.author();
-            if(!this.username.equalsIgnoreCase(author)) {
-                final String reply;
-                if (issue.isPullRequest()) {
-                    reply = String.format(
-                        project.language().reply(
-                            "reopenedPullRequest.comment"
-                        ),
-                        author
-                    );
-                } else {
-                    reply = String.format(
-                        project.language().reply("reopened.comment"),
-                        author
-                    );
-                }
-                issue.comments().post(reply);
-            }
-        }
+        final Step steps = new IssueHasLabel(
+            "no-task",
+            hasLabel -> LOG.debug(
+                "Reopened Issue is labeled 'no-task'. "
+                + "It will be ignored."
+            ),
+            new TaskIsRegistered(
+                isRegistered -> LOG.debug(
+                    "Reopened issue is still registered as a Task. "
+                    + "Doing nothing."
+                ),
+                new RegisterIssue(
+                    sendReply -> {
+                        final Project project = sendReply.project();
+                        final Issue issue = sendReply.issue();
+                        final String author = issue.author();
+                        if(!this.username.equalsIgnoreCase(author)) {
+                            final String reply;
+                            if (issue.isPullRequest()) {
+                                reply = String.format(
+                                    project.language().reply(
+                                        "reopenedPullRequest.comment"
+                                    ),
+                                    author
+                                );
+                            } else {
+                                reply = String.format(
+                                    project.language().reply(
+                                        "reopened.comment"
+                                    ),
+                                    author
+                                );
+                            }
+                            issue.comments().post(reply);
+                        }
+                    }
+                )
+            )
+        );
+        steps.perform(event);
     }
 
     @Override

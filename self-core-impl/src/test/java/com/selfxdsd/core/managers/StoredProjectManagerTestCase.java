@@ -567,8 +567,12 @@ public final class StoredProjectManagerTestCase {
         Mockito.when(issue.isPullRequest()).thenReturn(Boolean.FALSE);
         Mockito.when(issue.issueId()).thenReturn("1");
         Mockito.when(issue.author()).thenReturn("mihai");
-        Mockito.when(issue.repoFullName()).thenReturn("mihai/test");
-        Mockito.when(issue.provider()).thenReturn("github");
+        final Labels labels = Mockito.mock(Labels.class);
+        Mockito.when(labels.iterator()).thenReturn(
+            new ArrayList<Label>().iterator()
+        );
+        Mockito.when(issue.labels()).thenReturn(labels);
+
         final Comments comments = Mockito.mock(Comments.class);
         Mockito.when(comments.post(Mockito.anyString())).thenReturn(null);
         Mockito.when(issue.comments()).thenReturn(comments);
@@ -580,6 +584,9 @@ public final class StoredProjectManagerTestCase {
         ).thenReturn(null);
         Mockito.when(project.tasks()).thenReturn(tasks);
         Mockito.when(project.language()).thenReturn(new English());
+        Mockito.when(project.repoFullName()).thenReturn("mihai/test");
+        Mockito.when(project.provider()).thenReturn("github");
+
         manager.reopenedIssue(
             new Event() {
                 @Override
@@ -643,8 +650,11 @@ public final class StoredProjectManagerTestCase {
         Mockito.when(issue.isPullRequest()).thenReturn(Boolean.FALSE);
         Mockito.when(issue.issueId()).thenReturn("1");
         Mockito.when(issue.author()).thenReturn("zoeself");
-        Mockito.when(issue.repoFullName()).thenReturn("mihai/test");
-        Mockito.when(issue.provider()).thenReturn("github");
+        final Labels labels = Mockito.mock(Labels.class);
+        Mockito.when(labels.iterator()).thenReturn(
+            new ArrayList<Label>().iterator()
+        );
+        Mockito.when(issue.labels()).thenReturn(labels);
         final Comments comments = Mockito.mock(Comments.class);
         Mockito.when(comments.post(Mockito.anyString())).thenReturn(null);
         Mockito.when(issue.comments()).thenReturn(comments);
@@ -656,6 +666,8 @@ public final class StoredProjectManagerTestCase {
         ).thenReturn(null);
         Mockito.when(project.tasks()).thenReturn(tasks);
         Mockito.when(project.language()).thenReturn(new English());
+        Mockito.when(project.repoFullName()).thenReturn("mihai/test");
+        Mockito.when(project.provider()).thenReturn("github");
         manager.reopenedIssue(
             new Event() {
                 @Override
@@ -712,8 +724,11 @@ public final class StoredProjectManagerTestCase {
         Mockito.when(issue.isPullRequest()).thenReturn(Boolean.TRUE);
         Mockito.when(issue.issueId()).thenReturn("1");
         Mockito.when(issue.author()).thenReturn("mihai");
-        Mockito.when(issue.repoFullName()).thenReturn("mihai/test");
-        Mockito.when(issue.provider()).thenReturn("github");
+        final Labels labels = Mockito.mock(Labels.class);
+        Mockito.when(labels.iterator()).thenReturn(
+            new ArrayList<Label>().iterator()
+        );
+        Mockito.when(issue.labels()).thenReturn(labels);
         final Comments comments = Mockito.mock(Comments.class);
         Mockito.when(comments.post(Mockito.anyString())).thenReturn(null);
         Mockito.when(issue.comments()).thenReturn(comments);
@@ -725,6 +740,9 @@ public final class StoredProjectManagerTestCase {
         ).thenReturn(null);
         Mockito.when(project.tasks()).thenReturn(tasks);
         Mockito.when(project.language()).thenReturn(new English());
+        Mockito.when(project.repoFullName()).thenReturn("mihai/test");
+        Mockito.when(project.provider()).thenReturn("github");
+
         manager.reopenedIssue(
             new Event() {
                 @Override
@@ -785,8 +803,11 @@ public final class StoredProjectManagerTestCase {
         Mockito.when(issue.isPullRequest()).thenReturn(Boolean.TRUE);
         Mockito.when(issue.issueId()).thenReturn("1");
         Mockito.when(issue.author()).thenReturn("zoeself");
-        Mockito.when(issue.repoFullName()).thenReturn("mihai/test");
-        Mockito.when(issue.provider()).thenReturn("github");
+        final Labels labels = Mockito.mock(Labels.class);
+        Mockito.when(labels.iterator()).thenReturn(
+            new ArrayList<Label>().iterator()
+        );
+        Mockito.when(issue.labels()).thenReturn(labels);
         final Comments comments = Mockito.mock(Comments.class);
         Mockito.when(comments.post(Mockito.anyString())).thenReturn(null);
         Mockito.when(issue.comments()).thenReturn(comments);
@@ -798,6 +819,8 @@ public final class StoredProjectManagerTestCase {
         ).thenReturn(null);
         Mockito.when(project.tasks()).thenReturn(tasks);
         Mockito.when(project.language()).thenReturn(new English());
+        Mockito.when(project.repoFullName()).thenReturn("mihai/test");
+        Mockito.when(project.provider()).thenReturn("github");
         manager.reopenedIssue(
             new Event() {
                 @Override
@@ -851,8 +874,11 @@ public final class StoredProjectManagerTestCase {
         );
         final Issue issue = Mockito.mock(Issue.class);
         Mockito.when(issue.issueId()).thenReturn("1");
-        Mockito.when(issue.repoFullName()).thenReturn("mihai/test");
-        Mockito.when(issue.provider()).thenReturn("github");
+        final Labels labels = Mockito.mock(Labels.class);
+        Mockito.when(labels.iterator()).thenReturn(
+            new ArrayList<Label>().iterator()
+        );
+        Mockito.when(issue.labels()).thenReturn(labels);
         final Comments comments = Mockito.mock(Comments.class);
         Mockito.when(comments.post(Mockito.anyString())).thenThrow(
             new IllegalStateException(
@@ -872,6 +898,89 @@ public final class StoredProjectManagerTestCase {
         );
         final Project project = Mockito.mock(Project.class);
         Mockito.when(project.tasks()).thenReturn(all);
+        Mockito.when(project.repoFullName()).thenReturn("mihai/test");
+        Mockito.when(project.provider()).thenReturn("github");
+
+        manager.reopenedIssue(
+            new Event() {
+                @Override
+                public String type() {
+                    return Type.REOPENED_ISSUE;
+                }
+
+                @Override
+                public Issue issue() {
+                    return issue;
+                }
+
+                @Override
+                public Comment comment() {
+                    return null;
+                }
+
+                @Override
+                public Commit commit() {
+                    return null;
+                }
+
+                @Override
+                public Project project() {
+                    return project;
+                }
+
+            }
+        );
+    }
+
+    /**
+     * StoredProjectManager can handle a reopened Issue event when Issue has
+     * the 'no-task' label on it (doesn't do anything).
+     */
+    @Test
+    public void handlesReopenedIssueEventNoTaskLabel() {
+        final ProjectManager manager = new StoredProjectManager(
+            1,
+            "123",
+            "zoeself",
+            Provider.Names.GITHUB,
+            "123token",
+            8,
+            5,
+            Mockito.mock(Storage.class)
+        );
+        final Issue issue = Mockito.mock(Issue.class);
+        Mockito.when(issue.issueId()).thenReturn("1");
+        final Labels labels = Mockito.mock(Labels.class);
+        final Label noTask = Mockito.mock(Label.class);
+        Mockito.when(noTask.name()).thenReturn("no-task");
+        Mockito.when(labels.iterator()).thenReturn(List.of(noTask).iterator());
+        Mockito.when(issue.labels()).thenReturn(labels);
+
+        final Comments comments = Mockito.mock(Comments.class);
+        Mockito.when(comments.post(Mockito.anyString())).thenThrow(
+            new IllegalStateException(
+                "No comments should be posted!"
+            )
+        );
+        Mockito.when(issue.comments()).thenReturn(comments);
+
+        final Tasks all = Mockito.mock(Tasks.class);
+        Mockito.when(all.getById("1", "mihai/test", "github", Boolean.FALSE))
+            .thenThrow(
+                new IllegalStateException(
+                    "Issue has the 'no-task' label, Tasks.getById should not "
+                    + "be called!"
+                )
+            );
+        Mockito.when(all.register(issue)).thenThrow(
+            new IllegalStateException(
+                "Issue has the 'no-task' label, no Task should be registered!"
+            )
+        );
+        final Project project = Mockito.mock(Project.class);
+        Mockito.when(project.tasks()).thenReturn(all);
+        Mockito.when(project.repoFullName()).thenReturn("mihai/test");
+        Mockito.when(project.provider()).thenReturn("github");
 
         manager.reopenedIssue(
             new Event() {
