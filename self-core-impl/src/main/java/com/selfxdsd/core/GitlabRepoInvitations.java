@@ -33,6 +33,9 @@ import java.util.Iterator;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.45
+ * @todo #1109:60min Always return a fake invitation wrapped inside the
+ *  StarRepo and FollowProjectOwner decorators, so we can star/follow GitLab
+ *  repos when "accepting" invitations.
  */
 final class GitlabRepoInvitations implements Invitations {
 
