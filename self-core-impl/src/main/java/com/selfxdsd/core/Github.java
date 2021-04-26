@@ -25,6 +25,8 @@ package com.selfxdsd.core;
 import com.selfxdsd.api.*;
 import com.selfxdsd.api.storage.Storage;
 
+import javax.json.Json;
+import java.net.HttpURLConnection;
 import java.net.URI;
 
 /**
@@ -134,6 +136,30 @@ public final class Github implements Provider {
             this.uri,
             this.user,
             this.storage);
+    }
+
+    @Override
+    public boolean follow(final String username) {
+        final boolean followed;
+        if(username == null || username.isEmpty()) {
+            followed = false;
+        } else {
+            final Resource response = this.resources.put(
+                URI.create(
+                    this.uri + "/user/following/" + username
+                ),
+                Json.createObjectBuilder().build()
+            );
+            final int status = response.statusCode();
+            if (status == HttpURLConnection.HTTP_NO_CONTENT) {
+                followed = true;
+            } else if (status == HttpURLConnection.HTTP_NOT_MODIFIED){
+                followed = true;
+            } else {
+                followed = false;
+            }
+        }
+        return followed;
     }
 
     @Override

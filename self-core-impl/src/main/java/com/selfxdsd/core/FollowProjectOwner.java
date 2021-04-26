@@ -23,31 +23,64 @@
 package com.selfxdsd.core;
 
 import com.selfxdsd.api.Invitation;
-import com.selfxdsd.api.Invitations;
+import com.selfxdsd.api.Repo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.Iterator;
+import javax.json.JsonObject;
 
 /**
- * Invitations to a Gitlab Repo.
+ * Follow the PO after accepting the Invitation.
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
- * @since 0.0.45
- * @todo #1109:60min Always return a fake invitation wrapped inside the
- *  StarRepo and FollowProjectOwner decorators, so we can star/follow GitLab
- *  repos when "accepting" invitations.
+ * @since 0.0.76
  */
-final class GitlabRepoInvitations implements Invitations {
+final class FollowProjectOwner implements Invitation {
 
     /**
-     * In the case of Gitlab, we use the 'Add Member' endpoint
-     * to invite the PM to the repo. This endpoint adds the PM
-     * to the project directly, so there are no invitations
-     * to accept, ever. See method GitlabCollaborators.invite(...).
-     * @return Always empty iterable.
+     * Logger.
      */
+    private static final Logger LOG = LoggerFactory.getLogger(
+        FollowProjectOwner.class
+    );
+
+
+    /**
+     * Original Invitation.
+     */
+    private final Invitation origin;
+
+    /**
+     * Ctor.
+     * @param origin Original Invitation.
+     */
+    FollowProjectOwner(final Invitation origin) {
+        this.origin = origin;
+    }
+
     @Override
-    public Iterator<Invitation> iterator() {
-        return new ArrayList<Invitation>().iterator();
+    public JsonObject json() {
+        return this.origin.json();
+    }
+
+    @Override
+    public String inviter() {
+        return this.origin.inviter();
+    }
+
+    @Override
+    public Repo repo() {
+        return this.origin.repo();
+    }
+
+    @Override
+    public void accept() {
+        this.origin.accept();
+        LOG.debug("Following PO...");
+        try {
+            this.repo().owner().provider().follow(this.inviter());
+        } catch (final IllegalStateException ex) {
+            LOG.error("Caught ISE while following PO", ex);
+        }
     }
 }

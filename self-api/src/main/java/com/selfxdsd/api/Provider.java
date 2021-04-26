@@ -58,6 +58,13 @@ public interface Provider {
     Organizations organizations();
 
     /**
+     * The authenticated User will follow the given provider user.
+     * @param username Username of the user to follow.
+     * @return True if successful, false otherwise.
+     */
+    boolean follow(final String username);
+
+    /**
      * Return a Provider which has an access token.
      * @param accessToken Access token to make authorized requests with.
      * @return Provider.

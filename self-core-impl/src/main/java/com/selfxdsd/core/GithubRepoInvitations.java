@@ -77,12 +77,14 @@ final class GithubRepoInvitations implements Invitations {
         final List<Invitation> invitations = this.fetchInvitations().stream()
             .map(
                 jsonValue -> new HelloIssue(
+                    new FollowProjectOwner(
                         new StarRepo(
                             new GithubInvitation(
                                 this.resources,
                                 this.repoInvitationsUri,
                                 (JsonObject) jsonValue,
                                 this.github
+                            )
                         )
                     )
                 )
