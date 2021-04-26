@@ -139,6 +139,11 @@ public final class Bitbucket implements Provider {
     }
 
     @Override
+    public boolean follow(final String username) {
+        throw new UnsupportedOperationException("Not yet implemented.");
+    }
+
+    @Override
     public Provider withToken(final String accessToken) {
         return new Bitbucket(
             new BaseSelf.Authenticated(this.user, accessToken),

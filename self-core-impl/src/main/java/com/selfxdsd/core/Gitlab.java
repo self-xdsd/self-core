@@ -33,6 +33,8 @@ import java.net.URI;
  * @version $Id$
  * @since 0.0.1
  * @todo #27:30min Continue adding integration tests for Gitlab provider.
+ * @todo #1109:60min Implement and test method follow(...) which should call
+ *  GitLab's API and follow the specified user.
  */
 public final class Gitlab implements Provider {
 
@@ -130,6 +132,11 @@ public final class Gitlab implements Provider {
             this.uri,
             this.user,
             this.storage);
+    }
+
+    @Override
+    public boolean follow(final String username) {
+        throw new UnsupportedOperationException("Not yet implemented.");
     }
 
     @Override
