@@ -33,7 +33,7 @@ import javax.json.JsonObject;
  * Follow the PO after accepting the Invitation.
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
- * @since 0.0.75
+ * @since 0.0.76
  */
 final class FollowProjectOwner implements Invitation {
 

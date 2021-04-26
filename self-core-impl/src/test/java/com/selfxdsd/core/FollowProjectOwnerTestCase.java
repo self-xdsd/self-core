@@ -34,7 +34,7 @@ import javax.json.JsonObject;
 /**
  * Unit tests for {@link FollowProjectOwner}.
  * @author Mihai Andronache (amihaiemil@gmail.com)\
- * @since 0.0.75
+ * @since 0.0.76
  * @version $Id$
  */
 public final class FollowProjectOwnerTestCase {
