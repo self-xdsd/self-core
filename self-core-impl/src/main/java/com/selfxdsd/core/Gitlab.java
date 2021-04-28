@@ -25,6 +25,8 @@ package com.selfxdsd.core;
 import com.selfxdsd.api.*;
 import com.selfxdsd.api.storage.Storage;
 
+import javax.json.JsonValue;
+import java.net.HttpURLConnection;
 import java.net.URI;
 
 /**
@@ -33,8 +35,6 @@ import java.net.URI;
  * @version $Id$
  * @since 0.0.1
  * @todo #27:30min Continue adding integration tests for Gitlab provider.
- * @todo #1109:60min Implement and test method follow(...) which should call
- *  GitLab's API and follow the specified user.
  */
 public final class Gitlab implements Provider {
 
@@ -134,9 +134,32 @@ public final class Gitlab implements Provider {
             this.storage);
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @see <a href="https://docs.gitlab.com/ee/api/users.html#follow-and-unfollow-users">here</a>
+     *
+     */
     @Override
     public boolean follow(final String username) {
-        throw new UnsupportedOperationException("Not yet implemented.");
+        final boolean followed;
+        if(username == null || username.isBlank()) {
+            followed = false;
+        } else {
+            final int id = this.findUserId(username.trim());
+            if(id > -1) {
+                final Resource response = this.resources.post(
+                    URI.create(this.uri + "/users/" + id + "/follow"),
+                    JsonValue.NULL
+                );
+                final int status = response.statusCode();
+                followed = status == HttpURLConnection.HTTP_CREATED
+                    || status == HttpURLConnection.HTTP_NOT_MODIFIED;
+            }else {
+                followed = false;
+            }
+        }
+        return followed;
     }
 
     @Override
@@ -147,6 +170,24 @@ public final class Gitlab implements Provider {
             this.resources,
             accessToken
         );
+    }
+
+    /**
+     * Find user's id or -1 if user not found.
+     * @param username Username.
+     * @return User id.
+     */
+    private int findUserId(final String username){
+        final Resource response = this.resources.get(
+            URI.create(this.uri + "/users?username=" + username)
+        );
+        final int id;
+        if (response.statusCode() == HttpURLConnection.HTTP_OK) {
+            id = response.asJsonObject().getInt("id");
+        } else {
+            id = -1;
+        }
+        return id;
     }
 
     /**

@@ -4,12 +4,20 @@ import com.selfxdsd.api.Organizations;
 import com.selfxdsd.api.Provider;
 import com.selfxdsd.api.User;
 import com.selfxdsd.api.exceptions.RepoException;
+import com.selfxdsd.api.storage.Storage;
+import com.selfxdsd.core.mock.MockJsonResources;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
+import org.mockito.Mockito;
 
+import javax.json.Json;
 import javax.json.JsonObject;
+import javax.json.JsonValue;
 
+import java.net.HttpURLConnection;
+
+import static com.selfxdsd.core.mock.MockJsonResources.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.Mockito.mock;
@@ -52,6 +60,175 @@ public final class GitlabITCase {
             .organizations();
         MatcherAssert.assertThat(organizations,
             Matchers.instanceOf(GitlabOrganizations.class));
+    }
+
+    /**
+     * Gitlab.follow(...) works.
+     */
+    @Test
+    public void followUserWorks(){
+        final JsonResources res = this.createFollowResources(false, false);
+        final Provider gitlab = new Gitlab(
+            Mockito.mock(User.class),
+            Mockito.mock(Storage.class),
+            res
+        );
+
+        final boolean followed = gitlab.follow("john");
+
+        MatcherAssert.assertThat(followed, Matchers.is(Boolean.TRUE));
+    }
+
+    /**
+     * Gitlab.follow(...) returns true if user is already followed.
+     */
+    @Test
+    public void followAlreadyUserWorks(){
+        final JsonResources res = this.createFollowResources(true, false);
+
+        final Provider gitlab = new Gitlab(
+            Mockito.mock(User.class),
+            Mockito.mock(Storage.class),
+            res
+        );
+
+        final boolean followed = gitlab.follow("john");
+
+        MatcherAssert.assertThat(followed, Matchers.is(Boolean.TRUE));
+    }
+
+    /**
+     * Gitlab.follow(...) fails due to user not found.
+     */
+    @Test
+    public void followFailsUserNotFound() {
+        final JsonResources res = this.createFollowResources(true, false);
+
+        final Provider gitlab = new Gitlab(
+            Mockito.mock(User.class),
+            Mockito.mock(Storage.class),
+            res
+        );
+
+        final boolean followed = gitlab.follow("not-john");
+
+        MatcherAssert.assertThat(followed, Matchers.is(Boolean.FALSE));
+    }
+
+    /**
+     * Gitlab.follow(...) returns false if user is null.
+     */
+    @Test
+    public void followFailsUserIsNull() {
+        final JsonResources res = this.createFollowResources(false, false);
+
+        final Provider gitlab = new Gitlab(
+            Mockito.mock(User.class),
+            Mockito.mock(Storage.class),
+            res
+        );
+
+        final boolean followed = gitlab.follow(null);
+
+        MatcherAssert.assertThat(followed, Matchers.is(Boolean.FALSE));
+    }
+
+    /**
+     * Gitlab.follow(...) returns false if user is empty.
+     */
+    @Test
+    public void followFailsUserIsEmpty() {
+        final JsonResources res = this.createFollowResources(false, false);
+
+        final Provider gitlab = new Gitlab(
+            Mockito.mock(User.class),
+            Mockito.mock(Storage.class),
+            res
+        );
+
+        final boolean followed = gitlab.follow("   ");
+
+        MatcherAssert.assertThat(followed, Matchers.is(Boolean.FALSE));
+    }
+
+    /**
+     * Gitlab.follow(...) returns false if request failing due to server issues,
+     * rate-limited, unauthorized etc..
+     */
+    @Test
+    public void followFailsDueToOtherError() {
+        final JsonResources res = this.createFollowResources(false, true);
+
+        final Provider gitlab = new Gitlab(
+            Mockito.mock(User.class),
+            Mockito.mock(Storage.class),
+            res
+        );
+
+        final boolean followed = gitlab.follow("john");
+
+        MatcherAssert.assertThat(followed, Matchers.is(Boolean.FALSE));
+    }
+
+    /**
+     * Creates a "follow" resources requests context.
+     * @param alreadyFollowed Is already following?
+     * @param failOnFollow Fails when follow (server issues, rate limit etc.)
+     * @return MockJsonResources.
+     */
+    private JsonResources createFollowResources(
+        final boolean alreadyFollowed,
+        final boolean failOnFollow
+    ){
+        return new MockJsonResources(req -> {
+            final MockResource mock;
+            final String method = req.getMethod();
+            if ("GET".equals(method)) {
+                if (req.getUri().toString()
+                    .endsWith("/users?username=john")) {
+                    mock = new MockResource(
+                        HttpURLConnection.HTTP_OK,
+                        Json.createObjectBuilder()
+                            .add("id", 1)
+                            .build()
+                    );
+                } else {
+                    mock = new MockResource(
+                        HttpURLConnection.HTTP_NOT_FOUND,
+                        JsonValue.NULL
+                    );
+                }
+            } else if ("POST".equals(method)) {
+                if (req.getUri().toString()
+                    .endsWith("/users/1/follow")) {
+                    final int okStatus;
+                    if(!failOnFollow) {
+                        if (alreadyFollowed) {
+                            okStatus = HttpURLConnection.HTTP_NOT_MODIFIED;
+                        } else {
+                            okStatus = HttpURLConnection.HTTP_CREATED;
+                        }
+                    }else{
+                        okStatus = HttpURLConnection.HTTP_UNAVAILABLE;
+                    }
+                    mock = new MockResource(
+                        okStatus,
+                        JsonValue.NULL
+                    );
+                } else {
+                    mock = new MockResource(
+                        HttpURLConnection.HTTP_NOT_FOUND,
+                        JsonValue.NULL
+                    );
+                }
+            } else {
+                mock = new MockResource(
+                    HttpURLConnection.HTTP_BAD_METHOD,
+                    JsonValue.NULL
+                );
+            }
+            return mock;
+        });
     }
 
     /**
