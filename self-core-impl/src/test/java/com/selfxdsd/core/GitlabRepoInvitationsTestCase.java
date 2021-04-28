@@ -22,9 +22,14 @@
  */
 package com.selfxdsd.core;
 
+import com.selfxdsd.api.*;
+import com.selfxdsd.api.storage.Storage;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
+import org.mockito.Mockito;
+
+import java.util.List;
 
 /**
  * Unit tests for {@link GitlabRepoInvitations}.
@@ -35,14 +40,27 @@ import org.junit.Test;
 public final class GitlabRepoInvitationsTestCase {
 
     /**
-     * GitlabRepoInvitations should be an empty iterable.
+     * GitlabRepoInvitations can return the mock invitations.
      */
     @Test
-    public void isEmptyIterable() {
-        MatcherAssert.assertThat(
-            new GitlabRepoInvitations(),
-            Matchers.emptyIterable()
+    public void returnsMockInvitations() {
+        final Projects projects = Mockito.mock(Projects.class);
+        Mockito.when(projects.iterator()).thenReturn(
+            List.of(Mockito.mock(Project.class), Mockito.mock(Project.class))
+                .iterator()
         );
-    }
+        final User manager = Mockito.mock(User.class);
+        Mockito.when(manager.projects()).thenReturn(projects);
 
+        final Invitations invitations = new GitlabRepoInvitations(
+            new Gitlab(manager, Mockito.mock(Storage.class)),
+            manager
+        );
+
+        MatcherAssert.assertThat(
+            invitations,
+            Matchers.iterableWithSize(2)
+        );
+        Mockito.verify(manager, Mockito.times(1)).projects();
+    }
 }

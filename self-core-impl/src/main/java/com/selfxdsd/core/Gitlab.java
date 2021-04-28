@@ -122,7 +122,7 @@ public final class Gitlab implements Provider {
 
     @Override
     public Invitations invitations() {
-        return new GitlabRepoInvitations();
+        return new GitlabRepoInvitations(this, this.user);
     }
 
     @Override

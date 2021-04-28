@@ -22,32 +22,91 @@
  */
 package com.selfxdsd.core;
 
-import com.selfxdsd.api.Invitation;
-import com.selfxdsd.api.Invitations;
+import com.selfxdsd.api.*;
 
+import javax.json.Json;
+import javax.json.JsonObject;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * Invitations to a Gitlab Repo.
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.45
- * @todo #1109:60min Always return a fake invitation wrapped inside the
- *  StarRepo and FollowProjectOwner decorators, so we can star/follow GitLab
- *  repos when "accepting" invitations.
  */
 final class GitlabRepoInvitations implements Invitations {
 
     /**
+     * Gitlab.
+     */
+    private final Gitlab gitlab;
+
+    /**
+     * Manager authenticated in Gitlab.
+     */
+    private final User manager;
+
+    /**
+     * Ctor.
+     * @param gitlab Gitlab.
+     * @param manager Authenticated manager.
+     */
+    GitlabRepoInvitations(
+        final Gitlab gitlab,
+        final User manager
+    ) {
+        this.gitlab = gitlab;
+        this.manager = manager;
+    }
+
+    /**
      * In the case of Gitlab, we use the 'Add Member' endpoint
      * to invite the PM to the repo. This endpoint adds the PM
-     * to the project directly, so there are no invitations
-     * to accept, ever. See method GitlabCollaborators.invite(...).
-     * @return Always empty iterable.
+     * to the project directly, so <b>there are no actual invitations
+     * to accept</b>. See method GitlabCollaborators.invite(...).<br><br>
+     *
+     * However, we return a mock invitation for each Project managed by the PM,
+     * wrapped in StarRepo and FollowProjectOwner, in order to respect the
+     * architecture (starring a repo and following the PO should happen when
+     * accepting invitations).
+     *
+     * @return Invitation iterator.
      */
     @Override
     public Iterator<Invitation> iterator() {
-        return new ArrayList<Invitation>().iterator();
+        final List<Invitation> invitations = new ArrayList<>();
+        for(final Project project : this.manager.projects()) {
+            invitations.add(
+                new FollowProjectOwner(
+                    new StarRepo(
+                        new Invitation() {
+                            @Override
+                            public JsonObject json() {
+                                return Json.createObjectBuilder().build();
+                            }
+
+                            @Override
+                            public String inviter() {
+                                return project.owner().username();
+                            }
+
+                            @Override
+                            public Repo repo() {
+                                return GitlabRepoInvitations.this.gitlab.repo(
+                                    project.repoFullName(),
+                                    project.provider()
+                                );
+                            }
+
+                            @Override
+                            public void accept() { }
+                        }
+                    )
+                )
+            );
+        }
+        return invitations.iterator();
     }
 }
