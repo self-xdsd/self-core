@@ -25,6 +25,7 @@ package com.selfxdsd.core;
 import com.selfxdsd.api.*;
 import com.selfxdsd.api.storage.Storage;
 
+import javax.json.JsonArray;
 import javax.json.JsonValue;
 import java.net.HttpURLConnection;
 import java.net.URI;
@@ -183,7 +184,12 @@ public final class Gitlab implements Provider {
         );
         final int id;
         if (response.statusCode() == HttpURLConnection.HTTP_OK) {
-            id = response.asJsonObject().getInt("id");
+            final JsonArray result = response.asJsonArray();
+            if (!result.isEmpty()) {
+                id = result.get(0).asJsonObject().getInt("id");
+            } else {
+                id = -1;
+            }
         } else {
             id = -1;
         }
