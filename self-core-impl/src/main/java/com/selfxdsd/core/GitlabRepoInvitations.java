@@ -94,9 +94,10 @@ final class GitlabRepoInvitations implements Invitations {
 
                             @Override
                             public Repo repo() {
+                                final String fullName = project.repoFullName();
                                 return GitlabRepoInvitations.this.gitlab.repo(
-                                    project.repoFullName(),
-                                    project.provider()
+                                    fullName.split("/")[0],
+                                    fullName.split("/")[1]
                                 );
                             }
 
