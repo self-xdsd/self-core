@@ -188,14 +188,19 @@ public final class GitlabITCase {
                     .endsWith("/users?username=john")) {
                     mock = new MockResource(
                         HttpURLConnection.HTTP_OK,
-                        Json.createObjectBuilder()
-                            .add("id", 1)
+                        Json.createArrayBuilder()
+                            .add(
+                                Json.createObjectBuilder()
+                                    .add("id", 1)
+                                    .build()
+                            )
                             .build()
+
                     );
                 } else {
                     mock = new MockResource(
-                        HttpURLConnection.HTTP_NOT_FOUND,
-                        JsonValue.NULL
+                        HttpURLConnection.HTTP_OK,
+                        JsonValue.EMPTY_JSON_ARRAY
                     );
                 }
             } else if ("POST".equals(method)) {
