@@ -69,22 +69,4 @@ public final class GithubIssuesITCase {
         );
         MatcherAssert.assertThat(issue.assignee(), Matchers.equalTo("john"));
     }
-
-    /**
-     * Should return null if issue was not found.
-     */
-    @Test
-    public void fetchesIssueNotFound(){
-        final URI uri = URI.create(
-            "https://api.github.com/repos/amihaiemil/docker-java-api/issues");
-        final Issues issues = new GithubIssues(
-            new JsonResources.JdkHttp(),
-            uri,
-            mock(Repo.class),
-            mock(Storage.class)
-        );
-        final Issue issue = issues.getById("100000");
-        assertThat(issue, nullValue());
-    }
-
 }
