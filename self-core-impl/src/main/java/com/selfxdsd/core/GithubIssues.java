@@ -44,9 +44,6 @@ import java.util.List;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
- * @todo #938:60min Fetch the JSON Issue only when Issue.json() is called (use
- *  a caching Supplier inside GithubIssue to make sure the JSON is fetched
- *  only once).
  */
 final class GithubIssues implements Issues {
 
@@ -99,37 +96,15 @@ final class GithubIssues implements Issues {
 
     @Override
     public Issue getById(final String issueId) {
-        final URI issueUri = URI.create(
-            this.issuesUri.toString() + "/" + issueId
+        return new WithContributorLabel(
+            new GithubIssue(
+                URI.create(
+                    this.issuesUri.toString() + "/" + issueId
+                ),
+                this.storage,
+                this.resources
+            )
         );
-        final Resource resource = this.resources.get(issueUri);
-        JsonObject jsonObject;
-        switch (resource.statusCode()) {
-            case HttpURLConnection.HTTP_OK:
-                jsonObject = resource.asJsonObject();
-                break;
-            case HttpURLConnection.HTTP_NOT_FOUND:
-            case HttpURLConnection.HTTP_NO_CONTENT:
-                jsonObject = null;
-                break;
-            default:
-                throw new IllegalStateException(
-                    "Could not get the issue " + issueId + ". "
-                  + "Received status code: " + resource.statusCode()
-                );
-        }
-        Issue issue = null;
-        if(jsonObject != null){
-            issue = new WithContributorLabel(
-                new GithubIssue(
-                    issueUri,
-                    jsonObject,
-                    this.storage,
-                    this.resources
-                )
-            );
-        }
-        return issue;
     }
 
     @Override
@@ -139,7 +114,7 @@ final class GithubIssues implements Issues {
                 URI.create(
                     this.issuesUri.toString() + "/" + issue.getInt("number")
                 ),
-                issue,
+                () -> issue,
                 this.storage,
                 this.resources
             )
@@ -195,7 +170,7 @@ final class GithubIssues implements Issues {
                         this.issuesUri.toString() + "/"
                         + jsonObject.getInt("number")
                     ),
-                    jsonObject,
+                    () -> jsonObject,
                     this.storage,
                     this.resources
                 )

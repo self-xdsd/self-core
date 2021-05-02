@@ -245,7 +245,7 @@ public final class GitlabIssueTestCase {
      */
     @Test
     public void returnsEstimation() {
-        final Estimation estimation = new GithubIssue(
+        final Estimation estimation = new GitlabIssue(
             URI.create("http://localhost/issues/1"),
             Json.createObjectBuilder()
                 .add("number", 1)
