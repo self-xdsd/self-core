@@ -44,6 +44,9 @@ import java.util.List;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
+ * @todo #938:60min Fetch the JSON Issue only when Issue.json() is called (use
+ *  a caching Supplier inside GithubIssue to make sure the JSON is fetched
+ *  only once).
  */
 final class GithubIssues implements Issues {
 
