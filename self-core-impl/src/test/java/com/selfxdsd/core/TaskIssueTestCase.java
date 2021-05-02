@@ -28,6 +28,9 @@ import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import javax.json.Json;
+import javax.json.JsonObject;
+
 /**
  * Unit tests for {@link TaskIssue}.
  * @author Mihai Andronache (amihaiemil@gmail.com)
@@ -193,6 +196,158 @@ public final class TaskIssueTestCase {
         MatcherAssert.assertThat(
             issue.assignee(),
             Matchers.equalTo("mihai")
+        );
+    }
+
+    /**
+     * TaskIssue returns the author from the corresponding Issue.
+     */
+    @Test
+    public void returnsAuthorFromIssue() {
+        final Issue corresponding = Mockito.mock(Issue.class);
+        Mockito.when(corresponding.author()).thenReturn("vlad");
+        final Issue taskIssue = new TaskIssue(
+            Mockito.mock(Task.class),
+            () -> corresponding
+        );
+        MatcherAssert.assertThat(
+            taskIssue.author(),
+            Matchers.equalTo("vlad")
+        );
+    }
+
+    /**
+     * TaskIssue returns the body from the corresponding Issue.
+     */
+    @Test
+    public void returnsBodyFromIssue() {
+        final Issue corresponding = Mockito.mock(Issue.class);
+        Mockito.when(corresponding.body()).thenReturn("some issue...");
+        final Issue taskIssue = new TaskIssue(
+            Mockito.mock(Task.class),
+            () -> corresponding
+        );
+        MatcherAssert.assertThat(
+            taskIssue.body(),
+            Matchers.equalTo("some issue...")
+        );
+    }
+
+    /**
+     * TaskIssue delegates the assign operation to the corresponding Issue.
+     */
+    @Test
+    public void delegatesAssignToIssue() {
+        final Issue corresponding = Mockito.mock(Issue.class);
+        Mockito.when(corresponding.assign("ale")).thenReturn(true);
+        final Issue taskIssue = new TaskIssue(
+            Mockito.mock(Task.class),
+            () -> corresponding
+        );
+        MatcherAssert.assertThat(
+            taskIssue.assign("ale"),
+            Matchers.is(true)
+        );
+    }
+
+    /**
+     * TaskIssue delegates the unassign operation to the corresponding Issue.
+     */
+    @Test
+    public void delegatesUnassignToIssue() {
+        final Issue corresponding = Mockito.mock(Issue.class);
+        Mockito.when(corresponding.unassign("ale")).thenReturn(true);
+        final Issue taskIssue = new TaskIssue(
+            Mockito.mock(Task.class),
+            () -> corresponding
+        );
+        MatcherAssert.assertThat(
+            taskIssue.unassign("ale"),
+            Matchers.is(true)
+        );
+    }
+
+    /**
+     * TaskIssue delegates the close operation to the corresponding Issue.
+     */
+    @Test
+    public void delegatesCloseToIssue() {
+        final Issue corresponding = Mockito.mock(Issue.class);
+        final Issue taskIssue = new TaskIssue(
+            Mockito.mock(Task.class),
+            () -> corresponding
+        );
+        taskIssue.close();
+        Mockito.verify(corresponding, Mockito.times(1)).close();
+    }
+
+    /**
+     * TaskIssue delegates the reopen operation to the corresponding Issue.
+     */
+    @Test
+    public void delegatesReopenToIssue() {
+        final Issue corresponding = Mockito.mock(Issue.class);
+        final Issue taskIssue = new TaskIssue(
+            Mockito.mock(Task.class),
+            () -> corresponding
+        );
+        taskIssue.reopen();
+        Mockito.verify(corresponding, Mockito.times(1)).reopen();
+    }
+
+    /**
+     * TaskIssue returns the JSON from the corresponding Issue.
+     */
+    @Test
+    public void returnsJsonFromIssue() {
+        final JsonObject json = Json.createObjectBuilder()
+            .add("issueId", "123")
+            .build();
+        final Issue corresponding = Mockito.mock(Issue.class);
+        Mockito.when(corresponding.json()).thenReturn(json);
+        final Issue taskIssue = new TaskIssue(
+            Mockito.mock(Task.class),
+            () -> corresponding
+        );
+        MatcherAssert.assertThat(
+            taskIssue.json(),
+            Matchers.equalTo(json)
+        );
+    }
+
+    /**
+     * TaskIssue returns the Comments from the corresponding Issue.
+     */
+    @Test
+    public void returnsCommentsFromIssue() {
+        final Comments comments = Mockito.mock(Comments.class);
+        final Issue corresponding = Mockito.mock(Issue.class);
+        Mockito.when(corresponding.comments()).thenReturn(comments);
+        final Issue taskIssue = new TaskIssue(
+            Mockito.mock(Task.class),
+            () -> corresponding
+        );
+        MatcherAssert.assertThat(
+            taskIssue.comments(),
+            Matchers.is(comments)
+        );
+    }
+
+    /**
+     * TaskIssue returns the Labels from the corresponding Issue.
+     */
+    @Test
+    public void returnsLabelsFromIssue() {
+        final Labels labels = Mockito.mock(Labels.class);
+        final Issue corresponding = Mockito.mock(Issue.class);
+        Mockito.when(corresponding.labels()).thenReturn(labels);
+        final Issue taskIssue = new TaskIssue(
+            Mockito.mock(Task.class),
+            () -> corresponding
+        );
+        MatcherAssert.assertThat(
+            taskIssue.labels(),
+            Matchers.is(labels)
         );
     }
 }

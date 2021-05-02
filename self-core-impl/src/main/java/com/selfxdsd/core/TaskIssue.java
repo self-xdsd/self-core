@@ -109,7 +109,7 @@ final class TaskIssue implements Issue {
 
     @Override
     public String body() {
-        return this.issue.get().author();
+        return this.issue.get().body();
     }
 
     @Override
