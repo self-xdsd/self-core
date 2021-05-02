@@ -31,10 +31,8 @@ import javax.json.JsonObject;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @since 0.0.79
  * @version $Id$
- * @todo #938:60min Save the Issue author and body on the Task. We will also
- *  need to add these 2 db columns in the storage.
  */
-public final class TaskIssue implements Issue {
+final class TaskIssue implements Issue {
 
     /**
      * Repo where this Issue exists.
