@@ -29,6 +29,8 @@ import javax.json.JsonObject;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
+ * @todo #938:60min Add method etag() which will return the Issue's etag as
+ *  it comes from the Provider's API.
  */
 public interface Issue {
 
