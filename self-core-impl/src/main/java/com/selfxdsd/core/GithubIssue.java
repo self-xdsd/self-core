@@ -321,4 +321,9 @@ final class GithubIssue implements Issue {
             this.resources
         );
     }
+
+    @Override
+    public String etag() {
+        return "";
+    }
 }

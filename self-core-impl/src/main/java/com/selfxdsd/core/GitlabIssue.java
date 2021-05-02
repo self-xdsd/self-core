@@ -45,6 +45,8 @@ import java.net.URI;
  * @author criske
  * @version $Id$
  * @since 0.0.38
+ * @todo #1124:90min Start implementing the etag mechanism for Gitlab issues.
+ *  See how it's implemented for GithubIssues.
  */
 final class GitlabIssue implements Issue {
 
@@ -316,6 +318,11 @@ final class GitlabIssue implements Issue {
             this.resources,
             this.json
         );
+    }
+
+    @Override
+    public String etag() {
+        return "";
     }
 
     /**
