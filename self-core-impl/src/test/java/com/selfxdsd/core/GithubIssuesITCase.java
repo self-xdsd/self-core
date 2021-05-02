@@ -63,7 +63,7 @@ public final class GithubIssuesITCase {
             .build();
         final Issue issue = new GithubIssue(
             URI.create("/"),
-            json,
+            () -> json,
             Mockito.mock(Storage.class),
             Mockito.mock(JsonResources.class)
         );

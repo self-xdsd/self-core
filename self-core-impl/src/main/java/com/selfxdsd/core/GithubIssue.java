@@ -32,6 +32,7 @@ import javax.json.JsonObject;
 import javax.json.JsonValue;
 import java.net.HttpURLConnection;
 import java.net.URI;
+import java.util.function.Supplier;
 
 /**
  * An Issue in a Github repository.
@@ -54,9 +55,9 @@ final class GithubIssue implements Issue {
     private final URI issueUri;
 
     /**
-     * Issue JSON as returned by Github's API.
+     * Supplier of Issue JSON as returned by Github's API.
      */
-    private final JsonObject json;
+    private final Supplier<JsonObject> json;
 
     /**
      * Self storage, in case we want to store something.
@@ -70,14 +71,59 @@ final class GithubIssue implements Issue {
 
     /**
      * Ctor.
+     * @param issueUri Issue URI.
+     * @param storage Self's Storage.
+     * @param resources JSON Resources.
+     */
+    GithubIssue(
+        final URI issueUri,
+        final Storage storage,
+        final JsonResources resources
+    ) {
+        this(
+            issueUri,
+            new Supplier<>() {
+
+                /**
+                 * Cached json. Make sure to read it from the API only once.
+                 */
+                private JsonObject json;
+
+                @Override
+                public JsonObject get() {
+                    if(this.json == null) {
+                        final Resource resource = resources.get(issueUri);
+                        switch (resource.statusCode()) {
+                            case HttpURLConnection.HTTP_OK:
+                                this.json = resource.asJsonObject();
+                                break;
+                            default:
+                                throw new IllegalStateException(
+                                    "Could not get the issue ["
+                                    + issueUri.toString() + "]. "
+                                    + "Received status code: "
+                                    + resource.statusCode()
+                                );
+                        }
+                    }
+                    return this.json;
+                }
+            },
+            storage,
+            resources
+        );
+    }
+
+    /**
+     * Ctor.
      * @param issueUri Issues base URI.
-     * @param json Json Issue as returned by Github's API.
+     * @param json Supplier of Json Issue as returned by Github's API.
      * @param storage Storage.
      * @param resources Github's JSON Resources.
      */
     GithubIssue(
         final URI issueUri,
-        final JsonObject json,
+        final Supplier<JsonObject> json,
         final Storage storage,
         final JsonResources resources
     ) {
@@ -89,7 +135,7 @@ final class GithubIssue implements Issue {
 
     @Override
     public String issueId() {
-        return String.valueOf(this.json.getInt("number"));
+        return String.valueOf(this.json.get().getInt("number"));
     }
 
     @Override
@@ -104,7 +150,7 @@ final class GithubIssue implements Issue {
 
     @Override
     public String repoFullName() {
-        final String[] parts = this.json.getString("url").substring(
+        final String[] parts = this.json.get().getString("url").substring(
             "https://api.github.com/repos/".length()
         ).split("/");
         return parts[0] + "/" + parts[1];
@@ -112,17 +158,17 @@ final class GithubIssue implements Issue {
 
     @Override
     public String author() {
-        return this.json.getJsonObject("user").getString("login");
+        return this.json.get().getJsonObject("user").getString("login");
     }
 
     @Override
     public String body() {
-        return this.json.getString("body");
+        return this.json.get().getString("body");
     }
 
     @Override
     public String assignee() {
-        final JsonValue assignee = this.json.get("assignee");
+        final JsonValue assignee = this.json.get().get("assignee");
         final String username;
         if (assignee instanceof JsonObject) {
             username = ((JsonObject) assignee).getString("login");
@@ -194,7 +240,7 @@ final class GithubIssue implements Issue {
 
     @Override
     public JsonObject json() {
-        return this.json;
+        return this.json.get();
     }
 
     @Override
@@ -254,12 +300,12 @@ final class GithubIssue implements Issue {
 
     @Override
     public boolean isClosed() {
-        return "closed".equalsIgnoreCase(this.json.getString("state"));
+        return "closed".equalsIgnoreCase(this.json.get().getString("state"));
     }
 
     @Override
     public boolean isPullRequest() {
-        return this.json.getString("html_url")
+        return this.json.get().getString("html_url")
             .endsWith("/pull/" + this.issueId());
     }
 

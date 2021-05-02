@@ -50,7 +50,7 @@ public final class GithubIssueTestCase {
     public void returnsId() {
         final Issue issue = new GithubIssue(
             URI.create("http://localhost/issues/1"),
-            Json.createObjectBuilder().add("number", 1).build(),
+            () -> Json.createObjectBuilder().add("number", 1).build(),
             Mockito.mock(Storage.class),
             Mockito.mock(JsonResources.class)
         );
@@ -64,7 +64,7 @@ public final class GithubIssueTestCase {
     public void returnsProvider() {
         final Issue issue = new GithubIssue(
             URI.create("http://localhost/issues/1"),
-            Json.createObjectBuilder().add("number", 1).build(),
+            () -> Json.createObjectBuilder().add("number", 1).build(),
             Mockito.mock(Storage.class),
             Mockito.mock(JsonResources.class)
         );
@@ -79,7 +79,7 @@ public final class GithubIssueTestCase {
     public void returnsRepoFullNameFromIssue() {
         final Issue issue = new GithubIssue(
             URI.create("http://localhost/issues/1"),
-            Json.createObjectBuilder()
+            () -> Json.createObjectBuilder()
                 .add("number", 1)
                 .add(
                     "url",
@@ -104,7 +104,7 @@ public final class GithubIssueTestCase {
     public void returnsRepoFullNameFromPullRequest() {
         final Issue issue = new GithubIssue(
             URI.create("http://localhost/issues/1"),
-            Json.createObjectBuilder()
+            () -> Json.createObjectBuilder()
                 .add("number", 1)
                 .add(
                     "url",
@@ -128,7 +128,7 @@ public final class GithubIssueTestCase {
     public void returnsAuthor() {
         final Issue issue = new GithubIssue(
             URI.create("http://localhost/issues/1"),
-            Json.createObjectBuilder()
+            () -> Json.createObjectBuilder()
                 .add("id", 1)
                 .add(
                     "user",
@@ -153,7 +153,7 @@ public final class GithubIssueTestCase {
     public void returnsBody() {
         final Issue issue = new GithubIssue(
             URI.create("http://localhost/issues/1"),
-            Json.createObjectBuilder()
+            () -> Json.createObjectBuilder()
                 .add("id", 1)
                 .add(
                     "user",
@@ -178,7 +178,7 @@ public final class GithubIssueTestCase {
     public void returnsComments(){
         final Issue issue = new GithubIssue(
             URI.create("http://localhost/issues/1"),
-            Json.createObjectBuilder().build(),
+            () -> Json.createObjectBuilder().build(),
             Mockito.mock(Storage.class),
             Mockito.mock(JsonResources.class)
         );
@@ -195,7 +195,7 @@ public final class GithubIssueTestCase {
     public void returnsEstimation() {
         final Estimation estimation = new GithubIssue(
             URI.create("http://localhost/issues/1"),
-            Json.createObjectBuilder()
+            () -> Json.createObjectBuilder()
                 .add("number", 1)
                 .add("html_url", "http://localhost/issues/1")
                 .build(),
@@ -225,7 +225,7 @@ public final class GithubIssueTestCase {
         );
         final Issue issue = new GithubIssue(
             URI.create("http://localhost/issues/1"),
-            JsonObject.EMPTY_JSON_OBJECT,
+            () -> JsonObject.EMPTY_JSON_OBJECT,
             Mockito.mock(Storage.class),
             resources
         );
@@ -277,7 +277,7 @@ public final class GithubIssueTestCase {
         );
         final Issue issue = new GithubIssue(
             URI.create("http://localhost/issues/1"),
-            JsonObject.EMPTY_JSON_OBJECT,
+            () -> JsonObject.EMPTY_JSON_OBJECT,
             Mockito.mock(Storage.class),
             resources
         );
@@ -329,7 +329,7 @@ public final class GithubIssueTestCase {
         );
         final Issue issue = new GithubIssue(
             URI.create("http://localhost/issues/1"),
-            JsonObject.EMPTY_JSON_OBJECT,
+            () -> JsonObject.EMPTY_JSON_OBJECT,
             Mockito.mock(Storage.class),
             resources
         );
@@ -381,7 +381,7 @@ public final class GithubIssueTestCase {
         );
         final Issue issue = new GithubIssue(
             URI.create("http://localhost/issues/1"),
-            JsonObject.EMPTY_JSON_OBJECT,
+            () -> JsonObject.EMPTY_JSON_OBJECT,
             Mockito.mock(Storage.class),
             resources
         );
@@ -426,7 +426,7 @@ public final class GithubIssueTestCase {
     public void closesOk() {
         final Issue issue = new GithubIssue(
             URI.create("http://localhost/issues/1"),
-            JsonObject.EMPTY_JSON_OBJECT,
+            () -> JsonObject.EMPTY_JSON_OBJECT,
             Mockito.mock(Storage.class),
             new MockJsonResources(
                 new AccessToken.Github("github123"),
@@ -469,7 +469,7 @@ public final class GithubIssueTestCase {
     public void closesNotFound() {
         final Issue issue = new GithubIssue(
             URI.create("http://localhost/issues/1"),
-            JsonObject.EMPTY_JSON_OBJECT,
+            () -> JsonObject.EMPTY_JSON_OBJECT,
             Mockito.mock(Storage.class),
             new MockJsonResources(
                 new AccessToken.Github("github123"),
@@ -511,7 +511,7 @@ public final class GithubIssueTestCase {
     public void reopensOk() {
         final Issue issue = new GithubIssue(
             URI.create("http://localhost/issues/1"),
-            JsonObject.EMPTY_JSON_OBJECT,
+            () -> JsonObject.EMPTY_JSON_OBJECT,
             Mockito.mock(Storage.class),
             new MockJsonResources(
                 new AccessToken.Github("github123"),
@@ -554,7 +554,7 @@ public final class GithubIssueTestCase {
     public void reopensNotFound() {
         final Issue issue = new GithubIssue(
             URI.create("http://localhost/issues/1"),
-            JsonObject.EMPTY_JSON_OBJECT,
+            () -> JsonObject.EMPTY_JSON_OBJECT,
             Mockito.mock(Storage.class),
             new MockJsonResources(
                 new AccessToken.Github("github123"),
@@ -596,7 +596,8 @@ public final class GithubIssueTestCase {
     public void returnsIsClosedTrue() {
         final Issue issue = new GithubIssue(
             URI.create("http://localhost/issues/1"),
-            Json.createObjectBuilder().add("state", "closed").build(),
+            () -> Json.createObjectBuilder().add("state", "closed")
+                .build(),
             Mockito.mock(Storage.class),
             Mockito.mock(JsonResources.class)
         );
@@ -613,7 +614,7 @@ public final class GithubIssueTestCase {
     public void returnsIsClosedFalse() {
         final Issue issue = new GithubIssue(
             URI.create("http://localhost/issues/1"),
-            Json.createObjectBuilder().add("state", "open").build(),
+            () -> Json.createObjectBuilder().add("state", "open").build(),
             Mockito.mock(Storage.class),
             Mockito.mock(JsonResources.class)
         );
