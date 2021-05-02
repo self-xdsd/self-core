@@ -175,6 +175,6 @@ final class TaskIssue implements Issue {
 
     @Override
     public String etag() {
-        return "";
+        return this.task.etag();
     }
 }

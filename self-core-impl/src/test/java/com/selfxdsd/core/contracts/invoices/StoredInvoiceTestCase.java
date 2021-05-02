@@ -1051,6 +1051,7 @@ public final class StoredInvoiceTestCase {
                     "#1234",
                     "DEV", 30,
                     false,
+                    "",
                     storage
                 ),
                 BigDecimal.ZERO,

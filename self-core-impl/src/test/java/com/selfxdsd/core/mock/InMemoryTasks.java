@@ -97,6 +97,7 @@ public final class InMemoryTasks implements Tasks {
                 issue.role(),
                 issue.estimation().minutes(),
                 issue.isPullRequest(),
+                "",
                 this.storage
             );
             this.tasks.put(
@@ -132,7 +133,8 @@ public final class InMemoryTasks implements Tasks {
             assignmentDate,
             assignmentDate.plusDays(days),
             task.estimation(),
-            task.isPullRequest()
+            task.isPullRequest(),
+            ""
         );
         this.tasks.put(key, assigned);
         return assigned;
@@ -152,6 +154,7 @@ public final class InMemoryTasks implements Tasks {
             task.role(),
             task.estimation(),
             task.isPullRequest(),
+            "",
             this.storage
         );
         this.tasks.put(key, unassigned);
