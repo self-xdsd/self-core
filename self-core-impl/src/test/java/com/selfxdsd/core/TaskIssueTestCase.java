@@ -44,8 +44,8 @@ public final class TaskIssueTestCase {
         final Task task = Mockito.mock(Task.class);
         Mockito.when(task.issueId()).thenReturn("123");
         final Issue issue = new TaskIssue(
-            Mockito.mock(Repo.class),
-            task
+            task,
+            Mockito.mock(Repo.class)
         );
         MatcherAssert.assertThat(
             issue.issueId(),
@@ -61,8 +61,8 @@ public final class TaskIssueTestCase {
         final Task task = Mockito.mock(Task.class);
         Mockito.when(task.role()).thenReturn("DEV");
         final Issue issue = new TaskIssue(
-            Mockito.mock(Repo.class),
-            task
+            task,
+            Mockito.mock(Repo.class)
         );
         MatcherAssert.assertThat(
             issue.role(),
@@ -80,8 +80,8 @@ public final class TaskIssueTestCase {
         Mockito.when(project.provider()).thenReturn("github");
         Mockito.when(task.project()).thenReturn(project);
         final Issue issue = new TaskIssue(
-            Mockito.mock(Repo.class),
-            task
+            task,
+            Mockito.mock(Repo.class)
         );
         MatcherAssert.assertThat(
             issue.provider(),
@@ -99,8 +99,8 @@ public final class TaskIssueTestCase {
         Mockito.when(project.repoFullName()).thenReturn("mihai/test");
         Mockito.when(task.project()).thenReturn(project);
         final Issue issue = new TaskIssue(
-            Mockito.mock(Repo.class),
-            task
+            task,
+            Mockito.mock(Repo.class)
         );
         MatcherAssert.assertThat(
             issue.repoFullName(),
@@ -116,8 +116,8 @@ public final class TaskIssueTestCase {
         final Task task = Mockito.mock(Task.class);
         Mockito.when(task.isPullRequest()).thenReturn(Boolean.TRUE);
         final Issue issue = new TaskIssue(
-            Mockito.mock(Repo.class),
-            task
+            task,
+            Mockito.mock(Repo.class)
         );
         MatcherAssert.assertThat(
             issue.isPullRequest(),
@@ -133,8 +133,8 @@ public final class TaskIssueTestCase {
         final Task task = Mockito.mock(Task.class);
         Mockito.when(task.estimation()).thenReturn(35);
         final Issue issue = new TaskIssue(
-            Mockito.mock(Repo.class),
-            task
+            task,
+            Mockito.mock(Repo.class)
         );
         MatcherAssert.assertThat(
             issue.estimation().minutes(),
@@ -150,8 +150,8 @@ public final class TaskIssueTestCase {
     @Test
     public void isNeverClosed() {
         final Issue issue = new TaskIssue(
-            Mockito.mock(Repo.class),
-            Mockito.mock(Task.class)
+            Mockito.mock(Task.class),
+            Mockito.mock(Repo.class)
         );
         MatcherAssert.assertThat(
             issue.isClosed(),
@@ -167,8 +167,8 @@ public final class TaskIssueTestCase {
         final Task task = Mockito.mock(Task.class);
         Mockito.when(task.assignee()).thenReturn(null);
         final Issue issue = new TaskIssue(
-            Mockito.mock(Repo.class),
-            task
+            task,
+            Mockito.mock(Repo.class)
         );
         MatcherAssert.assertThat(
             issue.assignee(),
@@ -187,8 +187,8 @@ public final class TaskIssueTestCase {
         Mockito.when(mihai.username()).thenReturn("mihai");
         Mockito.when(task.assignee()).thenReturn(mihai);
         final Issue issue = new TaskIssue(
-            Mockito.mock(Repo.class),
-            task
+            task,
+            Mockito.mock(Repo.class)
         );
         MatcherAssert.assertThat(
             issue.assignee(),

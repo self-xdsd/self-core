@@ -25,6 +25,7 @@ package com.selfxdsd.core;
 import com.selfxdsd.api.*;
 
 import javax.json.JsonObject;
+import java.util.function.Supplier;
 
 /**
  * Issue in a Repo, based on an existing Task.
@@ -35,23 +36,50 @@ import javax.json.JsonObject;
 final class TaskIssue implements Issue {
 
     /**
-     * Repo where this Issue exists.
-     */
-    private final Repo repo;
-
-    /**
      * Task registered in Self XDSD.
      */
     private final Task task;
 
     /**
-     * Ctor.
-     * @param repo Repo where this Issue exists.
-     * @param task Task in Self XDSD.
+     * Supplier of the corresponding Issue.
      */
-    public TaskIssue(final Repo repo, final Task task) {
-        this.repo = repo;
+    private final Supplier<Issue> issue;
+
+    /**
+     * Ctor.
+     * @param task Task in Self XDSD.
+     * @param repo Repo where this Issue exists.
+     */
+    TaskIssue(final Task task, final Repo repo) {
+        this(
+            task,
+            new Supplier<>() {
+
+                /**
+                 * Cached Issue. Make sure to fetch it only once and cache
+                 * the result.
+                 */
+                private Issue cached;
+
+                @Override
+                public Issue get() {
+                    if(this.cached == null) {
+                        cached = repo.issues().getById(task.issueId());
+                    }
+                    return cached;
+                }
+            }
+        );
+    }
+
+    /**
+     * Ctor.
+     * @param task Task in Self XDSD.
+     * @param issue Supplier of the corresponding Issue.
+     */
+    TaskIssue(final Task task, final Supplier<Issue> issue) {
         this.task = task;
+        this.issue = issue;
     }
 
     @Override
