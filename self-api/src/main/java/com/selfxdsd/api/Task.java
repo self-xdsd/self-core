@@ -117,4 +117,10 @@ public interface Task {
      * @return Boolean.
      */
     boolean isPullRequest();
+
+    /**
+     * This Task's etag.
+     * @return String.
+     */
+    String etag();
 }

@@ -39,6 +39,8 @@ import java.util.function.Supplier;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
+ * @todo #1124:60min When fetching the Issue JSON, read the ETAG from the
+ *  response http header and add it to the JSON as a string attribute.
  */
 final class GithubIssue implements Issue {
 
@@ -320,5 +322,10 @@ final class GithubIssue implements Issue {
             URI.create(this.issueUri.toString() + "/labels"),
             this.resources
         );
+    }
+
+    @Override
+    public String etag() {
+        return "";
     }
 }

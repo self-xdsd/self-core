@@ -142,6 +142,21 @@ public final class WithContributorLabelTestCase {
     }
 
     /**
+     * Delegates the etag to the decorated object.
+     */
+    @Test
+    public void delegatesEtag() {
+        final Issue decorated = Mockito.mock(Issue.class);
+        Mockito.when(decorated.etag()).thenReturn("etag-123");
+        final Issue withLabel = new WithContributorLabel(decorated);
+        MatcherAssert.assertThat(
+            withLabel.etag(),
+            Matchers.equalTo("etag-123")
+        );
+        Mockito.verify(decorated, Mockito.times(1)).etag();
+    }
+
+    /**
      * Delegates the role to the decorated object.
      */
     @Test
