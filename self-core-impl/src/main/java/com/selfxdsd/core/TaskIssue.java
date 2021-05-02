@@ -104,12 +104,12 @@ final class TaskIssue implements Issue {
 
     @Override
     public String author() {
-        throw new UnsupportedOperationException("Not yet implemented.");
+        return this.issue.get().author();
     }
 
     @Override
     public String body() {
-        throw new UnsupportedOperationException("Not yet implemented.");
+        return this.issue.get().author();
     }
 
     @Override
@@ -125,32 +125,32 @@ final class TaskIssue implements Issue {
 
     @Override
     public boolean assign(final String username) {
-        throw new UnsupportedOperationException("Not yet implemented.");
+        return this.issue.get().assign(username);
     }
 
     @Override
     public boolean unassign(final String username) {
-        throw new UnsupportedOperationException("Not yet implemented.");
+        return this.issue.get().unassign(username);
     }
 
     @Override
     public JsonObject json() {
-        throw new UnsupportedOperationException("Not yet implemented.");
+        return this.issue.get().json();
     }
 
     @Override
     public Comments comments() {
-        throw new UnsupportedOperationException("Not yet implemented.");
+        return this.issue.get().comments();
     }
 
     @Override
     public void close() {
-        throw new UnsupportedOperationException("Not yet implemented.");
+        this.issue.get().close();
     }
 
     @Override
     public void reopen() {
-        throw new UnsupportedOperationException("Not yet implemented.");
+        this.issue.get().reopen();
     }
 
     @Override
@@ -170,6 +170,6 @@ final class TaskIssue implements Issue {
 
     @Override
     public Labels labels() {
-        throw new UnsupportedOperationException("Not yet implemented.");
+        return this.issue.get().labels();
     }
 }
