@@ -42,9 +42,8 @@ import java.util.function.Supplier;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.8
- * @todo #252:30min Add other methods such as delete and
- *  continue abstracting the HTTP calls away from the Provider's
- *  implementations (Issues, Comments etc).
+ * @todo #1128:60min Continue adding overloaded methods to also accept headers
+ *  for PATCH, PUT and DELETE (see how GET and POST are overloaded).
  */
 public interface JsonResources {
 
