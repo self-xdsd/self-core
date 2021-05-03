@@ -200,7 +200,9 @@ public interface JsonResources {
                         HttpResponse.BodyHandlers.ofString()
                     );
                 return new JsonResponse(
-                    response.statusCode(), response.body()
+                    response.statusCode(),
+                    response.body(),
+                    response.headers().map()
                 );
             } catch (final IOException | InterruptedException ex) {
                 throw new IllegalStateException(
@@ -238,7 +240,9 @@ public interface JsonResources {
                         HttpResponse.BodyHandlers.ofString()
                     );
                 return new JsonResponse(
-                    response.statusCode(), response.body()
+                    response.statusCode(),
+                    response.body(),
+                    response.headers().map()
                 );
             } catch (final IOException | InterruptedException ex) {
                 throw new IllegalStateException(
@@ -268,7 +272,9 @@ public interface JsonResources {
                         HttpResponse.BodyHandlers.ofString()
                     );
                 return new JsonResponse(
-                    response.statusCode(), response.body()
+                    response.statusCode(),
+                    response.body(),
+                    response.headers().map()
                 );
             } catch (final IOException | InterruptedException ex) {
                 throw new IllegalStateException(
@@ -295,7 +301,9 @@ public interface JsonResources {
                         HttpResponse.BodyHandlers.ofString()
                     );
                 return new JsonResponse(
-                    response.statusCode(), response.body()
+                    response.statusCode(),
+                    response.body(),
+                    response.headers().map()
                 );
             } catch (final IOException | InterruptedException ex) {
                 throw new IllegalStateException(
@@ -322,7 +330,9 @@ public interface JsonResources {
                         HttpResponse.BodyHandlers.ofString()
                     );
                 return new JsonResponse(
-                    response.statusCode(), response.body()
+                    response.statusCode(),
+                    response.body(),
+                    response.headers().map()
                 );
             } catch (final IOException | InterruptedException ex) {
                 throw new IllegalStateException(
@@ -393,13 +403,22 @@ public interface JsonResources {
         final String body;
 
         /**
+         * Response headers.
+         */
+        private final Map<String, List<String>> headers;
+
+        /**
          * Ctor.
          * @param statusCode Status code.
          * @param body Response Body.
+         * @param headers Response Headers.
          */
-        JsonResponse(final int statusCode, final String body) {
+        JsonResponse(final int statusCode,
+                     final String body,
+                     final Map<String, List<String>> headers) {
             this.statusCode = statusCode;
             this.body = body;
+            this.headers = headers;
         }
 
         @Override
@@ -419,6 +438,25 @@ public interface JsonResources {
             return Json.createReader(
                 new StringReader(this.body)
             ).readArray();
+        }
+
+        @Override
+        public Map<String, List<String>> headers() {
+            return this.headers;
+        }
+
+        @Override
+        public Resource newInstance(
+            final int status,
+            final JsonValue body,
+            final Map<String, List<String>> headers
+        ) {
+            return new JsonResponse(status, body.toString(), headers);
+        }
+
+        @Override
+        public String toString() {
+            return this.body;
         }
     }
 }

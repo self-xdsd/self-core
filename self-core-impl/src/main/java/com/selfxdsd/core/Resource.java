@@ -24,6 +24,9 @@ package com.selfxdsd.core;
 
 import javax.json.JsonArray;
 import javax.json.JsonObject;
+import javax.json.JsonValue;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Resource returned by the Provider.
@@ -51,4 +54,21 @@ public interface Resource {
      */
     JsonArray asJsonArray();
 
+    /**
+     * Resource headers.
+     * @return Map of headers.
+     */
+    Map<String, List<String>> headers();
+
+    /**
+     * Abstract factory for a new Resource.
+     * Useful on getting a Resource from cache updated from this instance.
+     * @param status Status.
+     * @param body Resource body.
+     * @param headers Resource headers.
+     * @return New Resource.
+     */
+    Resource newInstance(final int status,
+                         final JsonValue body,
+                         final Map<String, List<String>> headers);
 }
