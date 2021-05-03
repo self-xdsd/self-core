@@ -32,15 +32,18 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Supplier;
 
 /**
  * JSON Resources used by the Provider.
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.8
- * @todo #252:30min Add other methods such as delete and
- *  continue abstracting the HTTP calls away from the Provider's
- *  implementations (Issues, Comments etc).
+ * @todo #1128:60min Continue adding overloaded methods to also accept headers
+ *  for PATCH, PUT and DELETE (see how GET and POST are overloaded).
  */
 public interface JsonResources {
 
@@ -62,6 +65,19 @@ public interface JsonResources {
     Resource get(final URI uri);
 
     /**
+     * Get the Resource at the specified URI.
+     * @param uri Resource location.
+     * @param headers HTTP Headers.
+     * @return Resource.
+     * @throws IllegalStateException If IOException or InterruptedException
+     *  occur while making the HTTP request.
+     */
+    Resource get(
+        final URI uri,
+        final Supplier<Map<String, List<String>>> headers
+    );
+
+    /**
      * Post a JsonObject to the specified URI.
      * @param uri URI.
      * @param body JSON body of the request.
@@ -71,6 +87,21 @@ public interface JsonResources {
      */
     Resource post(
         final URI uri,
+        final JsonValue body
+    );
+
+    /**
+     * Post a JsonObject to the specified URI.
+     * @param uri URI.
+     * @param headers HTTP Headers.
+     * @param body JSON body of the request.
+     * @return Resource.
+     * @throws IllegalStateException If IOException or InterruptedException
+     *  occur while making the HTTP request.
+     */
+    Resource post(
+        final URI uri,
+        final Supplier<Map<String, List<String>>> headers,
         final JsonValue body
     );
 
@@ -149,12 +180,21 @@ public interface JsonResources {
 
         @Override
         public Resource get(final URI uri) {
+            return this.get(uri, () -> new HashMap<>());
+        }
+
+        @Override
+        public Resource get(
+            final URI uri,
+            final Supplier<Map<String, List<String>>> headers
+        ) {
             try {
                 final HttpResponse<String> response = HttpClient.newHttpClient()
                     .send(
                         this.request(
                             uri,
                             "GET",
+                            headers.get(),
                             HttpRequest.BodyPublishers.noBody()
                         ),
                         HttpResponse.BodyHandlers.ofString()
@@ -175,12 +215,22 @@ public interface JsonResources {
             final URI uri,
             final JsonValue body
         ) {
+            return this.post(uri, () -> new HashMap<>(), body);
+        }
+
+        @Override
+        public Resource post(
+            final URI uri,
+            final Supplier<Map<String, List<String>>> headers,
+            final JsonValue body
+        ) {
             try {
                 final HttpResponse<String> response = HttpClient.newHttpClient()
                     .send(
                         this.request(
                             uri,
                             "POST",
+                            headers.get(),
                             HttpRequest.BodyPublishers.ofString(
                                 body.toString()
                             )
@@ -193,7 +243,7 @@ public interface JsonResources {
             } catch (final IOException | InterruptedException ex) {
                 throw new IllegalStateException(
                     "Couldn't POST " + body.toString()
-                  + " to [" + uri.toString() +"]",
+                    + " to [" + uri.toString() +"]",
                     ex
                 );
             }
@@ -210,6 +260,7 @@ public interface JsonResources {
                         this.request(
                             uri,
                             "PATCH",
+                            new HashMap<>(),
                             HttpRequest.BodyPublishers.ofString(
                                 body.toString()
                             )
@@ -236,6 +287,7 @@ public interface JsonResources {
                         this.request(
                             uri,
                             "PUT",
+                            new HashMap<>(),
                             HttpRequest.BodyPublishers.ofString(
                                 body.toString()
                             )
@@ -262,6 +314,7 @@ public interface JsonResources {
                         this.request(
                             uri,
                             "DELETE",
+                            new HashMap<>(),
                             HttpRequest.BodyPublishers.ofString(
                                 body.toString()
                             )
@@ -284,30 +337,40 @@ public interface JsonResources {
          * Build and return the HTTP Request.
          * @param uri URI.
          * @param method Method.
+         * @param headers HTTP Headers.
          * @param body Body.
          * @return HttpRequest.
+         * @checkstyle LineLength (100 lines)
          */
         private HttpRequest request(
             final URI uri,
             final String method,
+            final Map<String, List<String>> headers,
             final HttpRequest.BodyPublisher body
         ) {
-            final HttpRequest request;
+            HttpRequest.Builder requestBuilder;
             if(this.accessToken != null) {
-                request = HttpRequest.newBuilder()
+                requestBuilder = HttpRequest.newBuilder()
                     .uri(uri)
                     .method(method, body)
                     .header("Content-Type", "application/json")
-                    .header(this.accessToken.header(), this.accessToken.value())
-                    .build();
+                    .header(
+                        this.accessToken.header(),
+                        this.accessToken.value()
+                    );
             } else {
-                request = HttpRequest.newBuilder()
+                requestBuilder = HttpRequest.newBuilder()
                     .uri(uri)
                     .method(method, body)
-                    .header("Content-Type", "application/json")
-                    .build();
+                    .header("Content-Type", "application/json");
             }
-            return request;
+            for(final Map.Entry<String, List<String>> header : headers.entrySet()) {
+                requestBuilder = requestBuilder.header(
+                    header.getKey(),
+                    String.join(",", header.getValue())
+                );
+            }
+            return requestBuilder.build();
         }
     }
 
