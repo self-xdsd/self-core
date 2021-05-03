@@ -92,6 +92,21 @@ public interface JsonResources {
     );
 
     /**
+     * Post a JsonObject to the specified URI.
+     * @param uri URI.
+     * @param headers HTTP Headers.
+     * @param body JSON body of the request.
+     * @return Resource.
+     * @throws IllegalStateException If IOException or InterruptedException
+     *  occur while making the HTTP request.
+     */
+    Resource post(
+        final URI uri,
+        final Supplier<Map<String, List<String>>> headers,
+        final JsonValue body
+    );
+
+    /**
      * Patch a JsonObject at the specified URI.
      * @param uri URI.
      * @param body JSON body of the request.
@@ -201,13 +216,22 @@ public interface JsonResources {
             final URI uri,
             final JsonValue body
         ) {
+            return this.post(uri, () -> new HashMap<>(), body);
+        }
+
+        @Override
+        public Resource post(
+            final URI uri,
+            final Supplier<Map<String, List<String>>> headers,
+            final JsonValue body
+        ) {
             try {
                 final HttpResponse<String> response = HttpClient.newHttpClient()
                     .send(
                         this.request(
                             uri,
                             "POST",
-                            new HashMap<>(),
+                            headers.get(),
                             HttpRequest.BodyPublishers.ofString(
                                 body.toString()
                             )
@@ -220,7 +244,7 @@ public interface JsonResources {
             } catch (final IOException | InterruptedException ex) {
                 throw new IllegalStateException(
                     "Couldn't POST " + body.toString()
-                  + " to [" + uri.toString() +"]",
+                    + " to [" + uri.toString() +"]",
                     ex
                 );
             }

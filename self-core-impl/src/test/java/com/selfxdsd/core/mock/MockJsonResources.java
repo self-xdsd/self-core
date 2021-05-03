@@ -140,10 +140,19 @@ public final class MockJsonResources implements JsonResources {
 
     @Override
     public Resource post(final URI uri, final JsonValue body) {
+        return this.post(uri, () -> new HashMap<>(), body);
+    }
+
+    @Override
+    public Resource post(
+        final URI uri,
+        final Supplier<Map<String, List<String>>> headers,
+        final JsonValue body
+    ) {
         final MockRequest request = new MockRequest(
             "POST",
             uri,
-            new HashMap<>(),
+            headers.get(),
             body,
             accessToken
         );
