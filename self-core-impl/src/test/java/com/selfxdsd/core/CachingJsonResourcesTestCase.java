@@ -153,11 +153,11 @@ public final class CachingJsonResourcesTestCase {
     }
 
     /**
-     * Should get Resource from json storage if the remote resource is not
+     * Should get Resource from remote if the remote resource has
      * changed.
      */
     @Test
-    public void shouldGetFromCacheIfRemoteHasChanged(){
+    public void shouldGetFromRemoteIfRemoteHasChanged(){
         final URI uri = URI.create("/");
         final JsonValue body = Json.createObjectBuilder()
             .add("hello", "world")
