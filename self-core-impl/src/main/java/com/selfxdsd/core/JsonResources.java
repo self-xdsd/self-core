@@ -32,6 +32,10 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Supplier;
 
 /**
  * JSON Resources used by the Provider.
@@ -60,6 +64,19 @@ public interface JsonResources {
      *  occur while making the HTTP request.
      */
     Resource get(final URI uri);
+
+    /**
+     * Get the Resource at the specified URI.
+     * @param uri Resource location.
+     * @param headers HTTP Headers.
+     * @return Resource.
+     * @throws IllegalStateException If IOException or InterruptedException
+     *  occur while making the HTTP request.
+     */
+    Resource get(
+        final URI uri,
+        final Supplier<Map<String, List<String>>> headers
+    );
 
     /**
      * Post a JsonObject to the specified URI.
@@ -149,12 +166,21 @@ public interface JsonResources {
 
         @Override
         public Resource get(final URI uri) {
+            return this.get(uri, () -> new HashMap<>());
+        }
+
+        @Override
+        public Resource get(
+            final URI uri,
+            final Supplier<Map<String, List<String>>> headers
+        ) {
             try {
                 final HttpResponse<String> response = HttpClient.newHttpClient()
                     .send(
                         this.request(
                             uri,
                             "GET",
+                            headers.get(),
                             HttpRequest.BodyPublishers.noBody()
                         ),
                         HttpResponse.BodyHandlers.ofString()
@@ -181,6 +207,7 @@ public interface JsonResources {
                         this.request(
                             uri,
                             "POST",
+                            new HashMap<>(),
                             HttpRequest.BodyPublishers.ofString(
                                 body.toString()
                             )
@@ -210,6 +237,7 @@ public interface JsonResources {
                         this.request(
                             uri,
                             "PATCH",
+                            new HashMap<>(),
                             HttpRequest.BodyPublishers.ofString(
                                 body.toString()
                             )
@@ -236,6 +264,7 @@ public interface JsonResources {
                         this.request(
                             uri,
                             "PUT",
+                            new HashMap<>(),
                             HttpRequest.BodyPublishers.ofString(
                                 body.toString()
                             )
@@ -262,6 +291,7 @@ public interface JsonResources {
                         this.request(
                             uri,
                             "DELETE",
+                            new HashMap<>(),
                             HttpRequest.BodyPublishers.ofString(
                                 body.toString()
                             )
@@ -284,30 +314,40 @@ public interface JsonResources {
          * Build and return the HTTP Request.
          * @param uri URI.
          * @param method Method.
+         * @param headers HTTP Headers.
          * @param body Body.
          * @return HttpRequest.
+         * @checkstyle LineLength (100 lines)
          */
         private HttpRequest request(
             final URI uri,
             final String method,
+            final Map<String, List<String>> headers,
             final HttpRequest.BodyPublisher body
         ) {
-            final HttpRequest request;
+            HttpRequest.Builder requestBuilder;
             if(this.accessToken != null) {
-                request = HttpRequest.newBuilder()
+                requestBuilder = HttpRequest.newBuilder()
                     .uri(uri)
                     .method(method, body)
                     .header("Content-Type", "application/json")
-                    .header(this.accessToken.header(), this.accessToken.value())
-                    .build();
+                    .header(
+                        this.accessToken.header(),
+                        this.accessToken.value()
+                    );
             } else {
-                request = HttpRequest.newBuilder()
+                requestBuilder = HttpRequest.newBuilder()
                     .uri(uri)
                     .method(method, body)
-                    .header("Content-Type", "application/json")
-                    .build();
+                    .header("Content-Type", "application/json");
             }
-            return request;
+            for(final Map.Entry<String, List<String>> header : headers.entrySet()) {
+                requestBuilder = requestBuilder.header(
+                    header.getKey(),
+                    String.join(",", header.getValue())
+                );
+            }
+            return requestBuilder.build();
         }
     }
 

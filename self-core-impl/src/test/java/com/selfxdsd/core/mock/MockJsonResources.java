@@ -9,10 +9,9 @@ import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.json.JsonValue;
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 /**
  * A mock implementation of {@link JsonResources} used to unit test
@@ -121,9 +120,18 @@ public final class MockJsonResources implements JsonResources {
 
     @Override
     public Resource get(final URI uri) {
+        return this.get(uri, () -> new HashMap<>());
+    }
+
+    @Override
+    public Resource get(
+        final URI uri,
+        final Supplier<Map<String, List<String>>> headers
+    ) {
         final MockRequest request = new MockRequest(
             "GET",
             uri,
+            headers.get(),
             JsonValue.NULL,
             accessToken
         );
@@ -135,6 +143,7 @@ public final class MockJsonResources implements JsonResources {
         final MockRequest request = new MockRequest(
             "POST",
             uri,
+            new HashMap<>(),
             body,
             accessToken
         );
@@ -146,6 +155,7 @@ public final class MockJsonResources implements JsonResources {
         final MockRequest request = new MockRequest(
             "PATCH",
             uri,
+            new HashMap<>(),
             body,
             accessToken
         );
@@ -157,6 +167,7 @@ public final class MockJsonResources implements JsonResources {
         final MockRequest request = new MockRequest(
             "PUT",
             uri,
+            new HashMap<>(),
             body,
             this.accessToken
         );
@@ -168,6 +179,7 @@ public final class MockJsonResources implements JsonResources {
         final MockRequest request = new MockRequest(
             "DELETE",
             uri,
+            new HashMap<>(),
             body,
             this.accessToken
         );
@@ -195,6 +207,12 @@ public final class MockJsonResources implements JsonResources {
          * Request URI.
          */
         private final URI uri;
+
+        /**
+         * HTTP Headers.
+         */
+        private final Map<String, List<String>> headers;
+
         /**
          * Request body.
          */
@@ -208,15 +226,18 @@ public final class MockJsonResources implements JsonResources {
          * Ctor.
          * @param method Http method.
          * @param uri Request URI.
+         * @param headers HTTP Headers.
          * @param body Request body.
          * @param accessToken Access token for authenticated requests.
          */
         private MockRequest(final String method,
                             final URI uri,
+                            final Map<String, List<String>> headers,
                             final JsonValue body,
                             final AccessToken accessToken) {
             this.method = method;
             this.uri = uri;
+            this.headers = headers;
             this.body = body;
             this.accessToken = accessToken;
         }
