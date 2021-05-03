@@ -122,7 +122,7 @@ public final class CachingJsonResources implements JsonResources {
 
     @Override
     public Resource put(final URI uri, final JsonValue body) {
-        return this.delegate.patch(uri, body);
+        return this.delegate.put(uri, body);
     }
 
     @Override
