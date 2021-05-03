@@ -33,8 +33,10 @@ import javax.json.Json;
 import javax.json.JsonValue;
 import java.net.HttpURLConnection;
 import java.net.URI;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 
 import static com.selfxdsd.core.mock.MockJsonResources.MockRequest;
 
@@ -249,5 +251,103 @@ public final class CachingJsonResourcesTestCase {
         ));
 
         Mockito.verify(storage).store(uri, "etag-123", body.toString());
+    }
+
+    /**
+     * CachingJsonResources should delegate POST http methods with headers.
+     */
+    @Test
+    public void shouldDelegatePostHttpMethodWithHeaders() {
+        final URI uri = URI.create("/");
+        final JsonResources resources = Mockito.mock(JsonResources.class);
+        final JsonResources cacheResources = new CachingJsonResources(
+            resources, Mockito.mock(JsonStorage.class)
+        );
+        Supplier<Map<String, List<String>>> emptyMap = Collections::emptyMap;
+        cacheResources.post(uri, emptyMap, JsonValue.NULL);
+
+        Mockito.verify(resources).post(uri, emptyMap, JsonValue.NULL);
+    }
+
+    /**
+     * CachingJsonResources should delegate POST http method.
+     */
+    @Test
+    public void shouldDelegatePostHttpMethod() {
+        final URI uri = URI.create("/");
+        final JsonResources resources = Mockito.mock(JsonResources.class);
+        final JsonResources cacheResources = new CachingJsonResources(
+            resources, Mockito.mock(JsonStorage.class)
+        );
+        cacheResources.post(uri, JsonValue.NULL);
+
+        Mockito.verify(resources).post(uri, JsonValue.NULL);
+    }
+
+    /**
+     * CachingJsonResources should delegate PATCH http method.
+     */
+    @Test
+    public void shouldDelegatePatchHttpMethod() {
+        final URI uri = URI.create("/");
+        final JsonResources resources = Mockito.mock(JsonResources.class);
+        final JsonResources cacheResources = new CachingJsonResources(
+            resources, Mockito.mock(JsonStorage.class)
+        );
+        cacheResources.patch(uri, JsonValue.NULL);
+
+        Mockito.verify(resources).patch(uri, JsonValue.NULL);
+    }
+
+    /**
+     * CachingJsonResources should delegate PUT http method.
+     */
+    @Test
+    public void shouldDelegatePutHttpMethod() {
+        final URI uri = URI.create("/");
+        final JsonResources resources = Mockito.mock(JsonResources.class);
+        final JsonResources cacheResources = new CachingJsonResources(
+            resources, Mockito.mock(JsonStorage.class)
+        );
+        cacheResources.put(uri, JsonValue.NULL);
+
+
+        Mockito.verify(resources).put(uri, JsonValue.NULL);
+
+    }
+
+    /**
+     * CachingJsonResources should delegate DELETE http method.
+     */
+    @Test
+    public void shouldDelegateDeleteHttpMethod() {
+        final URI uri = URI.create("/");
+        final JsonResources resources = Mockito.mock(JsonResources.class);
+        final JsonResources cacheResources = new CachingJsonResources(
+            resources, Mockito.mock(JsonStorage.class)
+        );
+        cacheResources.delete(uri, JsonValue.NULL);
+
+        Mockito.verify(resources).delete(uri, JsonValue.NULL);
+    }
+
+    /**
+     * CachingJsonResources should create new instance when authenticated.
+     */
+    @Test
+    public void shouldCreateNewCachingJsonResourcesOnAuth() {
+        final JsonResources cacheResources = new CachingJsonResources(
+            Mockito.mock(JsonResources.class)
+        );
+        final JsonResources authorized = cacheResources.authenticated(
+            new AccessToken.Github("123")
+        );
+        MatcherAssert.assertThat(authorized, Matchers.instanceOf(
+            CachingJsonResources.class
+        ));
+        MatcherAssert.assertThat(
+            authorized,
+            Matchers.not(Matchers.equalTo(cacheResources))
+        );
     }
 }

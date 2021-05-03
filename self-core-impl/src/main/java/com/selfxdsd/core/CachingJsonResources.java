@@ -105,7 +105,7 @@ public final class CachingJsonResources implements JsonResources {
     @Override
     public Resource post(final URI uri,
                          final JsonValue body) {
-        return this.delegate.get(uri);
+        return this.delegate.post(uri, body);
     }
 
     @Override
