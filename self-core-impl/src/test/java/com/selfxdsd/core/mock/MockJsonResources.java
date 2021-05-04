@@ -246,7 +246,13 @@ public final class MockJsonResources implements JsonResources {
                             final AccessToken accessToken) {
             this.method = method;
             this.uri = uri;
-            this.headers = headers;
+            this.headers = new HashMap<>(headers);
+            if (accessToken != null) {
+                this.headers.put(
+                    accessToken.header(),
+                    List.of(accessToken.value())
+                );
+            }
             this.body = body;
             this.accessToken = accessToken;
         }
@@ -281,6 +287,14 @@ public final class MockJsonResources implements JsonResources {
          */
         public AccessToken getAccessToken() {
             return accessToken;
+        }
+
+        /**
+         * Request headers.
+         * @return Map.
+         */
+        public Map<String, List<String>> getHeaders() {
+            return Collections.unmodifiableMap(this.headers);
         }
     }
 
@@ -355,6 +369,10 @@ public final class MockJsonResources implements JsonResources {
          * Response body.
          */
         private final JsonValue body;
+        /**
+         * Response headers.
+         */
+        private final Map<String, List<String>> headers;
 
         /**
          * Ctor.
@@ -362,8 +380,21 @@ public final class MockJsonResources implements JsonResources {
          * @param body Response body.
          */
         public MockResource(final int statusCode, final JsonValue body) {
+            this(statusCode, body, Collections.emptyMap());
+        }
+
+        /**
+         * Ctor.
+         * @param statusCode Status code.
+         * @param body Response body.
+         * @param headers Response headers.
+         */
+        public MockResource(final int statusCode,
+                            final JsonValue body,
+                            final Map<String, List<String>> headers) {
             this.statusCode = statusCode;
             this.body = body;
+            this.headers = Collections.unmodifiableMap(headers);
         }
 
         @Override
@@ -391,6 +422,21 @@ public final class MockJsonResources implements JsonResources {
                 jsonArray = Json.createArrayBuilder().build();
             }
             return jsonArray;
+        }
+
+        @Override
+        public Map<String, List<String>> headers() {
+            return this.headers;
+        }
+
+        @Override
+        public Builder newBuilder() {
+            return new Builder(this, MockResource::new);
+        }
+
+        @Override
+        public String toString() {
+            return this.body.toString();
         }
     }
 }
