@@ -22,11 +22,15 @@
  */
 package com.selfxdsd.core;
 
+import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
+import javax.json.JsonStructure;
 import javax.json.JsonValue;
+import java.io.StringReader;
 import java.util.List;
 import java.util.Map;
+import java.util.function.UnaryOperator;
 
 /**
  * Resource returned by the Provider.
@@ -61,14 +65,124 @@ public interface Resource {
     Map<String, List<String>> headers();
 
     /**
-     * Abstract factory for a new Resource.
-     * Useful on getting a Resource from cache updated from this instance.
-     * @param status Status.
-     * @param body Resource body.
-     * @param headers Resource headers.
-     * @return New Resource.
+     * Abstract builder for a new Resource based on this resource.
+     * @return Builder.
      */
-    Resource newInstance(final int status,
-                         final JsonValue body,
-                         final Map<String, List<String>> headers);
+    Builder newBuilder();
+
+    /**
+     * Abstract builder for a Resource.
+     */
+    class Builder {
+
+        /**
+         * Status code.
+         */
+        private int statusCode;
+
+        /**
+         * Body.
+         */
+        private JsonValue body;
+
+        /**
+         * Headers.
+         */
+        private Map<String, List<String>> headers;
+
+        /**
+         * Abstract factory.
+         */
+        private final Factory factory;
+
+        /**
+         * Ctor.
+         * @param source Original Resource.
+         * @param factory Resource factory.
+         */
+        public Builder(final Resource source, final Factory factory) {
+            this.statusCode = source.statusCode();
+            final String sourceBody = source.toString();
+            if ("null".equals(sourceBody)) {
+                this.body = JsonValue.NULL;
+            } else {
+                this.body = Json.createReader(
+                    new StringReader(sourceBody)
+                ).read();
+            }
+            this.headers = source.headers();
+            this.factory = factory;
+        }
+
+        /**
+         * Set new status code.
+         * @param statusCode Status code.
+         * @return Builder.
+         */
+        public Builder status(final int statusCode){
+            this.statusCode = statusCode;
+            return this;
+        }
+
+        /**
+         * Set new body as json object or array.
+         * @param body Body.
+         * @return Builder.
+         */
+        public Builder body(final JsonStructure body){
+            this.body = body;
+            return this;
+        }
+
+        /**
+         * Set new body from a string json object or array.
+         * @param body Body.
+         * @return Builder.
+         */
+        public Builder body(final String body){
+            return this.body(Json.createReader(new StringReader(body)).read());
+        }
+
+        /**
+         * Set new headers possibly based on previous headers.
+         * @param headers Headers.
+         * @return Builder.
+         */
+        public Builder headers(
+            final UnaryOperator<Map<String, List<String>>> headers
+        ){
+            this.headers = headers.apply(this.headers);
+            return this;
+        }
+
+        /**
+         * Creates a new Resource.
+         * @return Resource.
+         */
+        public Resource build() {
+            return this.factory
+                .create(this.statusCode, this.body, this.headers);
+        }
+
+        /**
+         * Abstract factory for Builder's Resource.
+         */
+        @FunctionalInterface
+        public interface Factory {
+
+            /**
+             * Creates a new Resource.
+             * @param statusCode Status code.
+             * @param body Body.
+             * @param headers Headers.
+             * @return Resource.
+             */
+            Resource create(
+                final int statusCode,
+                final JsonValue body,
+                final Map<String, List<String>> headers
+            );
+
+        }
+    }
 }

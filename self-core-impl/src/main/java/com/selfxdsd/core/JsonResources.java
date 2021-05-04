@@ -446,12 +446,15 @@ public interface JsonResources {
         }
 
         @Override
-        public Resource newInstance(
-            final int status,
-            final JsonValue body,
-            final Map<String, List<String>> headers
-        ) {
-            return new JsonResponse(status, body.toString(), headers);
+        public Builder newBuilder() {
+            return new Builder(
+                this,
+                (status, body, headers) -> new JsonResponse(
+                    status,
+                    body.toString(),
+                    headers
+                )
+            );
         }
 
         @Override

@@ -25,9 +25,7 @@ package com.selfxdsd.core;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.json.Json;
 import javax.json.JsonValue;
-import java.io.StringReader;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.util.Collections;
@@ -42,13 +40,13 @@ import java.util.function.Supplier;
  * @version $Id$
  * @since 0.0.79
  */
-public final class CachingJsonResources implements JsonResources {
+public final class ConditionalJsonResources implements JsonResources {
 
     /**
      * Logger.
      */
     private static final Logger LOG = LoggerFactory.getLogger(
-        CachingJsonResources.class
+        ConditionalJsonResources.class
     );
 
 
@@ -66,26 +64,26 @@ public final class CachingJsonResources implements JsonResources {
     /**
      * Ctor.
      * @param delegate JsonResources delegate.
-     * @param jsonStorage JSON storage.
      */
-    public CachingJsonResources(final JsonResources delegate,
-                                final JsonStorage jsonStorage) {
-        this.delegate = delegate;
-        this.jsonStorage = jsonStorage;
+    public ConditionalJsonResources(final JsonResources delegate) {
+        this(delegate, new JsonStorage.InMemory());
     }
 
     /**
      * Ctor.
      * @param delegate JsonResources delegate.
+     * @param jsonStorage JSON storage.
      */
-    public CachingJsonResources(final JsonResources delegate) {
-        this(delegate, new JsonStorage.InMemory());
+    public ConditionalJsonResources(final JsonResources delegate,
+                                    final JsonStorage jsonStorage) {
+        this.delegate = delegate;
+        this.jsonStorage = jsonStorage;
     }
 
 
     @Override
     public JsonResources authenticated(final AccessToken accessToken) {
-        return new CachingJsonResources(
+        return new ConditionalJsonResources(
             this.delegate.authenticated(accessToken),
             this.jsonStorage
         );
@@ -93,19 +91,19 @@ public final class CachingJsonResources implements JsonResources {
 
     @Override
     public Resource get(final URI uri) {
-        return this.tryGetFromCache(uri, Collections::emptyMap);
+        return this.conditionalGet(uri, Collections::emptyMap);
     }
 
     @Override
     public Resource get(final URI uri,
                         final Supplier<Map<String, List<String>>> headers) {
-        return this.tryGetFromCache(uri, headers);
+        return this.conditionalGet(uri, headers);
     }
 
     @Override
     public Resource post(final URI uri,
                          final JsonValue body) {
-        return this.delegate.post(uri, body);
+        return this.post(uri, Collections::emptyMap, body);
     }
 
     @Override
@@ -137,17 +135,15 @@ public final class CachingJsonResources implements JsonResources {
      * @param headers Current Headers.
      * @return Cached or remote Resource.
      */
-    private Resource tryGetFromCache(
+    private Resource conditionalGet(
         final URI uri,
         final Supplier<Map<String, List<String>>> headers
     ) {
         final Resource resource;
-        String cachedEtag = this.jsonStorage.getEtag(uri);
-        if (cachedEtag != null) {
-            final Supplier<Map<String, List<String>>> updatedHeaders =
-                this.updateHeaders(headers, cachedEtag);
+        final String etag = this.jsonStorage.getEtag(uri);
+        if (etag != null) {
             final Resource remoteResource = this.delegate
-                .get(uri, updatedHeaders);
+                .get(uri, this.ifNoneMatch(headers, etag));
             final int status = remoteResource.statusCode();
 
             if (status == HttpURLConnection.HTTP_NOT_MODIFIED) {
@@ -158,7 +154,11 @@ public final class CachingJsonResources implements JsonResources {
                             + " Getting the resource body from json storage.",
                         uri
                     );
-                    resource = this.updateResource(remoteResource, cachedBody);
+                    resource = remoteResource
+                        .newBuilder()
+                        .status(HttpURLConnection.HTTP_OK)
+                        .body(cachedBody)
+                        .build();
                 } else {
                     LOG.debug(
                         "Remote resource for {} was not modified"
@@ -167,7 +167,7 @@ public final class CachingJsonResources implements JsonResources {
                         uri
                     );
                     resource = this.delegate.get(uri, headers);
-                    this.tryStoreInCache(uri, resource);
+                    this.storeInCache(uri, resource);
                 }
             } else {
                 LOG.debug(
@@ -176,11 +176,11 @@ public final class CachingJsonResources implements JsonResources {
                     uri
                 );
                 resource = remoteResource;
-                this.tryStoreInCache(uri, resource);
+                this.storeInCache(uri, resource);
             }
         } else {
             resource = this.delegate.get(uri, headers);
-            this.tryStoreInCache(uri, resource);
+            this.storeInCache(uri, resource);
         }
         return resource;
     }
@@ -191,7 +191,7 @@ public final class CachingJsonResources implements JsonResources {
      * @param uri URI.
      * @param resource Resource.
      */
-    private void tryStoreInCache(final URI uri, final Resource resource) {
+    private void storeInCache(final URI uri, final Resource resource) {
         final List<String> etag = resource.headers().get("ETag");
         if (resource.statusCode() == HttpURLConnection.HTTP_OK
             && (etag != null && !etag.isEmpty())) {
@@ -205,29 +205,12 @@ public final class CachingJsonResources implements JsonResources {
     }
 
     /**
-     * Update Resource with a new status and body but keeping its headers.
-     * @param resource Resource.
-     * @param body New body as JSON.
-     * @return Updated Resource.
-     */
-    private Resource updateResource(
-        final Resource resource,
-        final String body
-    ) {
-        return resource.newInstance(
-            HttpURLConnection.HTTP_OK,
-            Json.createReader(new StringReader(body)).readObject(),
-            resource.headers()
-        );
-    }
-
-    /**
      * Append "If-None-Match" header to current headers.
      * @param headers Headers.
      * @param etag Etag.
      * @return Updated headers.
      */
-    private Supplier<Map<String, List<String>>> updateHeaders(
+    private Supplier<Map<String, List<String>>> ifNoneMatch(
         final Supplier<Map<String, List<String>>> headers,
         final String etag
     ){

@@ -41,13 +41,13 @@ import java.util.function.Supplier;
 import static com.selfxdsd.core.mock.MockJsonResources.MockRequest;
 
 /**
- * Unit tests for {@link CachingJsonResources}.
+ * Unit tests for {@link ConditionalJsonResources}.
  *
  * @author criske
  * @version $Id$
  * @since 0.0.79
  */
-public final class CachingJsonResourcesTestCase {
+public final class ConditionalJsonResourcesTestCase {
 
     /**
      * Should ignore cache when Etag header is not set in Resource response.
@@ -58,7 +58,7 @@ public final class CachingJsonResourcesTestCase {
         final MockJsonResources resources = new MockJsonResources(
             req -> new MockResource(200, JsonValue.NULL)
         );
-        final JsonResources cacheResources = new CachingJsonResources(
+        final JsonResources cacheResources = new ConditionalJsonResources(
             resources, storage
         );
 
@@ -89,7 +89,7 @@ public final class CachingJsonResourcesTestCase {
         final MockJsonResources resources = new MockJsonResources(
             req -> resource
         );
-        final JsonResources cacheResources = new CachingJsonResources(
+        final JsonResources cacheResources = new ConditionalJsonResources(
             resources, storage
         );
 
@@ -108,8 +108,10 @@ public final class CachingJsonResourcesTestCase {
     @Test
     public void shouldGetFromCacheIfRemoteNotChanged(){
         final URI uri = URI.create("/");
-        final JsonValue body = Json.createObjectBuilder()
-            .add("hello", "world")
+        final JsonValue body = Json.createArrayBuilder()
+            .add(Json.createObjectBuilder()
+                .add("hello", "world")
+                .build())
             .build();
 
         final JsonStorage storage = Mockito.mock(JsonStorage.class);
@@ -121,7 +123,7 @@ public final class CachingJsonResourcesTestCase {
                 JsonValue.NULL
             )
         );
-        final JsonResources cacheResources = new CachingJsonResources(
+        final JsonResources cacheResources = new ConditionalJsonResources(
             resources, storage
         );
 
@@ -176,7 +178,7 @@ public final class CachingJsonResourcesTestCase {
                 Map.of("ETag", List.of("etag-124"))
             )
         );
-        final JsonResources cacheResources = new CachingJsonResources(
+        final JsonResources cacheResources = new ConditionalJsonResources(
             resources, storage
         );
 
@@ -232,7 +234,7 @@ public final class CachingJsonResourcesTestCase {
                 return res;
             }
         );
-        final JsonResources cacheResources = new CachingJsonResources(
+        final JsonResources cacheResources = new ConditionalJsonResources(
             resources, storage
         );
 
@@ -260,7 +262,7 @@ public final class CachingJsonResourcesTestCase {
     public void shouldDelegatePostHttpMethodWithHeaders() {
         final URI uri = URI.create("/");
         final JsonResources resources = Mockito.mock(JsonResources.class);
-        final JsonResources cacheResources = new CachingJsonResources(
+        final JsonResources cacheResources = new ConditionalJsonResources(
             resources, Mockito.mock(JsonStorage.class)
         );
         Supplier<Map<String, List<String>>> emptyMap = Collections::emptyMap;
@@ -272,16 +274,20 @@ public final class CachingJsonResourcesTestCase {
     /**
      * CachingJsonResources should delegate POST http method.
      */
+    @SuppressWarnings("unchecked")
     @Test
     public void shouldDelegatePostHttpMethod() {
         final URI uri = URI.create("/");
         final JsonResources resources = Mockito.mock(JsonResources.class);
-        final JsonResources cacheResources = new CachingJsonResources(
+        final JsonResources cacheResources = new ConditionalJsonResources(
             resources, Mockito.mock(JsonStorage.class)
         );
         cacheResources.post(uri, JsonValue.NULL);
 
-        Mockito.verify(resources).post(uri, JsonValue.NULL);
+        Mockito.verify(resources).post(
+            org.mockito.Matchers.eq(uri),
+            org.mockito.Matchers.any(Supplier.class),
+            org.mockito.Matchers.eq(JsonValue.NULL));
     }
 
     /**
@@ -291,7 +297,7 @@ public final class CachingJsonResourcesTestCase {
     public void shouldDelegatePatchHttpMethod() {
         final URI uri = URI.create("/");
         final JsonResources resources = Mockito.mock(JsonResources.class);
-        final JsonResources cacheResources = new CachingJsonResources(
+        final JsonResources cacheResources = new ConditionalJsonResources(
             resources, Mockito.mock(JsonStorage.class)
         );
         cacheResources.patch(uri, JsonValue.NULL);
@@ -306,7 +312,7 @@ public final class CachingJsonResourcesTestCase {
     public void shouldDelegatePutHttpMethod() {
         final URI uri = URI.create("/");
         final JsonResources resources = Mockito.mock(JsonResources.class);
-        final JsonResources cacheResources = new CachingJsonResources(
+        final JsonResources cacheResources = new ConditionalJsonResources(
             resources, Mockito.mock(JsonStorage.class)
         );
         cacheResources.put(uri, JsonValue.NULL);
@@ -323,7 +329,7 @@ public final class CachingJsonResourcesTestCase {
     public void shouldDelegateDeleteHttpMethod() {
         final URI uri = URI.create("/");
         final JsonResources resources = Mockito.mock(JsonResources.class);
-        final JsonResources cacheResources = new CachingJsonResources(
+        final JsonResources cacheResources = new ConditionalJsonResources(
             resources, Mockito.mock(JsonStorage.class)
         );
         cacheResources.delete(uri, JsonValue.NULL);
@@ -336,14 +342,14 @@ public final class CachingJsonResourcesTestCase {
      */
     @Test
     public void shouldCreateNewCachingJsonResourcesOnAuth() {
-        final JsonResources cacheResources = new CachingJsonResources(
+        final JsonResources cacheResources = new ConditionalJsonResources(
             Mockito.mock(JsonResources.class)
         );
         final JsonResources authorized = cacheResources.authenticated(
             new AccessToken.Github("123")
         );
         MatcherAssert.assertThat(authorized, Matchers.instanceOf(
-            CachingJsonResources.class
+            ConditionalJsonResources.class
         ));
         MatcherAssert.assertThat(
             authorized,

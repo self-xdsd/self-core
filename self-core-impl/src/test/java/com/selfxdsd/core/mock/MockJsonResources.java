@@ -430,12 +430,8 @@ public final class MockJsonResources implements JsonResources {
         }
 
         @Override
-        public Resource newInstance(
-            final int status,
-            final JsonValue body,
-            final Map<String, List<String>> headers
-        ) {
-            return new MockResource(status, body, headers);
+        public Builder newBuilder() {
+            return new Builder(this, MockResource::new);
         }
 
         @Override
