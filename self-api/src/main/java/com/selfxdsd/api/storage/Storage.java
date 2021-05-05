@@ -29,9 +29,6 @@ import com.selfxdsd.api.*;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
- * @todo #1135:30min Add a method called `jsonStorage` that will return
- *  JsonStorage interface. JsonStorage needs to be moved from `self-core-impl`
- *  to `self-api` module.
  */
 public interface Storage extends AutoCloseable {
 
