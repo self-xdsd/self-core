@@ -70,7 +70,7 @@ public final class JdkHttpITCase {
                 )
             ).start(this.resource.port())
         ) {
-            final JsonResources resources = new JsonResources.JdkHttp();
+            final JsonResources resources = new JsonResources.JdkHttp(true);
             final Resource response = resources.get(container.home());
             MatcherAssert.assertThat(
                 response.asJsonObject(),
@@ -101,7 +101,7 @@ public final class JdkHttpITCase {
                 new MkAnswer.Simple(HttpURLConnection.HTTP_CREATED)
             ).start(this.resource.port())
         ) {
-            final JsonResources resources = new JsonResources.JdkHttp()
+            final JsonResources resources = new JsonResources.JdkHttp(true)
                 .authenticated(new AccessToken.Github("123token456"));
             final Resource response = resources.post(
                 container.home(), body
@@ -144,7 +144,7 @@ public final class JdkHttpITCase {
                 new MkAnswer.Simple(HttpURLConnection.HTTP_NO_CONTENT)
             ).start(this.resource.port())
         ) {
-            final JsonResources resources = new JsonResources.JdkHttp()
+            final JsonResources resources = new JsonResources.JdkHttp(true)
                 .authenticated(new AccessToken.Github("123token456"));
             final Resource response = resources.patch(
                 container.home(), body
@@ -187,7 +187,7 @@ public final class JdkHttpITCase {
                 new MkAnswer.Simple(HttpURLConnection.HTTP_CREATED)
             ).start(this.resource.port())
         ) {
-            final JsonResources resources = new JsonResources.JdkHttp()
+            final JsonResources resources = new JsonResources.JdkHttp(true)
                 .authenticated(new AccessToken.Github("123token456"));
             final Resource response = resources.put(
                 container.home(), body
@@ -230,7 +230,7 @@ public final class JdkHttpITCase {
                 new MkAnswer.Simple(HttpURLConnection.HTTP_CREATED)
             ).start(this.resource.port())
         ) {
-            final JsonResources resources = new JsonResources.JdkHttp()
+            final JsonResources resources = new JsonResources.JdkHttp(true)
                 .authenticated(new AccessToken.Github("123token456"));
             final Resource response = resources.delete(
                 container.home(), body

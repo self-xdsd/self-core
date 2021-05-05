@@ -159,23 +159,50 @@ public interface JsonResources {
         private final AccessToken accessToken;
 
         /**
+         * Instructs http client to use {@link HttpClient.Version#HTTP_1_1}.
+         * Use this flag if the integration test server doesn't support
+         * HTTP_2.
+         */
+        private final boolean useOldHttpProtocol;
+
+        /**
          * Ctor.
          */
         JdkHttp() {
-            this(null);
+            this(null, false);
+        }
+
+        /**
+         * Ctor.
+         * @param useOldHttpProtocol Instructs http client to use
+         * {@link HttpClient.Version#HTTP_1_1}. Use this flag if
+         * integration test server doesn't support HTTP_2.
+         */
+        JdkHttp(final boolean useOldHttpProtocol) {
+            this(null, useOldHttpProtocol);
         }
 
         /**
          * Ctor.
          * @param accessToken Access token for authenticated requests.
+         * @param useOldHttpProtocol Instructs http client to use
+         * {@link HttpClient.Version#HTTP_1_1}. Use this flag if
+         * integration test server doesn't support HTTP_2.
          */
-        private JdkHttp(final AccessToken accessToken) {
+        private JdkHttp(
+            final AccessToken accessToken,
+            final boolean useOldHttpProtocol
+        ) {
             this.accessToken = accessToken;
+            this.useOldHttpProtocol= useOldHttpProtocol;
         }
 
         @Override
         public JsonResources authenticated(final AccessToken accessToken) {
-            return new JsonResources.JdkHttp(accessToken);
+            return new JsonResources.JdkHttp(
+                accessToken,
+                this.useOldHttpProtocol
+            );
         }
 
         @Override
@@ -189,7 +216,7 @@ public interface JsonResources {
             final Supplier<Map<String, List<String>>> headers
         ) {
             try {
-                final HttpResponse<String> response = HttpClient.newHttpClient()
+                final HttpResponse<String> response = this.newHttpClient()
                     .send(
                         this.request(
                             uri,
@@ -227,7 +254,7 @@ public interface JsonResources {
             final JsonValue body
         ) {
             try {
-                final HttpResponse<String> response = HttpClient.newHttpClient()
+                final HttpResponse<String> response = this.newHttpClient()
                     .send(
                         this.request(
                             uri,
@@ -259,7 +286,7 @@ public interface JsonResources {
             final JsonValue body
         ) {
             try {
-                final HttpResponse<String> response = HttpClient.newHttpClient()
+                final HttpResponse<String> response = this.newHttpClient()
                     .send(
                         this.request(
                             uri,
@@ -288,7 +315,7 @@ public interface JsonResources {
         @Override
         public Resource put(final URI uri, final JsonValue body) {
             try {
-                final HttpResponse<String> response = HttpClient.newHttpClient()
+                final HttpResponse<String> response = this.newHttpClient()
                     .send(
                         this.request(
                             uri,
@@ -317,7 +344,7 @@ public interface JsonResources {
         @Override
         public Resource delete(final URI uri, final JsonValue body) {
             try {
-                final HttpResponse<String> response = HttpClient.newHttpClient()
+                final HttpResponse<String> response = this.newHttpClient()
                     .send(
                         this.request(
                             uri,
@@ -381,6 +408,23 @@ public interface JsonResources {
                 );
             }
             return requestBuilder.build();
+        }
+
+        /**
+         * Creates a new http client.
+         * @return HttpClient.
+         */
+        private HttpClient newHttpClient() {
+            final HttpClient client;
+            if (this.useOldHttpProtocol) {
+                client = HttpClient
+                    .newBuilder()
+                    .version(HttpClient.Version.HTTP_1_1)
+                    .build();
+            } else {
+                client = HttpClient.newHttpClient();
+            }
+            return client;
         }
     }
 
