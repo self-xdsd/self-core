@@ -25,6 +25,7 @@ package com.selfxdsd.core;
 import com.selfxdsd.api.Provider;
 import com.selfxdsd.api.User;
 import com.selfxdsd.api.exceptions.RepoException;
+import com.selfxdsd.api.storage.Storage;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
@@ -48,7 +49,11 @@ public final class GithubITCase {
     public void fetchesRepoOk() {
         final User user = Mockito.mock(User.class);
         Mockito.when(user.username()).thenReturn("amihaiemil");
-        final Provider github = new Github(user, null);
+        final Provider github = new Github(
+            user,
+            null,
+            new ConditionalJsonResources(new JsonResources.JdkHttp())
+        );
         final JsonObject repo = github
             .repo("amihaiemil", "docker-java-api")
             .json();
@@ -70,7 +75,11 @@ public final class GithubITCase {
     public void fetchesRepoNotFound() {
         final User user = Mockito.mock(User.class);
         Mockito.when(user.username()).thenReturn("amihaiemil");
-        final Provider github = new Github(user, null);
+        final Provider github = new Github(
+            user,
+            null,
+            new ConditionalJsonResources(new JsonResources.JdkHttp())
+        );
         try {
             github.repo("amihaiemil", "missing-test").json();
             Assert.fail("IllegalStateException was expected.");
@@ -92,7 +101,9 @@ public final class GithubITCase {
     public void fetchesOrganizations(){
         final Provider github = new Github(
             Mockito.mock(User.class),
-            null);
+            Mockito.mock(Storage.class),
+            Mockito.mock(JsonResources.class)
+        );
         MatcherAssert.assertThat(github.organizations(),
             Matchers.instanceOf(GithubOrganizations.class));
     }

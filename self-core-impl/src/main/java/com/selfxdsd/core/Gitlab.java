@@ -65,7 +65,14 @@ public final class Gitlab implements Provider {
      * @param storage Storage where we might save some stuff.
      */
     public Gitlab(final User user, final Storage storage) {
-        this(user, storage, new JsonResources.JdkHttp());
+        this(
+            user,
+            storage,
+            new ConditionalJsonResources(
+                new JsonResources.JdkHttp(),
+                storage.jsonStorage()
+            )
+        );
     }
 
     /**

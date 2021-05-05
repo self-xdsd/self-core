@@ -248,7 +248,9 @@ public final class GitlabITCase {
         when(user.username()).thenReturn(username);
         when(user.provider()).then(invocation -> new Gitlab(
             (User) invocation.getMock(),
-            null));
+            null,
+            new ConditionalJsonResources(new JdkHttp())
+        ));
         return (Gitlab) user.provider();
     }
 
