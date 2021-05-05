@@ -23,6 +23,7 @@
 package com.selfxdsd.core.mock;
 
 import com.selfxdsd.api.*;
+import com.selfxdsd.api.storage.JsonStorage;
 import com.selfxdsd.api.storage.Storage;
 
 import javax.json.JsonValue;
@@ -90,6 +91,11 @@ public final class InMemory implements Storage {
      * In-memory payout methods.
      */
     private PayoutMethods payoutMethods = new InMemoryPayoutMethods(this);
+
+    /**
+     * In-memory json storage.
+     */
+    private JsonStorage jsonStorage = new JsonStorage.InMemory();
 
     @Override
     public Users users() {
@@ -164,6 +170,11 @@ public final class InMemory implements Storage {
     @Override
     public Payments payments() {
         throw new UnsupportedOperationException("Not implemented yet!");
+    }
+
+    @Override
+    public JsonStorage jsonStorage() {
+        return this.jsonStorage;
     }
 
     /**

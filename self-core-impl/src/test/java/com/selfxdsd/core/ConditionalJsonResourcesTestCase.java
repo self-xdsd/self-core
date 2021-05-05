@@ -22,6 +22,7 @@
  */
 package com.selfxdsd.core;
 
+import com.selfxdsd.api.storage.JsonStorage;
 import com.selfxdsd.core.mock.MockJsonResources;
 import com.selfxdsd.core.mock.MockJsonResources.MockResource;
 import org.hamcrest.MatcherAssert;
