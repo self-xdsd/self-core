@@ -124,4 +124,10 @@ public interface Storage extends AutoCloseable {
      * @return Payments.
      */
     Payments payments();
+
+    /**
+     * Get the storage for cached Provider Resources.
+     * @return JsonStorage.
+     */
+    JsonStorage jsonStorage();
 }

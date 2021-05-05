@@ -22,6 +22,7 @@
  */
 package com.selfxdsd.core;
 
+import com.selfxdsd.api.storage.JsonStorage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
