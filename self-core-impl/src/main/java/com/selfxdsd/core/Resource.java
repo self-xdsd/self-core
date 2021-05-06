@@ -103,7 +103,8 @@ public interface Resource {
         public Builder(final Resource source, final Factory factory) {
             this.statusCode = source.statusCode();
             final String sourceBody = source.toString();
-            if ("null".equals(sourceBody)) {
+            if (sourceBody == null || sourceBody.isBlank()
+                || "null".equalsIgnoreCase(sourceBody)) {
                 this.body = JsonValue.NULL;
             } else {
                 this.body = Json.createReader(
