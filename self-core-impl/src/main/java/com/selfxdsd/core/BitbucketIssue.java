@@ -170,9 +170,4 @@ final class BitbucketIssue implements Issue {
     public Labels labels() {
         throw new UnsupportedOperationException("Not implemented yet");
     }
-
-    @Override
-    public String etag() {
-        return "";
-    }
 }

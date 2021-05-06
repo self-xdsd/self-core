@@ -74,23 +74,6 @@ public final class TaskIssueTestCase {
     }
 
     /**
-     * TaskIssue returns the etag from the Task.
-     */
-    @Test
-    public void returnsEtag() {
-        final Task task = Mockito.mock(Task.class);
-        Mockito.when(task.etag()).thenReturn("etag-111");
-        final Issue issue = new TaskIssue(
-            task,
-            Mockito.mock(Repo.class)
-        );
-        MatcherAssert.assertThat(
-            issue.etag(),
-            Matchers.equalTo("etag-111")
-        );
-    }
-
-    /**
      * TaskIssue returns the provider from the Task.
      */
     @Test

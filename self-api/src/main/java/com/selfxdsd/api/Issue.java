@@ -134,10 +134,4 @@ public interface Issue {
      * @return Issues.
      */
     Labels labels();
-
-    /**
-     * This Issue's Etag.
-     * @return String.
-     */
-    String etag();
 }

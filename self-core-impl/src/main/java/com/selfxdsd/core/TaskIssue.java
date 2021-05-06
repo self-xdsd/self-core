@@ -172,9 +172,4 @@ final class TaskIssue implements Issue {
     public Labels labels() {
         return this.issue.get().labels();
     }
-
-    @Override
-    public String etag() {
-        return this.task.etag();
-    }
 }

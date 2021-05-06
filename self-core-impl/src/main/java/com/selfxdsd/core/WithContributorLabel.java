@@ -164,9 +164,4 @@ final class WithContributorLabel implements Issue {
     public Labels labels() {
         return this.decorated.labels();
     }
-
-    @Override
-    public String etag() {
-        return this.decorated.etag();
-    }
 }

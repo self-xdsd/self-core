@@ -320,11 +320,6 @@ final class GitlabIssue implements Issue {
         );
     }
 
-    @Override
-    public String etag() {
-        return "";
-    }
-
     /**
      * Find user id by searching it in projects/repo members.
      * @param username Username to query.
