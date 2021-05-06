@@ -53,7 +53,6 @@ public final class StoredTaskTestCase {
             Contract.Roles.DEV,
             60,
             false,
-            "etag-123",
             Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(task.project(), Matchers.is(project));
@@ -70,7 +69,6 @@ public final class StoredTaskTestCase {
             Contract.Roles.DEV,
             60,
             false,
-            "etag-123",
             Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(
@@ -95,8 +93,7 @@ public final class StoredTaskTestCase {
             LocalDateTime.now(),
             LocalDateTime.now().plusDays(10),
             60,
-            false,
-            "etag-123"
+            false
         );
         MatcherAssert.assertThat(
             task.contract(),
@@ -115,7 +112,6 @@ public final class StoredTaskTestCase {
             Contract.Roles.DEV,
             60,
             false,
-            "etag-123",
             Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(task.issueId(), Matchers.equalTo("123"));
@@ -148,7 +144,6 @@ public final class StoredTaskTestCase {
             Contract.Roles.DEV,
             60,
             false,
-            "etag-123",
             Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(task.issue(), Matchers.is(issue));
@@ -181,7 +176,6 @@ public final class StoredTaskTestCase {
             Contract.Roles.DEV,
             60,
             true,
-            "etag-123",
             Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(task.issue(), Matchers.is(issue));
@@ -198,7 +192,6 @@ public final class StoredTaskTestCase {
             Contract.Roles.DEV,
             60,
             false,
-            "etag-123",
             Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(
@@ -218,7 +211,6 @@ public final class StoredTaskTestCase {
             Contract.Roles.DEV,
             60,
             false,
-            "etag-123",
             Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(
@@ -239,8 +231,7 @@ public final class StoredTaskTestCase {
             assignment,
             assignment.plusDays(10),
             0,
-            false,
-            "etag-123"
+            false
         );
         MatcherAssert.assertThat(
             task.assignmentDate().isEqual(assignment),
@@ -261,8 +252,7 @@ public final class StoredTaskTestCase {
             assignment,
             assignment.plusDays(10),
             0,
-            false,
-            "etag-123"
+            false
         );
         MatcherAssert.assertThat(
             task.deadline().isEqual(assignment.plusDays(10)),
@@ -286,8 +276,7 @@ public final class StoredTaskTestCase {
             LocalDateTime.now(),
             LocalDateTime.now().plusDays(10),
             0,
-            false,
-            "etag-123"
+            false
         );
         MatcherAssert.assertThat(task.assignee(), Matchers.is(mihai));
     }
@@ -310,8 +299,7 @@ public final class StoredTaskTestCase {
             LocalDateTime.now(),
             LocalDateTime.now().plusDays(10),
             30,
-            false,
-            "etag-123"
+            false
         );
 
         MatcherAssert.assertThat(
@@ -337,8 +325,7 @@ public final class StoredTaskTestCase {
             LocalDateTime.now(),
             LocalDateTime.now().plusDays(10),
             45,
-            false,
-            "etag-123"
+            false
         );
 
         MatcherAssert.assertThat(
@@ -364,8 +351,7 @@ public final class StoredTaskTestCase {
             LocalDateTime.now(),
             LocalDateTime.now().plusDays(10),
             120,
-            false,
-            "etag-123"
+            false
         );
 
         MatcherAssert.assertThat(
@@ -387,8 +373,7 @@ public final class StoredTaskTestCase {
             LocalDateTime.now(),
             LocalDateTime.now().plusDays(10),
             120,
-            false,
-            "etag-123"
+            false
         );
 
         MatcherAssert.assertThat(
@@ -409,7 +394,6 @@ public final class StoredTaskTestCase {
             Contract.Roles.DEV,
             45,
             false,
-            "etag-123",
             Mockito.mock(Storage.class)
         );
 
@@ -430,7 +414,6 @@ public final class StoredTaskTestCase {
             Contract.Roles.DEV,
             45,
             true,
-            "etag-123",
             Mockito.mock(Storage.class)
         );
 
@@ -439,28 +422,6 @@ public final class StoredTaskTestCase {
             Matchers.equalTo(Boolean.TRUE)
         );
     }
-
-    /**
-     * StoredTask can return its ETag.
-     */
-    @Test
-    public void returnsEtag() {
-        final Task task = new StoredTask(
-            Mockito.mock(Project.class),
-            "issueId123",
-            Contract.Roles.DEV,
-            45,
-            true,
-            "etag-123",
-            Mockito.mock(Storage.class)
-        );
-
-        MatcherAssert.assertThat(
-            task.etag(),
-            Matchers.equalTo("etag-123")
-        );
-    }
-
 
     /**
      * Can compare two StoredTask objects.
@@ -489,7 +450,6 @@ public final class StoredTaskTestCase {
             "DEV",
             120,
             false,
-            "etag-123",
             Mockito.mock(Storage.class)
         );
         final Task taskTwo = new StoredTask(
@@ -498,7 +458,6 @@ public final class StoredTaskTestCase {
             "DEV",
             120,
             false,
-            "etag-456",
             Mockito.mock(Storage.class)
         );
         final Task taskThree = new StoredTask(
@@ -507,7 +466,6 @@ public final class StoredTaskTestCase {
             "DEV",
             120,
             true,
-            "etag-789",
             Mockito.mock(Storage.class)
         );
         MatcherAssert.assertThat(task, Matchers.equalTo(taskTwo));
@@ -539,8 +497,7 @@ public final class StoredTaskTestCase {
             LocalDateTime.now(),
             LocalDateTime.now().plusDays(10),
             120,
-            false,
-            "etag-123"
+            false
         );
         final Task taskTwo = new StoredTask(
             contract,
@@ -549,8 +506,7 @@ public final class StoredTaskTestCase {
             LocalDateTime.now(),
             LocalDateTime.now().plusDays(10),
             120,
-            false,
-            "etag-456"
+            false
         );
         final Task taskThree = new StoredTask(
             contract,
@@ -559,8 +515,7 @@ public final class StoredTaskTestCase {
             LocalDateTime.now(),
             LocalDateTime.now().plusDays(10),
             120,
-            true,
-            "etag-789"
+            true
         );
         MatcherAssert.assertThat(task.hashCode(),
             Matchers.equalTo(taskTwo.hashCode()));
@@ -584,8 +539,7 @@ public final class StoredTaskTestCase {
             LocalDateTime.now(),
             LocalDateTime.now().plusDays(10),
             60,
-            false,
-            "etag-123"
+            false
         );
         task.assign(Mockito.mock(Contributor.class));
     }
@@ -607,7 +561,6 @@ public final class StoredTaskTestCase {
             "DEV",
             60,
             false,
-            "etag-123",
             Mockito.mock(Storage.class)
         );
         Mockito.when(assignee.contract("john/test", "github", "DEV"))
@@ -635,7 +588,6 @@ public final class StoredTaskTestCase {
             "DEV",
             60,
             false,
-            "etag-123",
             storage
         );
         Mockito.when(assignee.contract("john/test", "github", "DEV"))
@@ -666,7 +618,7 @@ public final class StoredTaskTestCase {
         final Tasks all = Mockito.mock(Tasks.class);
         final Task task = new StoredTask(contract, "1", storage,
             LocalDateTime.now(), LocalDateTime.now().plusDays(2), 60,
-            false, "etag-123");
+            false);
 
         Mockito.when(contract.contributor()).thenReturn(assignee);
         Mockito.when(storage.tasks()).thenReturn(all);
@@ -686,7 +638,7 @@ public final class StoredTaskTestCase {
     @Test
     public void unassignedTaskReturnsItselfWhenUnassign(){
         final Task task = new StoredTask(Mockito.mock(Project.class),
-            "1", "DEV", 60, false, "etag-123", Mockito.mock(Storage.class));
+            "1", "DEV", 60, false, Mockito.mock(Storage.class));
 
         MatcherAssert.assertThat(task.unassign(), Matchers.equalTo(task));
     }
@@ -701,7 +653,7 @@ public final class StoredTaskTestCase {
         final Resignations ofTask = Mockito.mock(Resignations.class);
         final Task task = new StoredTask(Mockito.mock(Contract.class),
             "1", storage, LocalDateTime.now(),
-            LocalDateTime.now().plusDays(2), 60, false, "etag-123");
+            LocalDateTime.now().plusDays(2), 60, false);
 
         Mockito.when(storage.resignations()).thenReturn(all);
         Mockito.when(all.ofTask(task)).thenReturn(ofTask);

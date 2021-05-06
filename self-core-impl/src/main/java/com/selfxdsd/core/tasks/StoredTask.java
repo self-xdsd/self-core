@@ -71,11 +71,6 @@ public final class StoredTask implements Task {
     private final boolean isPullRequest;
 
     /**
-     * Task's etag (corresponds to the Issue's etag).
-     */
-    private final String etag;
-
-    /**
      * Self Storage.
      */
     private final Storage storage;
@@ -87,7 +82,6 @@ public final class StoredTask implements Task {
      * @param role Role.
      * @param estimation Estimation in minutes.
      * @param isPullRequest Flags if this task is a PR.
-     * @param etag Task's etag.
      * @param storage Storage.
      */
     public StoredTask(
@@ -96,7 +90,6 @@ public final class StoredTask implements Task {
         final String role,
         final int estimation,
         final boolean isPullRequest,
-        final String etag,
         final Storage storage
     ) {
         this(
@@ -106,8 +99,7 @@ public final class StoredTask implements Task {
             null,
             null,
             estimation,
-            isPullRequest,
-            etag
+            isPullRequest
         );
     }
 
@@ -120,7 +112,6 @@ public final class StoredTask implements Task {
      * @param deadline Deadline by when this task should be finished.
      * @param estimation Estimation in minutes.
      * @param isPullRequest Flags if this task is a PR.
-     * @param etag Etag.
      */
     public StoredTask(
         final Contract contract,
@@ -129,8 +120,7 @@ public final class StoredTask implements Task {
         final LocalDateTime assignmentDate,
         final LocalDateTime deadline,
         final int estimation,
-        final boolean isPullRequest,
-        final String etag
+        final boolean isPullRequest
     ) {
         this.contract = contract;
         this.issueId = issueId;
@@ -139,7 +129,6 @@ public final class StoredTask implements Task {
         this.deadline = deadline;
         this.estimation = estimation;
         this.isPullRequest = isPullRequest;
-        this.etag = etag;
     }
 
     @Override
@@ -265,11 +254,6 @@ public final class StoredTask implements Task {
     @Override
     public boolean isPullRequest() {
         return this.isPullRequest;
-    }
-
-    @Override
-    public String etag() {
-        return this.etag;
     }
 
     @Override

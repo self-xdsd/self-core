@@ -98,7 +98,6 @@ public final class InMemoryResignations implements Resignations {
                 task.role(),
                 task.estimation(),
                 false,
-                "",
                 this.storage
             ),
             assignee,
