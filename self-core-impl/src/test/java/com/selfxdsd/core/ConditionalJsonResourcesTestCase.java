@@ -294,6 +294,7 @@ public final class ConditionalJsonResourcesTestCase {
     /**
      * CachingJsonResources should delegate PATCH http method.
      */
+    @SuppressWarnings("unchecked")
     @Test
     public void shouldDelegatePatchHttpMethod() {
         final URI uri = URI.create("/");
@@ -303,12 +304,16 @@ public final class ConditionalJsonResourcesTestCase {
         );
         cacheResources.patch(uri, JsonValue.NULL);
 
-        Mockito.verify(resources).patch(uri, JsonValue.NULL);
+        Mockito.verify(resources).patch(
+            org.mockito.Matchers.eq(uri),
+            org.mockito.Matchers.any(Supplier.class),
+            org.mockito.Matchers.eq(JsonValue.NULL));
     }
 
     /**
      * CachingJsonResources should delegate PUT http method.
      */
+    @SuppressWarnings("unchecked")
     @Test
     public void shouldDelegatePutHttpMethod() {
         final URI uri = URI.create("/");
@@ -319,7 +324,10 @@ public final class ConditionalJsonResourcesTestCase {
         cacheResources.put(uri, JsonValue.NULL);
 
 
-        Mockito.verify(resources).put(uri, JsonValue.NULL);
+        Mockito.verify(resources).put(
+            org.mockito.Matchers.eq(uri),
+            org.mockito.Matchers.any(Supplier.class),
+            org.mockito.Matchers.eq(JsonValue.NULL));
 
     }
 
@@ -335,7 +343,10 @@ public final class ConditionalJsonResourcesTestCase {
         );
         cacheResources.delete(uri, JsonValue.NULL);
 
-        Mockito.verify(resources).delete(uri, JsonValue.NULL);
+        Mockito.verify(resources).delete(
+            org.mockito.Matchers.eq(uri),
+            org.mockito.Matchers.any(Supplier.class),
+            org.mockito.Matchers.eq(JsonValue.NULL));
     }
 
     /**
