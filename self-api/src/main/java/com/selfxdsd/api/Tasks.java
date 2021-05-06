@@ -27,7 +27,6 @@ package com.selfxdsd.api;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
- * @todo #1124:60min Add a method to allow updating of a Task's etag.
  */
 public interface Tasks extends Iterable<Task> {
 
