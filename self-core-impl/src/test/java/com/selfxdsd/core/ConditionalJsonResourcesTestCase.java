@@ -75,7 +75,8 @@ public final class ConditionalJsonResourcesTestCase {
     }
 
     /**
-     * Should store in cache if Etag header is present.
+     * Should store in cache if Etag header is present. It also should
+     * ignore the header key casing when searching for etag header.
      */
     @Test
     public void shouldStoreInCacheWhenEntriesNotFound() {
@@ -85,7 +86,7 @@ public final class ConditionalJsonResourcesTestCase {
             .add("hello", "world")
             .build();
         final MockResource resource = new MockResource(200, body,
-            Map.of("ETag", List.of("etag-123"))
+            Map.of("eTaG", List.of("etag-123"))
         );
         final MockJsonResources resources = new MockJsonResources(
             req -> resource
