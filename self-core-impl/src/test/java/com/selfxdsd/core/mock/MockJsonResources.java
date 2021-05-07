@@ -119,11 +119,6 @@ public final class MockJsonResources implements JsonResources {
     }
 
     @Override
-    public Resource get(final URI uri) {
-        return this.get(uri, () -> new HashMap<>());
-    }
-
-    @Override
     public Resource get(
         final URI uri,
         final Supplier<Map<String, List<String>>> headers
@@ -136,11 +131,6 @@ public final class MockJsonResources implements JsonResources {
             accessToken
         );
         return onRequest.apply(request);
-    }
-
-    @Override
-    public Resource post(final URI uri, final JsonValue body) {
-        return this.post(uri, () -> new HashMap<>(), body);
     }
 
     @Override
@@ -160,11 +150,15 @@ public final class MockJsonResources implements JsonResources {
     }
 
     @Override
-    public Resource patch(final URI uri, final JsonValue body) {
+    public Resource patch(
+        final URI uri,
+        final Supplier<Map<String, List<String>>> headers,
+        final JsonValue body
+    ) {
         final MockRequest request = new MockRequest(
             "PATCH",
             uri,
-            new HashMap<>(),
+            headers.get(),
             body,
             accessToken
         );
@@ -172,11 +166,14 @@ public final class MockJsonResources implements JsonResources {
     }
 
     @Override
-    public Resource put(final URI uri, final JsonValue body) {
+    public Resource put(
+        final URI uri,
+        final Supplier<Map<String, List<String>>> headers,
+        final JsonValue body) {
         final MockRequest request = new MockRequest(
             "PUT",
             uri,
-            new HashMap<>(),
+            headers.get(),
             body,
             this.accessToken
         );
@@ -184,11 +181,15 @@ public final class MockJsonResources implements JsonResources {
     }
 
     @Override
-    public Resource delete(final URI uri, final JsonValue body) {
+    public Resource delete(
+        final URI uri,
+        final Supplier<Map<String, List<String>>> headers,
+        final JsonValue body
+    ) {
         final MockRequest request = new MockRequest(
             "DELETE",
             uri,
-            new HashMap<>(),
+            headers.get(),
             body,
             this.accessToken
         );

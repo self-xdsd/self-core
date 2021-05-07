@@ -32,7 +32,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
@@ -42,8 +42,6 @@ import java.util.function.Supplier;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.8
- * @todo #1128:60min Continue adding overloaded methods to also accept headers
- *  for PATCH, PUT and DELETE (see how GET and POST are overloaded).
  */
 public interface JsonResources {
 
@@ -62,7 +60,9 @@ public interface JsonResources {
      * @throws IllegalStateException If IOException or InterruptedException
      *  occur while making the HTTP request.
      */
-    Resource get(final URI uri);
+    default Resource get(final URI uri){
+        return this.get(uri, Collections::emptyMap);
+    }
 
     /**
      * Get the Resource at the specified URI.
@@ -85,10 +85,12 @@ public interface JsonResources {
      * @throws IllegalStateException If IOException or InterruptedException
      *  occur while making the HTTP request.
      */
-    Resource post(
+    default Resource post(
         final URI uri,
         final JsonValue body
-    );
+    ){
+        return this.post(uri, Collections::emptyMap, body);
+    }
 
     /**
      * Post a JsonObject to the specified URI.
@@ -105,6 +107,7 @@ public interface JsonResources {
         final JsonValue body
     );
 
+
     /**
      * Patch a JsonObject at the specified URI.
      * @param uri URI.
@@ -113,10 +116,28 @@ public interface JsonResources {
      * @throws IllegalStateException If IOException or InterruptedException
      *  occur while making the HTTP request.
      */
-    Resource patch(
+    default Resource patch(
         final URI uri,
         final JsonValue body
+    ){
+        return this.patch(uri, Collections::emptyMap, body);
+    }
+
+    /**
+     * Patch a JsonObject at the specified URI.
+     * @param uri URI.
+     * @param body JSON body of the request.
+     * @param headers HTTP Headers.
+     * @return Resource.
+     * @throws IllegalStateException If IOException or InterruptedException
+     *  occur while making the HTTP request.
+     */
+    Resource patch(
+        final URI uri,
+        final Supplier<Map<String, List<String>>> headers,
+        final JsonValue body
     );
+
 
     /**
      * Put a JsonObject at the specified URI.
@@ -126,8 +147,25 @@ public interface JsonResources {
      * @throws IllegalStateException If IOException or InterruptedException
      *  occur while making the HTTP request.
      */
+    default Resource put(
+        final URI uri,
+        final JsonValue body
+    ){
+        return this.put(uri, Collections::emptyMap, body);
+    }
+
+    /**
+     * Put a JsonObject at the specified URI.
+     * @param uri URI.
+     * @param body JSON body of the request.
+     * @param headers HTTP Headers.
+     * @return Resource.
+     * @throws IllegalStateException If IOException or InterruptedException
+     *  occur while making the HTTP request.
+     */
     Resource put(
         final URI uri,
+        final Supplier<Map<String, List<String>>> headers,
         final JsonValue body
     );
 
@@ -139,8 +177,25 @@ public interface JsonResources {
      * @throws IllegalStateException If IOException or InterruptedException
      *  occur while making the HTTP request.
      */
+    default Resource delete(
+        final URI uri,
+        final JsonValue body
+    ){
+        return this.delete(uri, Collections::emptyMap, body);
+    }
+
+    /**
+     * DELETE the specified resource.
+     * @param uri URI.
+     * @param headers HTTP Headers.
+     * @param body JSON body of the request.
+     * @return Resource.
+     * @throws IllegalStateException If IOException or InterruptedException
+     *  occur while making the HTTP request.
+     */
     Resource delete(
         final URI uri,
+        final Supplier<Map<String, List<String>>> headers,
         final JsonValue body
     );
 
@@ -206,11 +261,6 @@ public interface JsonResources {
         }
 
         @Override
-        public Resource get(final URI uri) {
-            return this.get(uri, () -> new HashMap<>());
-        }
-
-        @Override
         public Resource get(
             final URI uri,
             final Supplier<Map<String, List<String>>> headers
@@ -237,14 +287,6 @@ public interface JsonResources {
                     ex
                 );
             }
-        }
-
-        @Override
-        public Resource post(
-            final URI uri,
-            final JsonValue body
-        ) {
-            return this.post(uri, () -> new HashMap<>(), body);
         }
 
         @Override
@@ -283,6 +325,7 @@ public interface JsonResources {
         @Override
         public Resource patch(
             final URI uri,
+            final Supplier<Map<String, List<String>>> headers,
             final JsonValue body
         ) {
             try {
@@ -291,7 +334,7 @@ public interface JsonResources {
                         this.request(
                             uri,
                             "PATCH",
-                            new HashMap<>(),
+                            headers.get(),
                             HttpRequest.BodyPublishers.ofString(
                                 body.toString()
                             )
@@ -313,14 +356,18 @@ public interface JsonResources {
         }
 
         @Override
-        public Resource put(final URI uri, final JsonValue body) {
+        public Resource put(
+            final URI uri,
+            final Supplier<Map<String, List<String>>> headers,
+            final JsonValue body
+        ) {
             try {
                 final HttpResponse<String> response = this.newHttpClient()
                     .send(
                         this.request(
                             uri,
                             "PUT",
-                            new HashMap<>(),
+                            headers.get(),
                             HttpRequest.BodyPublishers.ofString(
                                 body.toString()
                             )
@@ -342,14 +389,18 @@ public interface JsonResources {
         }
 
         @Override
-        public Resource delete(final URI uri, final JsonValue body) {
+        public Resource delete(
+            final URI uri,
+            final Supplier<Map<String, List<String>>> headers,
+            final JsonValue body
+        ) {
             try {
                 final HttpResponse<String> response = this.newHttpClient()
                     .send(
                         this.request(
                             uri,
                             "DELETE",
-                            new HashMap<>(),
+                            headers.get(),
                             HttpRequest.BodyPublishers.ofString(
                                 body.toString()
                             )

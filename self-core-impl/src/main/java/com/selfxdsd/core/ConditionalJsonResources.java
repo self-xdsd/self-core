@@ -29,7 +29,6 @@ import org.slf4j.LoggerFactory;
 import javax.json.JsonValue;
 import java.net.HttpURLConnection;
 import java.net.URI;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -91,20 +90,9 @@ public final class ConditionalJsonResources implements JsonResources {
     }
 
     @Override
-    public Resource get(final URI uri) {
-        return this.conditionalGet(uri, Collections::emptyMap);
-    }
-
-    @Override
     public Resource get(final URI uri,
                         final Supplier<Map<String, List<String>>> headers) {
         return this.conditionalGet(uri, headers);
-    }
-
-    @Override
-    public Resource post(final URI uri,
-                         final JsonValue body) {
-        return this.post(uri, Collections::emptyMap, body);
     }
 
     @Override
@@ -115,18 +103,30 @@ public final class ConditionalJsonResources implements JsonResources {
     }
 
     @Override
-    public Resource patch(final URI uri, final JsonValue body) {
-        return this.delegate.patch(uri, body);
+    public Resource patch(
+        final URI uri,
+        final Supplier<Map<String, List<String>>> headers,
+        final JsonValue body
+    ) {
+        return this.delegate.patch(uri, headers, body);
     }
 
     @Override
-    public Resource put(final URI uri, final JsonValue body) {
-        return this.delegate.put(uri, body);
+    public Resource put(
+        final URI uri,
+        final Supplier<Map<String, List<String>>> headers,
+        final JsonValue body
+    ) {
+        return this.delegate.put(uri, headers, body);
     }
 
     @Override
-    public Resource delete(final URI uri, final JsonValue body) {
-        return this.delegate.delete(uri, body);
+    public Resource delete(
+        final URI uri,
+        final Supplier<Map<String, List<String>>> headers,
+        final JsonValue body
+    ) {
+        return this.delegate.delete(uri, headers, body);
     }
 
     /**
