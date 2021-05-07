@@ -33,6 +33,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 /**
  * Cacheable JSON Resources used by Provider.
@@ -193,15 +194,28 @@ public final class ConditionalJsonResources implements JsonResources {
      * @param resource Resource.
      */
     private void storeInCache(final URI uri, final Resource resource) {
-        final List<String> etag = resource.headers().get("ETag");
-        if (resource.statusCode() == HttpURLConnection.HTTP_OK
-            && (etag != null && !etag.isEmpty())) {
-            LOG.debug(
-                "Storing remote resource body for {} with ETag {}",
-                uri,
-                etag.get(0)
-            );
-            this.jsonStorage.store(uri, etag.get(0), resource.toString());
+        final List<String> etag = resource
+            .headers()
+            .entrySet()
+            .stream()
+            .filter(entry -> entry.getKey()
+                .equalsIgnoreCase("ETag"))
+            .flatMap(entry -> entry.getValue().stream())
+            .collect(Collectors.toList());
+        if (resource.statusCode() == HttpURLConnection.HTTP_OK) {
+            if (!etag.isEmpty()) {
+                LOG.debug(
+                    "Storing remote resource body for {} with ETag {}",
+                    uri,
+                    etag.get(0)
+                );
+                this.jsonStorage.store(uri, etag.get(0), resource.toString());
+            } else {
+                LOG.debug(
+                    "ETag header not found for {}. Caching is skipped.",
+                    uri
+                );
+            }
         }
     }
 
