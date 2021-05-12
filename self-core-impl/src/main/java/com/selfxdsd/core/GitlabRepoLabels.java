@@ -93,7 +93,7 @@ final class GitlabRepoLabels implements Labels {
             if(status == HttpURLConnection.HTTP_CREATED) {
                 LOG.debug("Label successfully added!");
             } else {
-                LOG.error(
+                LOG.warn(
                     "Problem while adding label. "
                     + "Expected 201 CREATED, got " + status
                 );
@@ -132,7 +132,7 @@ final class GitlabRepoLabels implements Labels {
                 LOG.debug("Label successfully removed.");
                 removed = true;
             } else {
-                LOG.error(
+                LOG.warn(
                     "Could not remove label [" + name + "]. "
                     + "Expected 204 NO CONTENT, got " + response.statusCode()
                 );
