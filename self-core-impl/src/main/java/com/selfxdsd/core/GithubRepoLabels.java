@@ -103,7 +103,7 @@ final class GithubRepoLabels implements Labels {
             LOG.debug("Repo Label removed successfully.");
         } else {
             result = false;
-            LOG.error(
+            LOG.warn(
                 "Unexpected response. Expected 204 or 404, but got: "
                 + status
             );

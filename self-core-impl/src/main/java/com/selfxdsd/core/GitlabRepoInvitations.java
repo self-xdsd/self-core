@@ -68,8 +68,8 @@ final class GitlabRepoInvitations implements Invitations {
      * to accept</b>. See method GitlabCollaborators.invite(...).<br><br>
      *
      * However, we return a mock invitation for each Project managed by the PM,
-     * wrapped in StarRepo and FollowProjectOwner, in order to respect the
-     * architecture (starring a repo and following the PO should happen when
+     * wrapped in StarRepo, FollowProjectOwner and others in order to respect
+     * the architecture (starring a repo or following the PO should happen when
      * accepting invitations).
      *
      * @return Invitation iterator.
@@ -79,31 +79,34 @@ final class GitlabRepoInvitations implements Invitations {
         final List<Invitation> invitations = new ArrayList<>();
         for(final Project project : this.manager.projects()) {
             invitations.add(
-                new FollowProjectOwner(
-                    new StarRepo(
-                        new Invitation() {
-                            @Override
-                            public JsonObject json() {
-                                return Json.createObjectBuilder().build();
-                            }
+                new CreateRepoLabels(
+                    new FollowProjectOwner(
+                        new StarRepo(
+                            new Invitation() {
+                                @Override
+                                public JsonObject json() {
+                                    return Json.createObjectBuilder().build();
+                                }
 
-                            @Override
-                            public String inviter() {
-                                return project.owner().username();
-                            }
+                                @Override
+                                public String inviter() {
+                                    return project.owner().username();
+                                }
 
-                            @Override
-                            public Repo repo() {
-                                final String fullName = project.repoFullName();
-                                return GitlabRepoInvitations.this.gitlab.repo(
-                                    fullName.split("/")[0],
-                                    fullName.split("/")[1]
-                                );
-                            }
+                                @Override
+                                public Repo repo() {
+                                    final String name = project.repoFullName();
+                                    return GitlabRepoInvitations.this.gitlab
+                                        .repo(
+                                            name.split("/")[0],
+                                            name.split("/")[1]
+                                        );
+                                }
 
-                            @Override
-                            public void accept() { }
-                        }
+                                @Override
+                                public void accept() { }
+                            }
+                        )
                     )
                 )
             );
