@@ -10,6 +10,7 @@ import java.net.HttpURLConnection;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Github stars.
@@ -41,6 +42,11 @@ final class GithubStars implements Stars {
     private final Storage storage;
 
     /**
+     * Repo owner holder.
+     */
+    private final RepoOwnerHolder holder;
+
+    /**
      * Ctor.
      *
      * @param resources Github's JSON Resources.
@@ -55,16 +61,13 @@ final class GithubStars implements Stars {
         this.resources = resources;
         this.starsUri = starsUri;
         this.storage = storage;
+        this.holder = new RepoOwnerHolder(starsUri);
     }
 
     @Override
     public boolean add() {
-        List<String> splits = Arrays.asList(this.starsUri.getPath().split("/"));
-        String owner = splits.get(splits.size()-1);
-        String repoName = splits.get(splits.size()-2);
-
         LOG.debug(
-            "Starring Github repository " + repoName
+            "Starring Github repository " + this.holder.getOwner()
         );
 
         final boolean starred;
@@ -78,12 +81,99 @@ final class GithubStars implements Stars {
         } else {
             starred = false;
             LOG.error(
-                "Unexpected status when starring repo " + repoName
-                + " of user " + owner + " ]"
-                + "Expected 204 NO CONTENT, but got "
-                + response.statusCode()
+                "Unexpected status when starring repo "
+                    + this.holder.getRepo()
+                    + " of user " + this.holder.getOwner() + " ]"
+                    + "Expected 204 NO CONTENT, but got "
+                    + response.statusCode()
             );
         }
         return starred;
+    }
+
+    /**
+     * {@inheritDoc}
+     * <br/>
+     * See doc <a href="https://docs.github.com/en/rest/reference/activity#check-if-a-repository-is-starred-by-the-authenticated-user">here</a>.
+     */
+    @Override
+    public boolean isStarred() {
+        LOG.debug(
+            "Check if Github repository " + this.holder.getRepo()
+                + " is starred by current authenticated user."
+        );
+
+        final boolean isStarred;
+        final Resource response = this.resources.get(
+            URI.create(this.starsUri.toString()),
+            () -> Map.of("Accept", List.of("application/vnd.github.v3+json"))
+        );
+        if (response.statusCode() == HttpURLConnection.HTTP_NO_CONTENT) {
+            isStarred = true;
+            LOG.debug("Repo is starred by current authenticated user.");
+        } else {
+            isStarred = false;
+            if (response.statusCode() == HttpURLConnection.HTTP_NOT_FOUND) {
+                LOG.debug("Repo is not starred by current authenticated user.");
+            } else {
+                LOG.error(
+                    "Unexpected status when checking if repo "
+                        + this.holder.getRepo()
+                        + " of user " + this.holder.getOwner()
+                        + " is starred by current authenticated user."
+                        + " Expected 204 NO CONTENT or 404 HTTP_NOT_FOUND,"
+                        + " but got " + response.statusCode()
+                );
+            }
+        }
+        return isStarred;
+    }
+
+    @Override
+    public String toString() {
+        return this.starsUri.toString();
+    }
+
+    /**
+     * Repo owner holder.
+     */
+    private static class RepoOwnerHolder {
+
+        /**
+         * Repo name.
+         */
+        private final String repo;
+
+        /**
+         * Owner name.
+         */
+        private final String owner;
+
+
+        /**
+         * Create new RepoOwner holder from uri.
+         * @param uri Uri.
+         */
+        RepoOwnerHolder(final URI uri) {
+            List<String> splits = Arrays.asList(uri.getPath().split("/"));
+            this.owner = splits.get(splits.size() - 1);
+            this.repo = splits.get(splits.size() - 2);
+        }
+
+        /**
+         * Get owner.
+         * @return String.
+         */
+        String getOwner() {
+            return owner;
+        }
+
+        /**
+         * Get repo.
+         * @return String.
+         */
+        String getRepo() {
+            return repo;
+        }
     }
 }

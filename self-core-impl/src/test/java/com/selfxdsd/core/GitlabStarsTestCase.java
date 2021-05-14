@@ -156,4 +156,16 @@ public final class GitlabStarsTestCase {
             )
         );
     }
+
+    /**
+     * GitlabStars can check if a repo is starred.
+     */
+    @Test(expected = UnsupportedOperationException.class)
+    public void canCheckIfRepoIsStarred() {
+        new GitlabStars(
+            Mockito.mock(JsonResources.class),
+            URI.create("/"),
+            Mockito.mock(Repo.class)
+        ).isStarred();
+    }
 }

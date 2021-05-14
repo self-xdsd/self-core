@@ -95,6 +95,15 @@ public interface Repo {
     Stars stars();
 
     /**
+     * Checks if this repo is starred by current authenticated user.
+     * @return True when starred or false if not or something went wrong
+     * (http error like unauthenticated user etc...).
+     */
+    default boolean isStarred() {
+        return this.stars().isStarred();
+    }
+
+    /**
      * Commits of this repo.
      * @return Commits.
      */

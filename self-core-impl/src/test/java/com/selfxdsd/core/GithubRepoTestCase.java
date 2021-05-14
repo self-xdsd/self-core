@@ -155,7 +155,10 @@ public final class GithubRepoTestCase {
             repo.stars(),
             Matchers.allOf(
                 Matchers.notNullValue(),
-                Matchers.instanceOf(GithubStars.class)
+                Matchers.instanceOf(GithubStars.class),
+                Matchers.hasToString(
+                    "http://localhost:8080/user/starred/mihai/test/"
+                )
             )
         );
     }

@@ -36,6 +36,7 @@ import java.net.URI;
  * @author Ali Fellahi (fellahi.ali@gmail.com)
  * @version $Id$
  * @since 0.0.42
+ * @todo #1153:60min Provide an implementation for GitlabStars#isStarred().
  */
 final class GitlabStars implements Stars {
 
@@ -120,5 +121,10 @@ final class GitlabStars implements Stars {
             }
         }
         return starred;
+    }
+
+    @Override
+    public boolean isStarred() {
+        throw new UnsupportedOperationException("Not implemented yet");
     }
 }

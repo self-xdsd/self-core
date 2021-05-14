@@ -31,7 +31,10 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import javax.json.JsonValue;
+import java.net.HttpURLConnection;
 import java.net.URI;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Unit tests for {@link GithubStars}.
@@ -99,5 +102,96 @@ public final class GithubStarsTestCase {
         MatcherAssert.assertThat(res.requests().first()
                 .getAccessToken(),
             Matchers.nullValue());
+    }
+
+    /**
+     * GithubStars can check if a repo is starred.
+     */
+    @Test
+    public void canCheckIfRepoIsStarred() {
+        final MockJsonResources res = new MockJsonResources(
+            new AccessToken.Github("github_123"),
+            req -> new MockJsonResources.MockResource(
+                HttpURLConnection.HTTP_NO_CONTENT,
+                JsonValue.NULL
+            )
+        );
+        final Stars stars = new GithubStars(
+            res,
+            URI.create("https://api.github.com/user/starred/john/test"),
+            Mockito.mock(Storage.class)
+        );
+        boolean isStarred = stars.isStarred();
+        final MockJsonResources.MockRequest request = res.requests().first();
+        MatcherAssert.assertThat(
+            isStarred,
+            Matchers.is(true)
+        );
+        MatcherAssert.assertThat(
+            request.getHeaders(),
+            Matchers.equalTo(
+                Map.of(
+                    "Accept", List.of("application/vnd.github.v3+json"),
+                    "Authorization", List.of("token github_123")
+                )
+            )
+        );
+        MatcherAssert.assertThat(
+            request.getUri(),
+            Matchers.equalTo(
+                URI.create("https://api.github.com/user/starred/john/test")
+            )
+        );
+        MatcherAssert.assertThat(
+            request.getMethod(),
+            Matchers.equalTo("GET")
+        );
+    }
+
+    /**
+     * GithubStars can check if a repo is not starred.
+     */
+    @Test
+    public void canCheckIfRepoIsNotStarred() {
+        final MockJsonResources res = new MockJsonResources(
+            req -> new MockJsonResources.MockResource(
+                HttpURLConnection.HTTP_NOT_FOUND,
+                JsonValue.NULL
+            )
+        );
+        final Stars stars = new GithubStars(
+            res,
+            URI.create("https://api.github.com/user/starred/john/test"),
+            Mockito.mock(Storage.class)
+        );
+        boolean isStarred = stars.isStarred();
+        MatcherAssert.assertThat(
+            isStarred,
+            Matchers.is(false)
+        );
+    }
+
+    /**
+     * GithubStars#isStarred returns false if user is not authenticated.
+     */
+    @Test
+    public void cantCheckIfRepoIsStarredWhenUnauthorized() {
+        final MockJsonResources res = new MockJsonResources(
+            new AccessToken.Github("github_123"),
+            req -> new MockJsonResources.MockResource(
+                HttpURLConnection.HTTP_UNAUTHORIZED,
+                JsonValue.NULL
+            )
+        );
+        final Stars stars = new GithubStars(
+            res,
+            URI.create("https://api.github.com/user/starred/john/test"),
+            Mockito.mock(Storage.class)
+        );
+        boolean isStarred = stars.isStarred();
+        MatcherAssert.assertThat(
+            isStarred,
+            Matchers.is(false)
+        );
     }
 }

@@ -45,4 +45,15 @@ public final class BitbucketStarsTestCase {
             Matchers.is(true)
         );
     }
+
+    /**
+     * BitbucketStars.isStarred() is just a placeholder.
+     */
+    @Test
+    public void isStarredIsPlaceholder() {
+        MatcherAssert.assertThat(
+            new BitbucketStars().isStarred(),
+            Matchers.is(true)
+        );
+    }
 }
