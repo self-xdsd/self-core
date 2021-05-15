@@ -124,7 +124,7 @@ final class GitlabStars implements Stars {
     }
 
     @Override
-    public boolean isStarred() {
+    public boolean added() {
         throw new UnsupportedOperationException("Not implemented yet");
     }
 }

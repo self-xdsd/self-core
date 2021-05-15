@@ -166,6 +166,6 @@ public final class GitlabStarsTestCase {
             Mockito.mock(JsonResources.class),
             URI.create("/"),
             Mockito.mock(Repo.class)
-        ).isStarred();
+        ).added();
     }
 }

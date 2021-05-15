@@ -52,7 +52,7 @@ public final class BitbucketStarsTestCase {
     @Test
     public void isStarredIsPlaceholder() {
         MatcherAssert.assertThat(
-            new BitbucketStars().isStarred(),
+            new BitbucketStars().added(),
             Matchers.is(true)
         );
     }

@@ -121,7 +121,7 @@ public final class GithubStarsTestCase {
             URI.create("https://api.github.com/user/starred/john/test"),
             Mockito.mock(Storage.class)
         );
-        boolean isStarred = stars.isStarred();
+        boolean isStarred = stars.added();
         final MockJsonResources.MockRequest request = res.requests().first();
         MatcherAssert.assertThat(
             isStarred,
@@ -164,7 +164,7 @@ public final class GithubStarsTestCase {
             URI.create("https://api.github.com/user/starred/john/test"),
             Mockito.mock(Storage.class)
         );
-        boolean isStarred = stars.isStarred();
+        boolean isStarred = stars.added();
         MatcherAssert.assertThat(
             isStarred,
             Matchers.is(false)
@@ -188,7 +188,7 @@ public final class GithubStarsTestCase {
             URI.create("https://api.github.com/user/starred/john/test"),
             Mockito.mock(Storage.class)
         );
-        boolean isStarred = stars.isStarred();
+        boolean isStarred = stars.added();
         MatcherAssert.assertThat(
             isStarred,
             Matchers.is(false)

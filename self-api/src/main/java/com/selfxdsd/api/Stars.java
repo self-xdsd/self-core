@@ -15,9 +15,9 @@ public interface Stars {
     boolean add();
 
     /**
-     * Checks if a repository is starred by the authenticated user.
+     * Check if the authenticated user added the star.
      * @return True when starred or false if not or something went wrong
      * (http error like unauthenticated user etc...).
      */
-    boolean isStarred();
+    boolean added();
 }

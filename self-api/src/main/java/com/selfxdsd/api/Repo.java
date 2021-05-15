@@ -100,7 +100,7 @@ public interface Repo {
      * (http error like unauthenticated user etc...).
      */
     default boolean isStarred() {
-        return this.stars().isStarred();
+        return this.stars().added();
     }
 
     /**
