@@ -37,6 +37,44 @@ import java.util.stream.StreamSupport;
 /**
  * Resource Pagination. Implementations should extract the next page link
  * either from headers or from body, depending on the Provider's API.
+ *
+ * <br/>
+ * Usage for Github and Gitlab resources (for Bitbucket will not work because
+ * next page link is inside json body not in response headers - well, it will
+ * work but will not advance to the next page, so other implementation is
+ * needed).
+ * <br/>
+ * Example to get all repos for a user that span over multiple pages.
+ * <br/>
+ * <pre>
+ *     JsonResources res = ...
+ *     Uri url = Uri.create("https://api.github.com/users/john/repos);
+ *     ResourcePaging pages = new ResourcePaging.FromHeaders(res, url);
+ *     for(Resource resource: pages){
+ *         //do something with the json resource.
+ *         //note: status code is guaranteed to be HTTP_OK otherwise pagination
+ *         //throws exception.
+ *     }
+ *     //or using streams.
+ *     pages.stream().forEach(resource -> {
+ *        //do something with the json resource.
+ *     })
+ * </pre>
+ *
+ * The above example is equivalent to manually call:
+ * <br/>
+ * <pre>
+ *    res.get(https://api.github.com/users/john/repos)
+ *    res.get(https://api.github.com/users/john/repos?page=2)
+ *    res.get(https://api.github.com/users/john/repos?page=3)
+ *    //..
+ *    res.get(https://api.github.com/users/john/repos?page=n)
+ * </pre>
+ * If there is only one page or "Link" is not present in response headers.
+ * the above code will be equivalent with:
+ * <pre>
+ *    res.get(https://api.github.com/users/john/repos)
+ * </pre>
  * @author criske
  * @version $Id$
  * @since 0.0.84
@@ -60,7 +98,7 @@ interface ResourcePaging extends Iterable<Resource> {
     /**
      * Resource pagination based on headers. This should be applied
      * to resources from Github and Gitlab.
-     * <br/>
+     *
      * Extracts the next page from "Link" header entry.
      */
     class FromHeaders implements ResourcePaging {
