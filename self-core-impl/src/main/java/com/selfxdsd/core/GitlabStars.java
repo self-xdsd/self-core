@@ -36,7 +36,12 @@ import java.net.URI;
  * @author Ali Fellahi (fellahi.ali@gmail.com)
  * @version $Id$
  * @since 0.0.42
- * @todo #1153:60min Provide an implementation for GitlabStars#isStarred().
+ * @todo #1155:60min Since there is no endpoint to check if current user
+ *  has starred "this" repo, another API endpoint must be used.
+ *  `GET /users/:user_id/starred_projects?starred=true&per_page=100`
+ *  https://docs.gitlab.com/ee/api/projects.html#list-projects-starred-by-a-user
+ *  Based on {@link ResourcePaging.FromHeaders}, implement `added()` by getting
+ *  all starred projects and filter them by current repo.
  */
 final class GitlabStars implements Stars {
 
