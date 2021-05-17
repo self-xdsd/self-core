@@ -41,7 +41,7 @@ final class GitlabRepoInvitations implements Invitations {
     /**
      * Gitlab.
      */
-    private final Gitlab gitlab;
+    private final Provider gitlab;
 
     /**
      * Manager authenticated in Gitlab.
@@ -54,7 +54,7 @@ final class GitlabRepoInvitations implements Invitations {
      * @param manager Authenticated manager.
      */
     GitlabRepoInvitations(
-        final Gitlab gitlab,
+        final Provider gitlab,
         final User manager
     ) {
         this.gitlab = gitlab;
@@ -78,38 +78,42 @@ final class GitlabRepoInvitations implements Invitations {
     public Iterator<Invitation> iterator() {
         final List<Invitation> invitations = new ArrayList<>();
         for(final Project project : this.manager.projects()) {
-            invitations.add(
-                new CreateRepoLabels(
-                    new FollowProjectOwner(
-                        new StarRepo(
-                            new Invitation() {
-                                @Override
-                                public JsonObject json() {
-                                    return Json.createObjectBuilder().build();
-                                }
+            final String name = project.repoFullName();
+            final Repo repo = this.gitlab.repo(
+                name.split("/")[0],
+                name.split("/")[1]
+            );
+            if(!repo.isStarred()) {
+                invitations.add(
+                    new CreateRepoLabels(
+                        new FollowProjectOwner(
+                            new StarRepo(
+                                new Invitation() {
+                                    @Override
+                                    public JsonObject json() {
+                                        return Json.createObjectBuilder()
+                                            .build();
+                                    }
 
-                                @Override
-                                public String inviter() {
-                                    return project.owner().username();
-                                }
+                                    @Override
+                                    public String inviter() {
+                                        return project.owner().username();
+                                    }
 
-                                @Override
-                                public Repo repo() {
-                                    final String name = project.repoFullName();
-                                    return GitlabRepoInvitations.this.gitlab
-                                        .repo(
-                                            name.split("/")[0],
-                                            name.split("/")[1]
-                                        );
-                                }
+                                    @Override
+                                    public Repo repo() {
+                                        return repo;
+                                    }
 
-                                @Override
-                                public void accept() { }
-                            }
+                                    @Override
+                                    public void accept() {
+                                    }
+                                }
+                            )
                         )
                     )
-                )
-            );
+                );
+            }
         }
         return invitations.iterator();
     }

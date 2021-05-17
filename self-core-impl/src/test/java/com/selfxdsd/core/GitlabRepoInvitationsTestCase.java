@@ -23,7 +23,6 @@
 package com.selfxdsd.core;
 
 import com.selfxdsd.api.*;
-import com.selfxdsd.api.storage.Storage;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -40,26 +39,70 @@ import java.util.List;
 public final class GitlabRepoInvitationsTestCase {
 
     /**
-     * GitlabRepoInvitations can return the mock invitations.
+     * GitlabRepoInvitations can return the mock invitations if the repo is
+     * not starred.
      */
     @Test
     public void returnsMockInvitations() {
+        final Provider gitlab = Mockito.mock(Provider.class);
+
         final Projects projects = Mockito.mock(Projects.class);
+
+        final Project project = Mockito.mock(Project.class);
+        Mockito.when(project.repoFullName()).thenReturn("mihai/test");
+        final Repo repo = Mockito.mock(Repo.class);
+        Mockito.when(repo.isStarred()).thenReturn(false);
+
+        Mockito.when(gitlab.repo("mihai", "test")).thenReturn(repo);
+
         Mockito.when(projects.iterator()).thenReturn(
-            List.of(Mockito.mock(Project.class), Mockito.mock(Project.class))
-                .iterator()
+            List.of(project).iterator()
         );
         final User manager = Mockito.mock(User.class);
         Mockito.when(manager.projects()).thenReturn(projects);
 
         final Invitations invitations = new GitlabRepoInvitations(
-            new Gitlab(manager, Mockito.mock(Storage.class)),
+            gitlab,
             manager
         );
 
         MatcherAssert.assertThat(
             invitations,
-            Matchers.iterableWithSize(2)
+            Matchers.iterableWithSize(1)
+        );
+        Mockito.verify(manager, Mockito.times(1)).projects();
+    }
+
+    /**
+     * GitlabRepoInvitations returns no invitations if the repo is starred.
+     */
+    @Test
+    public void returnsNoInvitations() {
+        final Provider gitlab = Mockito.mock(Provider.class);
+
+        final Projects projects = Mockito.mock(Projects.class);
+
+        final Project project = Mockito.mock(Project.class);
+        Mockito.when(project.repoFullName()).thenReturn("mihai/test");
+        final Repo repo = Mockito.mock(Repo.class);
+        Mockito.when(repo.isStarred()).thenReturn(true);
+
+        Mockito.when(gitlab.repo("mihai", "test")).thenReturn(repo);
+
+        Mockito.when(projects.iterator()).thenReturn(
+            List.of(project).iterator()
+        );
+        final User manager = Mockito.mock(User.class);
+        Mockito.when(manager.projects()).thenReturn(projects);
+
+        final Invitations invitations = new GitlabRepoInvitations(
+            gitlab,
+            manager
+        );
+
+        MatcherAssert.assertThat(
+            invitations,
+            Matchers.iterableWithSize(0)
         );
         Mockito.verify(manager, Mockito.times(1)).projects();
     }
