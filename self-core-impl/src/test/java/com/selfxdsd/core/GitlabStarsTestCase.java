@@ -30,6 +30,7 @@ import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import javax.json.Json;
 import javax.json.JsonValue;
 import java.net.HttpURLConnection;
 import java.net.URI;
@@ -160,12 +161,130 @@ public final class GitlabStarsTestCase {
     /**
      * GitlabStars can check if a repo is starred.
      */
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void canCheckIfRepoIsStarred() {
-        new GitlabStars(
-            Mockito.mock(JsonResources.class),
+        final Repo repo = Mockito.mock(Repo.class);
+        final JsonResources res = new MockJsonResources(req -> {
+            final String uri = req.getUri().toString();
+            final JsonValue body;
+            if ("https://gitlab.com/api/v4/user".equals(uri)) {
+                body = Json.createObjectBuilder()
+                    .add("id", 1)
+                    .build();
+            } else if (("https://gitlab.com/api/v4/users/1"
+                + "/starred_projects?simple=true&per_page=100").equals(uri)) {
+                body = Json.createArrayBuilder()
+                    .add(Json.createObjectBuilder()
+                        .add("path_with_namespace", "john/test")
+                        .build())
+                    .build();
+            } else {
+                body = JsonValue.NULL;
+            }
+            return new MockJsonResources.MockResource(
+                HttpURLConnection.HTTP_OK,
+                body
+            );
+        });
+        Mockito.when(repo.fullName()).thenReturn("john/test");
+
+        final Stars stars = new GitlabStars(
+            res,
             URI.create("/"),
-            Mockito.mock(Repo.class)
-        ).added();
+            repo
+        );
+
+        MatcherAssert.assertThat(stars.added(), Matchers.is(true));
+    }
+
+    /**
+     * GitlabStars can check if a repo is not starred by the authenticated.
+     */
+    @Test
+    public void canCheckIfRepoIsNotStarred() {
+        final Repo repo = Mockito.mock(Repo.class);
+        final JsonResources res = new MockJsonResources(req -> {
+            final String uri = req.getUri().toString();
+            final JsonValue body;
+            if ("https://gitlab.com/api/v4/user".equals(uri)) {
+                body = Json.createObjectBuilder()
+                    .add("id", 1)
+                    .build();
+            } else if (("https://gitlab.com/api/v4/users/1"
+                + "/starred_projects?simple=true&per_page=100").equals(uri)) {
+                body = Json.createArrayBuilder().build();
+            } else {
+                body = JsonValue.NULL;
+            }
+            return new MockJsonResources.MockResource(
+                HttpURLConnection.HTTP_OK,
+                body
+            );
+        });
+        Mockito.when(repo.fullName()).thenReturn("john/test");
+
+        final Stars stars = new GitlabStars(
+            res,
+            URI.create("/"),
+            repo
+        );
+
+        MatcherAssert.assertThat(stars.added(), Matchers.is(false));
+    }
+
+    /**
+     * GitlabStars can fail check if a repo is starred if user is not
+     * authenticated.
+     */
+    @Test
+    public void canFailCheckIfRepoIsStarredWhenUserNotAuth() {
+        final Repo repo = Mockito.mock(Repo.class);
+        final JsonResources res = new MockJsonResources(
+            req -> new MockJsonResources.MockResource(
+                HttpURLConnection.HTTP_UNAUTHORIZED,
+                JsonValue.NULL
+            ));
+        Mockito.when(repo.fullName()).thenReturn("john/test");
+
+        final Stars stars = new GitlabStars(
+            res,
+            URI.create("/"),
+            repo
+        );
+
+        MatcherAssert.assertThat(stars.added(), Matchers.is(false));
+    }
+
+    /**
+     * GitlabStars can fail check if a repo is starred if an unexpected error
+     * happens during find the starred repo.
+     */
+    @Test
+    public void canFailCheckIfRepoIsStarredDueToError() {
+        final Repo repo = Mockito.mock(Repo.class);
+        final JsonResources res = new MockJsonResources(req -> {
+            final String uri = req.getUri().toString();
+            final JsonValue body;
+            final int code;
+            if ("https://gitlab.com/api/v4/user".equals(uri)) {
+                body = Json.createObjectBuilder()
+                    .add("id", 1)
+                    .build();
+                code = HttpURLConnection.HTTP_OK;
+            } else {
+                body = JsonValue.NULL;
+                code = HttpURLConnection.HTTP_GATEWAY_TIMEOUT;
+            }
+            return new MockJsonResources.MockResource(code, body);
+        });
+        Mockito.when(repo.fullName()).thenReturn("john/test");
+
+        final Stars stars = new GitlabStars(
+            res,
+            URI.create("/"),
+            repo
+        );
+
+        MatcherAssert.assertThat(stars.added(), Matchers.is(false));
     }
 }
