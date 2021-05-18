@@ -27,21 +27,17 @@ import com.selfxdsd.api.Stars;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.json.JsonArray;
 import javax.json.JsonValue;
 import java.net.HttpURLConnection;
 import java.net.URI;
+import java.util.Iterator;
 
 /**
  * Gitlab stars.
  * @author Ali Fellahi (fellahi.ali@gmail.com)
  * @version $Id$
  * @since 0.0.42
- * @todo #1155:60min Since there is no endpoint to check if current user
- *  has starred "this" repo, another API endpoint must be used.
- *  `GET /users/:user_id/starred_projects?starred=true&per_page=100`
- *  https://docs.gitlab.com/ee/api/projects.html#list-projects-starred-by-a-user
- *  Based on {@link ResourcePaging.FromHeaders}, implement `added()` by getting
- *  all starred projects and filter them by current repo.
  */
 final class GitlabStars implements Stars {
 
@@ -130,6 +126,52 @@ final class GitlabStars implements Stars {
 
     @Override
     public boolean added() {
-        throw new UnsupportedOperationException("Not implemented yet");
+        LOG.debug(
+            "Check if Gitlab repository " + this.repo.fullName()
+                + " is starred by current authenticated user."
+        );
+        final boolean added;
+        final Resource authUser = this.resources
+            .get(URI.create("https://gitlab.com/api/v4/user"));
+        if (authUser.statusCode() == HttpURLConnection.HTTP_OK) {
+            final int userId = authUser.asJsonObject().getInt("id");
+            final ResourcePaging starredReposPaging = new ResourcePaging
+                .FromHeaders(
+                this.resources,
+                URI.create(
+                    "https://gitlab.com/api/v4/users/"
+                        + userId + "/starred_projects?simple=true&per_page=100"
+                )
+            );
+            LOG.debug(
+                "Finding " + this.repo.fullName()
+                    + " in the current user starred repos."
+            );
+            boolean found = false;
+            try {
+                final Iterator<Resource> pages = starredReposPaging
+                    .iterator();
+                while (!found && pages.hasNext()) {
+                    final JsonArray page = pages.next().asJsonArray();
+                    for (final JsonValue jsonEntry : page) {
+                        if (repo.fullName().equals(jsonEntry.asJsonObject()
+                            .getString("path_with_namespace"))) {
+                            found = true;
+                            break;
+                        }
+                    }
+                }
+            } catch (final IllegalStateException pagingException) {
+                LOG.warn(
+                    "Something went wrong while listing user's starred repos: ["
+                        + pagingException.getMessage() + "]."
+                );
+            }
+            added = found;
+        } else {
+            LOG.warn("Can't get user id, user is not authenticated.");
+            added = false;
+        }
+        return added;
     }
 }
