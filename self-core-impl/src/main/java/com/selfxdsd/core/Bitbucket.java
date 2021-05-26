@@ -121,6 +121,11 @@ public final class Bitbucket implements Provider {
     }
 
     @Override
+    public Repos repos() {
+        throw new UnsupportedOperationException("Not yet implemented.");
+    }
+
+    @Override
     public Repo repo(final String owner, final String name) {
         return new BitbucketRepo(
             this.resources,

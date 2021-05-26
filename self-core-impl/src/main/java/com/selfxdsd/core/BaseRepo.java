@@ -38,6 +38,9 @@ import java.util.UUID;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
+ * @todo #1163:60min Sometimes we receive the Repo JSON before we instantiate
+ *  this objects. As such, we should be able to initialize it through the
+ *  constructor to save an API call.
  */
 abstract class BaseRepo implements Repo {
     /**
