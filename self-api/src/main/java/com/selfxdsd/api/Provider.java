@@ -38,6 +38,12 @@ public interface Provider {
     String name();
 
     /**
+     * Personal Repos of the authenticated user (both public and private).
+     * @return Repos.
+     */
+    Repos repos();
+
+    /**
      * Get a Repo.
      * @param owner Login of the User owner or Organization name.
      * @param name Simple name of the repo.

@@ -116,6 +116,11 @@ public final class Github implements Provider {
     }
 
     @Override
+    public Repos repos() {
+        return null;
+    }
+
+    @Override
     public Repo repo(final String owner, final String name) {
         final URI repo = URI.create(
             this.uri.toString() + "/repos/" + owner + "/" + name

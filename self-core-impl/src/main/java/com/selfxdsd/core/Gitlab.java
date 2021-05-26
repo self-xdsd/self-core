@@ -119,6 +119,11 @@ public final class Gitlab implements Provider {
     }
 
     @Override
+    public Repos repos() {
+        throw new UnsupportedOperationException("Not yet implemented.");
+    }
+
+    @Override
     public Repo repo(final String owner, final String name) {
         return GitlabRepo.createFromName(
             owner,
