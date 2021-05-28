@@ -5,6 +5,7 @@ import com.selfxdsd.api.Repos;
 import com.selfxdsd.api.User;
 import com.selfxdsd.api.storage.Storage;
 
+import javax.json.JsonObject;
 import javax.json.JsonValue;
 import java.net.HttpURLConnection;
 import java.net.URI;
@@ -82,12 +83,14 @@ public final class BitbucketOrganizationRepos implements Repos {
      * @return Repo.
      */
     private Repo buildRepo(final JsonValue repoData) {
-        final String repoUri =  this.reposUri.toString() + "/"
-            + repoData.asJsonObject().getString("slug");
+        final JsonObject repo = (JsonObject) repoData;
         return new BitbucketRepo(
             this.resources,
-            URI.create(repoUri),
+            URI.create(
+                this.reposUri + "/" + repo.getString("slug")
+            ),
             this.owner,
+            repo,
             this.storage
         );
     }

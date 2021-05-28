@@ -123,7 +123,7 @@ public final class Github implements Provider {
     @Override
     public Repo repo(final String owner, final String name) {
         final URI repo = URI.create(
-            this.uri.toString() + "/repos/" + owner + "/" + name
+            this.uri + "/repos/" + owner + "/" + name
         );
         return new GithubRepo(
             this.resources, repo, this.user, this.storage

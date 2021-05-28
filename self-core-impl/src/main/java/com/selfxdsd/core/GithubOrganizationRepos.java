@@ -118,11 +118,13 @@ final class GithubOrganizationRepos implements Repos {
      * @return Repo.
      */
     private Repo buildRepo(final JsonValue repoData) {
-        final URI repoUri = URI.create(((JsonObject) repoData)
-            .getString("url"));
-        return new GithubRepo(this.resources,
-            repoUri,
+        final JsonObject json = (JsonObject) repoData;
+        return new GithubRepo(
+            this.resources,
+            URI.create(json.getString("url")),
             this.owner,
-            this.storage);
+            json,
+            this.storage
+        );
     }
 }

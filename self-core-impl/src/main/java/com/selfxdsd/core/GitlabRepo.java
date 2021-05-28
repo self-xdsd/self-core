@@ -26,6 +26,7 @@ import com.selfxdsd.api.*;
 import com.selfxdsd.api.Labels;
 import com.selfxdsd.api.storage.Storage;
 
+import javax.json.JsonObject;
 import java.net.URI;
 
 /**
@@ -50,7 +51,26 @@ final class GitlabRepo extends BaseRepo {
         final User owner,
         final Storage storage
     ) {
-        super(resources, uri, owner, storage);
+        this(resources, uri, owner, null, storage);
+    }
+
+    /**
+     * Constructor.
+     * @param resources Gitlab's JSON Resources.
+     * @param uri URI Pointing to this repo.
+     * @param owner Owner of this repo.
+     * @param json Repo in JSON.
+     * @param storage Storage used to save the Project when
+     *  this repo is activated.
+     */
+    GitlabRepo(
+        final JsonResources resources,
+        final URI uri,
+        final User owner,
+        final JsonObject json,
+        final Storage storage
+    ) {
+        super(resources, uri, owner, json, storage);
     }
 
     /**
