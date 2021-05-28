@@ -38,9 +38,6 @@ import java.util.UUID;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
- * @todo #1163:60min Sometimes we receive the Repo JSON before we instantiate
- *  this objects. As such, we should be able to initialize it through the
- *  constructor to save an API call.
  */
 abstract class BaseRepo implements Repo {
     /**
@@ -72,6 +69,7 @@ abstract class BaseRepo implements Repo {
      * Constructor.
      * @param resources The Provider's Json resources.
      * @param repo URI Pointing to this repo.
+     * @param json The Repo in JSON.
      * @param owner Owner of this repo.
      * @param storage Storage used for activation.
      */
@@ -79,11 +77,13 @@ abstract class BaseRepo implements Repo {
         final JsonResources resources,
         final URI repo,
         final User owner,
+        final JsonObject json,
         final Storage storage
     ) {
         this.resources = resources;
         this.uri = repo;
         this.owner = owner;
+        this.json = json;
         this.storage = storage;
     }
 
