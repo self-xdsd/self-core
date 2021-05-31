@@ -117,7 +117,12 @@ public final class Github implements Provider {
 
     @Override
     public Repos repos() {
-        return null;
+        return new GithubPersonalRepos(
+            this.uri,
+            this.user,
+            this.resources,
+            this.storage
+        );
     }
 
     @Override
