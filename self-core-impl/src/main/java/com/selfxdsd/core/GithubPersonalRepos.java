@@ -27,24 +27,26 @@ import com.selfxdsd.api.Repos;
 import com.selfxdsd.api.User;
 import com.selfxdsd.api.storage.Storage;
 
+import javax.json.JsonArray;
+import javax.json.JsonObject;
+import javax.json.JsonValue;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * Personal repos of the authenticated user, both public and private.
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.86
- * @todo #1163:60min Continue implementing this class. The iterator should
- *  iterate over all the personal repos (public and private) of the user, using
- *  ResourcePaging.
  */
 final class GithubPersonalRepos implements Repos {
 
     /**
-     * Personal Repos URI.
+     * Github API base URI.
      */
-    private final URI uri;
+    private final URI baseUri;
 
     /**
      * Current authenticated User.
@@ -63,25 +65,64 @@ final class GithubPersonalRepos implements Repos {
 
     /**
      * Ctor.
-     * @param uri Personal Repos URI.
+     * @param baseUri Github API base URI.
      * @param owner Current authenticated User.
      * @param resources Github's JSON Resources.
      * @param storage Storage used by Organization Repo.
      */
     GithubPersonalRepos(
-        final URI uri,
+        final URI baseUri,
         final User owner,
         final JsonResources resources,
         final Storage storage
     ) {
-        this.uri = uri;
+        this.baseUri = baseUri;
         this.owner = owner;
         this.resources = resources;
         this.storage = storage;
     }
 
+    /**
+     * @todo #1166:60min Possible bug in class FromHeaders. The bellow method
+     *  works fine if we specify per_page=100. However, if we do not specify
+     *  per_page, the default value is 30 and FromHeaders behaves strangely:
+     *  at the first iteration, the next page is ?page=2 (correct), but at
+     *  the second iteration, the next page is ?page=1 (it should be page=3).
+     * @return Iterator of Repo.
+     */
     @Override
     public Iterator<Repo> iterator() {
-        return null;
+        final List<Repo> repos = new ArrayList<>();
+        final ResourcePaging paginated = new ResourcePaging.FromHeaders(
+            this.resources,
+            URI.create(
+                this.baseUri + "/user/repos?per_page=100"
+            )
+        );
+        final Iterator<Resource> pages = paginated.iterator();
+        while(pages.hasNext()) {
+            final JsonArray page = pages.next().asJsonArray();
+            for (final JsonValue value : page) {
+                final JsonObject repo = (JsonObject) value;
+                final String login = repo.getJsonObject("owner").getString(
+                    "login", ""
+                );
+                if(login.equalsIgnoreCase(this.owner.username())) {
+                    repos.add(
+                        new GithubRepo(
+                            this.resources,
+                            URI.create(
+                                this.baseUri + "/"
+                                + repo.getString("full_name")
+                            ),
+                            this.owner,
+                            repo,
+                            this.storage
+                        )
+                    );
+                }
+            }
+        }
+        return repos.iterator();
     }
 }
