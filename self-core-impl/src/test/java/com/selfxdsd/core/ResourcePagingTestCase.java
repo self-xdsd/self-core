@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 /**
  * Unit test for {@link ResourcePaging} implementations.
@@ -77,6 +78,13 @@ public final class ResourcePagingTestCase {
                     Json.createObjectBuilder().add("page", 3).build()
                 )
             )
+        );
+        MatcherAssert.assertThat(
+            StreamSupport.stream(res.requests().spliterator(), false)
+                .filter(req -> req.getHeaders().containsKey("Cache-Control")
+                    && req.getHeaders().containsValue(List.of("no-cache"))
+                ).collect(Collectors.toList()),
+            Matchers.iterableWithSize(3)
         );
     }
 

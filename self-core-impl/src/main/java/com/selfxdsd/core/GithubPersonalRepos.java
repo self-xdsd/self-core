@@ -83,7 +83,7 @@ final class GithubPersonalRepos implements Repos {
     }
 
     /**
-     * @todo #1166:60min Possible bug in class FromHeaders. The bellow method
+     * TODO #1166:60min Possible bug in class FromHeaders. The bellow method
      *  works fine if we specify per_page=100. However, if we do not specify
      *  per_page, the default value is 30 and FromHeaders behaves strangely:
      *  at the first iteration, the next page is ?page=2 (correct), but at

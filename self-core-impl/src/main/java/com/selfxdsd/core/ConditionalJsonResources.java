@@ -182,9 +182,24 @@ public final class ConditionalJsonResources implements JsonResources {
             }
         } else {
             resource = this.delegate.get(uri, headers);
-            this.storeInCache(uri, resource);
+            if (!this.cacheControlNoCache(headers)) {
+                this.storeInCache(uri, resource);
+            }
         }
         return resource;
+    }
+
+    /**
+     * Checks if <code>Cache-Control: no-cache</code> is present.
+     * @param headers Headers.
+     * @return Boolean.
+     */
+    private boolean cacheControlNoCache(
+        final Supplier<Map<String, List<String>>> headers
+    ) {
+        List<String> entry = headers.get().get("Cache-Control");
+        return entry != null && !entry.isEmpty()
+            && entry.get(0).equalsIgnoreCase("no-cache");
     }
 
     /**

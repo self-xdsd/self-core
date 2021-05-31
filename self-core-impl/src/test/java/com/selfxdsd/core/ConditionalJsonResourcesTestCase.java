@@ -75,6 +75,39 @@ public final class ConditionalJsonResourcesTestCase {
     }
 
     /**
+     * Should ignore cache when headers contains Cache-Control: no-cache.
+     */
+    @Test
+    public void shouldIgnoreCacheWhenCacheControlIsPresent() {
+        final JsonStorage storage = Mockito.mock(JsonStorage.class);
+        final JsonValue body = Json.createObjectBuilder()
+            .add("hello", "world")
+            .build();
+        final MockResource resource = new MockResource(200, body,
+            Map.of("eTaG", List.of("etag-123"))
+        );
+        final MockJsonResources resources = new MockJsonResources(
+            req -> resource
+        );
+        final JsonResources cacheResources = new ConditionalJsonResources(
+            resources, storage
+        );
+
+        cacheResources.get(
+            URI.create("/"),
+            () -> Map.of("Cache-Control", List.of("no-cache"))
+        );
+
+        Mockito
+            .verify(storage, Mockito.never())
+            .store(
+                Mockito.any(),
+                Mockito.any(),
+                Mockito.any()
+            );
+    }
+
+    /**
      * Should store in cache if Etag header is present. It also should
      * ignore the header key casing when searching for etag header.
      */

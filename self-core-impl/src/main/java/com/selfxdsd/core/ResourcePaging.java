@@ -167,7 +167,10 @@ interface ResourcePaging extends Iterable<Resource> {
                     throw new NoSuchElementException("There is no next link");
                 }
                 LOG.debug("Fetching page from: {}", link);
-                final Resource resource = resources.get(link);
+                final Resource resource = resources.get(
+                    link,
+                    () -> Map.of("Cache-Control", List.of("no-cache"))
+                );
                 if (resource.statusCode() != HttpURLConnection.HTTP_OK) {
                     throw new IllegalStateException(
                         String.format(
