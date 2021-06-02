@@ -82,14 +82,6 @@ final class GithubPersonalRepos implements Repos {
         this.storage = storage;
     }
 
-    /**
-     * TODO #1166:60min Possible bug in class FromHeaders. The bellow method
-     *  works fine if we specify per_page=100. However, if we do not specify
-     *  per_page, the default value is 30 and FromHeaders behaves strangely:
-     *  at the first iteration, the next page is ?page=2 (correct), but at
-     *  the second iteration, the next page is ?page=1 (it should be page=3).
-     * @return Iterator of Repo.
-     */
     @Override
     public Iterator<Repo> iterator() {
         final List<Repo> repos = new ArrayList<>();

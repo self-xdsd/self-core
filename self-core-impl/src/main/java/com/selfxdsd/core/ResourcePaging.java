@@ -195,7 +195,10 @@ interface ResourcePaging extends Iterable<Resource> {
             private URI nextLink(
                 final Map<String, List<String>> headers
             ) {
-                List<String> links = headers.get("Link");
+                List<String> links = headers.getOrDefault(
+                    "Link",
+                    headers.get("link")
+                );
                 final URI next;
                 if (links == null) {
                     next = null;

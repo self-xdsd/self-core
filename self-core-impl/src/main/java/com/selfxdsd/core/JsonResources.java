@@ -30,11 +30,10 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.net.URI;
 import java.net.http.HttpClient;
+import java.net.http.HttpHeaders;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Supplier;
 
 /**
@@ -279,7 +278,7 @@ public interface JsonResources {
                 return new JsonResponse(
                     response.statusCode(),
                     response.body(),
-                    response.headers().map()
+                    this.headers(response.headers())
                 );
             } catch (final IOException | InterruptedException ex) {
                 throw new IllegalStateException(
@@ -311,7 +310,7 @@ public interface JsonResources {
                 return new JsonResponse(
                     response.statusCode(),
                     response.body(),
-                    response.headers().map()
+                    this.headers(response.headers())
                 );
             } catch (final IOException | InterruptedException ex) {
                 throw new IllegalStateException(
@@ -344,7 +343,7 @@ public interface JsonResources {
                 return new JsonResponse(
                     response.statusCode(),
                     response.body(),
-                    response.headers().map()
+                    this.headers(response.headers())
                 );
             } catch (final IOException | InterruptedException ex) {
                 throw new IllegalStateException(
@@ -377,7 +376,7 @@ public interface JsonResources {
                 return new JsonResponse(
                     response.statusCode(),
                     response.body(),
-                    response.headers().map()
+                    this.headers(response.headers())
                 );
             } catch (final IOException | InterruptedException ex) {
                 throw new IllegalStateException(
@@ -410,7 +409,7 @@ public interface JsonResources {
                 return new JsonResponse(
                     response.statusCode(),
                     response.body(),
-                    response.headers().map()
+                    this.headers(response.headers())
                 );
             } catch (final IOException | InterruptedException ex) {
                 throw new IllegalStateException(
@@ -476,6 +475,30 @@ public interface JsonResources {
                 client = HttpClient.newHttpClient();
             }
             return client;
+        }
+
+        /**
+         * Calling HttpHeaders.map() will return a Map<String, List<String>>,
+         * BUT it will not split the header's value by comma. We have to do
+         * that manually.
+         * @param headers Headers map with values list split by comma.
+         * @return Map.
+         * @checkstyle LineLength (10 lines)
+         * @see <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.net.http/java/net/http/HttpHeaders.html">HttpHeaders.map() JavaDoc.</a>
+         */
+        private Map<String, List<String>> headers(final HttpHeaders headers) {
+            final Map<String, List<String>> split = new HashMap<>();
+            final Map<String, List<String>> original = headers.map();
+            for(final Map.Entry<String, List<String>> header : original.entrySet()) {
+                final List<String> splitList = new ArrayList<>();
+                for(final String value : header.getValue()) {
+                    Arrays.asList(value.split(",")).stream().forEach(
+                        v -> splitList.add(v.trim())
+                    );
+                }
+                split.put(header.getKey(), splitList);
+            }
+            return split;
         }
     }
 
