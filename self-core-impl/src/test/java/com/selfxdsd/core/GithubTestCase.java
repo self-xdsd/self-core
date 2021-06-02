@@ -33,7 +33,6 @@ import org.mockito.Mockito;
 
 import javax.json.JsonValue;
 import java.net.HttpURLConnection;
-import java.util.Arrays;
 
 /**
  * Unit tests for {@link Github}.
@@ -48,8 +47,6 @@ public final class GithubTestCase {
      */
     @Test
     public void canFollowUser() {
-        final String orig = "oooooasdasdfdfdfdf";
-        System.out.println(Arrays.asList(orig.split(",")).toString());
         final Provider github = new Github(
             Mockito.mock(User.class),
             Mockito.mock(Storage.class),
