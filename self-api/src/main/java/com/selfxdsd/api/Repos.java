@@ -27,6 +27,8 @@ package com.selfxdsd.api;
  * @author criske
  * @version $Id$
  * @since 0.0.8
+ * @todo #1171:120min Implement and test GitlabPersonalRepos, which should
+ *  represent the user's public and private personal repositories.
  */
 public interface Repos extends Iterable<Repo> {
 }
