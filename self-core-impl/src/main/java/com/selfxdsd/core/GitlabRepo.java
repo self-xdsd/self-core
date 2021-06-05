@@ -206,4 +206,9 @@ final class GitlabRepo extends BaseRepo {
             this.resources()
         );
     }
+
+    @Override
+    public String toString() {
+        return super.repoUri().toString();
+    }
 }

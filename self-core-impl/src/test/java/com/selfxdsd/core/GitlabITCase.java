@@ -237,6 +237,20 @@ public final class GitlabITCase {
     }
 
     /**
+     * Gitlab provider exposes current authenticated user personal repos.
+     */
+    @Test
+    public void hasPersonalRepos() {
+        MatcherAssert.assertThat(
+            new Gitlab(
+                Mockito.mock(User.class),
+                Mockito.mock(Storage.class)
+            ).repos(),
+            Matchers.instanceOf(GitlabPersonalRepos.class)
+        );
+    }
+
+    /**
      * Creates a Gitlab instance based on a mocked
      * {@link com.selfxdsd.api.User}.
      *

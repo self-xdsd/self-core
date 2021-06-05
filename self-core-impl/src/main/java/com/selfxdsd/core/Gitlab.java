@@ -120,7 +120,12 @@ public final class Gitlab implements Provider {
 
     @Override
     public Repos repos() {
-        throw new UnsupportedOperationException("Not yet implemented.");
+        return new GitlabPersonalRepos(
+            this.uri,
+            this.user,
+            this.resources,
+            this.storage
+        );
     }
 
     @Override
