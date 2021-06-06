@@ -168,7 +168,7 @@ public final class ConditionalJsonResources implements JsonResources {
                     LOG.debug(
                         "Storing remote resource body for {} with ETag {}",
                         uri,
-                        newConditional
+                        newConditional.etag()
                     );
                     resource = this.jsonStorage.storeResource(newConditional);
                 } else {
@@ -184,7 +184,7 @@ public final class ConditionalJsonResources implements JsonResources {
                     LOG.debug(
                         "Storing remote resource body for {} with ETag {}",
                         uri,
-                        newConditional
+                        newConditional.etag()
                     );
                     this.jsonStorage.storeResource(newConditional);
                 }
