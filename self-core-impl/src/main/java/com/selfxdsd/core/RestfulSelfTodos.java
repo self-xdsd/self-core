@@ -23,6 +23,7 @@
 package com.selfxdsd.core;
 
 import com.selfxdsd.api.Project;
+import com.selfxdsd.api.Resource;
 import com.selfxdsd.api.SelfTodos;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

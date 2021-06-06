@@ -24,6 +24,7 @@ package com.selfxdsd.core;
 
 import com.selfxdsd.api.Label;
 import com.selfxdsd.api.Labels;
+import com.selfxdsd.api.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

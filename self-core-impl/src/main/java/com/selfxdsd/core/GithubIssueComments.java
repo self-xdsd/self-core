@@ -2,6 +2,7 @@ package com.selfxdsd.core;
 
 import com.selfxdsd.api.Comment;
 import com.selfxdsd.api.Comments;
+import com.selfxdsd.api.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

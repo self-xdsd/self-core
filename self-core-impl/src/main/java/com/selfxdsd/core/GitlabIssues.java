@@ -25,6 +25,7 @@ package com.selfxdsd.core;
 import com.selfxdsd.api.Issue;
 import com.selfxdsd.api.Issues;
 import com.selfxdsd.api.Repo;
+import com.selfxdsd.api.Resource;
 import com.selfxdsd.api.storage.Storage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -22,6 +22,8 @@
  */
 package com.selfxdsd.core;
 
+import com.selfxdsd.api.Resource;
+
 import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonObject;

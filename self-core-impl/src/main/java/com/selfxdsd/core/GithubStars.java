@@ -1,5 +1,6 @@
 package com.selfxdsd.core;
 
+import com.selfxdsd.api.Resource;
 import com.selfxdsd.api.Stars;
 import com.selfxdsd.api.storage.Storage;
 import org.slf4j.Logger;

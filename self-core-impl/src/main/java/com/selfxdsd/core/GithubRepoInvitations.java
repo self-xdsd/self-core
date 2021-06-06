@@ -24,6 +24,7 @@ package com.selfxdsd.core;
 
 import com.selfxdsd.api.Invitation;
 import com.selfxdsd.api.Invitations;
+import com.selfxdsd.api.Resource;
 
 import javax.json.JsonArray;
 import javax.json.JsonObject;
