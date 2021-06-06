@@ -150,6 +150,11 @@ public final class ConditionalJsonResources implements JsonResources {
             final int status = remoteResource.statusCode();
 
             if (status == HttpURLConnection.HTTP_NOT_MODIFIED) {
+                LOG.debug(
+                    "Remote resource body for {} was not modified."
+                        + " Getting the resource body from json storage.",
+                    uri
+                );
                 resource = stored;
             } else {
                 LOG.debug(
@@ -160,6 +165,11 @@ public final class ConditionalJsonResources implements JsonResources {
                 final ConditionalResource newConditional = ConditionalResource
                     .fromResource(uri, remoteResource);
                 if (newConditional != null) {
+                    LOG.debug(
+                        "Storing remote resource body for {} with ETag {}",
+                        uri,
+                        newConditional
+                    );
                     resource = this.jsonStorage.storeResource(newConditional);
                 } else {
                     resource = remoteResource;
@@ -171,6 +181,11 @@ public final class ConditionalJsonResources implements JsonResources {
                 final ConditionalResource newConditional = ConditionalResource
                     .fromResource(uri, resource);
                 if (newConditional != null) {
+                    LOG.debug(
+                        "Storing remote resource body for {} with ETag {}",
+                        uri,
+                        newConditional
+                    );
                     this.jsonStorage.storeResource(newConditional);
                 }
             }
