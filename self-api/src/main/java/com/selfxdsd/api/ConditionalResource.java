@@ -40,7 +40,7 @@ import java.util.Map;
 public interface ConditionalResource extends Resource {
 
     /**
-     * Uri of this resource. This should be also be a considered the
+     * Uri of this resource. This should be also considered the
      * storing key.
      *
      * @return URI.

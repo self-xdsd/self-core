@@ -272,6 +272,51 @@ public final class ConditionalJsonResourcesTestCase {
     }
 
     /**
+     * Should ignore getting from cache if remote check is not modified or not
+     * ok. It'll forward the remote resource instead.
+     *
+     */
+    @Test
+    public void shouldIgnoreCacheIfRemoteCodeIsNotOkOrNotModified(){
+        final URI uri = URI.create("/");
+        final JsonValue body = Json.createArrayBuilder()
+            .add(Json.createObjectBuilder()
+                .add("hello", "world")
+                .build())
+            .build();
+
+        final JsonStorage storage = Mockito.mock(JsonStorage.class);
+        final AccessToken token = new AccessToken.Github("token-123");
+        final MockJsonResources resources = new MockJsonResources(
+            token,
+            req -> new MockResource(
+                HttpURLConnection.HTTP_NOT_FOUND,
+                JsonValue.NULL
+            )
+        );
+        final JsonResources cacheResources = new ConditionalJsonResources(
+            resources, storage
+        );
+        Mockito.when(storage.getResource(uri)).thenReturn(
+            ConditionalResource
+                .fromResource(
+                    uri,
+                    new MockResource(
+                        HttpURLConnection.HTTP_OK,
+                        body,
+                        Map.of("ETag", List.of("etag-123"))
+                    )
+                )
+        );
+
+        final Resource result = cacheResources.get(uri);
+
+        MatcherAssert.assertThat(result.statusCode(), Matchers.is(
+            HttpURLConnection.HTTP_NOT_FOUND
+        ));
+    }
+
+    /**
      * CachingJsonResources should delegate POST http methods with headers.
      */
     @Test
