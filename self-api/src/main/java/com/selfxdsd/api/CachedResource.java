@@ -30,14 +30,15 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Conditional {@link Resource}.
- * A Resource is considered conditional if it has a eTag header in its
+ * Cached {@link Resource}.
+ * A Resource is considered cached if it has a eTag header in its
  * response headers.
  * @author criske
  * @version $Id$
  * @since 0.0.8
+ * @see com.selfxdsd.api.storage.JsonStorage
  */
-public interface ConditionalResource extends Resource {
+public interface CachedResource extends Resource {
 
     /**
      * Uri of this resource. This should be also considered the
@@ -55,65 +56,60 @@ public interface ConditionalResource extends Resource {
     String etag();
 
     /**
-     * Creation date of the conditional resource.
+     * Creation date of the cached resource.
      *
      * @return LocalDateTime.
      */
     LocalDateTime creationDate();
 
     /**
-     * Factory method that creates a ConditionalResource from a regular
+     * Factory method that creates a CachedResource from a regular
      * Resource.
-     * If the regular can't be conditional
+     * If the regular can't be cached
      * (no ETag header present in its response headers) it returns null.
      *
      * @param uri URI associated with the resource.
      * @param resource Original Resource.
-     * @return ConditionalResource or null.
+     * @return CachedResource or null.
      */
-    static ConditionalResource fromResource(
+    static CachedResource fromResource(
         final URI uri,
         final Resource resource
     ) {
-        final ConditionalResource conditional;
-        if (resource instanceof ConditionalResource) {
-            conditional = (ConditionalResource) resource;
-        } else {
-            final String eTag = findEtag(resource);
-            if (eTag != null) {
-                conditional = new FromResource(resource, eTag, uri);
+        final CachedResource cached;
+        if (resource instanceof CachedResource) {
+            final CachedResource candidate = (CachedResource) resource;
+            if (!candidate.uri().equals(uri)) {
+                cached = new FromResource(candidate, candidate.etag(), uri);
             } else {
-                conditional = null;
+                cached = candidate;
+            }
+        } else {
+            final String eTag = resource
+                .headers()
+                .entrySet()
+                .stream()
+                .filter(entry -> entry.getKey()
+                    .equalsIgnoreCase("ETag"))
+                .flatMap(entry -> entry.getValue().stream())
+                .findFirst()
+                .orElse(null);
+            if (eTag != null) {
+                cached = new FromResource(resource, eTag, uri);
+            } else {
+                cached = null;
             }
         }
-        return conditional;
-    }
-
-    /**
-     * Get ETag from resource headers.
-     *
-     * @param resource Resource.
-     * @return String or null if ETag was not found.
-     */
-    private static String findEtag(final Resource resource) {
-        return resource
-            .headers()
-            .entrySet()
-            .stream()
-            .filter(entry -> entry.getKey()
-                .equalsIgnoreCase("ETag"))
-            .flatMap(entry -> entry.getValue().stream())
-            .findFirst()
-            .orElse(null);
+        return cached;
     }
 
 
     /**
-     * Conditional Resource created from a regular Resource.
-     * A Resource is considered conditional if it has eTag header in its
+     * Cached Resource created from a regular Resource.
+     * A Resource is considered cached if it has eTag header in its
      * response headers.
      */
-    class FromResource implements ConditionalResource {
+    class FromResource implements CachedResource {
 
         /**
          * Original resource.
@@ -140,7 +136,7 @@ public interface ConditionalResource extends Resource {
          * Ctr.
          *
          * @param original Resource.
-         * @param eTag Etag extracted from headers.
+         * @param eTag Etag extracted from original headers.
          * @param uri URI.
          */
         private FromResource(

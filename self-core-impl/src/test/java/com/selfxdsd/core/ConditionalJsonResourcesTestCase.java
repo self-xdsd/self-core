@@ -22,7 +22,7 @@
  */
 package com.selfxdsd.core;
 
-import com.selfxdsd.api.ConditionalResource;
+import com.selfxdsd.api.CachedResource;
 import com.selfxdsd.api.Resource;
 import com.selfxdsd.api.storage.JsonStorage;
 import com.selfxdsd.core.mock.MockJsonResources;
@@ -129,7 +129,7 @@ public final class ConditionalJsonResourcesTestCase {
         );
 
         final Resource result = cacheResources.get(uri);
-        final ConditionalResource stored = storage.getResource(uri);
+        final CachedResource stored = storage.getResource(uri);
         MatcherAssert.assertThat(result, Matchers.equalTo(resource));
         MatcherAssert.assertThat(stored.etag(),
             Matchers.equalTo("etag-123"));
@@ -163,7 +163,7 @@ public final class ConditionalJsonResourcesTestCase {
             resources, storage
         );
         Mockito.when(storage.getResource(uri)).thenReturn(
-            ConditionalResource
+            CachedResource
                 .fromResource(
                     uri,
                     new MockResource(
@@ -226,7 +226,7 @@ public final class ConditionalJsonResourcesTestCase {
             resources, storage
         );
         Mockito.when(storage.getResource(uri)).thenReturn(
-            ConditionalResource
+            CachedResource
                 .fromResource(
                     uri,
                     new MockResource(
@@ -252,10 +252,10 @@ public final class ConditionalJsonResourcesTestCase {
             newBody.toString()
         ));
 
-        final ArgumentCaptor<ConditionalResource> captor = ArgumentCaptor
-            .forClass(ConditionalResource.class);
+        final ArgumentCaptor<CachedResource> captor = ArgumentCaptor
+            .forClass(CachedResource.class);
         Mockito.verify(storage).storeResource(captor.capture());
-        final ConditionalResource storing = captor.getValue();
+        final CachedResource storing = captor.getValue();
         MatcherAssert.assertThat(
             storing.uri(), Matchers.equalTo(uri)
         );
@@ -298,7 +298,7 @@ public final class ConditionalJsonResourcesTestCase {
             resources, storage
         );
         Mockito.when(storage.getResource(uri)).thenReturn(
-            ConditionalResource
+            CachedResource
                 .fromResource(
                     uri,
                     new MockResource(

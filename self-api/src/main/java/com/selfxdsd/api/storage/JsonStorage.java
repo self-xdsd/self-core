@@ -22,7 +22,7 @@
  */
 package com.selfxdsd.api.storage;
 
-import com.selfxdsd.api.ConditionalResource;
+import com.selfxdsd.api.CachedResource;
 
 import java.net.URI;
 import java.util.Map;
@@ -37,18 +37,18 @@ import java.util.concurrent.ConcurrentHashMap;
 public interface JsonStorage {
 
     /**
-     * Get conditional resource by its uri.
+     * Get cached resource by its uri.
      * @param uri URI.
      * @return Resource or null if not found.
      */
-    ConditionalResource getResource(final URI uri);
+    CachedResource getResource(final URI uri);
 
     /**
      * Store the resource.
      * @param resource Resource.
      * @return Stored Resource.
      */
-    ConditionalResource storeResource(ConditionalResource resource);
+    CachedResource storeResource(CachedResource resource);
 
     /**
      * In memory JsonStorage.
@@ -58,17 +58,17 @@ public interface JsonStorage {
         /**
          * Storage map.
          */
-        private final Map<URI, ConditionalResource> storage =
+        private final Map<URI, CachedResource> storage =
             new ConcurrentHashMap<>();
 
         @Override
-        public ConditionalResource getResource(final URI uri) {
+        public CachedResource getResource(final URI uri) {
             return storage.get(uri);
         }
 
         @Override
-        public ConditionalResource storeResource(
-            final ConditionalResource resource
+        public CachedResource storeResource(
+            final CachedResource resource
         ) {
             return storage.put(resource.uri(), resource);
         }

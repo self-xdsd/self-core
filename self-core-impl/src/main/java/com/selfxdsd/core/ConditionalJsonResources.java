@@ -22,7 +22,7 @@
  */
 package com.selfxdsd.core;
 
-import com.selfxdsd.api.ConditionalResource;
+import com.selfxdsd.api.CachedResource;
 import com.selfxdsd.api.Resource;
 import com.selfxdsd.api.storage.JsonStorage;
 import org.slf4j.Logger;
@@ -143,7 +143,7 @@ public final class ConditionalJsonResources implements JsonResources {
         final Supplier<Map<String, List<String>>> headers
     ) {
         final Resource resource;
-        final ConditionalResource stored = this.jsonStorage.getResource(uri);
+        final CachedResource stored = this.jsonStorage.getResource(uri);
         if (stored != null) {
             final Resource remoteResource = this.delegate
                 .get(uri, this.ifNoneMatch(headers, stored.etag()));
@@ -162,15 +162,15 @@ public final class ConditionalJsonResources implements JsonResources {
                         + " has an unexpected status code.",
                     uri
                 );
-                final ConditionalResource newConditional = ConditionalResource
+                final CachedResource cached = CachedResource
                     .fromResource(uri, remoteResource);
-                if (newConditional != null) {
+                if (cached != null) {
                     LOG.debug(
                         "Storing remote resource body for {} with ETag {}",
                         uri,
-                        newConditional.etag()
+                        cached.etag()
                     );
-                    resource = this.jsonStorage.storeResource(newConditional);
+                    resource = this.jsonStorage.storeResource(cached);
                 } else {
                     resource = remoteResource;
                 }
@@ -178,15 +178,15 @@ public final class ConditionalJsonResources implements JsonResources {
         } else {
             resource = this.delegate.get(uri, headers);
             if (!this.cacheControlNoCache(headers)) {
-                final ConditionalResource newConditional = ConditionalResource
+                final CachedResource cached = CachedResource
                     .fromResource(uri, resource);
-                if (newConditional != null) {
+                if (cached != null) {
                     LOG.debug(
                         "Storing remote resource body for {} with ETag {}",
                         uri,
-                        newConditional.etag()
+                        cached.etag()
                     );
-                    this.jsonStorage.storeResource(newConditional);
+                    this.jsonStorage.storeResource(cached);
                 }
             }
         }
