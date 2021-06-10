@@ -1,5 +1,6 @@
 package com.selfxdsd.core;
 
+import com.selfxdsd.api.Resource;
 import com.selfxdsd.core.mock.MockJsonResources;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;

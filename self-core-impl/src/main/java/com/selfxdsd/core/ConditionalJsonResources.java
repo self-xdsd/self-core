@@ -22,6 +22,8 @@
  */
 package com.selfxdsd.core;
 
+import com.selfxdsd.api.CachedResource;
+import com.selfxdsd.api.Resource;
 import com.selfxdsd.api.storage.JsonStorage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,7 +35,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 /**
  * Cacheable JSON Resources used by Provider.
@@ -142,48 +143,51 @@ public final class ConditionalJsonResources implements JsonResources {
         final Supplier<Map<String, List<String>>> headers
     ) {
         final Resource resource;
-        final String etag = this.jsonStorage.getEtag(uri);
-        if (etag != null) {
+        final CachedResource stored = this.jsonStorage.getResource(uri);
+        if (stored != null) {
             final Resource remoteResource = this.delegate
-                .get(uri, this.ifNoneMatch(headers, etag));
+                .get(uri, this.ifNoneMatch(headers, stored.etag()));
             final int status = remoteResource.statusCode();
 
             if (status == HttpURLConnection.HTTP_NOT_MODIFIED) {
-                final String cachedBody = this.jsonStorage.getResourceBody(uri);
-                if (cachedBody != null) {
-                    LOG.debug(
-                        "Remote resource body for {} was not modified."
-                            + " Getting the resource body from json storage.",
-                        uri
-                    );
-                    resource = remoteResource
-                        .newBuilder()
-                        .status(HttpURLConnection.HTTP_OK)
-                        .body(cachedBody)
-                        .build();
-                } else {
-                    LOG.debug(
-                        "Remote resource for {} was not modified"
-                            + " but resource body is missing from json storage."
-                            + " Getting the resource from remote.",
-                        uri
-                    );
-                    resource = this.delegate.get(uri, headers);
-                    this.storeInCache(uri, resource);
-                }
+                LOG.debug(
+                    "Remote resource body for {} was not modified."
+                        + " Getting the resource body from json storage.",
+                    uri
+                );
+                resource = stored;
             } else {
                 LOG.debug(
                     "Remote resource body for {} was modified or "
                         + " has an unexpected status code.",
                     uri
                 );
-                resource = remoteResource;
-                this.storeInCache(uri, resource);
+                final CachedResource cached = CachedResource
+                    .fromResource(uri, remoteResource);
+                if (cached != null) {
+                    LOG.debug(
+                        "Storing remote resource body for {} with ETag {}",
+                        uri,
+                        cached.etag()
+                    );
+                    resource = this.jsonStorage.storeResource(cached);
+                } else {
+                    resource = remoteResource;
+                }
             }
         } else {
             resource = this.delegate.get(uri, headers);
             if (!this.cacheControlNoCache(headers)) {
-                this.storeInCache(uri, resource);
+                final CachedResource cached = CachedResource
+                    .fromResource(uri, resource);
+                if (cached != null) {
+                    LOG.debug(
+                        "Storing remote resource body for {} with ETag {}",
+                        uri,
+                        cached.etag()
+                    );
+                    this.jsonStorage.storeResource(cached);
+                }
             }
         }
         return resource;
@@ -200,38 +204,6 @@ public final class ConditionalJsonResources implements JsonResources {
         List<String> entry = headers.get().get("Cache-Control");
         return entry != null && !entry.isEmpty()
             && entry.get(0).equalsIgnoreCase("no-cache");
-    }
-
-    /**
-     * Store the Resource in json storage only if Etag header is present
-     * and resource's status is HttpURLConnection.OK.
-     * @param uri URI.
-     * @param resource Resource.
-     */
-    private void storeInCache(final URI uri, final Resource resource) {
-        final List<String> etag = resource
-            .headers()
-            .entrySet()
-            .stream()
-            .filter(entry -> entry.getKey()
-                .equalsIgnoreCase("ETag"))
-            .flatMap(entry -> entry.getValue().stream())
-            .collect(Collectors.toList());
-        if (resource.statusCode() == HttpURLConnection.HTTP_OK) {
-            if (!etag.isEmpty()) {
-                LOG.debug(
-                    "Storing remote resource body for {} with ETag {}",
-                    uri,
-                    etag.get(0)
-                );
-                this.jsonStorage.store(uri, etag.get(0), resource.toString());
-            } else {
-                LOG.debug(
-                    "ETag header not found for {}. Caching is skipped.",
-                    uri
-                );
-            }
-        }
     }
 
     /**

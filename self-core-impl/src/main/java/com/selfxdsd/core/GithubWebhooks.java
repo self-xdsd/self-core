@@ -23,6 +23,7 @@
 package com.selfxdsd.core;
 
 import com.selfxdsd.api.Project;
+import com.selfxdsd.api.Resource;
 import com.selfxdsd.api.Webhook;
 import com.selfxdsd.api.Webhooks;
 import com.selfxdsd.api.storage.Storage;

@@ -22,18 +22,22 @@
  */
 package com.selfxdsd.core;
 
+import com.selfxdsd.api.CachedResource;
+import com.selfxdsd.api.Resource;
 import com.selfxdsd.api.storage.JsonStorage;
 import com.selfxdsd.core.mock.MockJsonResources;
 import com.selfxdsd.core.mock.MockJsonResources.MockResource;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
 import javax.json.Json;
 import javax.json.JsonValue;
 import java.net.HttpURLConnection;
 import java.net.URI;
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -67,9 +71,7 @@ public final class ConditionalJsonResourcesTestCase {
 
         Mockito
             .verify(storage, Mockito.never())
-            .store(
-                Mockito.any(),
-                Mockito.any(),
+            .storeResource(
                 Mockito.any()
             );
     }
@@ -100,9 +102,7 @@ public final class ConditionalJsonResourcesTestCase {
 
         Mockito
             .verify(storage, Mockito.never())
-            .store(
-                Mockito.any(),
-                Mockito.any(),
+            .storeResource(
                 Mockito.any()
             );
     }
@@ -129,10 +129,11 @@ public final class ConditionalJsonResourcesTestCase {
         );
 
         final Resource result = cacheResources.get(uri);
+        final CachedResource stored = storage.getResource(uri);
         MatcherAssert.assertThat(result, Matchers.equalTo(resource));
-        MatcherAssert.assertThat(storage.getEtag(uri),
+        MatcherAssert.assertThat(stored.etag(),
             Matchers.equalTo("etag-123"));
-        MatcherAssert.assertThat(storage.getResourceBody(uri),
+        MatcherAssert.assertThat(stored.toString(),
             Matchers.equalTo(body.toString()));
     }
 
@@ -161,9 +162,17 @@ public final class ConditionalJsonResourcesTestCase {
         final JsonResources cacheResources = new ConditionalJsonResources(
             resources, storage
         );
-
-        Mockito.when(storage.getEtag(uri)).thenReturn("etag-123");
-        Mockito.when(storage.getResourceBody(uri)).thenReturn(body.toString());
+        Mockito.when(storage.getResource(uri)).thenReturn(
+            CachedResource
+                .fromResource(
+                    uri,
+                    new MockResource(
+                        HttpURLConnection.HTTP_OK,
+                        body,
+                        Map.of("ETag", List.of("etag-123"))
+                    )
+                )
+        );
 
         final Resource result = cacheResources.get(
             uri,
@@ -216,9 +225,19 @@ public final class ConditionalJsonResourcesTestCase {
         final JsonResources cacheResources = new ConditionalJsonResources(
             resources, storage
         );
-
-        Mockito.when(storage.getEtag(uri)).thenReturn("etag-123");
-        Mockito.when(storage.getResourceBody(uri)).thenReturn(body.toString());
+        Mockito.when(storage.getResource(uri)).thenReturn(
+            CachedResource
+                .fromResource(
+                    uri,
+                    new MockResource(
+                        HttpURLConnection.HTTP_OK,
+                        body,
+                        Map.of("ETag", List.of("etag-123"))
+                    )
+                )
+        );
+        Mockito.when(storage.storeResource(Mockito.any()))
+            .thenAnswer(invocation -> invocation.getArguments()[0]);
 
         final Resource result = cacheResources.get(uri);
         final MockRequest req = resources.requests().first();
@@ -232,62 +251,69 @@ public final class ConditionalJsonResourcesTestCase {
         MatcherAssert.assertThat(result.toString(), Matchers.equalTo(
             newBody.toString()
         ));
-        
-        Mockito.verify(storage).store(uri, "etag-124", newBody.toString());
+
+        final ArgumentCaptor<CachedResource> captor = ArgumentCaptor
+            .forClass(CachedResource.class);
+        Mockito.verify(storage).storeResource(captor.capture());
+        final CachedResource storing = captor.getValue();
+        MatcherAssert.assertThat(
+            storing.uri(), Matchers.equalTo(uri)
+        );
+        MatcherAssert.assertThat(
+            storing.toString(), Matchers.equalTo(newBody.toString())
+        );
+        MatcherAssert.assertThat(
+            storing.etag(), Matchers.equalTo("etag-124")
+        );
+        MatcherAssert.assertThat(
+            storing.creationDate().toLocalDate(),
+            Matchers.equalTo(LocalDate.now())
+        );
     }
 
     /**
-     * Should get Resource from remote if etag is present but 
-     * resource is missing.
+     * Should ignore getting from cache if remote check is not modified or not
+     * ok. It'll forward the remote resource instead.
+     *
      */
     @Test
-    public void shouldGetFromRemoteIfResourceEntryIsMissing(){
+    public void shouldIgnoreCacheIfRemoteCodeIsNotOkOrNotModified(){
         final URI uri = URI.create("/");
-        final JsonValue body = Json.createObjectBuilder()
-            .add("hello", "world")
+        final JsonValue body = Json.createArrayBuilder()
+            .add(Json.createObjectBuilder()
+                .add("hello", "world")
+                .build())
             .build();
-        
+
         final JsonStorage storage = Mockito.mock(JsonStorage.class);
+        final AccessToken token = new AccessToken.Github("token-123");
         final MockJsonResources resources = new MockJsonResources(
-            req -> {
-                final boolean hasCheckHeader = req.getHeaders()
-                    .containsKey("If-None-Match");
-                final MockResource res;
-                if (hasCheckHeader) {
-                    res = new MockResource(
-                        HttpURLConnection.HTTP_NOT_MODIFIED,
-                        JsonValue.NULL,
-                        Map.of("ETag", List.of("etag-123"))
-                    );
-                } else {
-                    res = new MockResource(
-                        HttpURLConnection.HTTP_OK,
-                        body,
-                        Map.of("ETag", List.of("etag-123"))
-                    );
-                }
-                return res;
-            }
+            token,
+            req -> new MockResource(
+                HttpURLConnection.HTTP_NOT_FOUND,
+                JsonValue.NULL
+            )
         );
         final JsonResources cacheResources = new ConditionalJsonResources(
             resources, storage
         );
-
-        Mockito.when(storage.getEtag(uri)).thenReturn("etag-123");
+        Mockito.when(storage.getResource(uri)).thenReturn(
+            CachedResource
+                .fromResource(
+                    uri,
+                    new MockResource(
+                        HttpURLConnection.HTTP_OK,
+                        body,
+                        Map.of("ETag", List.of("etag-123"))
+                    )
+                )
+        );
 
         final Resource result = cacheResources.get(uri);
-        MatcherAssert.assertThat(
-            resources.requests().first().getHeaders().get("If-None-Match"),
-            Matchers.equalTo(List.of("etag-123"))
-        );
-        MatcherAssert.assertThat(result.statusCode(), Matchers.is(
-            HttpURLConnection.HTTP_OK
-        ));
-        MatcherAssert.assertThat(result.toString(), Matchers.equalTo(
-            body.toString()
-        ));
 
-        Mockito.verify(storage).store(uri, "etag-123", body.toString());
+        MatcherAssert.assertThat(result.statusCode(), Matchers.is(
+            HttpURLConnection.HTTP_NOT_FOUND
+        ));
     }
 
     /**

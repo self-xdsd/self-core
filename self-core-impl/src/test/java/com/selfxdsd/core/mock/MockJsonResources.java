@@ -2,7 +2,7 @@ package com.selfxdsd.core.mock;
 
 import com.selfxdsd.core.AccessToken;
 import com.selfxdsd.core.JsonResources;
-import com.selfxdsd.core.Resource;
+import com.selfxdsd.api.Resource;
 
 import javax.json.Json;
 import javax.json.JsonArray;

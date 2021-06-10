@@ -22,6 +22,8 @@
  */
 package com.selfxdsd.api.storage;
 
+import com.selfxdsd.api.CachedResource;
+
 import java.net.URI;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -35,26 +37,18 @@ import java.util.concurrent.ConcurrentHashMap;
 public interface JsonStorage {
 
     /**
-     * Return the ETag by URI.
+     * Get cached resource by its uri.
      * @param uri URI.
-     * @return ETag or null if not found.
+     * @return Resource or null if not found.
      */
-    String getEtag(final URI uri);
+    CachedResource getResource(final URI uri);
 
     /**
-     * Get a cached resource body in JSON format by URI.
-     * @param uri URI.
-     * @return JsonValue or null if not found.
+     * Store the resource.
+     * @param resource Resource.
+     * @return Stored Resource.
      */
-    String getResourceBody(final URI uri);
-
-    /**
-     * Stores a resource from URI along with its etag in json format.
-     * @param uri URI.
-     * @param etag ETag.
-     * @param resource Resource in JSON.
-     */
-    void store(final URI uri, final String etag, final String resource);
+    CachedResource storeResource(CachedResource resource);
 
     /**
      * In memory JsonStorage.
@@ -64,61 +58,19 @@ public interface JsonStorage {
         /**
          * Storage map.
          */
-        private final Map<URI, Value> storage = new ConcurrentHashMap<>();
+        private final Map<URI, CachedResource> storage =
+            new ConcurrentHashMap<>();
 
         @Override
-        public String getEtag(final URI uri) {
-            final Value value = this.storage.get(uri);
-            String etag = null;
-            if (value != null) {
-                etag = value.etag;
-            }
-            return etag;
+        public CachedResource getResource(final URI uri) {
+            return storage.get(uri);
         }
 
         @Override
-        public String getResourceBody(final URI uri) {
-            final Value value = this.storage.get(uri);
-            String resource = null;
-            if (value != null) {
-                resource = value.resource;
-            }
-            return resource;
-        }
-
-        @Override
-        public void store(
-            final URI uri,
-            final String etag,
-            final String resource
+        public CachedResource storeResource(
+            final CachedResource resource
         ) {
-            this.storage.put(uri, new Value(etag, resource));
+            return storage.put(resource.uri(), resource);
         }
-
-        /**
-         * JsonStorage value wrapper.
-         */
-        private static final class Value {
-            /**
-             * Etag.
-             */
-            private final String etag;
-            /**
-             * Resource as JSON.
-             */
-            private final String resource;
-
-            /**
-             * Ctor.
-             * @param etag Etag.
-             * @param resource Resource as JSON.
-             */
-            private Value(final String etag, final String resource) {
-                this.etag = etag;
-                this.resource = resource;
-            }
-
-        }
-
     }
 }

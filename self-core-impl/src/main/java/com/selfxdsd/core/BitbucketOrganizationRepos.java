@@ -2,6 +2,7 @@ package com.selfxdsd.core;
 
 import com.selfxdsd.api.Repo;
 import com.selfxdsd.api.Repos;
+import com.selfxdsd.api.Resource;
 import com.selfxdsd.api.User;
 import com.selfxdsd.api.storage.Storage;
 

@@ -24,6 +24,7 @@ package com.selfxdsd.core;
 
 import com.selfxdsd.api.Commit;
 import com.selfxdsd.api.Commits;
+import com.selfxdsd.api.Resource;
 import com.selfxdsd.api.storage.Storage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

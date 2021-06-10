@@ -26,6 +26,8 @@ import java.net.HttpURLConnection;
 import java.net.URI;
 import java.util.Iterator;
 import javax.json.JsonObject;
+
+import com.selfxdsd.api.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.selfxdsd.api.Commit;
