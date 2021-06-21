@@ -23,8 +23,13 @@
 package com.selfxdsd.api.storage;
 
 import com.selfxdsd.api.CachedResource;
+import com.selfxdsd.api.Resource;
 
+import javax.json.JsonArray;
+import javax.json.JsonObject;
 import java.net.URI;
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -45,10 +50,11 @@ public interface JsonStorage {
 
     /**
      * Store the resource.
+     * @param uri Key URI of the resource.
      * @param resource Resource.
      * @return Stored Resource.
      */
-    CachedResource storeResource(CachedResource resource);
+    CachedResource storeResource(final URI uri, final Resource resource);
 
     /**
      * In memory JsonStorage.
@@ -68,9 +74,53 @@ public interface JsonStorage {
 
         @Override
         public CachedResource storeResource(
-            final CachedResource resource
+            final URI uri,
+            final Resource resource
         ) {
-            return storage.put(resource.uri(), resource);
+            return storage.put(
+                uri,
+                new CachedResource() {
+                    @Override
+                    public URI uri() {
+                        return uri;
+                    }
+
+                    @Override
+                    public String etag() {
+                        return resource.etag();
+                    }
+
+                    @Override
+                    public LocalDateTime creationDate() {
+                        return LocalDateTime.now();
+                    }
+
+                    @Override
+                    public int statusCode() {
+                        return resource.statusCode();
+                    }
+
+                    @Override
+                    public JsonObject asJsonObject() {
+                        return resource.asJsonObject();
+                    }
+
+                    @Override
+                    public JsonArray asJsonArray() {
+                        return resource.asJsonArray();
+                    }
+
+                    @Override
+                    public Map<String, List<String>> headers() {
+                        return resource.headers();
+                    }
+
+                    @Override
+                    public Builder newBuilder() {
+                        return resource.newBuilder();
+                    }
+                }
+            );
         }
     }
 }

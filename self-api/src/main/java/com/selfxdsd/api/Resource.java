@@ -65,6 +65,21 @@ public interface Resource {
     Map<String, List<String>> headers();
 
     /**
+     * Returns this resource's etag() if it exists.
+     * @return String or null.
+     */
+    default String etag() {
+        return this.headers()
+            .entrySet()
+            .stream()
+            .filter(entry -> entry.getKey()
+                .equalsIgnoreCase("ETag"))
+            .flatMap(entry -> entry.getValue().stream())
+            .findFirst()
+            .orElse(null);
+    }
+
+    /**
      * Abstract builder for a new Resource based on this resource.
      * @return Builder.
      */
