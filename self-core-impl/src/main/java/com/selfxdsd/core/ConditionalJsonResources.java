@@ -152,25 +152,26 @@ public final class ConditionalJsonResources implements JsonResources {
             if (status == HttpURLConnection.HTTP_NOT_MODIFIED) {
                 LOG.debug(
                     "Remote resource body for {} was not modified."
-                        + " Getting the resource body from json storage.",
+                    + " Getting the resource body from json storage.",
                     uri
                 );
                 resource = stored;
             } else {
                 LOG.debug(
                     "Remote resource body for {} was modified or "
-                        + " has an unexpected status code.",
+                    + " has an unexpected status code.",
                     uri
                 );
-                final CachedResource cached = CachedResource
-                    .fromResource(uri, remoteResource);
-                if (cached != null) {
+                final String etag = remoteResource.etag();
+                if (etag != null) {
                     LOG.debug(
                         "Storing remote resource body for {} with ETag {}",
                         uri,
-                        cached.etag()
+                        etag
                     );
-                    resource = this.jsonStorage.storeResource(cached);
+                    resource = this.jsonStorage.storeResource(
+                        uri, remoteResource
+                    );
                 } else {
                     resource = remoteResource;
                 }
@@ -178,15 +179,14 @@ public final class ConditionalJsonResources implements JsonResources {
         } else {
             resource = this.delegate.get(uri, headers);
             if (!this.cacheControlNoCache(headers)) {
-                final CachedResource cached = CachedResource
-                    .fromResource(uri, resource);
-                if (cached != null) {
+                final String etag = resource.etag();
+                if (etag != null) {
                     LOG.debug(
                         "Storing remote resource body for {} with ETag {}",
                         uri,
-                        cached.etag()
+                        etag
                     );
-                    this.jsonStorage.storeResource(cached);
+                    this.jsonStorage.storeResource(uri, resource);
                 }
             }
         }
