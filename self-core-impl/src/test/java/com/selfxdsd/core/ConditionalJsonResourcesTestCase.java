@@ -318,7 +318,7 @@ public final class ConditionalJsonResourcesTestCase {
                 }
             }
         );
-        Mockito.when(storage.storeResource(Mockito.any(), Mockito.any()))
+        Mockito.when(storage.updateResource(Mockito.any(), Mockito.any()))
             .thenAnswer(
                 invocation -> {
                     Resource res = (Resource) invocation.getArguments()[1];
@@ -382,7 +382,7 @@ public final class ConditionalJsonResourcesTestCase {
 
         final ArgumentCaptor<Resource> captor = ArgumentCaptor
             .forClass(Resource.class);
-        Mockito.verify(storage).storeResource(Mockito.any(), captor.capture());
+        Mockito.verify(storage).updateResource(Mockito.any(), captor.capture());
         final Resource storing = captor.getValue();
         MatcherAssert.assertThat(
             storing.toString(), Matchers.equalTo(newBody.toString())

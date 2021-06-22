@@ -57,6 +57,14 @@ public interface JsonStorage {
     CachedResource storeResource(final URI uri, final Resource resource);
 
     /**
+     * Update a resource in the DB (etag, body etc).
+     * @param uri Key URI of the resource.
+     * @param resource Updated resource.
+     * @return Stored Resource.
+     */
+    CachedResource updateResource(final URI uri, final Resource resource);
+
+    /**
      * In memory JsonStorage.
      */
     final class InMemory implements JsonStorage {
@@ -77,50 +85,99 @@ public interface JsonStorage {
             final URI uri,
             final Resource resource
         ) {
-            return storage.put(
-                uri,
-                new CachedResource() {
-                    @Override
-                    public URI uri() {
-                        return uri;
-                    }
-
-                    @Override
-                    public String etag() {
-                        return resource.etag();
-                    }
-
-                    @Override
-                    public LocalDateTime creationDate() {
-                        return LocalDateTime.now();
-                    }
-
-                    @Override
-                    public int statusCode() {
-                        return resource.statusCode();
-                    }
-
-                    @Override
-                    public JsonObject asJsonObject() {
-                        return resource.asJsonObject();
-                    }
-
-                    @Override
-                    public JsonArray asJsonArray() {
-                        return resource.asJsonArray();
-                    }
-
-                    @Override
-                    public Map<String, List<String>> headers() {
-                        return resource.headers();
-                    }
-
-                    @Override
-                    public Builder newBuilder() {
-                        return resource.newBuilder();
-                    }
+            final CachedResource cached = new CachedResource() {
+                @Override
+                public URI uri() {
+                    return uri;
                 }
-            );
+
+                @Override
+                public String etag() {
+                    return resource.etag();
+                }
+
+                @Override
+                public LocalDateTime creationDate() {
+                    return LocalDateTime.now();
+                }
+
+                @Override
+                public int statusCode() {
+                    return resource.statusCode();
+                }
+
+                @Override
+                public JsonObject asJsonObject() {
+                    return resource.asJsonObject();
+                }
+
+                @Override
+                public JsonArray asJsonArray() {
+                    return resource.asJsonArray();
+                }
+
+                @Override
+                public Map<String, List<String>> headers() {
+                    return resource.headers();
+                }
+
+                @Override
+                public Builder newBuilder() {
+                    return resource.newBuilder();
+                }
+            };
+            storage.put(uri, cached);
+            return cached;
+        }
+
+        @Override
+        public CachedResource updateResource(
+            final URI uri,
+            final Resource resource
+        ) {
+            final CachedResource updated = new CachedResource() {
+                @Override
+                public URI uri() {
+                    return uri;
+                }
+
+                @Override
+                public String etag() {
+                    return resource.etag();
+                }
+
+                @Override
+                public LocalDateTime creationDate() {
+                    return LocalDateTime.now();
+                }
+
+                @Override
+                public int statusCode() {
+                    return resource.statusCode();
+                }
+
+                @Override
+                public JsonObject asJsonObject() {
+                    return resource.asJsonObject();
+                }
+
+                @Override
+                public JsonArray asJsonArray() {
+                    return resource.asJsonArray();
+                }
+
+                @Override
+                public Map<String, List<String>> headers() {
+                    return resource.headers();
+                }
+
+                @Override
+                public Builder newBuilder() {
+                    return resource.newBuilder();
+                }
+            };
+            storage.put(uri, updated);
+            return updated;
         }
     }
 }
