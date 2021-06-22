@@ -169,7 +169,7 @@ public final class ConditionalJsonResources implements JsonResources {
                         uri,
                         etag
                     );
-                    resource = this.jsonStorage.storeResource(
+                    resource = this.jsonStorage.updateResource(
                         uri, remoteResource
                     );
                 } else {
