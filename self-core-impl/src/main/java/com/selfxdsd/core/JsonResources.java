@@ -571,18 +571,6 @@ public interface JsonResources {
         }
 
         @Override
-        public Builder newBuilder() {
-            return new Builder(
-                this,
-                (status, body, headers) -> new JsonResponse(
-                    status,
-                    body.toString(),
-                    headers
-                )
-            );
-        }
-
-        @Override
         public String toString() {
             return this.body;
         }
