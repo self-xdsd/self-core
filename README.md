@@ -2,7 +2,7 @@
 
 # Self's Core Implementation
 
-[![Build Status](https://travis-ci.org/self-xdsd/self-core.svg?branch=master)](https://travis-ci.org/self-xdsd/self-core)
+[![Build Status](https://travis-ci.com/self-xdsd/self-core.svg?branch=master)](https://travis-ci.com/self-xdsd/self-core)
 [![Coverage Status](https://coveralls.io/repos/github/self-xdsd/self-core/badge.svg?branch=master)](https://coveralls.io/github/self-xdsd/self-core?branch=master)
 
 [![Managed By Self XDSD](https://self-xdsd.com/b/mbself.svg)](https://self-xdsd.com/p/self-xdsd/self-core?provider=github) 
