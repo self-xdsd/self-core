@@ -561,6 +561,11 @@ public interface JsonResources {
         }
 
         @Override
+        public String body() {
+            return this.body;
+        }
+
+        @Override
         public Map<String, List<String>> headers() {
             return this.headers;
         }
