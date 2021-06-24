@@ -426,6 +426,11 @@ public final class MockJsonResources implements JsonResources {
         }
 
         @Override
+        public String body() {
+            return this.body.toString();
+        }
+
+        @Override
         public Map<String, List<String>> headers() {
             return this.headers;
         }

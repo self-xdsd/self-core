@@ -59,6 +59,12 @@ public interface Resource {
     JsonArray asJsonArray();
 
     /**
+     * Returns the resource as simple String.
+     * @return String.
+     */
+    String body();
+
+    /**
      * Resource headers.
      * @return Map of headers.
      */

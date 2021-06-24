@@ -117,6 +117,11 @@ public interface JsonStorage {
                 }
 
                 @Override
+                public String body() {
+                    return resource.body();
+                }
+
+                @Override
                 public Map<String, List<String>> headers() {
                     return resource.headers();
                 }
@@ -164,6 +169,11 @@ public interface JsonStorage {
                 @Override
                 public JsonArray asJsonArray() {
                     return resource.asJsonArray();
+                }
+
+                @Override
+                public String body() {
+                    return resource.body();
                 }
 
                 @Override

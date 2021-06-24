@@ -55,6 +55,7 @@ import static com.selfxdsd.core.mock.MockJsonResources.MockRequest;
  * @since 0.0.79
  * @checkstyle JavaNCSS (1000 lines)
  * @checkstyle ExecutableStatementCount (1000 lines)
+ * @checkstyle MethodLength (1000 lines)
  */
 public final class ConditionalJsonResourcesTestCase {
 
@@ -207,6 +208,11 @@ public final class ConditionalJsonResourcesTestCase {
                 }
 
                 @Override
+                public String body() {
+                    return resource.body();
+                }
+
+                @Override
                 public Map<String, List<String>> headers() {
                     return resource.headers();
                 }
@@ -308,6 +314,11 @@ public final class ConditionalJsonResourcesTestCase {
                 }
 
                 @Override
+                public String body() {
+                    return resource.body();
+                }
+
+                @Override
                 public Map<String, List<String>> headers() {
                     return resource.headers();
                 }
@@ -351,6 +362,11 @@ public final class ConditionalJsonResourcesTestCase {
                         @Override
                         public JsonArray asJsonArray() {
                             return res.asJsonArray();
+                        }
+
+                        @Override
+                        public String body() {
+                            return res.body();
                         }
 
                         @Override
