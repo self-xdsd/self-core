@@ -125,11 +125,6 @@ public interface JsonStorage {
                 public Map<String, List<String>> headers() {
                     return resource.headers();
                 }
-
-                @Override
-                public Builder newBuilder() {
-                    return resource.newBuilder();
-                }
             };
             storage.put(uri, cached);
             return cached;
@@ -179,11 +174,6 @@ public interface JsonStorage {
                 @Override
                 public Map<String, List<String>> headers() {
                     return resource.headers();
-                }
-
-                @Override
-                public Builder newBuilder() {
-                    return resource.newBuilder();
                 }
             };
             storage.put(uri, updated);

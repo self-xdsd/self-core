@@ -436,11 +436,6 @@ public final class MockJsonResources implements JsonResources {
         }
 
         @Override
-        public Builder newBuilder() {
-            return new Builder(this, MockResource::new);
-        }
-
-        @Override
         public String toString() {
             return this.body.toString();
         }

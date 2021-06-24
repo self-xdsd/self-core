@@ -216,11 +216,6 @@ public final class ConditionalJsonResourcesTestCase {
                 public Map<String, List<String>> headers() {
                     return resource.headers();
                 }
-
-                @Override
-                public Builder newBuilder() {
-                    return resource.newBuilder();
-                }
             }
         );
 
@@ -322,11 +317,6 @@ public final class ConditionalJsonResourcesTestCase {
                 public Map<String, List<String>> headers() {
                     return resource.headers();
                 }
-
-                @Override
-                public Builder newBuilder() {
-                    return resource.newBuilder();
-                }
             }
         );
         Mockito.when(storage.updateResource(Mockito.any(), Mockito.any()))
@@ -372,11 +362,6 @@ public final class ConditionalJsonResourcesTestCase {
                         @Override
                         public Map<String, List<String>> headers() {
                             return res.headers();
-                        }
-
-                        @Override
-                        public Builder newBuilder() {
-                            return res.newBuilder();
                         }
                     };
                 }
