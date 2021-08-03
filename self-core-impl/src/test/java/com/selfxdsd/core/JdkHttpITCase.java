@@ -87,6 +87,117 @@ public final class JdkHttpITCase {
     }
 
     /**
+     * We can GET a JsonObject from the server if the response is 301 (redirect)
+     * with a new Location header.
+     * @throws IOException If something goes wrong.
+     */
+    @Test
+    public void getJsonObjectMovedPermanentlyRedirect() throws IOException {
+        final int port = this.resource.port();
+        final JsonObject json = Json.createObjectBuilder()
+            .add("from", "server")
+            .build();
+        try(
+            final MkContainer container = new MkGrizzlyContainer().next(
+                new MkAnswer.Simple(HttpURLConnection.HTTP_MOVED_PERM)
+                    .withHeader(
+                        "Location", "http://localhost:" + port
+                    )
+            ).next(
+                new MkAnswer.Simple(
+                    HttpURLConnection.HTTP_OK,
+                    json.toString()
+                )
+            ).start(port)
+        ) {
+            final JsonResources resources = new JsonResources.JdkHttp(true);
+            final Resource response = resources.get(container.home());
+            MatcherAssert.assertThat(
+                response.asJsonObject(),
+                Matchers.equalTo(json)
+            );
+            MatcherAssert.assertThat(
+                response.statusCode(),
+                Matchers.equalTo(HttpURLConnection.HTTP_OK)
+            );
+        }
+    }
+
+    /**
+     * We can GET a JsonObject from the server if the response is 302 (redirect)
+     * with a new Location header.
+     * @throws IOException If something goes wrong.
+     */
+    @Test
+    public void getJsonObjectMovedTemporarilyRedirect() throws IOException {
+        final int port = this.resource.port();
+        final JsonObject json = Json.createObjectBuilder()
+            .add("from", "server")
+            .build();
+        try(
+            final MkContainer container = new MkGrizzlyContainer().next(
+                new MkAnswer.Simple(HttpURLConnection.HTTP_MOVED_TEMP)
+                    .withHeader(
+                        "Location", "http://localhost:" + port
+                    )
+            ).next(
+                new MkAnswer.Simple(
+                    HttpURLConnection.HTTP_OK,
+                    json.toString()
+                )
+            ).start(port)
+        ) {
+            final JsonResources resources = new JsonResources.JdkHttp(true);
+            final Resource response = resources.get(container.home());
+            MatcherAssert.assertThat(
+                response.asJsonObject(),
+                Matchers.equalTo(json)
+            );
+            MatcherAssert.assertThat(
+                response.statusCode(),
+                Matchers.equalTo(HttpURLConnection.HTTP_OK)
+            );
+        }
+    }
+
+    /**
+     * We can GET a JsonObject from the server if the response is 303 (redirect)
+     * with a new Location header.
+     * @throws IOException If something goes wrong.
+     */
+    @Test
+    public void getJsonObjectSeeOtherRedirect() throws IOException {
+        final int port = this.resource.port();
+        final JsonObject json = Json.createObjectBuilder()
+            .add("from", "server")
+            .build();
+        try(
+            final MkContainer container = new MkGrizzlyContainer().next(
+                new MkAnswer.Simple(HttpURLConnection.HTTP_SEE_OTHER)
+                    .withHeader(
+                        "Location", "http://localhost:" + port
+                    )
+            ).next(
+                new MkAnswer.Simple(
+                    HttpURLConnection.HTTP_OK,
+                    json.toString()
+                )
+            ).start(port)
+        ) {
+            final JsonResources resources = new JsonResources.JdkHttp(true);
+            final Resource response = resources.get(container.home());
+            MatcherAssert.assertThat(
+                response.asJsonObject(),
+                Matchers.equalTo(json)
+            );
+            MatcherAssert.assertThat(
+                response.statusCode(),
+                Matchers.equalTo(HttpURLConnection.HTTP_OK)
+            );
+        }
+    }
+
+    /**
      * We can GET a JsonObject from the server with no access token and
      * request having other headers.
      * @throws IOException If something goes wrong.
