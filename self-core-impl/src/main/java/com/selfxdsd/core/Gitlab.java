@@ -35,7 +35,6 @@ import java.net.URI;
  * @author criske
  * @version $Id$
  * @since 0.0.1
- * @todo #27:30min Continue adding integration tests for Gitlab provider.
  */
 public final class Gitlab implements Provider {
 
