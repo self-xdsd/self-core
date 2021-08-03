@@ -472,9 +472,13 @@ public interface JsonResources {
                 client = HttpClient
                     .newBuilder()
                     .version(HttpClient.Version.HTTP_1_1)
+                    .followRedirects(HttpClient.Redirect.NORMAL)
                     .build();
             } else {
-                client = HttpClient.newHttpClient();
+                client = HttpClient
+                    .newBuilder()
+                    .followRedirects(HttpClient.Redirect.NORMAL)
+                    .build();
             }
             return client;
         }
