@@ -168,6 +168,11 @@ public final class InMemoryProjects extends BasePaged implements Projects{
     }
 
     @Override
+    public Project rename(final Project project, final String newName) {
+        throw new UnsupportedOperationException("Not yet implemented.");
+    }
+
+    @Override
     public Iterator<Project> iterator() {
         final Page page = super.current();
         return this.projects

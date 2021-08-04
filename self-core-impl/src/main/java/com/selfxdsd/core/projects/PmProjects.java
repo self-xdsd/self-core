@@ -160,6 +160,18 @@ public final class PmProjects extends BasePaged implements Projects {
     }
 
     @Override
+    public Project rename(
+        final Project project,
+        final String newName
+    ) {
+        throw new UnsupportedOperationException(
+            "Projects of a PM are immutable, "
+            + "can't rename one here. "
+            + "Use Project.rename(...)."
+        );
+    }
+
+    @Override
     public Iterator<Project> iterator() {
         final Page page = super.current();
         return this.projects.get()

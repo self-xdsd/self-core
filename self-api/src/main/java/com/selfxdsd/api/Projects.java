@@ -86,4 +86,11 @@ public interface Projects extends Iterable<Project>, Paged {
      */
     void remove(final Project project);
 
+    /**
+     * Rename a Project and return the new instance.
+     * @param project Project to be renamed.
+     * @param newName New name of the project (simple name, without the owner).
+     * @return Project.
+     */
+    Project rename(final Project project, final String newName);
 }

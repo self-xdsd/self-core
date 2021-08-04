@@ -44,6 +44,9 @@ import java.util.List;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.13
+ * @todo #1196:60min When registering the Project webhook, make sure to also add
+ *  the Repo Rename event to it. After that we might have to do it for Gitlab
+ *  as well.
  */
 final class GithubWebhooks implements Webhooks {
 

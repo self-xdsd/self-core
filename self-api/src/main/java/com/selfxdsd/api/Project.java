@@ -124,6 +124,13 @@ public interface Project {
     Repo deactivate(final Repo repo);
 
     /**
+     * Rename this Project.
+     * @param newName New name of the project. It should be the simple repo
+     *  name, without the owner (e.g. newName not user/newName).
+     */
+    void rename(final String newName);
+
+    /**
      * Create a wallet.
      * @param billingInfo Billing info. Data about the Customer,
      *  to be sent to Stripe. This info will appear on the invoices
