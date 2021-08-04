@@ -49,6 +49,9 @@ import java.util.Objects;
  *  It should decide what kind of event has occurred and delegate it
  *  further to the ProjectManager who will deal with it. We still need
  *  the Issue Assigned case and Comment Created case.
+ * @todo #1996:30min Add the Project_Renamed case to the resolve(...) method
+ *  and forward the call to the ProjectManager to take care of it.
+ * @todo #1196:30min Add unit tests for method rename(...) in this class.
  */
 public final class StoredProject implements Project {
 
@@ -258,6 +261,35 @@ public final class StoredProject implements Project {
             LOG.error("Problem while removing PM from repo Collaborators.");
         }
         return repo;
+    }
+
+    @Override
+    public void rename(final String newName) {
+        final String provider = this.provider();
+        LOG.debug(
+            "Renaming Project " + this.repoFullName
+            + " at " + provider + " to " + this.repoFullName.split("/")[0]
+            + "/" + newName + "... "
+        );
+        final Webhooks hooks = this.projectManager.provider().repo(
+            this.repoFullName.split("/")[0],
+            this.repoFullName.split("/")[1]
+        ).webhooks();
+        boolean noWebhooks = hooks.remove();
+        if(noWebhooks) {
+            LOG.debug("Successfully removed Webhooks! Renaming...");
+            final Project renamed = this.storage.projects()
+                .rename(this, newName);
+            LOG.debug("Project successfully renamed!");
+            boolean addedNewWebhook = hooks.add(renamed);
+            if(addedNewWebhook) {
+                LOG.debug("New Webhook successfully added!");
+            } else {
+                LOG.error("Failed to add new Webhook.");
+            }
+        } else {
+            LOG.error("Problem while removing webhooks. Rename aborted.");
+        }
     }
 
     @Override
