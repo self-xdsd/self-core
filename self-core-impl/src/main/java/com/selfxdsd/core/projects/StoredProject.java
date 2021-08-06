@@ -51,7 +51,6 @@ import java.util.Objects;
  *  the Issue Assigned case and Comment Created case.
  * @todo #1996:30min Add the Project_Renamed case to the resolve(...) method
  *  and forward the call to the ProjectManager to take care of it.
- * @todo #1196:30min Add unit tests for method rename(...) in this class.
  */
 public final class StoredProject implements Project {
 
