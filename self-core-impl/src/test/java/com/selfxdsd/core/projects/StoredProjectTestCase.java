@@ -494,6 +494,88 @@ public final class StoredProjectTestCase {
     }
 
     /**
+     * StoredProject can be renamed. Webhooks should be removed, project renamed
+     * in the Storage and new Webhook should be added.
+     */
+    @Test
+    public void canBeRenamed() {
+        final Project renamed = Mockito.mock(Project.class);
+
+        final Webhooks hooks = Mockito.mock(Webhooks.class);
+        Mockito.when(hooks.remove()).thenReturn(true);
+
+        final Repo repo = Mockito.mock(Repo.class);
+        Mockito.when(repo.webhooks()).thenReturn(hooks);
+
+        final Storage storage = Mockito.mock(Storage.class);
+        final Provider prov = Mockito.mock(Provider.class);
+        Mockito.when(prov.name()).thenReturn(Provider.Names.GITHUB);
+        Mockito.when(prov.repo("john", "test")).thenReturn(repo);
+
+        final User owner = Mockito.mock(User.class);
+        Mockito.when(owner.provider()).thenReturn(prov);
+        final ProjectManager manager = Mockito.mock(ProjectManager.class);
+        Mockito.when(manager.provider()).thenReturn(prov);
+
+        final Project project = new StoredProject(
+            owner,
+            "john/test",
+            "wh123token",
+            manager,
+            storage
+        );
+
+        final Projects all = Mockito.mock(Projects.class);
+        Mockito.when(all.rename(project, "newName"))
+            .thenReturn(renamed);
+        Mockito.when(storage.projects()).thenReturn(all);
+        Mockito.when(hooks.add(renamed)).thenReturn(true);
+
+        project.rename("newName");
+
+        Mockito.verify(hooks, Mockito.times(1)).remove();
+        Mockito.verify(all, Mockito.times(1)).rename(project, "newName");
+        Mockito.verify(hooks, Mockito.times(1)).add(renamed);
+    }
+
+    /**
+     * StoredProject should not be renamed if we fail to remove the original
+     * Webhooks.
+     */
+    @Test
+    public void doesNotRenameWhenWebhookRemovalFails() {
+        final Webhooks hooks = Mockito.mock(Webhooks.class);
+        Mockito.when(hooks.remove()).thenReturn(false);
+
+        final Repo repo = Mockito.mock(Repo.class);
+        Mockito.when(repo.webhooks()).thenReturn(hooks);
+
+        final Storage storage = Mockito.mock(Storage.class);
+        final Provider prov = Mockito.mock(Provider.class);
+        Mockito.when(prov.name()).thenReturn(Provider.Names.GITHUB);
+        Mockito.when(prov.repo("john", "test")).thenReturn(repo);
+
+        final User owner = Mockito.mock(User.class);
+        Mockito.when(owner.provider()).thenReturn(prov);
+        final ProjectManager manager = Mockito.mock(ProjectManager.class);
+        Mockito.when(manager.provider()).thenReturn(prov);
+
+        final Project project = new StoredProject(
+            owner,
+            "john/test",
+            "wh123token",
+            manager,
+            storage
+        );
+
+        project.rename("newName");
+
+        Mockito.verify(hooks, Mockito.times(1)).remove();
+        Mockito.verify(storage, Mockito.times(0)).projects();
+        Mockito.verify(hooks, Mockito.times(0)).add(Mockito.any());
+    }
+
+    /**
      * Mock a Repo for test.
      *
      * @param fullName Full name.
