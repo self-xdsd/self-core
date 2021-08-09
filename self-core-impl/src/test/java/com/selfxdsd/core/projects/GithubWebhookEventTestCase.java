@@ -100,6 +100,21 @@ public final class GithubWebhookEventTestCase {
         );
     }
 
+    /**
+     * GithubWebhookEvent can return the REPO_RENAMED type.
+     */
+    @Test
+    public void returnsRepoRenameType() {
+        final Project project = Mockito.mock(Project.class);
+        final Event event = new GithubWebhookEvent(
+            project, "repository", "{\"action\":\"renamed\"}"
+        );
+        MatcherAssert.assertThat(
+            event.type(),
+            Matchers.equalTo(Event.Type.REPO_RENAMED)
+        );
+    }
+
 
     /**
      * GithubWebhookEvent can return the newIssue PR type.

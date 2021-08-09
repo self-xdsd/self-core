@@ -83,6 +83,13 @@ final class GithubWebhookEvent implements Event {
             } else {
                 resolved = type;
             }
+        } else if("repository".equalsIgnoreCase(type)){
+            final String act = event.getString("action");
+            if("renamed".equalsIgnoreCase(act)) {
+                resolved = Type.REPO_RENAMED;
+            } else {
+                resolved = type;
+            }
         } else {
             resolved = type;
         }

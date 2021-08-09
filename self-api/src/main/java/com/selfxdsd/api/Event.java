@@ -103,6 +103,11 @@ public interface Event {
         public static final String ISSUE_COMMENT = "issue_comment";
 
         /**
+         * Event for renaming a repo.
+         */
+        public static final String REPO_RENAMED = "repo_renamed";
+
+        /**
          * Hello comment event.
          */
         public static final String HELLO = "hello";
