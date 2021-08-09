@@ -58,7 +58,7 @@ public interface Event {
 
     /**
      * New name (simple name, without owner) of the Repo.
-     * @return String if this event is REPO_ENAMED, null otherwise.
+     * @return String if this event is REPO_RENAMED, null otherwise.
      */
     String repoNewName();
 
