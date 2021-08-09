@@ -57,6 +57,12 @@ public interface Event {
     Commit commit();
 
     /**
+     * New name (simple name, without owner) of the Repo.
+     * @return String if this event is REPO_ENAMED, null otherwise.
+     */
+    String repoNewName();
+
+    /**
      * Project where this event occured.
      * @return Project.
      */

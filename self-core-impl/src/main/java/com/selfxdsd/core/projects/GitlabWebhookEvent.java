@@ -221,6 +221,13 @@ final class GitlabWebhookEvent implements Event {
     }
 
     @Override
+    public String repoNewName() {
+        throw new UnsupportedOperationException(
+            "GitLab doesn't support Webhook for REPO_RENAMED!"
+        );
+    }
+
+    @Override
     public Project project() {
         return this.project;
     }

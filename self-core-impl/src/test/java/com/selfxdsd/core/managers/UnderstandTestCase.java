@@ -90,6 +90,11 @@ public final class UnderstandTestCase {
                 }
 
                 @Override
+                public String repoNewName() {
+                    return null;
+                }
+
+                @Override
                 public Project project() {
                     return project;
                 }
@@ -145,6 +150,11 @@ public final class UnderstandTestCase {
 
                 @Override
                 public Commit commit() {
+                    return null;
+                }
+
+                @Override
+                public String repoNewName() {
                     return null;
                 }
 

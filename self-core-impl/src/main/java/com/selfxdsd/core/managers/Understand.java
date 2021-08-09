@@ -76,6 +76,11 @@ public final class Understand implements Conversation {
                 }
 
                 @Override
+                public String repoNewName() {
+                    return event.repoNewName();
+                }
+
+                @Override
                 public Project project() {
                     return event.project();
                 }

@@ -115,6 +115,49 @@ public final class GithubWebhookEventTestCase {
         );
     }
 
+    /**
+     * GithubWebhookEvent can return the repoNewName if the type is
+     * REPO_RENAMED.
+     */
+    @Test
+    public void returnsRepoNewNameIfTypeRenamed() {
+        final Project project = Mockito.mock(Project.class);
+        final Event event = new GithubWebhookEvent(
+            project,
+            "repository",
+            Json.createObjectBuilder()
+                .add("action", "renamed")
+                .add(
+                    "repository",
+                    Json.createObjectBuilder()
+                        .add("name", "new_name")
+                        .build()
+                ).build().toString()
+        );
+        MatcherAssert.assertThat(
+            event.repoNewName(),
+            Matchers.equalTo("new_name")
+        );
+    }
+
+    /**
+     * GithubWebhookEvent returns null repoNewName if type is not REPO_RENAMED.
+     */
+    @Test
+    public void returnsNullRepoNewNameIfTypeNotRenamed() {
+        final Project project = Mockito.mock(Project.class);
+        final Event event = new GithubWebhookEvent(
+            project,
+            "repository",
+            Json.createObjectBuilder()
+                .add("action", "publicised")
+                .build().toString()
+        );
+        MatcherAssert.assertThat(
+            event.repoNewName(),
+            Matchers.nullValue()
+        );
+    }
 
     /**
      * GithubWebhookEvent can return the newIssue PR type.

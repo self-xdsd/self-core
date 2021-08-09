@@ -137,6 +137,18 @@ final class GithubWebhookEvent implements Event {
     }
 
     @Override
+    public String repoNewName() {
+        final String repoNewName;
+        if(Type.REPO_RENAMED.equalsIgnoreCase(this.type())) {
+            repoNewName = this.event.getJsonObject("repository")
+                .getString("name");
+        } else {
+            repoNewName = null;
+        }
+        return repoNewName;
+    }
+
+    @Override
     public Project project() {
         return project;
     }

@@ -460,6 +460,11 @@ public final class StoredProjectManagerTestCase {
                 }
 
                 @Override
+                public String repoNewName() {
+                    return null;
+                }
+
+                @Override
                 public Project project() {
                     return project;
                 }
@@ -527,6 +532,11 @@ public final class StoredProjectManagerTestCase {
 
                 @Override
                 public Commit commit() {
+                    return null;
+                }
+
+                @Override
+                public String repoNewName() {
                     return null;
                 }
 
@@ -606,6 +616,11 @@ public final class StoredProjectManagerTestCase {
 
                 @Override
                 public Commit commit() {
+                    return null;
+                }
+
+                @Override
+                public String repoNewName() {
                     return null;
                 }
 
@@ -691,6 +706,11 @@ public final class StoredProjectManagerTestCase {
                 }
 
                 @Override
+                public String repoNewName() {
+                    return null;
+                }
+
+                @Override
                 public Project project() {
                     return project;
                 }
@@ -762,6 +782,11 @@ public final class StoredProjectManagerTestCase {
 
                 @Override
                 public Commit commit() {
+                    return null;
+                }
+
+                @Override
+                public String repoNewName() {
                     return null;
                 }
 
@@ -840,6 +865,11 @@ public final class StoredProjectManagerTestCase {
 
                 @Override
                 public Commit commit() {
+                    return null;
+                }
+
+                @Override
+                public String repoNewName() {
                     return null;
                 }
 
@@ -924,6 +954,11 @@ public final class StoredProjectManagerTestCase {
                 }
 
                 @Override
+                public String repoNewName() {
+                    return null;
+                }
+
+                @Override
                 public Project project() {
                     return project;
                 }
@@ -1001,6 +1036,11 @@ public final class StoredProjectManagerTestCase {
 
                 @Override
                 public Commit commit() {
+                    return null;
+                }
+
+                @Override
+                public String repoNewName() {
                     return null;
                 }
 

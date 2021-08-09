@@ -127,6 +127,11 @@ final class GitlabRepo extends BaseRepo {
                 }
 
                 @Override
+                public String repoNewName() {
+                    return null;
+                }
+
+                @Override
                 public Project project() {
                     return project;
                 }
