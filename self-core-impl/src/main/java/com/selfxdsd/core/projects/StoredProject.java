@@ -49,7 +49,7 @@ import java.util.Objects;
  *  It should decide what kind of event has occurred and delegate it
  *  further to the ProjectManager who will deal with it. We still need
  *  the Issue Assigned case and Comment Created case.
- * @todo #1996:30min Add the Project_Renamed case to the resolve(...) method
+ * @todo #1199:60min Add the REPO_RENAMED case to the resolve(...) method
  *  and forward the call to the ProjectManager to take care of it.
  */
 public final class StoredProject implements Project {
