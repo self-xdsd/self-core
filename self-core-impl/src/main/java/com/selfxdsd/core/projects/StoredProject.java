@@ -271,25 +271,8 @@ public final class StoredProject implements Project {
             + " at " + provider + " to " + this.repoFullName.split("/")[0]
             + "/" + newName + "... "
         );
-        final Webhooks hooks = this.projectManager.provider().repo(
-            this.repoFullName.split("/")[0],
-            this.repoFullName.split("/")[1]
-        ).webhooks();
-        boolean noWebhooks = hooks.remove();
-        if(noWebhooks) {
-            LOG.debug("Successfully removed Webhooks! Renaming...");
-            final Project renamed = this.storage.projects()
-                .rename(this, newName);
-            LOG.debug("Project successfully renamed!");
-            boolean addedNewWebhook = hooks.add(renamed);
-            if(addedNewWebhook) {
-                LOG.debug("New Webhook successfully added!");
-            } else {
-                LOG.error("Failed to add new Webhook.");
-            }
-        } else {
-            LOG.error("Problem while removing webhooks. Rename aborted.");
-        }
+        this.storage.projects().rename(this, newName);
+        LOG.debug("Project successfully renamed!");
     }
 
     @Override
