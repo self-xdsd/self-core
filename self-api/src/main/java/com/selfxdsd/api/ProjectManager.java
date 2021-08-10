@@ -135,4 +135,10 @@ public interface ProjectManager {
      * @param event Event.
      */
     void comment(final Event event);
+
+    /**
+     * Handle renaming of a Project.
+     * @param event Event.
+     */
+    void renamedProject(final Event event);
 }

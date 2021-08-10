@@ -1756,6 +1756,35 @@ public final class StoredProjectManagerTestCase {
     }
 
     /**
+     * StoredProjectManager can rename a Project.
+     */
+    @Test
+    public void handlesRepoRenamed() {
+        final Project project = Mockito.mock(Project.class);
+
+        final Event event = Mockito.mock(Event.class);
+        Mockito.when(event.project()).thenReturn(project);
+        Mockito.when(event.repoNewName()).thenReturn("newName");
+
+        final ProjectManager manager = new StoredProjectManager(
+            1,
+            "123",
+            "zoeself",
+            Provider.Names.GITHUB,
+            "123token",
+            8,
+            5,
+            Mockito.mock(Storage.class)
+        );
+
+        manager.renamedProject(event);
+
+        Mockito.verify(event, Mockito.times(1)).project();
+        Mockito.verify(event, Mockito.times(1)).repoNewName();
+        Mockito.verify(project, Mockito.times(1)).rename("newName");
+    }
+
+    /**
      * Mock a Repo for test.
      *
      * @param fullName Full name.

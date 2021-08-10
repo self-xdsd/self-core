@@ -625,6 +625,11 @@ public final class StoredProjectManager implements ProjectManager {
     }
 
     @Override
+    public void renamedProject(final Event event) {
+        event.project().rename(event.repoNewName());
+    }
+
+    @Override
     public int hashCode() {
         return this.id;
     }
