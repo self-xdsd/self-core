@@ -39,6 +39,8 @@ import java.util.stream.Stream;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
+ * @todo #1210:60min Continue with the unit tests for method getByWebHookToken
+ *  from this class.
  */
 public final class PmProjects extends BasePaged implements Projects {
 
@@ -138,6 +140,17 @@ public final class PmProjects extends BasePaged implements Projects {
             .limit(page.getSize())
             .filter(p -> p.repoFullName().equalsIgnoreCase(repoFullName)
                 && p.provider().equalsIgnoreCase(repoProvider))
+            .findFirst()
+            .orElse(null);
+    }
+
+    @Override
+    public Project getByWebHookToken(final String webHookToken) {
+        final Page page = super.current();
+        return this.projects.get()
+            .skip((page.getNumber() - 1) * page.getSize())
+            .limit(page.getSize())
+            .filter(p -> p.repoFullName().equals(webHookToken))
             .findFirst()
             .orElse(null);
     }

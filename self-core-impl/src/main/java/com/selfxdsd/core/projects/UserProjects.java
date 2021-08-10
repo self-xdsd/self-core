@@ -155,6 +155,20 @@ public final class UserProjects extends BasePaged implements Projects {
     }
 
     @Override
+    public Project getByWebHookToken(final String webHookToken) {
+        Project found = this.storage.projects().getByWebHookToken(
+            webHookToken
+        );
+        if(found != null) {
+            final String ownerUsername = found.owner().username();
+            if(!ownerUsername.equalsIgnoreCase(this.user.username())) {
+                found = null;
+            }
+        }
+        return found;
+    }
+
+    @Override
     public Projects page(final Paged.Page page) {
         return new UserProjects(this.user, this.projects, this.storage, page);
     }

@@ -168,8 +168,8 @@ public final class UserProjectsTestCase {
         final Projects projects = new UserProjects(
             user,
             () -> List.of(
-                mockProject("mihai/test", "github"),
-                mockProject("mihai/test2", "github")
+                mockProject("mihai/test", "github", "wt123"),
+                mockProject("mihai/test2", "github", "wt124")
             ).stream(),
             storage
         );
@@ -202,8 +202,8 @@ public final class UserProjectsTestCase {
         final Projects projects = new UserProjects(
             mihai,
             () -> List.of(
-                mockProject("mihai/test", "github"),
-                mockProject("mihai/test2", "github")
+                mockProject("mihai/test", "github", "wt123"),
+                mockProject("mihai/test2", "github", "wt124")
             ).stream(),
             storage
         );
@@ -213,7 +213,6 @@ public final class UserProjectsTestCase {
             Matchers.nullValue()
         );
     }
-
 
     /**
      * Should return null is project is not found by id.
@@ -233,12 +232,108 @@ public final class UserProjectsTestCase {
         final Projects projects = new UserProjects(
             user,
             () -> List.of(
-                mockProject("mihai/test", "github"),
-                mockProject("mihai/test2", "github")
+                mockProject("mihai/test", "github", "wt123"),
+                mockProject("mihai/test2", "github", "wt124")
             ).stream(),
             storage
         );
         final Project found = projects.getProjectById("mihai/test", "github");
+        MatcherAssert.assertThat(
+            found,
+            Matchers.nullValue()
+        );
+    }
+
+    /**
+     * Should find a project by it's webhook token.
+     */
+    @Test
+    public void projectByWebHookToken() {
+        final User user = this.mockUser("mihai", "github");
+
+        final Project project = Mockito.mock(Project.class);
+        Mockito.when(project.owner()).thenReturn(user);
+        final Projects all = Mockito.mock(Projects.class);
+        Mockito.when(
+            all.getByWebHookToken("wt123")
+        ).thenReturn(project);
+
+        final Storage storage = Mockito.mock(Storage.class);
+        Mockito.when(storage.projects()).thenReturn(all);
+
+        final Projects projects = new UserProjects(
+            user,
+            () -> List.of(
+                mockProject("mihai/test", "github", "wt123"),
+                mockProject("mihai/test2", "github", "wt124")
+            ).stream(),
+            storage
+        );
+        final Project found = projects.getByWebHookToken("wt123");
+        MatcherAssert.assertThat(
+            found,
+            Matchers.is(project)
+        );
+    }
+
+    /**
+     * A Project is found but it belongs to another User so the
+     * method should return null.
+     */
+    @Test
+    public void projectByWebHookTokenFoundButHasOtherOwner() {
+        final User mihai = this.mockUser("mihai", "github");
+        final User vlad = this.mockUser("vlad", "github");
+
+        final Project project = Mockito.mock(Project.class);
+        Mockito.when(project.owner()).thenReturn(vlad);
+        final Projects all = Mockito.mock(Projects.class);
+        Mockito.when(
+            all.getByWebHookToken("wt200")
+        ).thenReturn(project);
+
+        final Storage storage = Mockito.mock(Storage.class);
+        Mockito.when(storage.projects()).thenReturn(all);
+
+        final Projects projects = new UserProjects(
+            mihai,
+            () -> List.of(
+                mockProject("mihai/test", "github", "wt123"),
+                mockProject("mihai/test2", "github", "wt124")
+            ).stream(),
+            storage
+        );
+        final Project found = projects.getByWebHookToken("wt200");
+        MatcherAssert.assertThat(
+            found,
+            Matchers.nullValue()
+        );
+    }
+
+    /**
+     * Should return null is project is not found by webhook token.
+     */
+    @Test
+    public void projectByWebHookTokenNotFound() {
+        final User user = this.mockUser("mihai", "github");
+
+        final Projects all = Mockito.mock(Projects.class);
+        Mockito.when(
+            all.getByWebHookToken("wt404")
+        ).thenReturn(null);
+
+        final Storage storage = Mockito.mock(Storage.class);
+        Mockito.when(storage.projects()).thenReturn(all);
+
+        final Projects projects = new UserProjects(
+            user,
+            () -> List.of(
+                mockProject("mihai/test", "github", "wt123"),
+                mockProject("mihai/test2", "github", "wt124")
+            ).stream(),
+            storage
+        );
+        final Project found = projects.getByWebHookToken("wt404");
         MatcherAssert.assertThat(
             found,
             Matchers.nullValue()
@@ -254,14 +349,14 @@ public final class UserProjectsTestCase {
         final Projects projects = new UserProjects(
             mihai,
             () -> List.of(
-                mockProject("mihai/test", "github"),
-                mockProject("mihai/test2", "github"),
-                mockProject("mihai/test3", "github"),
-                mockProject("mihai/test4", "github")
+                mockProject("mihai/test", "github", "wt123"),
+                mockProject("mihai/test2", "github", "wt124"),
+                mockProject("mihai/test3", "github", "wt125"),
+                mockProject("mihai/test4", "github", "wt126")
             ).stream(),
             Mockito.mock(Storage.class)
         );
-        final Project toRemove = mockProject("mihai/test", "github");
+        final Project toRemove = mockProject("mihai/test", "github", "wt123");
         final Repo repo = Mockito.mock(Repo.class);
         Mockito.when(toRemove.repo()).thenReturn(repo);
         Mockito.when(toRemove.owner()).thenReturn(mihai);
@@ -279,14 +374,14 @@ public final class UserProjectsTestCase {
         final Projects projects = new UserProjects(
             this.mockUser("mihai", "github"),
             () -> List.of(
-                mockProject("mihai/test", "github"),
-                mockProject("mihai/test2", "github"),
-                mockProject("mihai/test3", "github"),
-                mockProject("mihai/test4", "github")
+                mockProject("mihai/test", "github", "wt123"),
+                mockProject("mihai/test2", "github", "wt124"),
+                mockProject("mihai/test3", "github", "wt125"),
+                mockProject("mihai/test4", "github", "wt126")
             ).stream(),
             Mockito.mock(Storage.class)
         );
-        final Project toRemove = mockProject("mihai/test", "github");
+        final Project toRemove = mockProject("mihai/test", "github", "wt123");
         final Repo repo = Mockito.mock(Repo.class);
         Mockito.when(toRemove.repo()).thenReturn(repo);
         final User vlad = this.mockUser("vlad", "github");
@@ -353,12 +448,18 @@ public final class UserProjectsTestCase {
      *
      * @param fullName Full name.
      * @param provider Provider.
+     * @param webHookToken WebHook Token.
      * @return Mocked Project
      */
-    private Project mockProject(final String fullName, final String provider) {
+    private Project mockProject(
+        final String fullName,
+        final String provider,
+        final String webHookToken
+    ) {
         final Project project = Mockito.mock(Project.class);
         Mockito.when(project.repoFullName()).thenReturn(fullName);
         Mockito.when(project.provider()).thenReturn(provider);
+        Mockito.when(project.webHookToken()).thenReturn(webHookToken);
         return project;
     }
 }
