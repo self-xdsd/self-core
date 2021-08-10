@@ -27,6 +27,9 @@ package com.selfxdsd.api;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.13
+ * @todo #1198:60min Elevate the PMs repo permissions when sending the
+ *  invitation. At the moment the PM has Write permissions which seems to not be
+ *  enough in order to add/remove Webhooks.
  */
 public interface Collaborators extends Iterable<Collaborator> {
 

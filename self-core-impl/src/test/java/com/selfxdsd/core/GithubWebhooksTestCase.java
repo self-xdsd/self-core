@@ -77,6 +77,7 @@ public final class GithubWebhooksTestCase {
                                         .add("issue_comment")
                                         .add("pull_request")
                                         .add("push")
+                                        .add("repository")
                                 )
                                 .add(
                                     "config",
@@ -147,6 +148,7 @@ public final class GithubWebhooksTestCase {
                                         .add("issue_comment")
                                         .add("pull_request")
                                         .add("push")
+                                        .add("repository")
                                 )
                                 .add(
                                     "config",
