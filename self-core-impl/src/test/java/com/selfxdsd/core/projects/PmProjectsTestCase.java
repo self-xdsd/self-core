@@ -147,8 +147,8 @@ public final class PmProjectsTestCase {
         final Projects projects = new PmProjects(
             1,
             () -> List.of(
-                mockProject("john/test", "github"),
-                mockProject("john/test2", "github")
+                mockProject("john/test", "github", "wt1"),
+                mockProject("john/test2", "github", "wt2")
             ).stream(),
             Mockito.mock(Storage.class)
         );
@@ -185,7 +185,7 @@ public final class PmProjectsTestCase {
         final Projects projects = new PmProjects(1, () -> IntStream
             .rangeClosed(1, 14)
             .mapToObj(i -> mockProject("repo-" + i,
-                Provider.Names.GITHUB)),
+                Provider.Names.GITHUB, "wt-" + i)),
             Mockito.mock(Storage.class)
         );
         //initial page has all available records
@@ -219,7 +219,7 @@ public final class PmProjectsTestCase {
         new PmProjects(1, () -> IntStream
             .rangeClosed(1, 10)
             .mapToObj(i -> mockProject("repo-" + i,
-                Provider.Names.GITHUB)),
+                Provider.Names.GITHUB, "wt-" + i)),
             Mockito.mock(Storage.class)
         ).page(new Paged.Page(5, 10));
     }
@@ -232,7 +232,7 @@ public final class PmProjectsTestCase {
         new PmProjects(1, () -> IntStream
             .rangeClosed(1, 10)
             .mapToObj(i -> mockProject("repo-" + i,
-                Provider.Names.GITHUB)),
+                Provider.Names.GITHUB, "wt-" + i)),
             Mockito.mock(Storage.class)
         ).page(new Paged.Page(0, 10));
     }
@@ -245,7 +245,7 @@ public final class PmProjectsTestCase {
         final Project found = new PmProjects(1, () -> IntStream
             .rangeClosed(1, 14)
             .mapToObj(i -> mockProject("repo-" + i,
-                Provider.Names.GITHUB)),
+                Provider.Names.GITHUB, "wt-" + i)),
             Mockito.mock(Storage.class)
         ).page(new Paged.Page(2, 5)).getProjectById(
             "repo-7", Provider.Names.GITHUB
@@ -270,7 +270,7 @@ public final class PmProjectsTestCase {
             1, () -> IntStream
             .rangeClosed(1, 14)
             .mapToObj(i -> mockProject("repo-" + i,
-                Provider.Names.GITHUB)),
+                Provider.Names.GITHUB, "wt-" + i)),
             Mockito.mock(Storage.class)
         ).page(new Paged.Page(2, 5)).getProjectById(
             "repo-1", Provider.Names.GITHUB
@@ -358,6 +358,81 @@ public final class PmProjectsTestCase {
     }
 
     /**
+     * Should find a project by its Webhook Token.
+     */
+    @Test
+    public void projectByWebhookTokenFound() {
+        final Projects projects = new PmProjects(
+            1,
+            () -> List.of(
+                mockProject("john/test", "github", "wt-1"),
+                mockProject("john/test2", "github", "wt-2")
+            ).stream(),
+            Mockito.mock(Storage.class)
+        );
+        final Project found = projects.getByWebHookToken("wt-1");
+        MatcherAssert.assertThat(
+            found.repoFullName(),
+            Matchers.equalTo("john/test")
+        );
+        MatcherAssert.assertThat(
+            found.provider(),
+            Matchers.equalTo("github")
+        );
+    }
+
+    /**
+     * Should return null if project is not found by webhook token.
+     */
+    @Test
+    public void projectByWebHookTokenNotFound() {
+        final Projects projects = new PmProjects(
+            1, Stream::empty, Mockito.mock(Storage.class)
+        );
+        MatcherAssert.assertThat(
+            projects.getByWebHookToken("wt-1"),
+            Matchers.nullValue()
+        );
+    }
+
+    /**
+     * Should find a project by its webhook token in a random page.
+     */
+    @Test
+    public void projectByWebHookTokenFoundInPage(){
+        final Project found = new PmProjects(1, () -> IntStream
+            .rangeClosed(1, 14)
+            .mapToObj(i -> mockProject("repo-" + i,
+                Provider.Names.GITHUB, "wt-" + i)),
+            Mockito.mock(Storage.class)
+        ).page(new Paged.Page(2, 5)).getByWebHookToken("wt-7");
+        MatcherAssert.assertThat(
+            found.repoFullName(),
+            Matchers.equalTo("repo-7")
+        );
+        MatcherAssert.assertThat(
+            found.provider(),
+            Matchers.equalTo("github")
+        );
+    }
+
+    /**
+     * Should return null if project is not found by webhook token in the
+     * specified page, even though project exists in overall.
+     */
+    @Test
+    public void existingProjectNotFoundByWebHookTokenInPage(){
+        final Project found = new PmProjects(
+            1, () -> IntStream
+            .rangeClosed(1, 14)
+            .mapToObj(i -> mockProject("repo-" + i,
+                Provider.Names.GITHUB, "wt-" + i)),
+            Mockito.mock(Storage.class)
+        ).page(new Paged.Page(2, 5)).getByWebHookToken("wt-1");
+        MatcherAssert.assertThat(found, Matchers.nullValue());
+    }
+
+    /**
      * Mock a User.
      *
      * @param username Username.
@@ -380,15 +455,18 @@ public final class PmProjectsTestCase {
      *
      * @param repoFullName Repo full name.
      * @param repoProvider Provider.
+     * @param webHookToken WebHook Token.
      * @return Mocked Project
      */
     private Project mockProject(
         final String repoFullName,
-        final String repoProvider
+        final String repoProvider,
+        final String webHookToken
     ) {
         final Project project = Mockito.mock(Project.class);
         Mockito.when(project.repoFullName()).thenReturn(repoFullName);
         Mockito.when(project.provider()).thenReturn(repoProvider);
+        Mockito.when(project.webHookToken()).thenReturn(webHookToken);
         return project;
     }
 }
