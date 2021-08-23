@@ -34,6 +34,8 @@ import com.selfxdsd.api.storage.Storage;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
+ * @todo #1215:60min Catch the webhook event for deleting/transferring Github
+ *  Issues and handle them.
  */
 public interface Project {
 

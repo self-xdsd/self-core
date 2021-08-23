@@ -396,50 +396,61 @@ public final class StoredProjectManager implements ProjectManager {
         );
         final Tasks projectTasks = project.tasks();
         for(final Task task : projectTasks.unassigned()) {
-            final Issue issue = task.issue();
-            if (issue.isClosed()) {
-                LOG.debug("Issue associated with task #" + issue.issueId()
-                    + " is closed. Removing task...");
-                projectTasks.remove(task);
-                continue;
-            }
-            final String issueAssignee = issue.assignee();
-            if (issueAssignee != null) {
-                final Contract contract = project.contracts().findById(
-                    new Contract.Id(
-                        project.repoFullName(),
-                        issueAssignee,
-                        project.provider(),
-                        task.role()
-                    )
-                );
-                if (contract == null) {
-                    LOG.debug("Unassigning @" + issueAssignee
-                        + " from issue #" + issue.issueId()
-                        + ". They are not contributor for project "
-                        + project.repoFullName() + " at " + project.provider()
-                        + ". "
+            try {
+                final Issue issue = task.issue();
+                if (issue.isClosed()) {
+                    LOG.debug("Issue associated with task #" + issue.issueId()
+                        + " is closed. Removing task...");
+                    projectTasks.remove(task);
+                    continue;
+                }
+                final String issueAssignee = issue.assignee();
+                if (issueAssignee != null) {
+                    final Contract contract = project.contracts().findById(
+                        new Contract.Id(
+                            project.repoFullName(),
+                            issueAssignee,
+                            project.provider(),
+                            task.role()
+                        )
                     );
-                    if (issue.unassign(issueAssignee)) {
-                        LOG.debug("Electing new assignee for task #"
-                            + issue.issueId());
-                        Contributor elected = project.contributors()
-                            .elect(task);
-                        this.assignTask(project, task, issue, elected);
-                    } else {
-                        LOG.debug("Could not unassign @" + issueAssignee
+                    if (contract == null) {
+                        LOG.debug("Unassigning @" + issueAssignee
                             + " from issue #" + issue.issueId()
-                            + ". New election aborted.");
+                            + ". They are not contributor for project "
+                            + project.repoFullName() + " at "
+                            + project.provider() + ". "
+                        );
+                        if (issue.unassign(issueAssignee)) {
+                            LOG.debug("Electing new assignee for task #"
+                                + issue.issueId());
+                            Contributor elected = project.contributors()
+                                .elect(task);
+                            this.assignTask(project, task, issue, elected);
+                        } else {
+                            LOG.debug("Could not unassign @" + issueAssignee
+                                + " from issue #" + issue.issueId()
+                                + ". New election aborted.");
+                        }
+                    } else {
+                        this.assignTask(
+                            project, task, issue, contract.contributor()
+                        );
                     }
                 } else {
-                    this.assignTask(
-                        project, task, issue, contract.contributor()
-                    );
+                    LOG.debug("Electing assignee for task #" + issue.issueId());
+                    final Contributor elected = project.contributors()
+                        .elect(task);
+                    this.assignTask(project, task, issue, elected);
                 }
-            } else {
-                LOG.debug("Electing assignee for task #" + issue.issueId());
-                final Contributor elected = project.contributors().elect(task);
-                this.assignTask(project, task, issue, elected);
+                //@checkstyle IllegalCatch (2 lines)
+            } catch (final RuntimeException exception) {
+                LOG.error(
+                    "Problem while checking the UNASSIGNED Task #"
+                    + task.issueId() + " of Project " + project.repoFullName()
+                    + " at " + project.provider() + ". Ignoring and moving on.",
+                    exception
+                );
             }
         }
         LOG.debug(
@@ -508,78 +519,90 @@ public final class StoredProjectManager implements ProjectManager {
         for(final Task task : project.tasks()) {
             final Contributor assignee = task.assignee();
             if(assignee != null) {
-                final Issue issue = task.issue();
-                if(issue.isClosed()) {
-                    LOG.debug(
-                        "Task #" + issue.issueId()
-                        + " of Contributor " + assignee.username()
-                        + " is closed. Invoicing... "
-                    );
-                    final BigDecimal value = task.value();
-                    final InvoicedTask invoiced = task.contract()
-                        .invoices()
-                        .active()
-                        .register(
-                            task,
-                            this.projectCommission(value),
-                            this.contributorCommission(value)
-                        );
-                    if(invoiced != null) {
-                        issue.comments().post(
-                            String.format(
-                                project.language().reply(
-                                    "taskInvoiced.comment"
-                                ),
-                                assignee.username()
-                            )
-                        );
-                        if(issue.assignee() != null) {
-                            issue.unassign(issue.assignee());
-                        }
+                try {
+                    final Issue issue = task.issue();
+                    if (issue.isClosed()) {
                         LOG.debug(
-                            "Task #" + issue.issueId() + " successfully"
-                            + " invoiced and taken out of scope."
+                            "Task #" + issue.issueId()
+                                + " of Contributor " + assignee.username()
+                                + " is closed. Invoicing... "
                         );
-                    }
-                } else {
-                    final LocalDateTime now = this.dateTimeSupplier.get();
-                    if (now.until(task.deadline(), ChronoUnit.MINUTES) < 0) {
-                        task.resignations()
-                            .register(task, Resignations.Reason.DEADLINE);
-                        task.unassign();
-                        if(issue.assignee() != null) {
-                            issue.unassign(issue.assignee());
-                        }
-                        issue.comments().post(
-                            String.format(
-                                project.language().reply(
-                                    "taskDeadlineMissed.comment"
-                                ),
-                                assignee.username(),
-                                task.deadline()
-                            )
-                        );
-                    } else {
-                        final int time = Period.between(
-                            task.assignmentDate().toLocalDate(),
-                            task.deadline().toLocalDate()
-                        ).getDays();
-                        final int left = Period.between(
-                            now.toLocalDate(),
-                            task.deadline().toLocalDate()
-                        ).getDays();
-                        if (left <= time / 2) {
+                        final BigDecimal value = task.value();
+                        final InvoicedTask invoiced = task.contract()
+                            .invoices()
+                            .active()
+                            .register(
+                                task,
+                                this.projectCommission(value),
+                                this.contributorCommission(value)
+                            );
+                        if (invoiced != null) {
                             issue.comments().post(
                                 String.format(
                                     project.language().reply(
-                                        "taskDeadlineReminder.comment"
+                                        "taskInvoiced.comment"
+                                    ),
+                                    assignee.username()
+                                )
+                            );
+                            if (issue.assignee() != null) {
+                                issue.unassign(issue.assignee());
+                            }
+                            LOG.debug(
+                                "Task #" + issue.issueId() + " successfully"
+                                    + " invoiced and taken out of scope."
+                            );
+                        }
+                    } else {
+                        final LocalDateTime now = this.dateTimeSupplier.get();
+                        final LocalDateTime deadline = task.deadline();
+                        if (now.until(deadline, ChronoUnit.MINUTES) < 0) {
+                            task.resignations()
+                                .register(task, Resignations.Reason.DEADLINE);
+                            task.unassign();
+                            if (issue.assignee() != null) {
+                                issue.unassign(issue.assignee());
+                            }
+                            issue.comments().post(
+                                String.format(
+                                    project.language().reply(
+                                        "taskDeadlineMissed.comment"
                                     ),
                                     assignee.username(),
                                     task.deadline()
                                 )
                             );
+                        } else {
+                            final int time = Period.between(
+                                task.assignmentDate().toLocalDate(),
+                                task.deadline().toLocalDate()
+                            ).getDays();
+                            final int left = Period.between(
+                                now.toLocalDate(),
+                                task.deadline().toLocalDate()
+                            ).getDays();
+                            if (left <= time / 2) {
+                                issue.comments().post(
+                                    String.format(
+                                        project.language().reply(
+                                            "taskDeadlineReminder.comment"
+                                        ),
+                                        assignee.username(),
+                                        task.deadline()
+                                    )
+                                );
+                            }
                         }
                     }
+                    //@checkstyle IllegalCatch (2 lines)
+                } catch (final RuntimeException ex) {
+                    LOG.error(
+                        "Problem while checking the ASSIGNED Task #"
+                        + task.issueId() + " of Project "
+                        + project.repoFullName() + " at " + project.provider()
+                        + ". Ignoring and moving on.",
+                        ex
+                    );
                 }
             }
         }
