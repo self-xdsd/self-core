@@ -396,50 +396,61 @@ public final class StoredProjectManager implements ProjectManager {
         );
         final Tasks projectTasks = project.tasks();
         for(final Task task : projectTasks.unassigned()) {
-            final Issue issue = task.issue();
-            if (issue.isClosed()) {
-                LOG.debug("Issue associated with task #" + issue.issueId()
-                    + " is closed. Removing task...");
-                projectTasks.remove(task);
-                continue;
-            }
-            final String issueAssignee = issue.assignee();
-            if (issueAssignee != null) {
-                final Contract contract = project.contracts().findById(
-                    new Contract.Id(
-                        project.repoFullName(),
-                        issueAssignee,
-                        project.provider(),
-                        task.role()
-                    )
-                );
-                if (contract == null) {
-                    LOG.debug("Unassigning @" + issueAssignee
-                        + " from issue #" + issue.issueId()
-                        + ". They are not contributor for project "
-                        + project.repoFullName() + " at " + project.provider()
-                        + ". "
+            try {
+                final Issue issue = task.issue();
+                if (issue.isClosed()) {
+                    LOG.debug("Issue associated with task #" + issue.issueId()
+                        + " is closed. Removing task...");
+                    projectTasks.remove(task);
+                    continue;
+                }
+                final String issueAssignee = issue.assignee();
+                if (issueAssignee != null) {
+                    final Contract contract = project.contracts().findById(
+                        new Contract.Id(
+                            project.repoFullName(),
+                            issueAssignee,
+                            project.provider(),
+                            task.role()
+                        )
                     );
-                    if (issue.unassign(issueAssignee)) {
-                        LOG.debug("Electing new assignee for task #"
-                            + issue.issueId());
-                        Contributor elected = project.contributors()
-                            .elect(task);
-                        this.assignTask(project, task, issue, elected);
-                    } else {
-                        LOG.debug("Could not unassign @" + issueAssignee
+                    if (contract == null) {
+                        LOG.debug("Unassigning @" + issueAssignee
                             + " from issue #" + issue.issueId()
-                            + ". New election aborted.");
+                            + ". They are not contributor for project "
+                            + project.repoFullName() + " at "
+                            + project.provider() + ". "
+                        );
+                        if (issue.unassign(issueAssignee)) {
+                            LOG.debug("Electing new assignee for task #"
+                                + issue.issueId());
+                            Contributor elected = project.contributors()
+                                .elect(task);
+                            this.assignTask(project, task, issue, elected);
+                        } else {
+                            LOG.debug("Could not unassign @" + issueAssignee
+                                + " from issue #" + issue.issueId()
+                                + ". New election aborted.");
+                        }
+                    } else {
+                        this.assignTask(
+                            project, task, issue, contract.contributor()
+                        );
                     }
                 } else {
-                    this.assignTask(
-                        project, task, issue, contract.contributor()
-                    );
+                    LOG.debug("Electing assignee for task #" + issue.issueId());
+                    final Contributor elected = project.contributors()
+                        .elect(task);
+                    this.assignTask(project, task, issue, elected);
                 }
-            } else {
-                LOG.debug("Electing assignee for task #" + issue.issueId());
-                final Contributor elected = project.contributors().elect(task);
-                this.assignTask(project, task, issue, elected);
+                //@checkstyle IllegalCatch (2 lines)
+            } catch (final RuntimeException exception) {
+                LOG.error(
+                    "Problem while checking the unassigned Task #"
+                    + task.issueId() + " of Project " + project.repoFullName()
+                    + " at " + project.provider() + ". Ignoring and moving on.",
+                    exception
+                );
             }
         }
         LOG.debug(
