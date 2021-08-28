@@ -158,11 +158,6 @@ public final class InMemoryProjects extends BasePaged implements Projects{
     }
 
     @Override
-    public Project getByWebHookToken(final String webHookToken) {
-        throw new UnsupportedOperationException("Not yet implemented.");
-    }
-
-    @Override
     public Projects page(final Paged.Page page) {
         return new InMemoryProjects(this.storage, this.projects, page);
     }

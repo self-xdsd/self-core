@@ -73,13 +73,6 @@ public interface Projects extends Iterable<Project>, Paged {
     );
 
     /**
-     * Get the Project with the specified webHookToken.
-     * @param webHookToken String WebHook Token.
-     * @return Project or null if no Project found.
-     */
-    Project getByWebHookToken(final String webHookToken);
-
-    /**
      * Get the Projects at the provided Page.
      * @param page Page number.
      * @return Projects in a page.
