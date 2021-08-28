@@ -143,17 +143,6 @@ public final class PmProjects extends BasePaged implements Projects {
     }
 
     @Override
-    public Project getByWebHookToken(final String webHookToken) {
-        final Page page = super.current();
-        return this.projects.get()
-            .skip((page.getNumber() - 1) * page.getSize())
-            .limit(page.getSize())
-            .filter(p -> p.webHookToken().equals(webHookToken))
-            .findFirst()
-            .orElse(null);
-    }
-
-    @Override
     public Projects page(final Paged.Page page) {
         return new PmProjects(this.pmId, this.projects, this.storage, page);
     }
