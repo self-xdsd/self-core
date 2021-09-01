@@ -90,11 +90,10 @@ public final class XmlBnr implements Bnr {
             return readEurFromXml(response.body());
         } catch (final Exception ex) {
             LOG.error(
-                "[BNR] Could not get EUR-RON exchange rate: ",
-                ex.getMessage()
+                "[BNR] Could not get EUR-RON exchange rate: ", ex
             );
-            LOG.error("[BNR] Returning 487 as default exchange rate.");
-            return BigDecimal.valueOf(487);
+            LOG.error("[BNR] Returning 492 as default exchange rate.");
+            return BigDecimal.valueOf(492);
         }
     }
 
@@ -126,12 +125,12 @@ public final class XmlBnr implements Bnr {
                         .multiply(BigDecimal.valueOf(100));
                 }
             }
-            LOG.warn("[BNR] EUR-RON not found! Returning 487 as default.");
-            return BigDecimal.valueOf(487);
+            LOG.warn("[BNR] EUR-RON not found! Returning 492 as default.");
+            return BigDecimal.valueOf(492);
         } catch (final Exception ex) {
-            LOG.error("[BNR] Exception while parsing XML: ", ex.getMessage());
-            LOG.error("[BNR] Returning 487 as default exchange rate.");
-            return BigDecimal.valueOf(487);
+            LOG.error("[BNR] Exception while parsing XML: ", ex);
+            LOG.error("[BNR] Returning 492 as default exchange rate.");
+            return BigDecimal.valueOf(492);
         }
     }
 }
