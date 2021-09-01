@@ -45,7 +45,7 @@ public final class XmlBnrTestCase {
     public void getsEurToRonFromBnr() {
         MatcherAssert.assertThat(
             new XmlBnr().euroToRon(),
-            Matchers.greaterThan(BigDecimal.valueOf(400))
+            Matchers.greaterThan(BigDecimal.valueOf(490))
         );
     }
 
@@ -57,7 +57,7 @@ public final class XmlBnrTestCase {
     public void getsFallbackEurToRonFromBnr() {
         MatcherAssert.assertThat(
             new XmlBnr(URI.create("http://localhost:12345")).euroToRon(),
-            Matchers.equalTo(BigDecimal.valueOf(487))
+            Matchers.equalTo(BigDecimal.valueOf(492))
         );
     }
 
