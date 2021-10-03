@@ -90,6 +90,14 @@ final class GithubWebhookEvent implements Event {
             } else {
                 resolved = type;
             }
+        } else if("label".equalsIgnoreCase(type)) {
+            final String label = event.getJsonObject("label")
+                .getString("name");
+            if(label.matches("\\d+(mins|min|m)")){
+                resolved = Type.TASK_ESTIMATION;
+            }else{
+                resolved = type;
+            }
         } else {
             resolved = type;
         }

@@ -141,4 +141,10 @@ public interface ProjectManager {
      * @param event Event.
      */
     void renamedProject(final Event event);
+
+    /**
+     * Handle estimation labels for a task.
+     * @param event Event.
+     */
+    void updateTaskEstimation(final Event event);
 }

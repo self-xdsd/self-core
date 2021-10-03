@@ -148,5 +148,10 @@ public interface Event {
          */
         public static final String COMMANDS = "commands";
 
+        /**
+         * Task estimation event.
+         */
+        public static final String TASK_ESTIMATION = "task-estimation";
+
     }
 }
