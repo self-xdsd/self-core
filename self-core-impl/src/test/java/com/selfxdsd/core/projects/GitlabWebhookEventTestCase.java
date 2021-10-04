@@ -130,7 +130,7 @@ public final class GitlabWebhookEventTestCase {
      * changed or removed.
      */
     @Test
-    public void typeTaskEstimationType(){
+    public void typeLabelChangesForIssue(){
         final Project project = Mockito.mock(Project.class);
         final Event event = new GitlabWebhookEvent(
             project, "Issue Hook",

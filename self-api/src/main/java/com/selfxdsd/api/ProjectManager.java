@@ -143,7 +143,7 @@ public interface ProjectManager {
     void renamedProject(final Event event);
 
     /**
-     * Handle estimation labels for a task.
+     * Handle label changes for an issue.
      * @param event Event.
      */
     void issueLabelsChanged(final Event event);
