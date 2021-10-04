@@ -55,6 +55,8 @@ import java.util.function.Supplier;
  *  by resolving Event.Type.TASK_ESTIMATION event when an estimation
  *  label is added or removed. If more estimation labels are found, the biggest
  *  one should be taken into account.
+ *  Condition to check if an estimation label is changed is:
+ *  `Event.issue().estimation()` != `task.estimation()`
  */
 public final class StoredProjectManager implements ProjectManager {
 
@@ -659,8 +661,8 @@ public final class StoredProjectManager implements ProjectManager {
     }
 
     @Override
-    public void updateTaskEstimation(final Event event) {
-        LOG.debug("Updating Task Estimation: <not implemented yet>");
+    public void issueLabelsChanged(final Event event) {
+        LOG.debug("Handling labels changed: <not implemented yet>");
     }
 
     @Override

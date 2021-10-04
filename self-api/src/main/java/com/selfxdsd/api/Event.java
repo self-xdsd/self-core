@@ -149,9 +149,9 @@ public interface Event {
         public static final String COMMANDS = "commands";
 
         /**
-         * Task estimation event.
+         * Issue label event.
          */
-        public static final String TASK_ESTIMATION = "task-estimation";
+        public static final String LABEL = "label";
 
     }
 }

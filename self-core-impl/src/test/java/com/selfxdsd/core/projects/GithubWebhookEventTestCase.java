@@ -190,11 +190,11 @@ public final class GithubWebhookEventTestCase {
     }
 
     /**
-     * GithubWebhookEvent can return task estimation event type when
-     * an estimation label is added, edited or deleted.
+     * GithubWebhookEvent can return label event type when
+     * an issue label is added, edited or deleted.
      */
     @Test
-    public void  returnsTaskEstimationType(){
+    public void returnsLabelType(){
         final Project project = Mockito.mock(Project.class);
         final Event event = new GithubWebhookEvent(
             project, "label",
@@ -208,7 +208,7 @@ public final class GithubWebhookEventTestCase {
         );
         MatcherAssert.assertThat(
             event.type(),
-            Matchers.equalTo(Event.Type.TASK_ESTIMATION)
+            Matchers.equalTo(Event.Type.LABEL)
         );
     }
 

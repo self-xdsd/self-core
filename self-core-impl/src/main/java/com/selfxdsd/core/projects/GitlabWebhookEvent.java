@@ -27,7 +27,6 @@ import com.selfxdsd.api.*;
 import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
-import javax.json.JsonValue;
 import java.io.StringReader;
 
 /**
@@ -92,10 +91,9 @@ final class GitlabWebhookEvent implements Event {
             } else if ("reopen".equalsIgnoreCase(action)) {
                 resolved = Type.REOPENED_ISSUE;
             } else if ("update".equalsIgnoreCase(action)){
-                final boolean estimationChanged =
-                    this.estimationLabelsChanged();
-                if (estimationChanged) {
-                    resolved = Type.TASK_ESTIMATION;
+                final boolean labelsChanged = this.labelsChanged();
+                if (labelsChanged) {
+                    resolved = Type.LABEL;
                 } else {
                     resolved = this.type;
                 }
@@ -243,44 +241,23 @@ final class GitlabWebhookEvent implements Event {
     }
 
     /**
-     * Checks if current issue payload has info about changing estimation
+     * Checks if current issue payload has info about changing
      * labels. (adding, changing, removing).
      * @return Boolean.
      */
-    private boolean estimationLabelsChanged(){
+    private boolean labelsChanged(){
         final JsonObject changes = this.event.getJsonObject("changes");
         boolean hasChanged = false;
-        if (changes.containsKey("labels")) {
+        if (changes != null && changes.containsKey("labels")) {
             final JsonArray previous = changes
                 .getJsonObject("labels")
                 .getOrDefault("previous", JsonArray.EMPTY_JSON_ARRAY)
                 .asJsonArray();
-            for (final JsonValue entry : previous) {
-                final String label = entry.asJsonObject()
-                    .getString("title");
-                if (label.matches("\\d+(mins|min|m)")) {
-                    // we have at least one estimation label modified
-                    // not need to look further.
-                    hasChanged = true;
-                    break;
-                }
-            }
-            if (!hasChanged) {
-                final JsonArray current = changes
-                    .getJsonObject("labels")
-                    .getOrDefault("current", JsonArray.EMPTY_JSON_ARRAY)
-                    .asJsonArray();
-                for (final JsonValue entry : current) {
-                    final String label = entry.asJsonObject()
-                        .getString("title");
-                    if (label.matches("\\d+(mins|min|m)")) {
-                        // we have at least one estimation label modified
-                        // not need to look further.
-                        hasChanged = true;
-                        break;
-                    }
-                }
-            }
+            final JsonArray current = changes
+                .getJsonObject("labels")
+                .getOrDefault("current", JsonArray.EMPTY_JSON_ARRAY)
+                .asJsonArray();
+            hasChanged = !previous.isEmpty() || !current.isEmpty();
         }
         return hasChanged;
     }

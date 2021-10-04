@@ -32,7 +32,6 @@ import org.mockito.stubbing.Answer;
 
 import javax.json.Json;
 import javax.json.JsonObject;
-import javax.json.JsonValue;
 
 /**
  * Unit tests for {@link GitlabWebhookEvent}.
@@ -127,8 +126,8 @@ public final class GitlabWebhookEventTestCase {
     }
 
     /**
-     * It can return the TASK_ESTIMATION type when an estimation label for
-     * an issue has been added or changed.
+     * It can return the LABEL type when a label for an issue has been added,
+     * changed or removed.
      */
     @Test
     public void typeTaskEstimationType(){
@@ -149,38 +148,10 @@ public final class GitlabWebhookEventTestCase {
         );
         MatcherAssert.assertThat(
             event.type(),
-            Matchers.equalTo(Event.Type.TASK_ESTIMATION)
+            Matchers.equalTo(Event.Type.LABEL)
         );
     }
 
-
-    /**
-     * It can return the TASK_ESTIMATION type when an estimation label for
-     * an issue has removed.
-     */
-    @Test
-    public void  typeTaskEstimationTypeRemoved(){
-        final Project project = Mockito.mock(Project.class);
-        final Event event = new GitlabWebhookEvent(
-            project, "Issue Hook",
-            Json.createObjectBuilder()
-                .add("object_attributes", Json.createObjectBuilder()
-                    .add("action", "update"))
-                .add("changes", Json.createObjectBuilder()
-                    .add("labels", Json.createObjectBuilder()
-                        .add("previous", Json.createArrayBuilder()
-                            .add(Json.createObjectBuilder()
-                                .add("title", "60min")))
-                        .add("current", JsonValue.EMPTY_JSON_ARRAY)
-                    ))
-                .build()
-                .toString()
-        );
-        MatcherAssert.assertThat(
-            event.type(),
-            Matchers.equalTo(Event.Type.TASK_ESTIMATION)
-        );
-    }
     /**
      * It returns the original type ("Issue Hook") if the Issue's
      * state is not opened or reopened.
