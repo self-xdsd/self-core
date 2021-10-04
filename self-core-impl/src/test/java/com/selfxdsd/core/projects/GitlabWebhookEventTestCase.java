@@ -126,6 +126,33 @@ public final class GitlabWebhookEventTestCase {
     }
 
     /**
+     * It can return the LABEL type when a label for an issue has been added,
+     * changed or removed.
+     */
+    @Test
+    public void typeLabelChangesForIssue(){
+        final Project project = Mockito.mock(Project.class);
+        final Event event = new GitlabWebhookEvent(
+            project, "Issue Hook",
+            Json.createObjectBuilder()
+                .add("object_attributes", Json.createObjectBuilder()
+                    .add("action", "update"))
+                .add("changes", Json.createObjectBuilder()
+                    .add("labels", Json.createObjectBuilder()
+                        .add("current", Json.createArrayBuilder()
+                            .add(Json.createObjectBuilder()
+                                .add("title", "60min")
+                                .build()))))
+                .build()
+                .toString()
+        );
+        MatcherAssert.assertThat(
+            event.type(),
+            Matchers.equalTo(Event.Type.LABEL)
+        );
+    }
+
+    /**
      * It returns the original type ("Issue Hook") if the Issue's
      * state is not opened or reopened.
      */

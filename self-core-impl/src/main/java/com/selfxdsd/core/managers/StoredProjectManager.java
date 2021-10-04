@@ -49,6 +49,14 @@ import java.util.function.Supplier;
  * @checkstyle ClassFanOutComplexity (1000 lines)
  * @checkstyle ClassDataAbstractionCoupling (1000 lines)
  * @since 0.0.1
+ * @todo #1228:60min Update Task/Tasks api to support updating
+ *  task estimation.
+ * @todo #1228:30min Handle updating task estimation
+ *  by resolving Event.Type.TASK_ESTIMATION event when an estimation
+ *  label is added or removed. If more estimation labels are found, the biggest
+ *  one should be taken into account.
+ *  Condition to check if an estimation label is changed is:
+ *  `Event.issue().estimation()` != `task.estimation()`
  */
 public final class StoredProjectManager implements ProjectManager {
 
@@ -650,6 +658,11 @@ public final class StoredProjectManager implements ProjectManager {
     @Override
     public void renamedProject(final Event event) {
         event.project().rename(event.repoNewName());
+    }
+
+    @Override
+    public void issueLabelsChanged(final Event event) {
+        LOG.debug("Handling labels changed: <not implemented yet>");
     }
 
     @Override

@@ -141,4 +141,10 @@ public interface ProjectManager {
      * @param event Event.
      */
     void renamedProject(final Event event);
+
+    /**
+     * Handle label changes for an issue.
+     * @param event Event.
+     */
+    void issueLabelsChanged(final Event event);
 }

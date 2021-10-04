@@ -25,6 +25,7 @@ package com.selfxdsd.core.projects;
 import com.selfxdsd.api.*;
 
 import javax.json.Json;
+import javax.json.JsonArray;
 import javax.json.JsonObject;
 import java.io.StringReader;
 
@@ -89,6 +90,13 @@ final class GitlabWebhookEvent implements Event {
                 resolved = Type.NEW_ISSUE;
             } else if ("reopen".equalsIgnoreCase(action)) {
                 resolved = Type.REOPENED_ISSUE;
+            } else if ("update".equalsIgnoreCase(action)){
+                final boolean labelsChanged = this.labelsChanged();
+                if (labelsChanged) {
+                    resolved = Type.LABEL;
+                } else {
+                    resolved = this.type;
+                }
             } else {
                 resolved = this.type;
             }
@@ -230,5 +238,27 @@ final class GitlabWebhookEvent implements Event {
     @Override
     public Project project() {
         return this.project;
+    }
+
+    /**
+     * Checks if current issue payload has info about changing
+     * labels. (adding, changing, removing).
+     * @return Boolean.
+     */
+    private boolean labelsChanged(){
+        final JsonObject changes = this.event.getJsonObject("changes");
+        boolean hasChanged = false;
+        if (changes != null && changes.containsKey("labels")) {
+            final JsonArray previous = changes
+                .getJsonObject("labels")
+                .getOrDefault("previous", JsonArray.EMPTY_JSON_ARRAY)
+                .asJsonArray();
+            final JsonArray current = changes
+                .getJsonObject("labels")
+                .getOrDefault("current", JsonArray.EMPTY_JSON_ARRAY)
+                .asJsonArray();
+            hasChanged = !previous.isEmpty() || !current.isEmpty();
+        }
+        return hasChanged;
     }
 }

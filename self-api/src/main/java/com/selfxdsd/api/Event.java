@@ -148,5 +148,10 @@ public interface Event {
          */
         public static final String COMMANDS = "commands";
 
+        /**
+         * Issue label event.
+         */
+        public static final String LABEL = "label";
+
     }
 }

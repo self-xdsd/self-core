@@ -196,6 +196,9 @@ public final class StoredProject implements Project {
             case Event.Type.REPO_RENAMED:
                 this.projectManager.renamedProject(event);
                 break;
+            case Event.Type.LABEL:
+                this.projectManager.issueLabelsChanged(event);
+                break;
             default:
                 break;
         }
