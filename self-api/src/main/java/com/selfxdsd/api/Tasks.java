@@ -27,6 +27,8 @@ package com.selfxdsd.api;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
+ * @todo #1233:30min Implement {@link Tasks#updateEstimation(Task, int)}
+ *  for ContractTasks, ContributorTasks, and ProjectTasks.
  */
 public interface Tasks extends Iterable<Task> {
 
@@ -67,6 +69,14 @@ public interface Tasks extends Iterable<Task> {
      * @return Task.
      */
     Task unassign(Task task);
+
+    /**
+     * Updates estimation for a Task.
+     * @param task Task to be updated.
+     * @param estimation Estimation in minutes.
+     * @return Task.
+     */
+    Task updateEstimation(Task task, int estimation);
 
     /**
      * Get the tasks of a given Project.

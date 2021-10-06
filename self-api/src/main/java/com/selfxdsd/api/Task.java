@@ -113,6 +113,13 @@ public interface Task {
     int estimation();
 
     /**
+     * Updates this task with a new estimation.
+     * @param estimation Estimation in minutes.
+     * @return Updated task.
+     */
+    Task updateEstimation(final int estimation);
+
+    /**
      * Flags if this task is a PR.
      * @return Boolean.
      */

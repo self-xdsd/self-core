@@ -252,6 +252,11 @@ public final class StoredTask implements Task {
     }
 
     @Override
+    public Task updateEstimation(final int estimation) {
+        return this.storage.tasks().updateEstimation(this, estimation);
+    }
+
+    @Override
     public boolean isPullRequest() {
         return this.isPullRequest;
     }

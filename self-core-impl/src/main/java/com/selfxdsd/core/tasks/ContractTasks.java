@@ -174,4 +174,9 @@ public final class ContractTasks implements Tasks {
         }
         return this.storage.tasks().unassign(task);
     }
+
+    @Override
+    public Task updateEstimation(final Task task, final int estimation) {
+        throw new UnsupportedOperationException("Not implemented yet");
+    }
 }

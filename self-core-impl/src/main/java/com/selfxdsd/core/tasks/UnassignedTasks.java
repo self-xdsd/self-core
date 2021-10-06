@@ -80,6 +80,12 @@ public final class UnassignedTasks implements Tasks {
     }
 
     @Override
+    public Task updateEstimation(final Task task, final int estimation) {
+        throw new TasksException.OfUnassigned("Can't update estimation "
+            + "for UnassignedTasks.");
+    }
+
+    @Override
     public Tasks ofProject(final String repoFullName,
                            final String repoProvider) {
         final Supplier<Stream<Task>> ofProject = () -> tasks.get()

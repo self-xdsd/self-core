@@ -135,6 +135,11 @@ public final class ProjectTasks implements Tasks {
     }
 
     @Override
+    public Task updateEstimation(final Task task, final int estimation) {
+        throw new UnsupportedOperationException("Not implemented yet");
+    }
+
+    @Override
     public Tasks ofProject(
         final String repoFullName,
         final String repoProvider
