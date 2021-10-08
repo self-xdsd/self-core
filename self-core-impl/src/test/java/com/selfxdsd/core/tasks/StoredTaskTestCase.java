@@ -660,4 +660,31 @@ public final class StoredTaskTestCase {
 
         MatcherAssert.assertThat(task.resignations(), Matchers.equalTo(ofTask));
     }
+
+    /**
+     * Task can update its estimation.
+     */
+    @Test
+    public void canUpdateEstimation(){
+        final Storage storage = Mockito.mock(Storage.class);
+        final Tasks tasks = Mockito.mock(Tasks.class);
+        final Task task = new StoredTask(
+            Mockito.mock(Project.class),
+            "issueId123",
+            "DEV",
+            60,
+            false,
+            storage
+        );
+        final Task updated = Mockito.mock(Task.class);
+
+        Mockito.when(storage.tasks()).thenReturn(tasks);
+        Mockito.when(tasks.updateEstimation(task, 30))
+            .thenReturn(updated);
+
+        MatcherAssert.assertThat(
+            task.updateEstimation(30),
+            Matchers.equalTo(updated)
+        );
+    }
 }

@@ -159,6 +159,26 @@ public final class InMemoryTasks implements Tasks {
     }
 
     @Override
+    public Task updateEstimation(final Task task, final int estimation) {
+        final TaskKey key = new TaskKey(
+            task.issueId(),
+            task.project().repoFullName(),
+            task.project().provider(),
+            task.isPullRequest()
+        );
+        final Task updated = new StoredTask(
+            task.project(),
+            key.issueId,
+            task.role(),
+            estimation,
+            task.isPullRequest(),
+            this.storage
+        );
+        this.tasks.put(key, updated);
+        return updated;
+    }
+
+    @Override
     public Tasks ofProject(final String repoFullName,
                            final String repoProvider) {
         final Supplier<Stream<Task>> tasksOf = () -> tasks.values()
