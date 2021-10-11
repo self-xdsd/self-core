@@ -1826,4 +1826,47 @@ public final class StoredProjectManagerTestCase {
         pmUser.register("foo", "secret", LocalDateTime.MIN);
     }
 
+    /**
+     * A PM can update a task estimation if issue estimation has changed.
+     */
+    @Test
+    public void handlesIssueLabelsChangesOfEstimation() {
+        final ProjectManager manager = new StoredProjectManager(
+            1,
+            "123",
+            "zoeself",
+            Provider.Names.GITHUB,
+            "123token",
+            8,
+            5,
+            Mockito.mock(Storage.class)
+        );
+        final Event event = Mockito.mock(Event.class);
+        final Issue issue = Mockito.mock(Issue.class);
+        final Project project = Mockito.mock(Project.class);
+        final Tasks tasks = Mockito.mock(Tasks.class);
+        final Task task = Mockito.mock(Task.class);
+
+        Mockito.when(event.issue()).thenReturn(issue);
+        Mockito.when(event.project()).thenReturn(project);
+        Mockito.when(project.tasks()).thenReturn(tasks);
+
+        Mockito.when(issue.issueId()).thenReturn("123");
+        Mockito.when(issue.provider()).thenReturn(Provider.Names.GITHUB);
+        Mockito.when(issue.repoFullName()).thenReturn("john/test");
+        Mockito.when(issue.estimation()).thenReturn(() -> 30);
+
+        Mockito.when(tasks.getById(
+            "123",
+            "john/test",
+            Provider.Names.GITHUB,
+            false
+        )).thenReturn(task);
+        Mockito.when(task.estimation()).thenReturn(60);
+
+        manager.issueLabelsChanged(event);
+
+        Mockito.verify(task, Mockito.times(1)).updateEstimation(30);
+    }
+
 }
