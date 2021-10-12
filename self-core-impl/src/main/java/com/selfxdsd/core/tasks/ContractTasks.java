@@ -156,6 +156,22 @@ public final class ContractTasks implements Tasks {
 
     @Override
     public Task unassign(final Task task) {
+        this.checkTask(task);
+        return this.storage.tasks().unassign(task);
+    }
+
+    @Override
+    public Task updateEstimation(final Task task, final int estimation) {
+        this.checkTask(task);
+        return this.storage.tasks().updateEstimation(task, estimation);
+    }
+
+    /**
+     * Checks if task is part of current contract.
+     * @param task Task.
+     * @throws TasksException.OfContract.NotFound when task is not found.
+     */
+    private void checkTask(final Task task) {
         final boolean isOfContract = this.tasks.get()
             .anyMatch(t -> t.equals(task));
         if (!isOfContract) {
@@ -172,11 +188,5 @@ public final class ContractTasks implements Tasks {
                 task.role()
             ));
         }
-        return this.storage.tasks().unassign(task);
-    }
-
-    @Override
-    public Task updateEstimation(final Task task, final int estimation) {
-        throw new UnsupportedOperationException("Not implemented yet");
     }
 }
