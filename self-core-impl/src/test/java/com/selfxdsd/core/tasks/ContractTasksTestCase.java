@@ -16,8 +16,7 @@ import java.util.stream.Stream;
  * @author criske
  * @version $Id$
  * @since 0.0.6
- *
- * @todd #1237:30min Write remaining testcases for updating estimation
+ * @todo #1237:30min Write remaining testcases for updating estimation
  *  in {@link ContributorTasks} and {@link ProjectTasks}.
  */
 public final class ContractTasksTestCase {
