@@ -106,7 +106,8 @@ public final class LabelsEstimationTestCase {
     }
 
     /**
-     * Returns a label estimation.
+     * Returns a label estimation. If there multiple estimation labels
+     * it returns the max value.
      */
     @Test
     public void returnsLabelEstimation() {
@@ -114,15 +115,21 @@ public final class LabelsEstimationTestCase {
         Mockito.when(issue.isPullRequest()).thenReturn(Boolean.TRUE);
         final Label label = Mockito.mock(Label.class);
         Mockito.when(label.name()).thenReturn("45 min");
+        final Label labelB = Mockito.mock(Label.class);
+        Mockito.when(labelB.name()).thenReturn("60min");
+        final Label labelC = Mockito.mock(Label.class);
+        Mockito.when(labelC.name()).thenReturn("15 min");
         final Labels labels = Mockito.mock(Labels.class);
-        Mockito.when(labels.iterator()).thenReturn(List.of(label).iterator());
+        Mockito.when(labels.iterator()).thenReturn(
+            List.of(label, labelB, labelC).iterator()
+        );
         Mockito.when(issue.labels()).thenReturn(labels);
 
         final Estimation est = new LabelsEstimation(issue);
 
         MatcherAssert.assertThat(
             est.minutes(),
-            Matchers.equalTo(45)
+            Matchers.equalTo(60)
         );
     }
 
