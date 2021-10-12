@@ -40,8 +40,8 @@ import java.util.regex.Pattern;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.39
- * @todo #1234:60min Modify the implementation of this class to get the biggest estimation
- *  if more than one estimation label is found.
+ * @todo #1234:60min Modify the implementation of this class to get the biggest
+ *  estimation if more than one estimation label is found.
  */
 final class LabelsEstimation implements Estimation {
 

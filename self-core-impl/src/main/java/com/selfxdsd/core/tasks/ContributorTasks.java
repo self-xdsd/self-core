@@ -104,7 +104,14 @@ public final class ContributorTasks implements Tasks {
 
     @Override
     public Task updateEstimation(final Task task, final int estimation) {
-        throw new UnsupportedOperationException("Not implemented yet");
+        final boolean isOfContributor = task.assignee() != null
+            && task.assignee().username().equalsIgnoreCase(this.username)
+            && task.assignee().provider().equalsIgnoreCase(this.provider);
+        if (!isOfContributor) {
+            throw new TasksException.OfContributor
+                .NotFound(this.username, this.provider);
+        }
+        return this.storage.tasks().updateEstimation(task, estimation);
     }
 
     @Override

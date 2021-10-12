@@ -16,6 +16,9 @@ import java.util.stream.Stream;
  * @author criske
  * @version $Id$
  * @since 0.0.6
+ *
+ * @todd #1237:30min Write remaining testcases for updating estimation
+ *  in {@link ContributorTasks} and {@link ProjectTasks}.
  */
 public final class ContractTasksTestCase {
 
@@ -344,6 +347,55 @@ public final class ContractTasksTestCase {
         Mockito.when(storage.tasks()).thenReturn(all);
 
         tasks.remove(task);
+    }
+
+    /**
+     * An assigned Task part of ContractTasks can update its estimation.
+     */
+    @Test
+    public void canUpdateEstimationIfPartOfContract(){
+        final Task task = Mockito.mock(Task.class);
+        final Storage storage = Mockito.mock(Storage.class);
+        final Tasks tasks = new ContractTasks(
+            new Contract.Id("foo", "mihai",
+                "github", "dev"),
+            () -> Stream.of(task),
+            storage
+        );
+
+        Mockito.when(storage.tasks()).thenReturn(Mockito.mock(Tasks.class));
+
+        tasks.updateEstimation(task, 30);
+        Mockito.verify(storage.tasks()).updateEstimation(task, 30);
+    }
+
+    /**
+     * An assigned Task not part of ContractTasks fails updating its
+     * estimation.
+     */
+    @Test(expected = TasksException.OfContract.NotFound.class)
+    public void canFailUpdateEstimationIfNotPartOfContract(){
+        final Task task = Mockito.mock(Task.class);
+        final Project project = Mockito.mock(Project.class);
+        final Issue issue = Mockito.mock(Issue.class);
+        final Storage storage = Mockito.mock(Storage.class);
+        final Tasks all = Mockito.mock(Tasks.class);
+        final Tasks tasks = new ContractTasks(
+            new Contract.Id("foo", "mihai",
+                "github", "dev"),
+            Stream::empty,
+            storage
+        );
+
+        Mockito.when(project.repoFullName()).thenReturn("foo");
+        Mockito.when(project.provider()).thenReturn("github");
+        Mockito.when(task.project()).thenReturn(project);
+        Mockito.when(issue.issueId()).thenReturn("1");
+        Mockito.when(task.issueId()).thenReturn("1");
+        Mockito.when(task.issue()).thenReturn(issue);
+        Mockito.when(storage.tasks()).thenReturn(all);
+
+        tasks.updateEstimation(task, 30);
     }
 
 }

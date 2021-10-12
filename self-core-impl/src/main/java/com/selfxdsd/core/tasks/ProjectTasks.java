@@ -136,7 +136,16 @@ public final class ProjectTasks implements Tasks {
 
     @Override
     public Task updateEstimation(final Task task, final int estimation) {
-        throw new UnsupportedOperationException("Not implemented yet");
+        final boolean isOfProject = task.project().repoFullName()
+            .equalsIgnoreCase(this.repoFullName) && task.project().provider()
+            .equalsIgnoreCase(this.provider);
+        if (!isOfProject) {
+            throw new TasksException.OfProject.NotFound(
+                this.repoFullName,
+                this.provider
+            );
+        }
+        return this.storage.tasks().updateEstimation(task, estimation);
     }
 
     @Override
