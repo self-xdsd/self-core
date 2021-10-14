@@ -134,7 +134,7 @@ public final class GithubWebhookEventTestCase {
 
     /**
      * GithubWebhookEvent can return the labeled PR type on labeling
-     * an Issue.
+     * an PR.
      */
     @Test
     public void returnsLabelOnPullRequestLabeledAction() {
@@ -150,7 +150,7 @@ public final class GithubWebhookEventTestCase {
 
     /**
      * GithubWebhookEvent can return the labeled PR type on unlabeling
-     * an Issue.
+     * a PR.
      */
     @Test
     public void returnsLabelOnPullRequestUnlabeledAction() {
