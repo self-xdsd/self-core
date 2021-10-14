@@ -101,6 +101,70 @@ public final class GithubWebhookEventTestCase {
     }
 
     /**
+     * GithubWebhookEvent can return the labeled Issue type on labeling
+     * an Issue.
+     */
+    @Test
+    public void returnsLabelOnIssueLabeledAction() {
+        final Project project = Mockito.mock(Project.class);
+        final Event event = new GithubWebhookEvent(
+            project, "issues", "{\"action\":\"labeled\"}"
+        );
+        MatcherAssert.assertThat(
+            event.type(),
+            Matchers.equalTo(Event.Type.LABEL)
+        );
+    }
+
+    /**
+     * GithubWebhookEvent can return the labeled Issue type on unlabeling
+     * an Issue.
+     */
+    @Test
+    public void returnsLabelOnIssueUnlabeledAction() {
+        final Project project = Mockito.mock(Project.class);
+        final Event event = new GithubWebhookEvent(
+            project, "issues", "{\"action\":\"unlabeled\"}"
+        );
+        MatcherAssert.assertThat(
+            event.type(),
+            Matchers.equalTo(Event.Type.LABEL)
+        );
+    }
+
+    /**
+     * GithubWebhookEvent can return the labeled PR type on labeling
+     * an Issue.
+     */
+    @Test
+    public void returnsLabelOnPullRequestLabeledAction() {
+        final Project project = Mockito.mock(Project.class);
+        final Event event = new GithubWebhookEvent(
+            project, "pull_request", "{\"action\":\"labeled\"}"
+        );
+        MatcherAssert.assertThat(
+            event.type(),
+            Matchers.equalTo(Event.Type.LABEL)
+        );
+    }
+
+    /**
+     * GithubWebhookEvent can return the labeled PR type on unlabeling
+     * an Issue.
+     */
+    @Test
+    public void returnsLabelOnPullRequestUnlabeledAction() {
+        final Project project = Mockito.mock(Project.class);
+        final Event event = new GithubWebhookEvent(
+            project, "pull_request", "{\"action\":\"unlabeled\"}"
+        );
+        MatcherAssert.assertThat(
+            event.type(),
+            Matchers.equalTo(Event.Type.LABEL)
+        );
+    }
+
+    /**
      * GithubWebhookEvent can return the REPO_RENAMED type.
      */
     @Test
