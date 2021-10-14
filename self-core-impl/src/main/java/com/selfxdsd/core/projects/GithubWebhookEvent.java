@@ -80,6 +80,10 @@ final class GithubWebhookEvent implements Event {
                 resolved = Type.NEW_ISSUE;
             } else if ("reopened".equalsIgnoreCase(act)) {
                 resolved = Type.REOPENED_ISSUE;
+            } else if ("labeled".equalsIgnoreCase(act)) {
+                resolved = Type.LABEL;
+            } else if ("unlabeled".equalsIgnoreCase(act)) {
+                resolved = Type.LABEL;
             } else {
                 resolved = type;
             }
