@@ -270,17 +270,17 @@ public interface JsonResources {
             final Supplier<Map<String, List<String>>> headers
         ) {
             final ExecutorService exec = Executors.newSingleThreadExecutor();
+            HttpClient client = this.newHttpClient(exec);
             try {
-                final HttpResponse<String> response = this.newHttpClient(exec)
-                    .send(
-                        this.request(
-                            uri,
-                            "GET",
-                            headers.get(),
-                            HttpRequest.BodyPublishers.noBody()
-                        ),
-                        HttpResponse.BodyHandlers.ofString()
-                    );
+                final HttpResponse<String> response = client.send(
+                    this.request(
+                        uri,
+                        "GET",
+                        headers.get(),
+                        HttpRequest.BodyPublishers.noBody()
+                    ),
+                    HttpResponse.BodyHandlers.ofString()
+                );
                 return new JsonResponse(
                     response.statusCode(),
                     response.body(),
@@ -293,6 +293,8 @@ public interface JsonResources {
                 );
             } finally {
                 exec.shutdownNow();
+                client = null;
+                System.gc();
             }
         }
 
@@ -303,19 +305,19 @@ public interface JsonResources {
             final JsonValue body
         ) {
             final ExecutorService exec = Executors.newSingleThreadExecutor();
+            HttpClient client = this.newHttpClient(exec);
             try {
-                final HttpResponse<String> response = this.newHttpClient(exec)
-                    .send(
-                        this.request(
-                            uri,
-                            "POST",
-                            headers.get(),
-                            HttpRequest.BodyPublishers.ofString(
-                                body.toString()
-                            )
-                        ),
-                        HttpResponse.BodyHandlers.ofString()
-                    );
+                final HttpResponse<String> response = client.send(
+                    this.request(
+                        uri,
+                        "POST",
+                        headers.get(),
+                        HttpRequest.BodyPublishers.ofString(
+                            body.toString()
+                        )
+                    ),
+                    HttpResponse.BodyHandlers.ofString()
+                );
                 return new JsonResponse(
                     response.statusCode(),
                     response.body(),
@@ -329,6 +331,8 @@ public interface JsonResources {
                 );
             } finally {
                 exec.shutdownNow();
+                client = null;
+                System.gc();
             }
         }
 
@@ -339,19 +343,19 @@ public interface JsonResources {
             final JsonValue body
         ) {
             final ExecutorService exec = Executors.newSingleThreadExecutor();
+            HttpClient client = this.newHttpClient(exec);
             try {
-                final HttpResponse<String> response = this.newHttpClient(exec)
-                    .send(
-                        this.request(
-                            uri,
-                            "PATCH",
-                            headers.get(),
-                            HttpRequest.BodyPublishers.ofString(
-                                body.toString()
-                            )
-                        ),
-                        HttpResponse.BodyHandlers.ofString()
-                    );
+                final HttpResponse<String> response = client.send(
+                    this.request(
+                        uri,
+                        "PATCH",
+                        headers.get(),
+                        HttpRequest.BodyPublishers.ofString(
+                            body.toString()
+                        )
+                    ),
+                    HttpResponse.BodyHandlers.ofString()
+                );
                 return new JsonResponse(
                     response.statusCode(),
                     response.body(),
@@ -365,6 +369,8 @@ public interface JsonResources {
                 );
             } finally {
                 exec.shutdownNow();
+                client = null;
+                System.gc();
             }
         }
 
@@ -375,19 +381,19 @@ public interface JsonResources {
             final JsonValue body
         ) {
             final ExecutorService exec = Executors.newSingleThreadExecutor();
+            HttpClient client = this.newHttpClient(exec);
             try {
-                final HttpResponse<String> response = this.newHttpClient(exec)
-                    .send(
-                        this.request(
-                            uri,
-                            "PUT",
-                            headers.get(),
-                            HttpRequest.BodyPublishers.ofString(
-                                body.toString()
-                            )
-                        ),
-                        HttpResponse.BodyHandlers.ofString()
-                    );
+                final HttpResponse<String> response = client.send(
+                    this.request(
+                        uri,
+                        "PUT",
+                        headers.get(),
+                        HttpRequest.BodyPublishers.ofString(
+                            body.toString()
+                        )
+                    ),
+                    HttpResponse.BodyHandlers.ofString()
+                );
                 return new JsonResponse(
                     response.statusCode(),
                     response.body(),
@@ -401,6 +407,8 @@ public interface JsonResources {
                 );
             } finally {
                 exec.shutdownNow();
+                client = null;
+                System.gc();
             }
         }
 
@@ -411,19 +419,19 @@ public interface JsonResources {
             final JsonValue body
         ) {
             final ExecutorService exec = Executors.newSingleThreadExecutor();
+            HttpClient client = this.newHttpClient(exec);
             try {
-                final HttpResponse<String> response = this.newHttpClient(exec)
-                    .send(
-                        this.request(
-                            uri,
-                            "DELETE",
-                            headers.get(),
-                            HttpRequest.BodyPublishers.ofString(
-                                body.toString()
-                            )
-                        ),
-                        HttpResponse.BodyHandlers.ofString()
-                    );
+                final HttpResponse<String> response = client.send(
+                    this.request(
+                        uri,
+                        "DELETE",
+                        headers.get(),
+                        HttpRequest.BodyPublishers.ofString(
+                            body.toString()
+                        )
+                    ),
+                    HttpResponse.BodyHandlers.ofString()
+                );
                 return new JsonResponse(
                     response.statusCode(),
                     response.body(),
@@ -437,6 +445,8 @@ public interface JsonResources {
                 );
             } finally {
                 exec.shutdownNow();
+                client = null;
+                System.gc();
             }
         }
 
