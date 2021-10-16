@@ -29,6 +29,7 @@ import com.selfxdsd.core.mock.InMemory;
 import com.selfxdsd.core.mock.MockJsonResources;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
+import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -281,5 +282,93 @@ public final class GithubRepoTestCase {
             "token");
 
         repo.activate();
+    }
+
+    /**
+     * GithubRepo can enable its Issues.
+     */
+    @Test
+    public void canEnableIssues() {
+        final JsonResources res = new MockJsonResources(request -> {
+            MatcherAssert.assertThat(
+                request.getUri(),
+                Matchers.equalTo(URI.create("/repos/mihai/testrepo"))
+            );
+            MatcherAssert.assertThat(
+                request.getMethod(),
+                Matchers.equalTo("PATCH")
+            );
+            MatcherAssert.assertThat(
+                request.getBody(),
+                Matchers.equalTo(
+                    Json.createObjectBuilder()
+                        .add("has_issues", true)
+                        .build()
+                )
+            );
+            return new MockJsonResources.MockResource(
+                200,
+                Json.createObjectBuilder().build()
+            );
+        });
+        final Repo repo = new GithubRepo(
+            res,
+            URI.create("/repos/mihai/testrepo"),
+            Mockito.mock(User.class),
+            Mockito.mock(Storage.class)
+        );
+        MatcherAssert.assertThat(
+            repo.enableIssues(),
+            Matchers.instanceOf(Issues.class)
+        );
+    }
+
+    /**
+     * GithubRepo throws IllegalStateException if enableIssues returns status
+     * != 200 OK.
+     */
+    @Test
+    public void throwsIllegalStateExceptionIfEnableIssueNotOk() {
+        final JsonResources res = new MockJsonResources(request -> {
+            MatcherAssert.assertThat(
+                request.getUri(),
+                Matchers.equalTo(URI.create("/repos/mihai/testrepo"))
+            );
+            MatcherAssert.assertThat(
+                request.getMethod(),
+                Matchers.equalTo("PATCH")
+            );
+            MatcherAssert.assertThat(
+                request.getBody(),
+                Matchers.equalTo(
+                    Json.createObjectBuilder()
+                        .add("has_issues", true)
+                        .build()
+                )
+            );
+            return new MockJsonResources.MockResource(
+                410,
+                Json.createObjectBuilder().build()
+            );
+        });
+        final Repo repo = new GithubRepo(
+            res,
+            URI.create("/repos/mihai/testrepo"),
+            Mockito.mock(User.class),
+            Mockito.mock(Storage.class)
+        );
+        try {
+            repo.enableIssues();
+            Assert.fail("IllegalStateException was expected.");
+        } catch (final IllegalStateException ex) {
+            MatcherAssert.assertThat(
+                ex.getMessage(),
+                Matchers.equalTo(
+                    "Could not enable Issues for Repo "
+                    + "[/repos/mihai/testrepo]. Received Status is 410, "
+                    + "while Status 200 OK was expected."
+                )
+            );
+        }
     }
 }

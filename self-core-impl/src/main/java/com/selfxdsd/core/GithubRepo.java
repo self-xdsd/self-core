@@ -36,8 +36,6 @@ import java.net.URI;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
- * @todo #1248:60min Write some integration tests using MkGrizzly server for
- *  method enableIssues().
  */
 final class GithubRepo extends BaseRepo {
 
