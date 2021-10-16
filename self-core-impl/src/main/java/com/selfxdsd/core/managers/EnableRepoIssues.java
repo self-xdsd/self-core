@@ -22,64 +22,56 @@
  */
 package com.selfxdsd.core.managers;
 
-import com.selfxdsd.api.*;
+import com.selfxdsd.api.Event;
+import com.selfxdsd.api.Project;
 import com.selfxdsd.api.pm.Intermediary;
 import com.selfxdsd.api.pm.Step;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Step to invite the PM to the project's repository.
+ * Enable Issues in the Project's Repo. We will move on to the next Step even
+ * if the operation fails, because most Repos have the Issues enabled anyway.
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
- * @since 0.0.13
+ * @since 0.0.95
  */
-public final class InvitePm extends Intermediary {
+public final class EnableRepoIssues extends Intermediary {
 
     /**
      * Logger.
      */
     private static final Logger LOG = LoggerFactory.getLogger(
-        InvitePm.class
+        EnableRepoIssues.class
     );
 
     /**
      * Ctor.
-     *
      * @param next The next step to perform.
      */
-    public InvitePm(final Step next) {
+    public EnableRepoIssues(final Step next) {
         super(next);
     }
 
     @Override
     public void perform(final Event event) {
         final Project project = event.project();
-        final Repo repo = project.repo();
+        final String repoFullName = project.repoFullName();
         final String provider = project.provider();
-        final ProjectManager manager = project.projectManager();
         LOG.debug(
-            "Inviting PM to repo " + repo.fullName() + " at " + provider
+            "Enabling Issues for Repo " + repoFullName
+            + " at " + provider + "... "
         );
-        final String user;
-        if(Provider.Names.GITHUB.equals(provider)) {
-            user = manager.username();
-        } else if (Provider.Names.GITLAB.equals(provider)) {
-            user = manager.userId();
-        } else {
-            throw new IllegalStateException(
-                "Unknown Provider: [" + provider + "]."
-            );
-        }
-        final boolean response = repo.collaborators().invite(user);
-        if(response) {
-            LOG.debug("PM invited successfully!");
-        } else {
-            LOG.debug(
-                "There was a problem while inviting the PM, "
-                + "check the logs above."
+        try {
+            project.repo().enableIssues();
+            LOG.debug("Issues successfully enabled.");
+        } catch (final IllegalStateException ex) {
+            LOG.error(
+                "Could not enable Issues for Repo " + repoFullName + " at "
+                + provider + ". Exception is: " + ex.getMessage()
             );
         }
         this.next().perform(event);
     }
+
 }
