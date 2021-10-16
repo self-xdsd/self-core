@@ -254,15 +254,17 @@ public final class StoredProjectManager implements ProjectManager {
     @Override
     public void newProject(final Event event) {
         final Step steps = new InvitePm(
-            new SetupWebhook(
-                lastly -> {
-                    final Project project = event.project();
-                    LOG.debug(
-                        "Finished setting up project "
-                        + project.repoFullName() + " at "
-                        + project.provider()
-                    );
-                }
+            new EnableRepoIssues(
+                new SetupWebhook(
+                    lastly -> {
+                        final Project project = event.project();
+                        LOG.debug(
+                            "Finished setting up project "
+                            + project.repoFullName() + " at "
+                            + project.provider()
+                        );
+                    }
+                )
             )
         );
         steps.perform(event);
