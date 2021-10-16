@@ -66,8 +66,6 @@ public final class EnableRepoIssues extends Intermediary {
         LOG.debug(
             "Enabling Issues for Repo " + repoFullName
             + " at " + provider + "... "
-
-            
         );
         try {
             project.repo().enableIssues();
