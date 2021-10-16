@@ -240,6 +240,13 @@ public final class JdkHttpITCase {
                 request.headers().get("My-Header-2").get(0),
                 Matchers.equalTo("hello2")
             );
+            MatcherAssert.assertThat(
+                request.headers().get("User-Agent").get(0),
+                Matchers.equalTo(
+                    "Self XDSD; https://self-xdsd.com; "
+                    + "https://github.com/self-xdsd"
+                )
+            );
         }
     }
 
@@ -282,6 +289,13 @@ public final class JdkHttpITCase {
             MatcherAssert.assertThat(
                 request.headers().get("Authorization").get(0),
                 Matchers.equalTo("token 123token456")
+            );
+            MatcherAssert.assertThat(
+                request.headers().get("User-Agent").get(0),
+                Matchers.equalTo(
+                    "Self XDSD; https://self-xdsd.com; "
+                    + "https://github.com/self-xdsd"
+                )
             );
         }
     }
@@ -339,6 +353,13 @@ public final class JdkHttpITCase {
                 request.headers().get("My-Header-2").get(0),
                 Matchers.equalTo("hello2")
             );
+            MatcherAssert.assertThat(
+                request.headers().get("User-Agent").get(0),
+                Matchers.equalTo(
+                    "Self XDSD; https://self-xdsd.com; "
+                    + "https://github.com/self-xdsd"
+                )
+            );
         }
     }
 
@@ -381,6 +402,13 @@ public final class JdkHttpITCase {
             MatcherAssert.assertThat(
                 request.headers().get("Authorization").get(0),
                 Matchers.equalTo("token 123token456")
+            );
+            MatcherAssert.assertThat(
+                request.headers().get("User-Agent").get(0),
+                Matchers.equalTo(
+                    "Self XDSD; https://self-xdsd.com; "
+                    + "https://github.com/self-xdsd"
+                )
             );
         }
     }
@@ -434,6 +462,13 @@ public final class JdkHttpITCase {
                 request.headers().get("My-Header-2").get(0),
                 Matchers.equalTo("hello2")
             );
+            MatcherAssert.assertThat(
+                request.headers().get("User-Agent").get(0),
+                Matchers.equalTo(
+                    "Self XDSD; https://self-xdsd.com; "
+                    + "https://github.com/self-xdsd"
+                )
+            );
         }
     }
 
@@ -476,6 +511,13 @@ public final class JdkHttpITCase {
             MatcherAssert.assertThat(
                 request.headers().get("Authorization").get(0),
                 Matchers.equalTo("token 123token456")
+            );
+            MatcherAssert.assertThat(
+                request.headers().get("User-Agent").get(0),
+                Matchers.equalTo(
+                    "Self XDSD; https://self-xdsd.com; "
+                    + "https://github.com/self-xdsd"
+                )
             );
         }
     }
@@ -529,6 +571,13 @@ public final class JdkHttpITCase {
                 request.headers().get("My-Header-2").get(0),
                 Matchers.equalTo("hello2")
             );
+            MatcherAssert.assertThat(
+                request.headers().get("User-Agent").get(0),
+                Matchers.equalTo(
+                    "Self XDSD; https://self-xdsd.com; "
+                    + "https://github.com/self-xdsd"
+                )
+            );
         }
     }
 
@@ -571,6 +620,13 @@ public final class JdkHttpITCase {
             MatcherAssert.assertThat(
                 request.headers().get("Authorization").get(0),
                 Matchers.equalTo("token 123token456")
+            );
+            MatcherAssert.assertThat(
+                request.headers().get("User-Agent").get(0),
+                Matchers.equalTo(
+                    "Self XDSD; https://self-xdsd.com; "
+                    + "https://github.com/self-xdsd"
+                )
             );
         }
     }
@@ -627,6 +683,13 @@ public final class JdkHttpITCase {
             MatcherAssert.assertThat(
                 request.headers().get("My-Header-2").get(0),
                 Matchers.equalTo("hello2")
+            );
+            MatcherAssert.assertThat(
+                request.headers().get("User-Agent").get(0),
+                Matchers.equalTo(
+                    "Self XDSD; https://self-xdsd.com; "
+                    + "https://github.com/self-xdsd"
+                )
             );
         }
     }
