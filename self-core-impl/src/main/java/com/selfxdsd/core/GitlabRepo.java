@@ -34,6 +34,9 @@ import java.net.URI;
  * @author criske
  * @version $Id$
  * @since 0.0.1
+ * @todo #1246:60min Implement enabling of Issues for a GitLab repository.
+ *  If GitLab doesn't support this functionality, the method should not do
+ *  anything.
  */
 final class GitlabRepo extends BaseRepo {
 
@@ -144,6 +147,11 @@ final class GitlabRepo extends BaseRepo {
     @Override
     public String fullName() {
         return this.json().getString("path_with_namespace");
+    }
+
+    @Override
+    public Issues enableIssues() {
+        throw new UnsupportedOperationException("Not yet implemented.");
     }
 
     @Override

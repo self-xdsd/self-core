@@ -26,7 +26,9 @@ import com.selfxdsd.api.*;
 import com.selfxdsd.api.Labels;
 import com.selfxdsd.api.storage.Storage;
 
+import javax.json.Json;
 import javax.json.JsonObject;
+import java.net.HttpURLConnection;
 import java.net.URI;
 
 /**
@@ -34,6 +36,8 @@ import java.net.URI;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
+ * @todo #1248:60min Write some integration tests using MkGrizzly server for
+ *  method enableIssues().
  */
 final class GithubRepo extends BaseRepo {
 
@@ -122,6 +126,30 @@ final class GithubRepo extends BaseRepo {
     @Override
     public String fullName() {
         return this.json().getString("full_name");
+    }
+
+    @Override
+    public Issues enableIssues() {
+        final Resource response = this.resources().patch(
+            this.repoUri(),
+            Json.createObjectBuilder()
+                .add("has_issues", true)
+                .build()
+        );
+        if(response.statusCode() == HttpURLConnection.HTTP_OK) {
+            return new GithubIssues(
+                this.resources(),
+                URI.create(this.repoUri().toString() + "/issues"),
+                this,
+                this.storage()
+            );
+        } else {
+            throw new IllegalStateException(
+                "Could not enable Issues for Repo ["
+                + this.repoUri() + "]. Received Status is "
+                + response.statusCode() + ", while Status 200 OK was expected."
+            );
+        }
     }
 
     @Override

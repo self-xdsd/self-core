@@ -33,6 +33,9 @@ import java.net.URI;
  * @author criske
  * @version $Id$
  * @since 0.0.67
+ * @todo #1246:60min Implement enabling of Issues for a BitBucket repository.
+ *  If BitBucket doesn't support this functionality, the method should not do
+ *  anything.
  */
 final class BitbucketRepo extends BaseRepo {
 
@@ -121,6 +124,11 @@ final class BitbucketRepo extends BaseRepo {
     @Override
     public String fullName() {
         return this.json().getString("full_name");
+    }
+
+    @Override
+    public Issues enableIssues() {
+        throw new UnsupportedOperationException("Not yet implemented.");
     }
 
     @Override

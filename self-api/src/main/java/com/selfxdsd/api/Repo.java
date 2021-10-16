@@ -65,6 +65,12 @@ public interface Repo {
     String provider();
 
     /**
+     * Enable Issues for this Repo.
+     * @return Issues.
+     */
+    Issues enableIssues();
+
+    /**
      * The repo's Issues.
      * @return Issues.
      */

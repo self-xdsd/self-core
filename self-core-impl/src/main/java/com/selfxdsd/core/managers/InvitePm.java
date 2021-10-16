@@ -33,6 +33,8 @@ import org.slf4j.LoggerFactory;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.13
+ * @todo #1246:60min Implement an Intermediary Step used to enable Issues for
+ *  a Repo, when it is being activated.
  */
 public final class InvitePm extends Intermediary {
 
