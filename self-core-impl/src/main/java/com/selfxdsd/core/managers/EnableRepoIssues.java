@@ -30,8 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Enable Issues in the Project's Repo. We will move on to the next Step even
- * if the operation fails, because most Repos have the Issues enabled anyway.
+ * Enable Issues in the Project's Repo.
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.95
@@ -53,6 +52,12 @@ public final class EnableRepoIssues extends Intermediary {
         super(next);
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * We will move on to the next Step even if the operation fails,
+     * because most Repos have the Issues enabled anyway.
+     */
     @Override
     public void perform(final Event event) {
         final Project project = event.project();
@@ -61,6 +66,8 @@ public final class EnableRepoIssues extends Intermediary {
         LOG.debug(
             "Enabling Issues for Repo " + repoFullName
             + " at " + provider + "... "
+
+            
         );
         try {
             project.repo().enableIssues();
