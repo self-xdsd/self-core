@@ -487,6 +487,11 @@ public interface JsonResources {
                     String.join(",", header.getValue())
                 );
             }
+            requestBuilder = requestBuilder.setHeader(
+                "User-Agent",
+                "Self XDSD; https://self-xdsd.com; "
+                + "https://github.com/self-xdsd"
+            );
             return requestBuilder.build();
         }
 
