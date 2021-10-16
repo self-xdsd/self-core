@@ -1869,4 +1869,48 @@ public final class StoredProjectManagerTestCase {
         Mockito.verify(task, Mockito.times(1)).updateEstimation(30);
     }
 
+    /**
+     * A PM can skip handling issue labels changes if task associated with issue
+     * is not found.
+     */
+    @Test
+    public void skipHandlingIssueLabelsChanges() {
+        final ProjectManager manager = new StoredProjectManager(
+            1,
+            "123",
+            "zoeself",
+            Provider.Names.GITHUB,
+            "123token",
+            8,
+            5,
+            Mockito.mock(Storage.class)
+        );
+        final Event event = Mockito.mock(Event.class);
+        final Issue issue = Mockito.mock(Issue.class);
+        final Project project = Mockito.mock(Project.class);
+        final Tasks tasks = Mockito.mock(Tasks.class);
+        final Task task = Mockito.mock(Task.class);
+
+        Mockito.when(event.issue()).thenReturn(issue);
+        Mockito.when(event.project()).thenReturn(project);
+        Mockito.when(project.tasks()).thenReturn(tasks);
+
+        Mockito.when(issue.issueId()).thenReturn("123");
+        Mockito.when(issue.provider()).thenReturn(Provider.Names.GITHUB);
+        Mockito.when(issue.repoFullName()).thenReturn("john/test");
+        Mockito.when(issue.estimation()).thenReturn(() -> 30);
+
+        Mockito.when(tasks.getById(
+            "not-this-issue-123",
+            "john/test",
+            Provider.Names.GITHUB,
+            false
+        )).thenReturn(task);
+
+        manager.issueLabelsChanged(event);
+
+        Mockito.verify(task, Mockito.never())
+            .updateEstimation(Mockito.anyInt());
+    }
+
 }

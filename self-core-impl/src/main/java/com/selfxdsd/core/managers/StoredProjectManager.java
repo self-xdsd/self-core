@@ -664,19 +664,29 @@ public final class StoredProjectManager implements ProjectManager {
                 issue.isPullRequest()
             );
 
-        final int newEstimation = issue.estimation().minutes();
-        final int oldEstimation = task.estimation();
+        if(task != null) {
+            final int newEstimation = issue.estimation().minutes();
+            final int oldEstimation = task.estimation();
 
-        if(oldEstimation != newEstimation){
-            task.updateEstimation(newEstimation);
-            LOG.debug(String.format(
-                "Task [#%s-%s-%s] updated its estimation from %s min. "
-                    + "to %s min.",
+            if (oldEstimation != newEstimation) {
+                task.updateEstimation(newEstimation);
+                LOG.debug(String.format(
+                    "Task [#%s-%s-%s] updated its estimation from %s min. "
+                        + "to %s min.",
+                    issue.issueId(),
+                    issue.repoFullName(),
+                    issue.provider(),
+                    oldEstimation,
+                    newEstimation
+                ));
+            }
+        } else {
+            LOG.error(String.format(
+                "Issue [#%s-%s-%s] is not registered yet as a task. "
+                    + "Skipping handling issue labels changes...",
                 issue.issueId(),
                 issue.repoFullName(),
-                issue.provider(),
-                oldEstimation,
-                newEstimation
+                issue.provider()
             ));
         }
     }
