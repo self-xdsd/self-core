@@ -335,6 +335,51 @@ public final class ContributorTasksTestCase {
     }
 
     /**
+     * Can update task estimation if task is part of ContributorTasks.
+     */
+    @Test
+    public void canUpdateTaskEstimation(){
+        final Storage storage = Mockito.mock(Storage.class);
+        final Task task = Mockito.mock(Task.class);
+        final Contributor contributor = Mockito.mock(Contributor.class);
+        final Tasks tasks = new ContributorTasks(
+            "mihai", "github",
+            () -> Stream.of(task),
+            storage
+        );
+
+        Mockito.when(contributor.username()).thenReturn("mihai");
+        Mockito.when(contributor.provider()).thenReturn("github");
+        Mockito.when(task.assignee()).thenReturn(contributor);
+        Mockito.when(storage.tasks()).thenReturn(Mockito.mock(Tasks.class));
+
+        tasks.updateEstimation(task, 30);
+        Mockito.verify(storage.tasks(), Mockito.times(1))
+            .updateEstimation(task, 30);
+    }
+
+    /**
+     * Throws Self Exception on update estimation when Task is not part
+     * of ContributorTasks.
+     */
+    @Test(expected = TasksException.OfContributor.NotFound.class)
+    public void throwsWhenUpdateEstimationTaskNotPartOfContributorTasks(){
+        final Task task = Mockito.mock(Task.class);
+        final Contributor contributor = Mockito.mock(Contributor.class);
+        final Tasks tasks = new ContributorTasks(
+            "mihai", "github",
+            () -> Stream.of(task),
+            Mockito.mock(Storage.class)
+        );
+
+        Mockito.when(contributor.username()).thenReturn("mihai");
+        Mockito.when(contributor.provider()).thenReturn("github");
+        Mockito.when(task.assignee()).thenReturn(contributor);
+
+        tasks.updateEstimation(Mockito.mock(Task.class), 30);
+    }
+
+    /**
      * Mock an Issue for test.
      *
      * @param issueId ID.

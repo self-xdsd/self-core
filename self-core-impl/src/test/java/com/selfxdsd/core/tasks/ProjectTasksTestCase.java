@@ -399,6 +399,58 @@ public final class ProjectTasksTestCase {
     }
 
     /**
+     * An assigned Task part of ProjectTasks can update estimation.
+     */
+    @Test
+    public void canUpdateEstimationIfPartOfProjectTasks(){
+        final Storage storage = Mockito.mock(Storage.class);
+        final Task task = Mockito.mock(Task.class);
+        final Project project = Mockito.mock(Project.class);
+        final Tasks tasks = new ProjectTasks(
+            "john/test", "github",
+            () -> Stream.of(task),
+            storage
+        );
+
+        Mockito.when(project.repoFullName()).thenReturn("john/test");
+        Mockito.when(project.provider()).thenReturn("github");
+        Mockito.when(task.project()).thenReturn(project);
+        Mockito.when(storage.tasks()).thenReturn(Mockito.mock(Tasks.class));
+
+        tasks.updateEstimation(task, 30);
+
+        Mockito.verify(storage.tasks()).updateEstimation(task, 30);
+
+    }
+
+    /**
+     * Throws Self Exception on update estimation when Task is not part of
+     * ProjectTasks.
+     */
+    @Test(expected = TasksException.OfProject.NotFound.class)
+    public void throwsOnUpdateEstiomationWhenTaskNotPartOfProjectTasks(){
+        final Task task = Mockito.mock(Task.class);
+        final Task otherTask = Mockito.mock(Task.class);
+        final Project project = Mockito.mock(Project.class);
+        final Project otherProject = Mockito.mock(Project.class);
+        final Tasks tasks = new ProjectTasks(
+            "john/test", "github",
+            () -> Stream.of(task),
+            Mockito.mock(Storage.class)
+        );
+
+        Mockito.when(project.repoFullName()).thenReturn("john/test");
+        Mockito.when(project.provider()).thenReturn("github");
+        Mockito.when(task.project()).thenReturn(project);
+        Mockito.when(otherProject.repoFullName()).thenReturn("john/test-other");
+        Mockito.when(otherProject.provider()).thenReturn("github");
+        Mockito.when(otherTask.project()).thenReturn(otherProject);
+
+        tasks.updateEstimation(otherTask, 30);
+    }
+
+
+    /**
      * Can remove a task from storage if task is part of ProjectTasks.
      */
     @Test
