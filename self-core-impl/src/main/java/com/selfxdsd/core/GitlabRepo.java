@@ -25,6 +25,8 @@ package com.selfxdsd.core;
 import com.selfxdsd.api.*;
 import com.selfxdsd.api.Labels;
 import com.selfxdsd.api.storage.Storage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.json.JsonObject;
 import java.net.URI;
@@ -34,11 +36,15 @@ import java.net.URI;
  * @author criske
  * @version $Id$
  * @since 0.0.1
- * @todo #1246:60min Implement enabling of Issues for a GitLab repository.
- *  If GitLab doesn't support this functionality, the method should not do
- *  anything.
  */
 final class GitlabRepo extends BaseRepo {
+
+    /**
+     * Logger.
+     */
+    private static final Logger LOG = LoggerFactory.getLogger(
+        GitlabRepo.class
+    );
 
     /**
      * Constructor.
@@ -151,7 +157,8 @@ final class GitlabRepo extends BaseRepo {
 
     @Override
     public Issues enableIssues() {
-        throw new UnsupportedOperationException("Not yet implemented.");
+        LOG.warn("Gitlab doesn't support enabling issues...");
+        return new EmptyIssues();
     }
 
     @Override

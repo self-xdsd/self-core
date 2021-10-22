@@ -238,4 +238,21 @@ public final class GitlabRepoTestCase {
             )
         );
     }
+
+    /**
+     * Gitlab doesn't support enabling issues.
+     */
+    @Test
+    public void doesNotSupportEnableIssues(){
+        final Repo repo = new GitlabRepo(
+            Mockito.mock(JsonResources.class),
+            URI.create("https://gitlab.com/api/v4/projects/1"),
+            Mockito.mock(User.class),
+            Mockito.mock(Storage.class)
+        );
+        MatcherAssert.assertThat(
+            repo.enableIssues(),
+            Matchers.instanceOf(EmptyIssues.class)
+        );
+    }
 }
