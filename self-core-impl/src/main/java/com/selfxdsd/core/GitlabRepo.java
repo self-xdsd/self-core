@@ -25,10 +25,10 @@ package com.selfxdsd.core;
 import com.selfxdsd.api.*;
 import com.selfxdsd.api.Labels;
 import com.selfxdsd.api.storage.Storage;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+import javax.json.Json;
 import javax.json.JsonObject;
+import java.net.HttpURLConnection;
 import java.net.URI;
 
 /**
@@ -38,13 +38,6 @@ import java.net.URI;
  * @since 0.0.1
  */
 final class GitlabRepo extends BaseRepo {
-
-    /**
-     * Logger.
-     */
-    private static final Logger LOG = LoggerFactory.getLogger(
-        GitlabRepo.class
-    );
 
     /**
      * Constructor.
@@ -155,10 +148,29 @@ final class GitlabRepo extends BaseRepo {
         return this.json().getString("path_with_namespace");
     }
 
+    /**
+     * {@inheritDoc}
+     * <br/>
+     * Gitlab doc: <a href="https://docs.gitlab.com/ee/api/projects.html#edit-project">link</a>
+     */
     @Override
     public Issues enableIssues() {
-        LOG.warn("Gitlab doesn't support enabling issues...");
-        return new EmptyIssues();
+        final Resource response = this.resources().put(
+            this.repoUri(),
+            Json.createObjectBuilder()
+                .add("issues_access_level", "enabled")
+                .build()
+        );
+        if(response.statusCode() == HttpURLConnection.HTTP_OK) {
+            return this.issues();
+        } else {
+            throw new IllegalStateException(
+                "Could not enable Issues for Repo ["
+                    + this.repoUri() + "]. Received Status is "
+                    + response.statusCode() + ", while Status 200 OK"
+                    + " was expected."
+            );
+        }
     }
 
     @Override

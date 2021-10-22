@@ -11,6 +11,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import javax.json.Json;
+import javax.json.JsonValue;
 import java.math.BigDecimal;
 import java.net.URI;
 
@@ -240,19 +241,65 @@ public final class GitlabRepoTestCase {
     }
 
     /**
-     * Gitlab doesn't support enabling issues.
+     * GitlabRepo can enable issues.
      */
     @Test
-    public void doesNotSupportEnableIssues(){
+    public void canEnableIssues(){
+        final MockJsonResources res = new MockJsonResources(
+            request -> new MockJsonResources.MockResource(
+                200,
+                Json.createObjectBuilder().build()
+            )
+        );
         final Repo repo = new GitlabRepo(
-            Mockito.mock(JsonResources.class),
+            res,
             URI.create("https://gitlab.com/api/v4/projects/1"),
             Mockito.mock(User.class),
             Mockito.mock(Storage.class)
         );
+
         MatcherAssert.assertThat(
             repo.enableIssues(),
-            Matchers.instanceOf(EmptyIssues.class)
+            Matchers.instanceOf(Issues.class)
         );
+
+        final MockJsonResources.MockRequest request = res.requests().first();
+        MatcherAssert.assertThat(
+            request.getUri(),
+            Matchers.equalTo(URI.create("https://gitlab.com/api/v4/projects/1"))
+        );
+        MatcherAssert.assertThat(
+            request.getMethod(),
+            Matchers.equalTo("PUT")
+        );
+        MatcherAssert.assertThat(
+            request.getBody(),
+            Matchers.equalTo(
+                Json.createObjectBuilder()
+                    .add("issues_access_level", "enabled")
+                    .build()
+            )
+        );
+    }
+
+    /**
+     * GitlabRepo throws IllegalStateException if enableIssues returns status
+     * != 200 OK.
+     */
+    @Test(expected = IllegalStateException.class)
+    public void throwsIllegalStateExceptionIfEnableIssueNotOk() {
+        final JsonResources res = new MockJsonResources(
+            request -> new MockJsonResources.MockResource(
+                410,
+                JsonValue.EMPTY_JSON_OBJECT
+            )
+        );
+        final Repo repo = new GitlabRepo(
+            res,
+            URI.create("https://gitlab.com/api/v4/projects/1"),
+            Mockito.mock(User.class),
+            Mockito.mock(Storage.class)
+        );
+        repo.enableIssues();
     }
 }
