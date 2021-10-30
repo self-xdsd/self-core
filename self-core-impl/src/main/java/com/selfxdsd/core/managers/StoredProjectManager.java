@@ -49,6 +49,11 @@ import java.util.function.Supplier;
  * @checkstyle ClassFanOutComplexity (1000 lines)
  * @checkstyle ClassDataAbstractionCoupling (1000 lines)
  * @since 0.0.1
+ * @todo #1265:30min In method issueLabelsChanged, use the step IssueIsClosed
+ *  before doing anything else. We shouldn't act on labeled/unlabeled if the
+ *  Issue is closed.
+ * @todo #1265:30min Send a comment after updating a task's estimation inside
+ *  issueLabelsChanged.
  */
 public final class StoredProjectManager implements ProjectManager {
 
@@ -656,41 +661,20 @@ public final class StoredProjectManager implements ProjectManager {
 
     @Override
     public void issueLabelsChanged(final Event event) {
-        final Issue issue = event.issue();
-        final Task task = event.project()
-            .tasks()
-            .getById(
-                issue.issueId(),
-                issue.repoFullName(),
-                issue.provider(),
-                issue.isPullRequest()
-            );
-
-        if(task != null) {
-            final int newEstimation = issue.estimation().minutes();
-            final int oldEstimation = task.estimation();
-
-            if (oldEstimation != newEstimation) {
-                task.updateEstimation(newEstimation);
-                LOG.debug(String.format(
-                    "Task [#%s-%s-%s] updated its estimation from %s min. "
-                        + "to %s min.",
-                    issue.issueId(),
-                    issue.repoFullName(),
-                    issue.provider(),
-                    oldEstimation,
-                    newEstimation
-                ));
-            }
-        } else {
-            LOG.error(String.format(
-                "Issue [#%s-%s-%s] is not registered yet as a task. "
-                    + "Skipping handling issue labels changes...",
-                issue.issueId(),
-                issue.repoFullName(),
-                issue.provider()
-            ));
-        }
+        final Step steps = new TaskIsRegistered(
+            new IssueEstimationChanged(
+                new UpdateTaskEstimation(
+                    sendReply -> LOG.debug("Send updated estimation comment.")
+                ),
+                notChanged -> LOG.debug(
+                    "Nothing to do on Issue label change."
+                )
+            ),
+            isNotRegistered -> LOG.debug(
+                "Issue is NOT registered as a Task. Doing nothing."
+            )
+        );
+        steps.perform(event);
     }
 
     @Override
