@@ -230,7 +230,7 @@ public final class GitlabWebhookEventTestCase {
         );
         MatcherAssert.assertThat(
             gitlabEvent.type(),
-            Matchers.equalTo(Event.Type.ISSUE_COMMENT)
+            Matchers.equalTo(Event.Type.NEW_COMMENT)
         );
     }
 
@@ -251,7 +251,7 @@ public final class GitlabWebhookEventTestCase {
         );
         MatcherAssert.assertThat(
             gitlabEvent.type(),
-            Matchers.equalTo(Event.Type.ISSUE_COMMENT)
+            Matchers.equalTo(Event.Type.NEW_COMMENT)
         );
     }
 

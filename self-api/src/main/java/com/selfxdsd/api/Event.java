@@ -106,7 +106,7 @@ public interface Event {
         /**
          * Event for a comment.
          */
-        public static final String ISSUE_COMMENT = "issue_comment";
+        public static final String NEW_COMMENT = "comment_created";
 
         /**
          * Event for renaming a repo.

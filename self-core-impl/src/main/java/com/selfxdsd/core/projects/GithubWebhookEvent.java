@@ -34,6 +34,7 @@ import java.io.StringReader;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.61
+ * @checkstyle CyclomaticComplexity (500 lines)
  */
 final class GithubWebhookEvent implements Event {
 
@@ -84,6 +85,13 @@ final class GithubWebhookEvent implements Event {
                 resolved = Type.LABEL;
             } else if ("unlabeled".equalsIgnoreCase(act)) {
                 resolved = Type.LABEL;
+            } else {
+                resolved = type;
+            }
+        } else if ("issue_comment".equalsIgnoreCase(type)) {
+            final String act = event.getString("action");
+            if("created".equalsIgnoreCase(act)) {
+                resolved = Type.NEW_COMMENT;
             } else {
                 resolved = type;
             }

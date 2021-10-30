@@ -190,7 +190,7 @@ public final class StoredProject implements Project {
             case Event.Type.ASSIGNED_TASKS:
                 this.projectManager.assignedTasks(event);
                 break;
-            case Event.Type.ISSUE_COMMENT:
+            case Event.Type.NEW_COMMENT:
                 this.projectManager.comment(event);
                 break;
             case Event.Type.REPO_RENAMED:
