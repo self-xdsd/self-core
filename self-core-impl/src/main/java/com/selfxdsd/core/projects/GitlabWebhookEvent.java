@@ -106,7 +106,7 @@ final class GitlabWebhookEvent implements Event {
             ).getString("noteable_type", "");
             if("Issue".equalsIgnoreCase(noteableType)
                 || "MergeRequest".equalsIgnoreCase(noteableType)) {
-                resolved = Type.ISSUE_COMMENT;
+                resolved = Type.NEW_COMMENT;
             } else {
                 resolved = this.type;
             }

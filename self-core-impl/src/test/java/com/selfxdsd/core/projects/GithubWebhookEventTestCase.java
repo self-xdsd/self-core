@@ -447,7 +447,7 @@ public final class GithubWebhookEventTestCase {
         );
         MatcherAssert.assertThat(
             event.type(),
-            Matchers.equalTo(Event.Type.ISSUE_COMMENT)
+            Matchers.equalTo(Event.Type.NEW_COMMENT)
         );
     }
 }

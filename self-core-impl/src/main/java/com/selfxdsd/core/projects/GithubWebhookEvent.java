@@ -91,7 +91,7 @@ final class GithubWebhookEvent implements Event {
         } else if ("issue_comment".equalsIgnoreCase(type)) {
             final String act = event.getString("action");
             if("created".equalsIgnoreCase(act)) {
-                resolved = Type.ISSUE_COMMENT;
+                resolved = Type.NEW_COMMENT;
             } else {
                 resolved = type;
             }
