@@ -254,29 +254,6 @@ public final class GithubWebhookEventTestCase {
     }
 
     /**
-     * GithubWebhookEvent can return label event type when
-     * an issue label is added, edited or deleted.
-     */
-    @Test
-    public void returnsLabelType(){
-        final Project project = Mockito.mock(Project.class);
-        final Event event = new GithubWebhookEvent(
-            project, "label",
-            Json.createObjectBuilder()
-                .add("action", "created")
-                .add("label", Json.createObjectBuilder()
-                    .add("name", "60min")
-                    .build())
-                .build()
-                .toString()
-        );
-        MatcherAssert.assertThat(
-            event.type(),
-            Matchers.equalTo(Event.Type.LABEL)
-        );
-    }
-
-    /**
      * GithubWebhookEvent can return its Issue.
      */
     @Test
@@ -455,6 +432,22 @@ public final class GithubWebhookEventTestCase {
                     .toString()
             ).commit(),
             Matchers.nullValue()
+        );
+    }
+
+    /**
+     * GithubWebhookEvent can return the ISSUE_COMMENT type for a comment
+     * created action.
+     */
+    @Test
+    public void returnsIssueCommentType() {
+        final Project project = Mockito.mock(Project.class);
+        final Event event = new GithubWebhookEvent(
+            project, "issue_comment", "{\"action\":\"created\"}"
+        );
+        MatcherAssert.assertThat(
+            event.type(),
+            Matchers.equalTo(Event.Type.ISSUE_COMMENT)
         );
     }
 }
