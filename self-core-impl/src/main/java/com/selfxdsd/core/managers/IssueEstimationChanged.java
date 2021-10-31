@@ -14,7 +14,6 @@ import org.slf4j.LoggerFactory;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.96
- * @todo #1265:30min Write some unit tests for this class.
  */
 public final class IssueEstimationChanged extends PreconditionCheck {
 
