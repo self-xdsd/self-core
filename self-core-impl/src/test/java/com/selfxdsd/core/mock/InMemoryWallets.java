@@ -38,9 +38,6 @@ import java.util.stream.Collectors;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.21
- * @todo #499:30min As soon as we have the Stripe wallet implemented,
- *  modify the register(...) method here to take it into account, according
- *  to the given type (at the moment, it always registers the Missing wallet).
  */
 public final class InMemoryWallets implements Wallets {
 
