@@ -23,6 +23,9 @@
 package com.selfxdsd.core.managers;
 
 import com.selfxdsd.api.Event;
+import com.selfxdsd.api.Issue;
+import com.selfxdsd.api.Project;
+import com.selfxdsd.api.Task;
 import com.selfxdsd.api.pm.Intermediary;
 import com.selfxdsd.api.pm.Step;
 import org.slf4j.Logger;
@@ -33,8 +36,6 @@ import org.slf4j.LoggerFactory;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.96
- * @todo #1265:60min Implement and test the method perform from this class.
- *  It should simply update a task's estimation and forward to the next step.
  */
 public final class UpdateTaskEstimation extends Intermediary {
 
@@ -55,6 +56,24 @@ public final class UpdateTaskEstimation extends Intermediary {
 
     @Override
     public void perform(final Event event) {
-        throw new UnsupportedOperationException("Not yet implemented.");
+        final Issue issue = event.issue();
+        final String issueId = issue.issueId();
+        final Project project = event.project();
+        final Task task = project.tasks().getById(
+            issueId,
+            project.repoFullName(),
+            project.provider(),
+            issue.isPullRequest()
+        );
+        final int newEstimation = issue.estimation().minutes();
+        task.updateEstimation(newEstimation);
+        LOG.debug(String.format(
+            "The estimation of Task [#%s-%s-%s] has been updated to %s min.",
+            issue.issueId(),
+            issue.repoFullName(),
+            issue.provider(),
+            newEstimation
+        ));
+        this.next().perform(event);
     }
 }
