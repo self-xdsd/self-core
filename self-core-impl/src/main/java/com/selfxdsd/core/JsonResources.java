@@ -35,10 +35,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpHeaders;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.time.Duration;
 import java.util.*;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.function.Supplier;
 
 /**
@@ -269,10 +266,16 @@ public interface JsonResources {
             final URI uri,
             final Supplier<Map<String, List<String>>> headers
         ) {
-            final ExecutorService exec = Executors.newSingleThreadExecutor();
-            HttpClient client = this.newHttpClient(exec);
             try {
-                final HttpResponse<String> response = client.send(
+                final HttpClient.Version version;
+                if(this.useOldHttpProtocol) {
+                    version = HttpClient.Version.HTTP_1_1;
+                } else {
+                    version = HttpClient.Version.HTTP_2;
+                }
+                final HttpResponse<String> response = GlobalHttpClient.instance(
+                    version
+                ).send(
                     this.request(
                         uri,
                         "GET",
@@ -291,10 +294,6 @@ public interface JsonResources {
                     "Couldn't GET [" + uri.toString() +"]",
                     ex
                 );
-            } finally {
-                exec.shutdownNow();
-                client = null;
-                System.gc();
             }
         }
 
@@ -304,10 +303,16 @@ public interface JsonResources {
             final Supplier<Map<String, List<String>>> headers,
             final JsonValue body
         ) {
-            final ExecutorService exec = Executors.newSingleThreadExecutor();
-            HttpClient client = this.newHttpClient(exec);
             try {
-                final HttpResponse<String> response = client.send(
+                final HttpClient.Version version;
+                if(this.useOldHttpProtocol) {
+                    version = HttpClient.Version.HTTP_1_1;
+                } else {
+                    version = HttpClient.Version.HTTP_2;
+                }
+                final HttpResponse<String> response = GlobalHttpClient.instance(
+                    version
+                ).send(
                     this.request(
                         uri,
                         "POST",
@@ -329,10 +334,6 @@ public interface JsonResources {
                     + " to [" + uri.toString() +"]",
                     ex
                 );
-            } finally {
-                exec.shutdownNow();
-                client = null;
-                System.gc();
             }
         }
 
@@ -342,10 +343,16 @@ public interface JsonResources {
             final Supplier<Map<String, List<String>>> headers,
             final JsonValue body
         ) {
-            final ExecutorService exec = Executors.newSingleThreadExecutor();
-            HttpClient client = this.newHttpClient(exec);
             try {
-                final HttpResponse<String> response = client.send(
+                final HttpClient.Version version;
+                if(this.useOldHttpProtocol) {
+                    version = HttpClient.Version.HTTP_1_1;
+                } else {
+                    version = HttpClient.Version.HTTP_2;
+                }
+                final HttpResponse<String> response = GlobalHttpClient.instance(
+                    version
+                ).send(
                     this.request(
                         uri,
                         "PATCH",
@@ -367,10 +374,6 @@ public interface JsonResources {
                   + " at [" + uri.toString() +"]",
                     ex
                 );
-            } finally {
-                exec.shutdownNow();
-                client = null;
-                System.gc();
             }
         }
 
@@ -380,10 +383,16 @@ public interface JsonResources {
             final Supplier<Map<String, List<String>>> headers,
             final JsonValue body
         ) {
-            final ExecutorService exec = Executors.newSingleThreadExecutor();
-            HttpClient client = this.newHttpClient(exec);
             try {
-                final HttpResponse<String> response = client.send(
+                final HttpClient.Version version;
+                if(this.useOldHttpProtocol) {
+                    version = HttpClient.Version.HTTP_1_1;
+                } else {
+                    version = HttpClient.Version.HTTP_2;
+                }
+                final HttpResponse<String> response = GlobalHttpClient.instance(
+                    version
+                ).send(
                     this.request(
                         uri,
                         "PUT",
@@ -405,10 +414,6 @@ public interface JsonResources {
                   + " at [" + uri.toString() +"]",
                     ex
                 );
-            } finally {
-                exec.shutdownNow();
-                client = null;
-                System.gc();
             }
         }
 
@@ -418,10 +423,16 @@ public interface JsonResources {
             final Supplier<Map<String, List<String>>> headers,
             final JsonValue body
         ) {
-            final ExecutorService exec = Executors.newSingleThreadExecutor();
-            HttpClient client = this.newHttpClient(exec);
             try {
-                final HttpResponse<String> response = client.send(
+                final HttpClient.Version version;
+                if(this.useOldHttpProtocol) {
+                    version = HttpClient.Version.HTTP_1_1;
+                } else {
+                    version = HttpClient.Version.HTTP_2;
+                }
+                final HttpResponse<String> response = GlobalHttpClient.instance(
+                    version
+                ).send(
                     this.request(
                         uri,
                         "DELETE",
@@ -443,10 +454,6 @@ public interface JsonResources {
                  + " at [" + uri.toString() +"]",
                     ex
                 );
-            } finally {
-                exec.shutdownNow();
-                client = null;
-                System.gc();
             }
         }
 
@@ -493,32 +500,6 @@ public interface JsonResources {
                 + "https://github.com/self-xdsd"
             );
             return requestBuilder.build();
-        }
-
-        /**
-         * Creates a new http client.
-         * @param executor ExecutorService to use internally and close on end.
-         * @return HttpClient.
-         */
-        private HttpClient newHttpClient(final ExecutorService executor) {
-            final HttpClient client;
-            if (this.useOldHttpProtocol) {
-                client = HttpClient
-                    .newBuilder()
-                    .version(HttpClient.Version.HTTP_1_1)
-                    .followRedirects(HttpClient.Redirect.NORMAL)
-                    .connectTimeout(Duration.ofSeconds(10))
-                    .executor(executor)
-                    .build();
-            } else {
-                client = HttpClient
-                    .newBuilder()
-                    .followRedirects(HttpClient.Redirect.NORMAL)
-                    .connectTimeout(Duration.ofSeconds(10))
-                    .executor(executor)
-                    .build();
-            }
-            return client;
         }
 
         /**
