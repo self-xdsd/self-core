@@ -49,8 +49,6 @@ import java.util.function.Supplier;
  * @checkstyle ClassFanOutComplexity (1000 lines)
  * @checkstyle ClassDataAbstractionCoupling (1000 lines)
  * @since 0.0.1
- * @todo #1265:30min Send a comment after updating a task's estimation inside
- *  issueLabelsChanged.
  */
 public final class StoredProjectManager implements ProjectManager {
 
@@ -665,8 +663,7 @@ public final class StoredProjectManager implements ProjectManager {
             isNotClosed -> new TaskIsRegistered(
                 new IssueEstimationChanged(
                     new UpdateTaskEstimation(
-                        sendReply -> LOG.debug("Send updated estimation"
-                            + " comment.")
+                        new SendReply("Task estimation has been updated.")
                     ),
                     notChanged -> LOG.debug(
                         "Nothing to do on Issue label change."
