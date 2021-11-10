@@ -49,9 +49,6 @@ import java.util.function.Supplier;
  * @checkstyle ClassFanOutComplexity (1000 lines)
  * @checkstyle ClassDataAbstractionCoupling (1000 lines)
  * @since 0.0.1
- * @todo #1265:30min In method issueLabelsChanged, use the step IssueIsClosed
- *  before doing anything else. We shouldn't act on labeled/unlabeled if the
- *  Issue is closed.
  * @todo #1265:30min Send a comment after updating a task's estimation inside
  *  issueLabelsChanged.
  */
@@ -661,17 +658,23 @@ public final class StoredProjectManager implements ProjectManager {
 
     @Override
     public void issueLabelsChanged(final Event event) {
-        final Step steps = new TaskIsRegistered(
-            new IssueEstimationChanged(
-                new UpdateTaskEstimation(
-                    sendReply -> LOG.debug("Send updated estimation comment.")
-                ),
-                notChanged -> LOG.debug(
-                    "Nothing to do on Issue label change."
-                )
+        final Step steps = new IssueIsClosed(
+            isClosed -> LOG.debug(
+                "Can't handle labels changes on a closed issue."
             ),
-            isNotRegistered -> LOG.debug(
-                "Issue is NOT registered as a Task. Doing nothing."
+            isNotClosed -> new TaskIsRegistered(
+                new IssueEstimationChanged(
+                    new UpdateTaskEstimation(
+                        sendReply -> LOG.debug("Send updated estimation"
+                            + " comment.")
+                    ),
+                    notChanged -> LOG.debug(
+                        "Nothing to do on Issue label change."
+                    )
+                ),
+                isNotRegistered -> LOG.debug(
+                    "Issue is NOT registered as a Task. Doing nothing."
+                )
             )
         );
         steps.perform(event);

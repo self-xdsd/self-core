@@ -1917,4 +1917,33 @@ public final class StoredProjectManagerTestCase {
             .updateEstimation(Mockito.anyInt());
     }
 
+    /**
+     * A PM can skip handling issue labels changes if issue is closed.
+     */
+    @Test
+    public void skipHandlingIssueLabelsChangesOnClosedIssue() {
+        final ProjectManager manager = new StoredProjectManager(
+            1,
+            "123",
+            "zoeself",
+            Provider.Names.GITHUB,
+            "123token",
+            8,
+            5,
+            Mockito.mock(Storage.class)
+        );
+        final Event event = Mockito.mock(Event.class);
+        final Issue issue = Mockito.mock(Issue.class);
+        final Task task = Mockito.mock(Task.class);
+
+        Mockito.when(issue.isClosed()).thenReturn(true);
+        Mockito.when(event.issue()).thenReturn(issue);
+        Mockito.when(issue.issueId()).thenReturn("123");
+
+        manager.issueLabelsChanged(event);
+
+        Mockito.verify(task, Mockito.never())
+            .updateEstimation(Mockito.anyInt());
+    }
+
 }
