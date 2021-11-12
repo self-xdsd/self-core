@@ -92,4 +92,19 @@ public final class SendReply extends Intermediary {
         LOG.debug("Reply sent successfully!");
         this.next().perform(event);
     }
+
+    @Override
+    public Step derive(final Object data) {
+        final Step derivedStep;
+        if (data instanceof String) {
+            final String extraInfo = data.toString();
+            derivedStep = new SendReply(
+                this.reply + "\n" + extraInfo,
+                this.next()
+            );
+        } else {
+            derivedStep = this;
+        }
+        return derivedStep;
+    }
 }

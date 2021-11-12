@@ -37,6 +37,7 @@ public final class UpdateTaskEstimationTestCase {
 
     /**
      * UpdateTaskEstimation can update the Task's estimation.
+     * @checkstyle ExecutableStatementCount (50 lines)
      */
     @Test
     public void updatesTaskEstimation() {
@@ -61,10 +62,12 @@ public final class UpdateTaskEstimationTestCase {
         Mockito.when(event.project()).thenReturn(project);
 
         final Step next = Mockito.mock(Step.class);
+        final Step derived = Mockito.mock(Step.class);
+        Mockito.when(next.derive(Mockito.anyString())).thenReturn(derived);
         final Step update = new UpdateTaskEstimation(next);
         update.perform(event);
 
         Mockito.verify(task, Mockito.times(1)).updateEstimation(125);
-        Mockito.verify(next, Mockito.times(1)).perform(event);
+        Mockito.verify(derived, Mockito.times(1)).perform(event);
     }
 }

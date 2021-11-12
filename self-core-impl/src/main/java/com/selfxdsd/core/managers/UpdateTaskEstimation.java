@@ -67,13 +67,14 @@ public final class UpdateTaskEstimation extends Intermediary {
         );
         final int newEstimation = issue.estimation().minutes();
         task.updateEstimation(newEstimation);
-        LOG.debug(String.format(
+        final String message = String.format(
             "The estimation of Task [#%s-%s-%s] has been updated to %s min.",
             issue.issueId(),
             issue.repoFullName(),
             issue.provider(),
             newEstimation
-        ));
-        this.next().perform(event);
+        );
+        LOG.debug(message);
+        this.next().derive(message).perform(event);
     }
 }

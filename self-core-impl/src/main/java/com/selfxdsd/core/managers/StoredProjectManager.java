@@ -660,7 +660,7 @@ public final class StoredProjectManager implements ProjectManager {
             isClosed -> LOG.debug(
                 "Can't handle labels changes on a closed issue."
             ),
-            isNotClosed -> new TaskIsRegistered(
+            new TaskIsRegistered(
                 new IssueEstimationChanged(
                     new UpdateTaskEstimation(
                         new SendReply("Task estimation has been updated.")
