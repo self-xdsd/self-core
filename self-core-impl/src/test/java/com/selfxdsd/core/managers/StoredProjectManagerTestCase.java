@@ -30,6 +30,7 @@ import com.selfxdsd.core.projects.English;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
 import java.math.BigDecimal;
@@ -44,9 +45,9 @@ import java.util.function.Supplier;
  *
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
- * @since 0.0.1
  * @checkstyle ExecutableStatementCount (2000 lines)
  * @checkstyle ClassFanOutComplexity (2000 lines)
+ * @since 0.0.1
  */
 public final class StoredProjectManagerTestCase {
 
@@ -318,7 +319,8 @@ public final class StoredProjectManagerTestCase {
         final User pmUser = new StoredProjectManager.PmUser(manager);
         MatcherAssert.assertThat(
             pmUser.username(),
-            Matchers.is("zoeself"));
+            Matchers.is("zoeself")
+        );
     }
 
     /**
@@ -331,7 +333,8 @@ public final class StoredProjectManagerTestCase {
         );
         MatcherAssert.assertThat(
             pmUser.role(),
-            Matchers.is("user"));
+            Matchers.is("user")
+        );
     }
 
     /**
@@ -476,7 +479,7 @@ public final class StoredProjectManagerTestCase {
         Mockito.verify(comments, Mockito.times(1))
             .post(
                 "@mihai thank you for reporting this. "
-                + "I'll assign someone to take care of it soon."
+                    + "I'll assign someone to take care of it soon."
             );
     }
 
@@ -636,10 +639,10 @@ public final class StoredProjectManagerTestCase {
         Mockito.verify(comments, Mockito.times(1))
             .post(
                 "@mihai thanks for reopening this, "
-                + "I'll find someone to take a look at it. \n"
-                + "However, please keep in mind that reopening tickets "
-                + "is a bad practice. "
-                + "Next time, please open a new ticket."
+                    + "I'll find someone to take a look at it. \n"
+                    + "However, please keep in mind that reopening tickets "
+                    + "is a bad practice. "
+                    + "Next time, please open a new ticket."
             );
     }
 
@@ -802,7 +805,7 @@ public final class StoredProjectManagerTestCase {
         Mockito.verify(comments, Mockito.times(1))
             .post(
                 "@mihai thanks for reopening this PR, "
-                + "I'll find someone to review it soon."
+                    + "I'll find someone to review it soon."
             );
     }
 
@@ -923,7 +926,7 @@ public final class StoredProjectManagerTestCase {
         Mockito.when(all.register(issue)).thenThrow(
             new IllegalStateException(
                 "There already is an ongoing task, "
-              + "no new task should be registered!"
+                    + "no new task should be registered!"
             )
         );
         final Project project = Mockito.mock(Project.class);
@@ -1004,7 +1007,7 @@ public final class StoredProjectManagerTestCase {
             .thenThrow(
                 new IllegalStateException(
                     "Issue has the 'no-task' label, Tasks.getById should not "
-                    + "be called!"
+                        + "be called!"
                 )
             );
         Mockito.when(all.register(issue)).thenThrow(
@@ -1222,7 +1225,7 @@ public final class StoredProjectManagerTestCase {
      * assignee if they have the appropriate Contract with the Project.
      */
     @Test
-    public void handlesUnassignedTasksEventIssueAssigneeIsContributor(){
+    public void handlesUnassignedTasksEventIssueAssigneeIsContributor() {
 
         final Contract contract = Mockito.mock(Contract.class);
         final Contributor assignee = Mockito.mock(Contributor.class);
@@ -1309,7 +1312,7 @@ public final class StoredProjectManagerTestCase {
      * with the Project and elects new Contributor.
      */
     @Test
-    public void handlesUnassignedTasksEventIssueAssigneeIsNotContributor(){
+    public void handlesUnassignedTasksEventIssueAssigneeIsNotContributor() {
 
         final Contributor assignee = Mockito.mock(Contributor.class);
         Mockito.when(assignee.username()).thenReturn("mihai");
@@ -1358,7 +1361,6 @@ public final class StoredProjectManagerTestCase {
         Mockito.when(contributors.elect(task)).thenReturn(assignee);
         Mockito.when(contributors.getById("mihai", "github"))
             .thenReturn(assignee);
-
 
 
         Mockito.when(project.contributors()).thenReturn(contributors);
@@ -1490,8 +1492,10 @@ public final class StoredProjectManagerTestCase {
             5,
             Mockito.mock(Storage.class)
         );
-        MatcherAssert.assertThat(manager.hashCode(),
-            Matchers.equalTo(managerTwo.hashCode()));
+        MatcherAssert.assertThat(
+            manager.hashCode(),
+            Matchers.equalTo(managerTwo.hashCode())
+        );
     }
 
     /**
@@ -1530,7 +1534,7 @@ public final class StoredProjectManagerTestCase {
     @Test
     public void handlesAssignedTasksEventNoAssignedTasks() {
         final List<Task> mocks = new ArrayList<>();
-        for(int idx = 0; idx<3; idx++) {
+        for (int idx = 0; idx < 3; idx++) {
             final Task task = Mockito.mock(Task.class);
             Mockito.when(task.assignee()).thenReturn(null);
             mocks.add(task);
@@ -1554,7 +1558,7 @@ public final class StoredProjectManagerTestCase {
         );
         manager.assignedTasks(event);
         Mockito.verify(project, Mockito.never()).language();
-        for(int idx = 0; idx<3; idx++) {
+        for (int idx = 0; idx < 3; idx++) {
             final Task task = mocks.get(idx);
             Mockito.verify(task, Mockito.times(1)).assignee();
             Mockito.verify(task, Mockito.never()).issue();
@@ -1668,7 +1672,7 @@ public final class StoredProjectManagerTestCase {
 
         final LocalDateTime assignmentDate = LocalDateTime.now();
         final LocalDateTime deadlineDate = LocalDateTime.now().plusDays(10);
-        final Supplier<LocalDateTime> now = ()-> assignmentDate.plusDays(6);
+        final Supplier<LocalDateTime> now = () -> assignmentDate.plusDays(6);
         Mockito.when(task.assignmentDate()).thenReturn(assignmentDate);
         Mockito.when(task.deadline()).thenReturn(deadlineDate);
 
@@ -1725,7 +1729,7 @@ public final class StoredProjectManagerTestCase {
 
         final LocalDateTime assignmentDate = LocalDateTime.now();
         final LocalDateTime deadlineDate = LocalDateTime.now().plusDays(10);
-        final Supplier<LocalDateTime> now = ()-> deadlineDate.plusMinutes(1);
+        final Supplier<LocalDateTime> now = () -> deadlineDate.plusMinutes(1);
         Mockito.when(task.assignmentDate()).thenReturn(assignmentDate);
         Mockito.when(task.deadline()).thenReturn(deadlineDate);
 
@@ -1859,6 +1863,7 @@ public final class StoredProjectManagerTestCase {
         Mockito.when(project.tasks()).thenReturn(tasks);
         Mockito.when(project.repoFullName()).thenReturn("john/test");
         Mockito.when(project.provider()).thenReturn(Provider.Names.GITHUB);
+        Mockito.when(project.language()).thenReturn(new English());
 
         Mockito.when(issue.isClosed()).thenReturn(false);
         Mockito.when(issue.issueId()).thenReturn("123");
@@ -1878,11 +1883,12 @@ public final class StoredProjectManagerTestCase {
         manager.issueLabelsChanged(event);
 
         Mockito.verify(task, Mockito.times(1)).updateEstimation(30);
-        final String reply = "> \n\n"
-            + "Task estimation has been updated.\n"
-            + "The estimation of Task [#123-john/test-github] has been updated "
-            + "to 30 min.";
-        Mockito.verify(comments, Mockito.times(1)).post(reply);
+        final ArgumentCaptor<String> commentCaptor = ArgumentCaptor
+            .forClass(String.class);
+        Mockito.verify(comments, Mockito.times(1))
+            .post(commentCaptor.capture());
+        MatcherAssert.assertThat(commentCaptor.getValue(), Matchers
+            .startsWith("Estimation changed to ``30`` minutes at ``20"));
     }
 
     /**

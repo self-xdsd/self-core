@@ -38,18 +38,4 @@ public interface Step {
      * @param event Event that triggered everything.
      */
     void perform(final Event event);
-
-
-    /**
-     * Creates a derived Step from "this" Step. The new Step may use additional
-     * data that's expected to come from the nearest previous step in chain.
-     * <br/>
-     * By default no new Step is created.
-     * @param data Data.
-     * @return Step.
-     */
-    default Step derive(final Object data){
-        return this;
-    }
-
 }

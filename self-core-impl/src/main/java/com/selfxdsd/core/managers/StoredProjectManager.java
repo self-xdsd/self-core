@@ -663,7 +663,15 @@ public final class StoredProjectManager implements ProjectManager {
             new TaskIsRegistered(
                 new IssueEstimationChanged(
                     new UpdateTaskEstimation(
-                        new SendReply("Task estimation has been updated.")
+                        changed -> changed
+                            .issue()
+                            .comments()
+                            .post(String.format(
+                                changed.project().language()
+                                    .reply("taskEstimationChanged.comment"),
+                                changed.issue().estimation().minutes(),
+                                LocalDateTime.now()
+                            ))
                     ),
                     notChanged -> LOG.debug(
                         "Nothing to do on Issue label change."
