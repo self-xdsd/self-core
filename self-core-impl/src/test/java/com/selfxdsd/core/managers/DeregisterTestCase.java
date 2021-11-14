@@ -152,8 +152,8 @@ public final class DeregisterTestCase {
         Mockito.verify(issue.comments(), Mockito.times(1))
             .post("> Deregister please!\n\n"
                 + "@john-dev you don't have the appropriate role "
-                + "to remove this task.\n\n"
-                + "Only users with PO or ARCH roles are allowed.");
+                + "to remove this task from scope.\n\n"
+                + "Only users with PO or ARCH roles are allowed to do that.");
     }
 
     /**
