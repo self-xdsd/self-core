@@ -73,7 +73,8 @@ public final class ConfusedTestCase {
         );
 
         Mockito.verify(comments).post("> " + "gibberish" + "\n\n"
-            + "@mihai didn't understand that, sorry.");
+            + "@mihai I'm afraid I didn't understand that, sorry. "
+            + "Say \"commands\" for a full list of things I understand.");
     }
 
     /**
