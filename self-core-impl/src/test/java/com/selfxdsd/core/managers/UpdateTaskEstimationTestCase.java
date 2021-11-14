@@ -37,6 +37,7 @@ public final class UpdateTaskEstimationTestCase {
 
     /**
      * UpdateTaskEstimation can update the Task's estimation.
+     * @checkstyle ExecutableStatementCount (50 lines)
      */
     @Test
     public void updatesTaskEstimation() {

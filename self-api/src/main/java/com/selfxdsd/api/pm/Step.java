@@ -38,5 +38,4 @@ public interface Step {
      * @param event Event that triggered everything.
      */
     void perform(final Event event);
-
 }
