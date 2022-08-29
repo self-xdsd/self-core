@@ -70,9 +70,16 @@ public interface PlatformInvoice {
      * @return String
      */
     default String billedBy() {
+        final String streetAddress;
+        if(this.createdAt().isBefore(LocalDateTime.of(2022, 8, 15, 0, 0))) {
+            streetAddress = "Transilvaniei St. 18, bl. U2, ap. 111";
+        } else {
+            streetAddress = "Alexandru Odobescu St. 5, bl. PB91, ap. 1";
+        }
         return new StringBuilder()
             .append("SC Extremely Distributed Technologies SRL\n\n")
-            .append("Transilvaniei St. 18, bl. U2, ap. 111\n")
+            .append(streetAddress)
+            .append("\n")
             .append("Oradea, Romania\n\n")
             .append("Nr. ORC/Reg. Number: J05/197/2021\n")
             .append("Cod TVA/VAT Code: RO43621869\n")

@@ -259,10 +259,11 @@ public final class StoredPlatformInvoiceTestCase {
     }
 
     /**
-     * StoredPlatformInvoice can return its billedBy.
+     * StoredPlatformInvoice can return its updated billedBy, with the new
+     * address after August 15th 2022.
      */
     @Test
-    public void returnsBilledBy() {
+    public void returnsUpdatedBilledBy() {
         final PlatformInvoice invoice = new StoredPlatformInvoice(
             1234,
             LocalDateTime.now(),
@@ -271,6 +272,39 @@ public final class StoredPlatformInvoiceTestCase {
             BigDecimal.valueOf(19),
             "transactionId123",
             LocalDateTime.now(),
+            10,
+            BigDecimal.valueOf(487),
+            Mockito.mock(Storage.class)
+        );
+        MatcherAssert.assertThat(
+            invoice.billedBy(),
+            Matchers.equalTo(
+                new StringBuilder()
+                    .append("SC Extremely Distributed Technologies SRL\n\n")
+                    .append("Alexandru Odobescu St. 5, bl. PB91, ap. 1\n")
+                    .append("Oradea, Romania\n\n")
+                    .append("Nr. ORC/Reg. Number: J05/197/2021\n")
+                    .append("Cod TVA/VAT Code: RO43621869\n")
+                    .append("EUID: ROONRC.J05/197/2021")
+                    .toString()
+            )
+        );
+    }
+
+    /**
+     * StoredPlatformInvoice can return its old billedBy, with the old
+     * address from before August 15th 2022.
+     */
+    @Test
+    public void returnsOldBilledBy() {
+        final PlatformInvoice invoice = new StoredPlatformInvoice(
+            1234,
+            LocalDateTime.of(2022, 7, 3, 0, 0),
+            "mihai",
+            BigDecimal.valueOf(100),
+            BigDecimal.valueOf(19),
+            "transactionId123",
+            LocalDateTime.of(2022, 7, 3, 0, 0),
             10,
             BigDecimal.valueOf(487),
             Mockito.mock(Storage.class)

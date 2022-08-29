@@ -45,7 +45,7 @@ public final class XmlBnrTestCase {
     public void getsEurToRonFromBnr() {
         MatcherAssert.assertThat(
             new XmlBnr().euroToRon(),
-            Matchers.greaterThan(BigDecimal.valueOf(490))
+            Matchers.greaterThan(BigDecimal.valueOf(480))
         );
     }
 
