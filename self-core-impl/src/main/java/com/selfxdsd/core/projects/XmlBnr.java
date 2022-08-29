@@ -50,6 +50,11 @@ import java.net.http.HttpResponse;
 public final class XmlBnr implements Bnr {
 
     /**
+     * Fallback exchange rate we use in case the API call fails.
+     */
+    public static final int FALLBACK_EXCHANGE_RATE = 485;
+
+    /**
      * Logger.
      */
     private static final Logger LOG = LoggerFactory.getLogger(
@@ -92,8 +97,11 @@ public final class XmlBnr implements Bnr {
             LOG.error(
                 "[BNR] Could not get EUR-RON exchange rate: ", ex
             );
-            LOG.error("[BNR] Returning 492 as default exchange rate.");
-            return BigDecimal.valueOf(492);
+            LOG.error(
+                "[BNR] Returning " + FALLBACK_EXCHANGE_RATE
+                + " as default exchange rate."
+            );
+            return BigDecimal.valueOf(FALLBACK_EXCHANGE_RATE);
         }
     }
 
@@ -125,12 +133,12 @@ public final class XmlBnr implements Bnr {
                         .multiply(BigDecimal.valueOf(100));
                 }
             }
-            LOG.warn("[BNR] EUR-RON not found! Returning 492 as default.");
-            return BigDecimal.valueOf(492);
+            LOG.warn("[BNR] EUR-RON not found! Returning " + FALLBACK_EXCHANGE_RATE + " as default.");
+            return BigDecimal.valueOf(FALLBACK_EXCHANGE_RATE);
         } catch (final Exception ex) {
             LOG.error("[BNR] Exception while parsing XML: ", ex);
-            LOG.error("[BNR] Returning 492 as default exchange rate.");
-            return BigDecimal.valueOf(492);
+            LOG.error("[BNR] Returning " + FALLBACK_EXCHANGE_RATE + " as default exchange rate.");
+            return BigDecimal.valueOf(FALLBACK_EXCHANGE_RATE);
         }
     }
 }

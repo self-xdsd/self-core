@@ -57,7 +57,7 @@ public final class XmlBnrTestCase {
     public void getsFallbackEurToRonFromBnr() {
         MatcherAssert.assertThat(
             new XmlBnr(URI.create("http://localhost:12345")).euroToRon(),
-            Matchers.equalTo(BigDecimal.valueOf(492))
+            Matchers.equalTo(BigDecimal.valueOf(XmlBnr.FALLBACK_EXCHANGE_RATE))
         );
     }
 
