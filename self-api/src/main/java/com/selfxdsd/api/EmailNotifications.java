@@ -32,7 +32,7 @@ public interface EmailNotifications {
 
     /**
      * Send a notification.
-     * @param emailNotification - Notification to send.
+     * @param emailNotification Notification to send.
      */
     void send(final EmailNotification emailNotification);
 }

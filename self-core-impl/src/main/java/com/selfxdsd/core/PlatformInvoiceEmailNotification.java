@@ -11,8 +11,15 @@ import com.selfxdsd.api.PlatformInvoice;
  */
 final class PlatformInvoiceEmailNotification implements EmailNotification {
 
+    /**
+     * PlatformInvoice for which we send the notification.
+     */
     private final PlatformInvoice platformInvoice;
 
+    /**
+     * Ctor.
+     * @param platformInvoice PlatformInvoice in the notification.
+     */
     PlatformInvoiceEmailNotification(final PlatformInvoice platformInvoice) {
         this.platformInvoice = platformInvoice;
     }
@@ -23,14 +30,24 @@ final class PlatformInvoiceEmailNotification implements EmailNotification {
     }
 
     @Override
+    public String toName() {
+        return "Self XDSD Admin";
+    }
+
+    @Override
     public String subject() {
-        return "[Self XDSD] New Platform Invoice " +
-            "(ID: " + this.platformInvoice.id() + ")";
+        return "New Platform Invoice "
+            + "(ID: " + this.platformInvoice.id() + ")";
     }
 
     @Override
     public String body() {
-        return "New platform invoice (id is " + this.platformInvoice.id() +
-            ") registered at " + this.platformInvoice.createdAt();
+        return "New platform invoice (id is " + this.platformInvoice.id()
+            + ") registered at " + this.platformInvoice.createdAt() + ".";
+    }
+
+    @Override
+    public String type() {
+        return "PlatformInvoide Mail Notification";
     }
 }

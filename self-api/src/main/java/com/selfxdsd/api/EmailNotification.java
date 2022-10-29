@@ -27,6 +27,7 @@ package com.selfxdsd.api;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.99
+ * @checkstyle MethodName (100 lines)
  */
 public interface EmailNotification {
 
@@ -35,6 +36,28 @@ public interface EmailNotification {
      * @return String.
      */
     String to();
+
+    /**
+     * Name of the receiver.
+     * @return String.
+     */
+    String toName();
+
+    /**
+     * Sender e-mail address.
+     * @return String.
+     */
+    default String from() {
+        return "support@self-xdsd.com";
+    }
+
+    /**
+     * Sender name.
+     * @return String.
+     */
+    default String fromName() {
+        return "Self XDSD";
+    }
 
     /**
      * Subect text.
@@ -47,4 +70,10 @@ public interface EmailNotification {
      * @return String.
      */
     String body();
+
+    /**
+     * Type of the notification.
+     * @return String.
+     */
+    String type();
 }
