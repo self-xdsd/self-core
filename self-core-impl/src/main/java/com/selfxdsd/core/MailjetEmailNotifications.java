@@ -41,8 +41,7 @@ import java.util.Base64;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.99
- * @todo #1296:60min Write unit tests for this class, as well as for class
- *  PlatformInvoiceEmailnotification.
+ * @todo #1298:60min Write unit tests for this class, using Grizzly mock server.
  * @todo #1296:60min Use this class to send e-mails as soon as a real payment
  *  is successful. We should do it in a Wallet decorator.
  */
