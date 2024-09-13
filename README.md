@@ -2,10 +2,9 @@
 
 # Self's Core Implementation
 
-[![Build Status](https://travis-ci.com/self-xdsd/self-core.svg?branch=master)](https://travis-ci.com/self-xdsd/self-core)
 [![Coverage Status](https://coveralls.io/repos/github/self-xdsd/self-core/badge.svg?branch=master)](https://coveralls.io/github/self-xdsd/self-core?branch=master)
 
-[![Managed By Self XDSD](https://self-xdsd.com/b/mbself.svg)](https://self-xdsd.com/p/self-xdsd/self-core?provider=github) 
+[![Managed By Self XDSD](https://docs.self-xdsd.com/img/mbself.svg)](https://self-xdsd.com/p/self-xdsd/self-core?provider=github) 
 [![DevOps By Rultor.com](http://www.rultor.com/b/self-xdsd/self-core)](http://www.rultor.com/p/self-xdsd/self-core)
 [![We recommend IntelliJ IDEA](http://amihaiemil.github.io/images/intellij-idea-recommend.svg)](https://www.jetbrains.com/idea/)
 
