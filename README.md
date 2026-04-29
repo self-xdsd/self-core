@@ -1,4 +1,4 @@
-<img alt="self-xsdsd-logo" src="https://self-xdsd.com/files/self-xdsd.png" width="80" height="80"/>
+<img alt="self-xsdsd-logo" src="https://amihaiemil.com/images/self-xdsd.png" width="80" height="80"/>
 
 # Self's Core Implementation
 
@@ -11,7 +11,7 @@
 
 Self's Core, version `0.0.98`.
 
-This repo contains the main Java SE 11 implementation, clean of any framework.
+This repo contains the main Java SE 11 implementation, clean of any framework. Just start from the entrypoint, which is the [Self.java](https://github.com/self-xdsd/self-core/blob/master/self-api/src/main/java/com/selfxdsd/api/Self.java) interface - look for its implementors. You should get the hang of it quickly.
 
 The platform's domain model is implemented as a set of public Java Interfaces which, besides being the skeleton of the core implementation, can also be used to implement Selenium tests or implement a Java client for the RESTful API.
 
